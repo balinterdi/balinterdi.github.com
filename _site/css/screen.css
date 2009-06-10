@@ -1,0 +1,35 @@
+body {
+  font-size: 14px;
+  font-family: Palatino, Lucida Grande, Verdana, sans-serif;
+  background-color: white;
+}
+
+#content {
+  margin: 10px auto;
+  padding: 10px;
+}
+
+#sidebar {
+/*  width: 20%;*/
+  padding: 10px;
+  border-right: 1px solid black;
+  float: left;
+}
+
+#main_panel {
+  float: left;
+  padding: 10px;
+/*  width: 80%;*/
+}
+
+#projects li {
+  list-style-type: none;
+}
+
+#footer {
+  clear: both;
+}
+
+#footer li {
+  list-style-type: none;
+}
