@@ -1,53 +1,152 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
-<head>
-   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-   <title>Bálint Érdi</title>
-   <meta name="author" content="Balint Erdi" />
-   <link href="http://feeds.feedburner.com/bucionrails" rel="alternate" title="Balint Erdi" type="application/atom+xml" />
-  <!-- Homepage CSS -->
-  <link rel="stylesheet" href="/css/screen.css" type="text/css" media="screen, projection" />
-</head>
-<body>
-  <div id="content">
-    <div id="sidebar">
-      This is the personal site of Bálint Érdi
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Bálint Érdi : Buci On Rails</title>
+    <link rel="stylesheet" href="/css/main.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+  </head>
+  <body>
+    <div id="top-bar">
+      <ul>
+        <li><a href="http://feeds.feedburner.com/bucionrails">RSS</a></li>
+        <li><a href="http://bucionrails.com/archives">Archives</a></li>
+        <li><a href="http://bucionrails.com/about">About</a></li>
+        <li><a href="#post-1">Top ^</a></li>
+      </ul>
     </div>
-    <div id="main_panel">
-      <div id="projects">
-  <h2>Projects</h2>
-  <ul>
-    <li><a href="http://github.com/balinterdi/cuckoo_twitterer">Cuckoo twitterer</a></li>
-    <li><a href="http://github.com/balinterdi/missing_t">Missing t</a></li>
-    <li><a href="http://github.com/balinterdi/i15r">I15r</a></li>
-    <li><a href="http://github.com/balinterdi/only_owner">Only owner</a></li>
-    <li><a href="http://github.com/balinterdi/acts_as_trivia">Acts as trivia</a></li>
-    <li><a href="http://github.com/balinterdi/thrifty">Thrifty</a></li>
-  </ul>
-  <h2>Contributions</h2>
-  <ul>
-    <li><a href="http://github.com/datamapper/dm-more">Datamapper</a></li>
-    <li><a href="http://github.com/tog/tog_oracle">Tog oracle</a></li>
-    <li><a href="http://github.com/tog/tog_picto">Tog picto</a></li>
-    <li><a href="http://github.com/tog/tog_social">Tog social</a></li>
-  </ul>
-  
-</div>
-    </div>
-    <div id="footer">
-      <div id="contact">
-        <ul>
-          <li><span>Twitter: </span><a href="http://twitter.com/baaz">http://twitter.com/baaz</a></li>
-          <li><span>Email: </span><a href="mailto:balint@bucionrails.com">balint@bucionrails.com</a></li>
-          <li><span>Github: </span><a href="http://github.com/balinterdi">http://github.com/balinterdi</a></li>
-        </ul>
+    <div id="content">
+      <div id="header">
+        <h1>
+          <!-- <span id="title-buci">Buci</span>
+          <span id="title-on">On</span>
+          <span id="title-rails">Rails</span> -->
+          So let me tell you this.
+        </h1>
+        <div id="recent-post-list">
+          Recent posts:
+          <ul>
+            <li><a href="#post-1">Cucumber meets Selenium meets integrity</a></li>
+            <li><a href="#post-2">Rubygems under the hood: hooking into require</a></li>
+            <li><a href="#post-3">I15R 0.3.2 is out!</a></li>                        
+          </ul>
+        </div>
+        <!-- <h3 id="motto">Balint Erdi's tech blog</h3> -->
       </div>
-      <div class="rss">
-          <a href="http://feeds2.feedburner.com/bucionrails">Subscribe</a>
-      </div>
-    </div>
-  </div>
-</body>
+      <div id="main">
+        <div id="left">
+          <div class="post">
+            <h2 class="post_title">
+              <a id="post-1" href="http://bucionrails.com/2009/09/25/cucumber-meets-selenium-meets-integrity/">Cucumber meets Selenium meets Integrity</a>
+              <div class="date">25th September 2009</div>
+            </h2>
+            <div class="post_body">
+              <p><a href="http://martinfowler.com/articles/continuousIntegration.html">Continuous integration (CI)</a> is a basic building block of any project done in TDD style. In brief, having a CI server properly set up guarantees that developers can rest assured that the application passes all its tests and can thus be deployed at any moment. It does this by sending some kind of a warning if something is broken so it can be fixed immediately.</p>
 
+              <p>Now I noticed that if a CI server is not in the mix right from the beginning of project, chances are it will never be, that was one of the first things I installed on a new Rails project. My server of choice is <a href="http://integrityapp.com">Integrity</a> mostly because it is so easy to set up and quite straightforward to use.</p>
+
+              <p>Ok, so next we need some tests that Integrity will run at each commit and make sure the app can still be built. As a high-level acceptance test framework, I use <a href="http://cukes.info">Cucumber</a>, which plays very nicely with <a href="http://seleniumhq.org">Selenium</a> for automated in-browser testing. Since nowadays even the most basic web application will have some amount of client-side scripting code (that is, javascript) if you really want to test the features of your application you’ll need Selenium tests.</p>
+
+              <p>That’s when matters get a bit more complicated when it comes to integrating these with the Integrity server. Why? Because on the server you usually don’t have the “desktop environment” which is available on the machine you do the development on. By default, you don’t run a desktop manager and have a graphic display on a server. A tool called <a href="http://linux.about.com/cs/linux101/g/xvfb.htm">xvfb</a> comes into a picture that emulate a dumb framebuffer so you can still programs that need a graphic display.</p>
+
+              <p>To have some practical guidance, here’s what I did on an Ubuntu server to enable all of the above:</p>
+
+              <p>Install java since Selenium runs in the JVM:</p>
+
+              <pre>apt-get install java-common sun-java6-jre</pre>
+              <p>Install firefox since that’s what Selenium runs by default and that’s a very good choice.</p>
+
+              <pre>apt-get install firefox</pre>
+              <p>Install X since that’s what the xvfb launches and Xvfb itself.</p>
+
+              <p>apt-get install xorg xserver-xorg</p>
+
+              <pre>apt-get install xvfb</pre>
+
+              <p>Next I found a wiki that describes how to launch the Xvfb correctly. Log into the server and do:</p>
+
+              <pre>startx -- `which Xvfb` :1 -screen 0 1024x768x24 2>&1 >/dev/null &</pre>
+              <p>So Xvfb will run on the DISPLAY :1. So far so good. But something was still not quite right. When integrity launched the test suite that included some Cucumber-Selenium tests I received an error message basically saying that no browser sessions could be started. And the solution to that, in fact, is where this post wants to get at.</p>
+
+              <p>After a decent amount of head-scratching and code mining I realized that the Selenium server starts the browser on the same display where the server itself (the jar file) runs. I have found the relevant code that assembles the command that starts the Selenium server in the selenium-client gem and figured it was not meant to be run in graphic hardware-less environment since I saw no options to define which display it should run on. So as an easy hack I added the hardcoded “DISPLAY=:1″ before it and crossed my fingers.</p>
+
+              <p>Bingo, it worked and I had a green build again! What’s more surprising is that it still runs perfectly on my Macbook so it seems to run in (some) graphical environments, too. It seems a bit strange to me to have found so little information on this subject since Rails, Cucumber, Selenium and CI are all en vogue so it is possible that I missed something obvious and there is an easier way to do all this. I am very eager to hear how others set up their CI to run automated-browser features. Do you use another tool, not Selenium? Do you use a CI server with a monitor?</p>
+
+              <p>Anyway, I certainly hope my hackish solution will prove to be useful for some of you TDD-minded developers out there who run their CI on a simple <name of your favorite provider here> slice.</p>
+
+              <p>UPDATE: As a fellow developer and the author of the selenium-client gem himself pointed out library code is not the place for enviroment specific settings. Rather, it should go into the application’s code. I guess that leaves the choice of putting it into the code of the application you are building or the configuration of the CI server. This latter seemed more clean to me so I put the following line into config.ru in Integrity’s directory:</p>
+
+              <pre>
+                env["DISPLAY"] = ":1"
+              </pre>
+          
+              <p>There is still something left, though. When integrity -or, to be precise, the selenium process that was launched from integrity- wants to access display :1, it will be denied. You need to explicitly enable local connections by putting “localhost” in a file:</p>
+
+               <!-- echo 'localhost' &gt;/etc/X99.cfg
+              , and then using that file as the access records list when you launch the server:
+
+              xinit -- `which Xvfb` :1 -screen 0 1024x768x24 -auth /etc/X99.cfg 2>&1 >/dev/null &
+              (Note that I launch xinit and not startx as before. startx somehow adds another -auth option which messes things up)
+
+              There, that should do it. It works and there is no code where it does not belong. -->
+            </div> <!-- post body -->
+          </div> <!-- post -->
+          <div class="post">
+            <h2 class="post_title">
+              <a id="post-2" href="http://bucionrails.com/2009/10/28/rubygems-under-the-hood-hooking-into-require/">Rubygems under the hood: hooking into require</a>
+              <div class="date">28th October 2009</div>
+            </h2>
+            <div class="post_body">
+              <p>(See <a href="http://bucionrails.com/2009/10/20/rubygems-under-the-hood-introduction/">the introduction</a> to the series.)</p> 
+              <p>When you want to pull in a Ruby library, you require it. The library you require has to be on Ruby&#8217;s load path ($LOAD_PATH) in order to succeed. So let&#8217;s see how Rubygems hooks into this process. </p> 
+              <p>The secret lies in custom_require.rb. You&#8217;ll see a nice comment near the top.</p> 
+              <blockquote><p> 
+              When you call &#8220;require &#8216;x&#8217;&#8221;, this is what happens:<br /> 
+                * If the file can be loaded from the existing Ruby loadpath, it is.<br /> 
+                * Otherwise, installed gems are searched for a file that matches.<br /> 
+              If it&#8217;s found in gem &#8216;y&#8217;, that gem is activated (added to the loadpath).
+              </p></blockquote> 
+              <p>In fact, that explanation looks so straightforward to me that I doubt if I can add more words to precise it, so let&#8217;s look at the code together:</p> 
+
+              <div class="wp_syntax"><div class="code"><pre class="ruby">&nbsp;
+              <span style="color:#9966CC; font-weight:bold;">module</span> <span style="color:#CC00FF; font-weight:bold;">Kernel</span> 
+                <span style="color:#9966CC; font-weight:bold;">alias</span> gem_original_require <span style="color:#CC0066; font-weight:bold;">require</span> 
+                <span style="color:#006600; font-weight:bold;">&#40;</span>...<span style="color:#006600; font-weight:bold;">&#41;</span> 
+                <span style="color:#9966CC; font-weight:bold;">def</span> <span style="color:#CC0066; font-weight:bold;">require</span><span style="color:#006600; font-weight:bold;">&#40;</span>path<span style="color:#006600; font-weight:bold;">&#41;</span> <span style="color:#008000; font-style:italic;"># :doc:</span> 
+                  gem_original_require path
+                <span style="color:#9966CC; font-weight:bold;">rescue</span> <span style="color:#CC00FF; font-weight:bold;">LoadError</span> <span style="color:#006600; font-weight:bold;">=&gt;</span> load_error
+                  <span style="color:#9966CC; font-weight:bold;">if</span> load_error.<span style="color:#9900CC;">message</span> =~ <span style="color:#006600; font-weight:bold;">/</span><span style="color:#008000; font-style:italic;">#{Regexp.escape path}\z/ and</span> 
+                     spec = Gem.<span style="color:#9900CC;">searcher</span>.<span style="color:#9900CC;">find</span><span style="color:#006600; font-weight:bold;">&#40;</span>path<span style="color:#006600; font-weight:bold;">&#41;</span> <span style="color:#9966CC; font-weight:bold;">then</span> 
+                    Gem.<span style="color:#9900CC;">activate</span><span style="color:#006600; font-weight:bold;">&#40;</span>spec.<span style="color:#9900CC;">name</span>, <span style="color:#996600;">&quot;= #{spec.version}&quot;</span><span style="color:#006600; font-weight:bold;">&#41;</span> 
+                    gem_original_require path
+                  <span style="color:#9966CC; font-weight:bold;">else</span> 
+                    <span style="color:#CC0066; font-weight:bold;">raise</span> load_error
+                  <span style="color:#9966CC; font-weight:bold;">end</span> 
+                <span style="color:#9966CC; font-weight:bold;">end</span> 
+              <span style="color:#006600; font-weight:bold;">&#40;</span>...<span style="color:#006600; font-weight:bold;">&#41;</span> 
+              <span style="color:#9966CC; font-weight:bold;">end</span></pre></div></div> 
+
+              <p>Aliasing a method, redefining it and calling the original version from the redefined method is a very familiar pattern if you have read Rails source code (called method chaining). </p> 
+              <p>So, just as the above description says, if the file can be loaded &#8220;without Rubygems&#8221; it is and Rubygems never comes into the picture. If not, we make sure that the load error comes from the file not found on the load path and then find the gemspec for that file and activate it. </p> 
+              <p>Activating it adds it to the load path, so we can call the original require safe in the knowledge that it will now succeed and we won&#8217;t get another load error this time around (and go into an infinite loop). Clever, heh?</p> 
+              <p>This is one of the cases when the code is so simple for a moment I think I could have written it myself. With its &lt;10 lines of code Rubygems is empowered to load a myriad of useful Ruby libraries. Isn't this wonderful?</p>
+                
+                
+            </div> <!-- post body -->
+          </div> <!-- post -->
+        </div> <!-- left -->  
+        <div id="right">
+          <div id="wwr-recommend-me">
+            <a title="Recommend me" href="http://workingwithrails.com/recommendation/new/person/12103-b-lint-rdi"><img alt="Recommend Me" src="/images/wwr-compact-small-button.jpg" border="0" /></a>
+          </div>
+          <div id="twitter-follow">
+            <a href="http://twitter.com/baaz" title="Follow me on twitter">
+              <img src="/images/twitter-magenta.png" border="0" />
+            </a>
+          </div>
+        </div> <!-- right -->
+
+      </div> <!-- main -->
+    </div> <!-- content -->
+  </body>
+</html>

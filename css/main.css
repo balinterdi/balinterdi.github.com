@@ -1,0 +1,186 @@
+body {
+  font-size: 62.5%;
+  font-family: 'Trebuchet MS', Verdana, sans-serif;
+  color: #333333;
+}
+
+a {
+  color: #1047A9;
+}
+
+a:hover {
+  color: #ffffff;
+  background-color: #1047A9;
+  text-decoration: none;
+}
+
+p {
+/*  font-size: 1.2em;*/
+  font-size: 16px;
+}
+
+div {
+/*  font-size: 1.2em;*/
+  font-size: 12px;
+}
+
+pre {
+  font-family: 'Courier', monospace;
+/*  font-family: 'Courier New', monospace;*/
+}
+
+blockquote {
+  font-family: Garamond, Georgia, 'Times New Roman', serif;  
+}
+
+h1, h2, h1 span {
+  font-family: Garamond, Georgia, 'Times New Roman', serif;  
+}
+
+h1, h1 span {
+/*  font-size: 2em;*/
+  font-size: 52px;
+/*  font-size: 20px;*/
+}
+
+h2 {
+  font-size: 26px;
+/*  font-size: 1.5em;*/
+}
+
+h2.post_title a {
+  color: #A64600;
+  text-decoration: none;
+}
+
+h2.post_title a:hover {
+  color: #ff7100;
+  text-decoration: none;
+  background-color: #ffffff;
+}
+
+.post_title .date {
+  color: #999999;
+  font-size: 0.8em;
+  letter-spacing: -0.05em;
+}
+
+.post_body {
+  line-height: 2em;
+/*  font-size: 16px;*/
+}
+
+#header h1 {
+  color: #1047A9;
+}
+/*#title-buci {
+  color: #ff6c00;
+}
+
+#title-on {
+  color: #1047A9;
+}
+
+#title-rails {
+  color: #ffcf00;
+}
+*/
+
+#top-bar ul {
+  list-style: none;
+}
+
+#top-bar ul li {
+  float: right;
+  margin: 0 20px;
+  font-size: 16px;
+}
+
+#recent-post-list {
+  font-size: 16px;
+}
+
+#recent-post-list ul {
+  list-style: none;
+/*  list-style-type: square;*/
+}
+
+#recent-post-list ul li {
+  font-size: 14px;
+  margin: 10px 0px;
+}
+
+/* layout */
+
+#top-bar {
+  position: fixed;
+  left: 350px;
+  top: 0px;
+  height: 50px;
+  width: 720px;
+/*  http://www.boutell.com/newfaq/creating/transparent.html*/
+  background: url('top-bar.png');
+/*  background-color: #ffffff;*/
+}
+
+/*
+// a white bg. solution for the nav bar
+#top-bar {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  height: 20px;
+  width: 1100px;
+  background-color: #ffffff;
+  
+}
+*/
+#content {
+  width: 750px;
+  margin: 0 auto;
+/*  border: 1px solid blue;*/
+}
+
+#header {
+  width: 500px;
+  text-align: left;
+  vertical-align: middle;
+  padding: 0 20px;
+  margin: 0 0 0px 0;
+/*  border-bottom: 1px solid black;*/
+/*  border: 1px solid red;*/
+}
+
+#motto {
+  position: relative;
+  left: 5px;
+  top: -150px;
+}
+
+#main {
+  width: 750px;
+/*  margin: 0 20px;*/
+/*  padding: 10px 10px;*/
+/*  border: 1px solid black;*/
+}
+
+#left {
+  width: 500px; 
+  text-align: left;
+  padding: 20px;
+/*  margin: 20px;*/
+/*  border: 1px solid green;*/
+  float: left;
+}
+
+#right {
+  width: 150px;
+  margin-top: 20px;
+  padding: 20px;
+/*  border: 1px solid blue;*/
+  float: left;
+}
+
+#right div {
+  margin-bottom: 20px;
+}
