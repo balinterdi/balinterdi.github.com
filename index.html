@@ -1,24 +1,31 @@
 ---
 layout: default
-title: Bálint Érdi
+title:  "Index"
 ---
-<div id="projects">
-  <h2>Projects</h2>
-  <ul>
-    <li><a href="http://github.com/balinterdi/cuckoo_twitterer">Cuckoo twitterer</a></li>
-    <li><a href="http://github.com/balinterdi/missing_t">Missing t</a></li>
-    <li><a href="http://github.com/balinterdi/i15r">I15r</a></li>
-    <li><a href="http://github.com/balinterdi/only_owner">Only owner</a></li>
-    <li><a href="http://github.com/balinterdi/acts_as_trivia">Acts as trivia</a></li>
-    <li><a href="http://github.com/balinterdi/thrifty">Thrifty</a></li>
-  </ul>
-  <h2>Contributions</h2>
-  <ul>
-    <li><a href="http://github.com/datamapper/dm-more">Datamapper</a></li>
-    <li><a href="http://github.com/tog/tog_oracle">Tog oracle</a></li>
-    <li><a href="http://github.com/tog/tog_picto">Tog picto</a></li>
-    <li><a href="http://github.com/tog/tog_social">Tog social</a></li>
-    <li><a href="http://github.com/tpope/pickler">Pickler</a></li>
-  </ul>
-  
+
+{% for post in site.posts %}
+<div class="article">
+  <h1>
+    <a href="{{ post.url}}">{{ post.title }}</a>
+    <span class="meta">
+      {% if post.author %}
+      <span class="vcard">
+        by
+        {% if post.author_uri %}
+        <a href="{{post.author_uri}}" class="url fn">{{post.author}}</a>
+        {% else %}
+        <span class="fn">{{post.author}}</span>
+        {% endif %}
+      </span>
+      {% endif %}
+      <span class="date">{{ post.created_at | date: "%Y-%m-%d %H:%M" }}</span>{% unless post.no_comment %}, <a href="http://ruby.meetup.hu{{post.url}}#disqus_thread" class="comments">kommentek</a>{% endunless %}.
+    </span>
+  </h1>
+
+  <div class="body">
+    {{ post.content }}
+    <a href="{{ post.url }}" title="{{ post.title }}">tovább »</a>
+  </div>
+  <hr/>
 </div>
+{% endfor %}

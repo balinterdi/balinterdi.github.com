@@ -119,7 +119,7 @@ h2.post_title a:hover {
   height: 50px;
   width: 720px;
 /*  http://www.boutell.com/newfaq/creating/transparent.html*/
-  background: url('top-bar.png');
+  background: url('/images/top-bar.png');
 /*  background-color: #ffffff;*/
 }
 
