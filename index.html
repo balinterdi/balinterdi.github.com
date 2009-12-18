@@ -2,30 +2,8 @@
 layout: default
 title:  "Index"
 ---
-
+<ul>
 {% for post in site.posts %}
-<div class="article">
-  <h1>
-    <a href="{{ post.url}}">{{ post.title }}</a>
-    <span class="meta">
-      {% if post.author %}
-      <span class="vcard">
-        by
-        {% if post.author_uri %}
-        <a href="{{post.author_uri}}" class="url fn">{{post.author}}</a>
-        {% else %}
-        <span class="fn">{{post.author}}</span>
-        {% endif %}
-      </span>
-      {% endif %}
-      <span class="date">{{ post.created_at | date: "%Y-%m-%d %H:%M" }}</span>{% unless post.no_comment %}, <a href="http://ruby.meetup.hu{{post.url}}#disqus_thread" class="comments">kommentek</a>{% endunless %}.
-    </span>
-  </h1>
-
-  <div class="body">
-    {{ post.content }}
-    <a href="{{ post.url }}" title="{{ post.title }}">tovább »</a>
-  </div>
-  <hr/>
-</div>
+  <li>{{ post.title }}</li>
 {% endfor %}
+</ul>
