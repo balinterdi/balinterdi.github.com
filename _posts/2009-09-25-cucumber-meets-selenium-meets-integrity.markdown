@@ -23,7 +23,7 @@ Install X since that's what the xvfb launches and Xvfb itself.
 
 apt-get install xvfb</pre>
 Next I found a <a href="http://wiki.openqa.org/display/SRC/Selenium-RC+and+Continuous+Integration">wiki</a> that describes how to launch the Xvfb correctly. Log into the server and do:
-<pre lang="bash">startx -- `which Xvfb` :1 -screen 0 1024x768x24 2>&1 >/dev/null &</pre>
+<pre lang="bash">startx -- `which Xvfb` :1 -screen 0 1024x768x24 2>&amp;1 >/dev/null &amp;</pre>
 So Xvfb will run on the DISPLAY :1. So far so good. But something was still not quite right. When integrity launched the test suite that included some Cucumber-Selenium tests I received an error message basically saying that no browser sessions could be started. And the solution to that, in fact, is where this post wants to get at.
 
 After a decent amount of head-scratching and code mining I realized that the Selenium server starts the browser on the same display where the server itself (the jar file) runs. I have found the relevant code that assembles the command that starts the Selenium server in the selenium-client gem and figured it was not meant to be run in graphic hardware-less environment since I saw no options to define which display it should run on. So as an <a href="http://github.com/balinterdi/selenium-client/commit/37094df174b5c52cb68d041f7dc940e501b3e438">easy hack I added the hardcoded "DISPLAY=:1" before it</a> and crossed my fingers.
@@ -38,7 +38,7 @@ There is still something left, though. When integrity -or, to be precise, the se
 <pre lang="bash"> echo 'localhost' &gt;/etc/X99.cfg</pre>
 , and then using that file as the access records list when you launch the server:
 <pre lang="bash">
-xinit -- `which Xvfb` :1 -screen 0 1024x768x24 -auth /etc/X99.cfg 2>&1 >/dev/null &
+xinit -- `which Xvfb` :1 -screen 0 1024x768x24 -auth /etc/X99.cfg 2>&amp;1 >/dev/null &amp;
 </pre>
 (Note that I launch xinit and not startx as before. startx somehow adds another -auth option which messes things up)
 

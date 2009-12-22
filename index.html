@@ -2,8 +2,14 @@
 layout: default
 title:  "Index"
 ---
-<ul>
 {% for post in site.posts %}
-  <li>{{ post.title }}</li>
+  <div class="post">
+    <h2 class="post_title">
+      <a id="post-{{post.id}}" href="{{ post.url }}">{{ post.title }}</a>
+      <div class="date">{{ post.date | date: "%m-%d-%Y" }}</div>
+    </h2>
+    <div class="post_body">
+      {{ post.content }}
+    </div> <!-- post body -->
+  </div> <!-- post -->
 {% endfor %}
-</ul>

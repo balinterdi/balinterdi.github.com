@@ -45,4 +45,4 @@ So, just as the above description says, if the file can be loaded "without Rubyg
 
 Activating it adds it to the load path, so we can call the original require safe in the knowledge that it will now succeed and we won't get another load error this time around (and go into an infinite loop). Clever, heh?
 
-This is one of the cases when the code is so simple for a moment I think I could have written it myself. With its <10 lines of code Rubygems is empowered to load a myriad of useful Ruby libraries. Isn't this wonderful?
+This is one of the cases when the code is so simple for a moment I think I could have written it myself. With its &lt;10 lines of code Rubygems is empowered to load a myriad of useful Ruby libraries. Isn't this wonderful?

@@ -30,7 +30,8 @@ pre {
 }
 
 blockquote {
-  font-family: Garamond, Georgia, 'Times New Roman', serif;  
+  font-family: Garamond, Georgia, 'Times New Roman', serif;
+  font-size: 16px;
 }
 
 h1, h2, h1 span {
@@ -73,6 +74,11 @@ h2.post_title a:hover {
 #header h1 {
   color: #1047A9;
 }
+
+.post {
+  margin-bottom: 25px;
+}
+
 /*#title-buci {
   color: #ff6c00;
 }
