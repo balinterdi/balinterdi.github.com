@@ -6,7 +6,10 @@ title:  "Index"
   <div class="post">
     <h2 class="post_title">
       <a id="post-{{post.id}}" href="{{ post.url }}">{{ post.title }}</a>
-      <div class="date">{{ post.date | date: "%m-%d-%Y" }}</div>
+      <div>
+        <span class="date">{{ post.date | date: "%m-%d-%Y" }}</span> |
+        <a href="{{ post.url }}#disqus_thread">comments</a>
+      </div>      
     </h2>
     <div class="post_body">
       {{ post.content }}
