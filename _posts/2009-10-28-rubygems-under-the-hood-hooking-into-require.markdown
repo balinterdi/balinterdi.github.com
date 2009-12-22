@@ -19,8 +19,7 @@ If it's found in gem 'y', that gem is activated (added to the loadpath).
 
 In fact, that explanation looks so straightforward to me that I doubt if I can add more words to precise it, so let's look at the code together:
 
-<pre lang="ruby">
-
+{% highlight bash %}
 module Kernel
   alias gem_original_require require
   (...)
@@ -37,7 +36,7 @@ module Kernel
   end
 (...)
 end
-</pre>
+{% endhighlight %}
 
 Aliasing a method, redefining it and calling the original version from the redefined method is a very familiar pattern if you have read Rails source code (called method chaining). 
 

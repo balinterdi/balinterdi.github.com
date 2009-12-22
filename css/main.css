@@ -79,6 +79,9 @@ h2.post_title a:hover {
   margin-bottom: 25px;
 }
 
+.highlight {
+  padding: 10px;
+}
 /*#title-buci {
   color: #ff6c00;
 }

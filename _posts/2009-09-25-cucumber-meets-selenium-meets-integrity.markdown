@@ -36,7 +36,7 @@ apt-get install xvfb
 Next I found a [wiki][selenium_wiki] that describes how to launch the Xvfb correctly. Log into the server and do:
 
 {% highlight bash %}
-startx -- `which Xvfb` :1 -screen 0 1024x768x24 2>&1 >/dev/null &;
+startx -- `which Xvfb` :1 -screen 0 1024x768x24 2>&1 >/dev/null &
 {% endhighlight %}
 
 So Xvfb will run on the DISPLAY :1. So far so good. But something was still not quite right. When integrity launched the test suite that included some Cucumber-Selenium tests I received an error message basically saying that no browser sessions could be started. And the solution to that, in fact, is where this post wants to get at.
