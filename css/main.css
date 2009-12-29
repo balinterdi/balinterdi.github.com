@@ -98,6 +98,11 @@ h2.post_title a:hover {
 .highlight {
   padding: 10px;
 }
+
+#paginate_links {
+  font-size: 1.5em;
+}
+
 /*#title-buci {
   color: #ff6c00;
 }

@@ -2,12 +2,12 @@
 layout: default
 title:  "Index"
 ---
-{% for post in site.posts %}
+{% for post in paginator.posts %}
   <div class="post">
     <h2 class="post_title">
       <a id="post-{{post.id}}" href="{{ post.url }}">{{ post.title }}</a>
       <div>
-        <span class="date">{{ post.date | date: "%B %d, %Y" }}</span> |
+        <span class="date">{{ post.date | date: "%B %d, %Y" }}</span>&nbsp;
         <span class="comment_count"><a href="{{ post.url }}#disqus_thread">comments</a></span>
       </div>      
     </h2>
