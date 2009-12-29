@@ -103,10 +103,6 @@ h2.post_title a:hover {
   padding: 10px;
 }
 
-#paginate_links {
-  font-size: 1.5em;
-}
-
 /*#title-buci {
   color: #ff6c00;
 }
@@ -222,3 +218,20 @@ h2.post_title a:hover {
 #right div {
   margin-bottom: 20px;
 }
+
+#paginate_links {
+  width: 500px;
+}
+
+#paginate_links a {
+  font-size: 1.5em;
+}
+
+#paginate_links .newer {
+  float: left;
+}
+
+#paginate_links .older {
+  float: right;
+}
+

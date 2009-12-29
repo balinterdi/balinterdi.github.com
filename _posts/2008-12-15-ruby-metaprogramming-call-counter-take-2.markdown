@@ -8,8 +8,7 @@ So <a href="http://bucionrails.com/2008/12/06/exploring-ruby-metaprogramming-cal
 
 <strong>call_counter.rb:</strong>
 
-<pre lang="ruby">
-
+{% highlight ruby %}
 module CallCounter
 		
     def count_calls_to(method_name)
@@ -45,13 +44,13 @@ module CallCounter
   end
 
 end
-</pre>
+{% endhighlight %}
 
 What has changed is the introduction of a class variable that counts the calls on all watched methods and that the number of calls on each method is queried by calls_to(&lt;method name&gt;) instead of calls_to_&lt;method_name&gt;. A bit less magic.
 
 <strong>call_foo.rb:</strong>
 
-<pre lang="ruby">
+{% highlight ruby %}
 
 require "call_counter"
 
@@ -66,11 +65,11 @@ class CallFoo
   count_calls_to :bar
 
 end
-</pre>
+{% endhighlight %}
 
 <strong>(a snippet of) call_counter_spec.rb:</strong>
 
-<pre lang="ruby">
+{% highlight ruby %}
 require "call_foo"
 require "spec"
 	
@@ -89,7 +88,7 @@ describe CallFoo do
   end
 	
 end
-</pre>
+{% endhighlight %}
 
 I'm still not 100% content with this solution, the programming interface is nice now but it would be cool to get rid of the class variable somehow, possibly replacing it with closures. If you know how to achieve it, please leave a comment.
 

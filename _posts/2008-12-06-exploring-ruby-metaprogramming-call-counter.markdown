@@ -11,7 +11,7 @@ I was stunned by its beauty so I came up with another -though similar- problem a
 The task is to count the calls to a certain method of all instances of a class.
 
 call_counter.rb:
-<pre lang="ruby">
+{% highlight ruby %}
 module CallCounter
   def count_calls_to(method_name)
   	original_method = instance_method(method_name)
@@ -28,10 +28,10 @@ module CallCounter
   	end		
   end
 end
-</pre>
+{% endhighlight %}
 
 call_foo.rb:
-<pre lang="ruby">
+{% highlight ruby %}
 require "call_counter"
 
 class CallFoo
@@ -42,7 +42,7 @@ class CallFoo
 	count_calls_to :foo
 
 end
-</pre>
+{% endhighlight %}
 
 After calling "count_calls_to :foo" in the CallFoo class definition, calls to the "foo" method of CallFoo instances will be counted. A "calls_to_foo" method is available to get this count. 
 
@@ -50,7 +50,7 @@ I first created an UnboundMethod with "instance_method" and then used the bind m
 
 You can use the counter like this:
 
-<pre lang="ruby">
+{% highlight ruby %}
 irb(main):003:0> cf = CallFoo.new
 => #<CallFoo:0x608100>
 irb(main):004:0> cf.calls_to_foo
@@ -59,16 +59,16 @@ irb(main):005:0> 4.times { cf.foo }
 => 4
 irb(main):006:0> cf.calls_to_foo
 => 4
-</pre>
+{% endhighlight %}
 
 Once again, what I love about Ruby is that in ~ 20 lines we have laid the base of a benchmarking tool (adding the possibility of measuring time spent in the method would not be hard). Also, the original class is not sullied by the call counting code intrinsic details. That functionality is stashed in a module, eager to be reused again.
 
 You may note there is something not quite nice about this. The method calls are counted per class, which makes sense since we usually want to know how many times the method in question was called in all instances, not per instance. However, the calls_to_foo is called on the instance which is confusing. It should be called on the class object, like this: 
 
-<pre lang="ruby">
+{% highlight ruby %}
   4.times { cf.foo }
   CallFoo.calls_to_foo
   => 4
-</pre>
+{% endhighlight %}
 
 I may get back to this later.
