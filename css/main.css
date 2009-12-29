@@ -31,12 +31,14 @@ pre {
 }
 
 blockquote {
-  font-family: "sorts-mill-goudy-1","sorts-mill-goudy-2", Garamond, Georgia, 'Times New Roman', serif;
+/*  sorts-mill-goudy-1","sorts-mill-goudy-2 */
+  font-family: "garagier-1","garagier-2", Garamond, Georgia, 'Times New Roman', serif;
   font-size: 1.5em;
 }
 
 h1, h2, h1 span {
-  font-family: "sorts-mill-goudy-1","sorts-mill-goudy-2", Garamond, Georgia, 'Times New Roman', serif;  
+/*  garagier-1","garagier-2*/
+  font-family: "garagier-1","garagier-2", Garamond, Georgia, 'Times New Roman', serif;  
 }
 
 h1, h1 span {
