@@ -1,6 +1,6 @@
 body {
   font-size: 62.5%;
-  font-family: 'Trebuchet MS', Verdana, sans-serif;
+  font-family: "ff-enzo-web-1","ff-enzo-web-2", 'Trebuchet MS', Verdana, sans-serif;
   color: #333333;
 }
 
@@ -30,12 +30,12 @@ pre {
 }
 
 blockquote {
-  font-family: Garamond, Georgia, 'Times New Roman', serif;
+  font-family: "newcomen-1","newcomen-2", Garamond, Georgia, 'Times New Roman', serif;
   font-size: 1.5em;
 }
 
 h1, h2, h1 span {
-  font-family: Garamond, Georgia, 'Times New Roman', serif;  
+  font-family: "newcomen-1","newcomen-2", Garamond, Georgia, 'Times New Roman', serif;  
 }
 
 h1, h1 span {
