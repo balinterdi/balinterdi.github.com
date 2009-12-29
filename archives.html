@@ -1,0 +1,12 @@
+---
+layout: default
+title:  "Archives"
+---
+
+{% for post in site.posts %}
+  <div id="archives-list">
+    <ul>
+      <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+    </ul>
+  </div>
+{% endfor %}

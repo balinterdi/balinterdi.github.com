@@ -6,24 +6,25 @@
     <title>{{ page.title }} : Codigo Ergo Sum</title>
     <link rel="stylesheet" href="/css/main.css" type="text/css" media="screen" title="no title" charset="utf-8" />
     <link rel="stylesheet" href="/css/syntax.css" type="text/css" media="screen" title="no title" charset="utf-8" />
-    {% include site_feed.html %}    
+    {% include site_feed.html %}
+    {% include typekit.html %}
   </head>
   <body>
     <div id="top-bar">
       <ul>
         <li><a href="http://feeds.feedburner.com/codigoergosum">RSS</a></li>
-        <li><a href="/archives">Archives</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="#post-{{site.posts.first.id}}">Top ^</a></li>
+        <li><a href="/archives.html">Archives</a></li>
+        <li><a href="/about.html">About</a></li>
+        <li><a href="#main">Top ^</a></li>
       </ul>
     </div>
     <div id="content">
       <div id="header">
         <h1>
-          Codigo Ergo Sum
+          <a id="home-title-link" href="/">Codigo Ergo Sum</a>
         </h1>
-        <div id="recent-post-list">
-          Recent posts:
+        <div id="latest-post-list">
+          Latest posts:
           <ul>
             {% for post in site.posts limit:3 %}
               <li><a href="{{ post.url }}">{{ post.title }}</a></li>

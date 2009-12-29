@@ -31,7 +31,7 @@ pre {
 
 blockquote {
   font-family: Garamond, Georgia, 'Times New Roman', serif;
-  font-size: 16px;
+  font-size: 1.5em;
 }
 
 h1, h2, h1 span {
@@ -47,6 +47,16 @@ h1, h1 span {
 h2 {
   font-size: 26px;
 /*  font-size: 1.5em;*/
+}
+
+a#home-title-link {
+  text-decoration: none;
+}
+
+a#home-title-link:hover {
+  cursor: pointer;
+  color: #1047A9;
+  background-color: #ffffff;
 }
 
 h2.post_title a {
@@ -105,18 +115,22 @@ h2.post_title a:hover {
   font-size: 16px;
 }
 
-#recent-post-list {
+#latest-post-list {
   font-size: 16px;
 }
 
-#recent-post-list ul {
+#latest-post-list ul {
   list-style: none;
 /*  list-style-type: square;*/
 }
 
-#recent-post-list ul li {
+#latest-post-list ul li {
   font-size: 14px;
   margin: 10px 0px;
+}
+
+#archives-list {
+  font-size: 2em;
 }
 
 /* layout */
