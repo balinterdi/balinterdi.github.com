@@ -23,34 +23,15 @@
         <h1>
           <a id="home-title-link" href="/">Codigo Ergo Sum</a>
         </h1>
-        <div id="latest-post-list">
-          Latest posts:
-          <ul>
-            {% for post in site.posts limit:3 %}
-              <li><a href="{{ post.url }}">{{ post.title }}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
-        <!-- <h3 id="motto">Balint Erdi's tech blog</h3> -->
       </div>
       <div id="main">
         <div id="left">
           {{ content }}
-          <div id="paginate_links">
-            {% if paginator.previous_page %}
-            <div class="newer"><a href="/{% unless paginator.previous_page == 1 %}page{{paginator.previous_page}}/{% endunless %}">« Newer posts</a></div>
-            {% endif %}
-              {% if paginator.next_page %}
-            <div class="older"><a href="/page{{paginator.next_page}}/">Older posts »</a></div>
-            {% endif %}
-          </div>
         </div> <!-- left -->  
         <div id="right">
           {% include badges.html %}
         </div> <!-- right -->
-
       </div> <!-- main -->
     </div> <!-- content -->
-    {% include comment_counter.html %}
   </body>
 </html>

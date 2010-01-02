@@ -77,8 +77,11 @@ h2.post_title a:hover {
   background-color: #ffffff;
 }
 
-.post_title .date {
+.date {
   color: #999999;
+}
+
+.post_title .date {  
   font-size: 1.5em;
 }
 
@@ -141,7 +144,11 @@ h2.post_title a:hover {
 }
 
 #archives-list {
-  font-size: 2em;
+  font-size: 1.2em;
+}
+
+#archives-list ul {
+  list-style-type: none;
 }
 
 /* layout */
