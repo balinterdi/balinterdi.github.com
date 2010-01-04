@@ -151,6 +151,10 @@ h2.post_title a:hover {
   list-style-type: none;
 }
 
+#archives-list ul li {
+  margin-bottom: 1.2em;
+}
+
 /* layout */
 
 #top-bar {
