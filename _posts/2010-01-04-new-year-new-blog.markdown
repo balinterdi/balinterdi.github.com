@@ -41,8 +41,8 @@ It felt appropriate to start the new year with a new blog and -to my surprise- t
 
 Now I am blogging like a hacker, too!
 
-[blogging-like-a-hacker]: [http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html]
-[lackac-blog-migration]: [http://lackac.hu/2009/11/19/blog-migralas.html]
+[blogging-like-a-hacker]: http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html
+[lackac-blog-migration]: http://lackac.hu/2009/11/19/blog-migralas.html
 [jekyll]: http://github.com/mojombo/jekyll
 [marley]: http://github.com/karmi/marley
 [disqus]: http://disqus.com/
