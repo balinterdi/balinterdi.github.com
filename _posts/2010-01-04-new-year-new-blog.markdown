@@ -23,7 +23,7 @@ For my Wordpress blog, I used a design template that looked ok but was in PHP an
 
 ### Layout, site feed, etc. with Jekyll
 
-Have I said I love open source? There is a Jekyll wiki that lists [Jekyll sites][jekyll-sites] along with a link to their sources so seeing how to set up my blog with Jekyll was quite straightforward. I guess this was still the most time-consuming part of all but I did not really have to think of anything, the steps are well-defined.
+Have I said I love open source? There is a Jekyll wiki that lists [Jekyll sites][jekyll-sites] along with a link to their sources so seeing how to set up my blog with Jekyll was quite straightforward. I guess this was still the most time-consuming part of all but I did not really have to think of anything, the steps are well-defined. (Here is the [source of my blog][github-repo] if you'd like to take a glimpse.)
 
 ### Buying a Github plan to be able to use a non-github domain
 
@@ -55,3 +55,4 @@ Now I am blogging like a hacker, too!
 [euruko2008]: http://www.euruko2008.org/
 [the-prag-prog]: http://pragprog.com/titles/tpp/the-pragmatic-programmer
 [descartes]: http://en.wikipedia.org/wiki/Descartes
+[github-repo]: http://github.com/balinterdi/balinterdi.github.com
