@@ -33,7 +33,7 @@ If you'd like to host your blog under a custom domain ([http://codigoergosum.com
 
 Back in the spring of 2008, returning from the [European Ruby conference][euruko2008] (and having finished [The Pragmatic Programmer][the-prag-prog] on the train) my mind was buzzing with new ideas and I could not wait to set myself on a craftsman's journey. 
 
-I felt I needed a blog immediately. The hard part of course was coming up with a name. Since I felt it was more important to get something going than to idle on finding the perfect one (I guess we can call this agile, can't we? :)), I launched [http://bucionrails.com](http://bucionrails.com). During the almost two years that have passed since that day I have grown somewhat uncomfortable with that name so I decided to change it. I hope you like [the new one][descartes] :).
+I felt I needed a blog immediately. The hard part of course was coming up with a name. Since I felt it was more important to get something going than to idle on finding the perfect one (I guess we can call this agile, can't we? :)), I launched [http://bucionrails.com](http://bucionrails.com). During the almost two years that have passed since that day I have grown somewhat uncomfortable with that name so I decided to change it. I hope you like [the new one][descartes] :). (I set up a feed redirection with Feedburner to notify you of the feed URL change after 15 days but you could directly subscribe to the [new feed now][site-feed])
 
 ## The end result
 
@@ -56,3 +56,4 @@ Now I am blogging like a hacker, too!
 [the-prag-prog]: http://pragprog.com/titles/tpp/the-pragmatic-programmer
 [descartes]: http://en.wikipedia.org/wiki/Descartes
 [github-repo]: http://github.com/balinterdi/balinterdi.github.com
+[site-feed]: http://feeds.feedburner.com/codigoergosum
