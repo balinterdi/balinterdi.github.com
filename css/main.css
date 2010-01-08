@@ -1,4 +1,4 @@
-/* 
+/*
 See colors here:
 http://colorschemedesigner.com/#3I31Tw0w0w0w0
 */
@@ -42,7 +42,7 @@ blockquote {
 
 h1, h2, h1 span {
 /*  garagier-1","garagier-2*/
-  font-family: "garagier-1","garagier-2", Garamond, Georgia, 'Times New Roman', serif;  
+  font-family: "garagier-1","garagier-2", Garamond, Georgia, 'Times New Roman', serif;
 }
 
 h1, h1 span {
@@ -81,7 +81,7 @@ h2.post_title a:hover {
   color: #999999;
 }
 
-.post_title .date {  
+.post_title .date {
   font-size: 1.5em;
 }
 
@@ -155,6 +155,11 @@ h2.post_title a:hover {
   margin-bottom: 1.2em;
 }
 
+#bottom-navbar {
+  margin: 20px 0px;
+  font-size: 1.3em;
+}
+
 /* layout */
 
 #top-bar {
@@ -177,7 +182,7 @@ h2.post_title a:hover {
   height: 20px;
   width: 1100px;
   background-color: #ffffff;
-  
+
 }
 */
 #content {
@@ -210,7 +215,7 @@ h2.post_title a:hover {
 }
 
 #left {
-  width: 500px; 
+  width: 500px;
   text-align: left;
   padding: 20px;
 /*  margin: 20px;*/
