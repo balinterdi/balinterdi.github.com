@@ -160,6 +160,10 @@ h2.post_title a:hover {
   font-size: 1.3em;
 }
 
+h2 span.author {
+  color: #444444;
+}
+
 /* layout */
 
 #top-bar {
