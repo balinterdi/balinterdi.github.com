@@ -37,7 +37,7 @@ The fact that I have not finished only goes to show its splendidness, I simply d
 
 ## Life is not just about stubbing, view helpers and achromatic color schemes
 
-At a Christmas evening, I sat down on a comfy sofa with [Révolutions by J.M.G. Le Clézio][revolutions] in my hand and was totally immersed in it right from page one. I realized I need occasions like this to repeatedly remind myself how much I miss of life if I only ever read technical books. (Sadly, my list of novels I read last year is a lot shorter than the above one but I heartily recommend you [A Thousand Splendid Suns by Khaled Hosseini][thousand_splendid_suns] and [Poisson d'or by J.M.G. Le Clézio][poisson_dor])
+On a Christmas evening, I sat down on a comfy sofa with [Révolutions by J.M.G. Le Clézio][revolutions] in my hand and was totally immersed in it right from page one. I realized I need occasions like this to repeatedly remind myself how much I miss of life if I only ever read technical books. (Sadly, my list of novels I read last year is a lot shorter than the above one but I heartily recommend you [A Thousand Splendid Suns by Khaled Hosseini][thousand_splendid_suns] and [Poisson d'or by J.M.G. Le Clézio][poisson_dor])
 
 ## Any good books you have read?
 
