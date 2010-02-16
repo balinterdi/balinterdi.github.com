@@ -2,7 +2,7 @@
 title: Remove'em trailing whitespaces!
 layout: post
 ---
-Some of you reading this probably use TextMate. It is an excellent editor with two caveats. The first is that you can only see one file in the editing window (no screen split), the other is that there is no save hook. The former gave me headaches since I can't stand any trailing whitespace in source code and the easiest solution would have been to run a script to remove those when the file is saved.
+Some of you reading this probably use TextMate. It is an excellent editor with two caveats. The first is that you can only see one file in the editing window (no screen split), the other is that there is no save hook. This latter gave me headaches since I can't stand any trailing whitespace in source code and the easiest solution would have been to run a script to remove those when the file is saved.
 
 Without further ado I'll paste my solution below. Obviously this is not a difficult task to accomplish so the goal is to share not to show off. I use Git for SCM and the following solution parses out the files that have been modified and runs the whitespace eraser script for those. If you use something else (why do you?) you should obviously change the first building block:
 
