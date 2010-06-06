@@ -2,7 +2,7 @@
 title: It's a spec, not a test
 layout: post
 ---
-You must have heard the question several times on Rails mailing list and different IRC channels: "Should I test validates_uniqueness_of"? The standard answer to that one is "No, you definitely should not. It's Rails framework code, and it's already thoroughly tested. If you followed this path, you should also test whether objects are properly persisted in the database."
+You must have heard the question several times on the Rails mailing list and different IRC channels: "Should I test validates_uniqueness_of"? The standard answer to that one is "No, you definitely should not. It's Rails framework code, and it's already thoroughly tested. If you followed this path, you should also test whether objects are properly persisted in the database."
 
 I think, however, that the question is wrong and thus you can not give a correct answer. It is wrong because validates_uniqueness_of is the implementation, not the requirement. If you approach it from this angle, the question turns into whether you should test the specific implementation or whether you should verify that (business) requirements are met.
 
@@ -12,7 +12,8 @@ That, in turn, comes down to tests vs. specs (short for specifications) and this
 describe User do
   it "has a unique email address" do
     Factory(:user, :email => "jeff@topnotch.com")
-    lambda { Factory(:user, :email => "jeff@topnotch.com") }.should raise_error(ActiveRecord::RecordInvalid)
+    lambda { Factory(:user, :email => "jeff@topnotch.com") }.should
+     raise_error(ActiveRecord::RecordInvalid)
   end
 end
 {% endhighlight %}
