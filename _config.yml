@@ -2,14 +2,14 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://yoursite.com
-title: My Octopress Blog
-subtitle: A blogging framework for hackers.
-author: Your Name
+url: http://codigoergosum.com
+title: Codigo Ergo Sum
+subtitle:
+author: Balint Erdi
 simple_search: http://google.com/search
 
 # RSS / Email (optional) subscription links (change if using something like Feedburner)
-subscribe_rss: /atom.xml
+subscribe_rss: http://feeds.feedburner.com/codigoergosum
 subscribe_email:
 # RSS feeds can list your email address if you like
 email:
@@ -48,7 +48,7 @@ default_asides: [asides/recent_posts.html, asides/twitter.html, asides/delicious
 # ----------------------- #
 
 # Twitter
-twitter_user:
+twitter_user: baaz
 twitter_tweet_count: 4
 twitter_show_replies: false
 twitter_follow_button: true
@@ -68,7 +68,7 @@ delicious_user:
 delicious_count: 3
 
 # Disqus Comments
-disqus_short_name:
+disqus_short_name: balinterdi
 
 # Google Analytics
 google_analytics_tracking_id:
