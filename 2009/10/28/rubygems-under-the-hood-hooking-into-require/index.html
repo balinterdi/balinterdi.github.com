@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Codigo Ergo Sum: Migrating to Octopress</title>
+  <title>Codigo Ergo Sum: Rubygems under the hood: hooking into require</title>
   <meta name="author" content="Balint Erdi">
   
 
@@ -16,7 +16,7 @@
 
   
 
-  <link rel="canonical" href="http://codigoergosum.com/blog/2011/08/18/migrating-to-octopress/"/>
+  <link rel="canonical" href="http://codigoergosum.com/2009/10/28/rubygems-under-the-hood-hooking-into-require/"/>
   <link href="/favicon.png" rel="shortcut icon" />
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -83,7 +83,7 @@
   
   <header>
     
-      <h1 class="entry-title">Migrating to Octopress</h1>
+      <h1 class="entry-title">Rubygems Under the Hood: Hooking Into Require</h1>
     
     
       <p class="meta">
@@ -91,7 +91,7 @@
 
 
 
-<time datetime="2011-08-18 00:05:00 +0200" pubdate  updated >Aug 18<span>th</span>, 2011</time>
+<time datetime="2009-10-28 00:00:00 +0100" pubdate  updated >Oct 28<span>th</span>, 2009</time>
 
 
 </p>
@@ -99,7 +99,51 @@
   </header>
 
 
-<div class="entry-content"><p>It&#8217;s so awesome.</p>
+<div class="entry-content"><p>(See <a href="http://bucionrails.com/2009/10/20/rubygems-under-the-hood-introduction/">the introduction</a> to the series.)</p>
+
+<p>When you want to pull in a Ruby library, you require it. The library you require has to be on Ruby&#8217;s load path ($LOAD_PATH) in order to succeed. So let&#8217;s see how Rubygems hooks into this process.</p>
+
+<p>The secret lies in custom_require.rb. You&#8217;ll see a nice comment near the top.</p>
+
+<blockquote>
+When you call &#8220;require &#8216;x&#8217;&#8221;, this is what happens:
+  * If the file can be loaded from the existing Ruby loadpath, it is.
+  * Otherwise, installed gems are searched for a file that matches.
+If it&#8217;s found in gem &#8216;y&#8217;, that gem is activated (added to the loadpath).
+</blockquote>
+
+
+<p>In fact, that explanation looks so straightforward to me that I doubt if I can add more words to precise it, so let&#8217;s look at the code together:</p>
+
+<div>
+  <pre>
+    <code class='ruby'>module Kernel
+  alias gem_original_require require
+  (...)
+  def require(path) # :doc:
+    gem_original_require path
+  rescue LoadError =&gt; load_error
+    if load_error.message =~ /#{Regexp.escape path}\z/ and
+       spec = Gem.searcher.find(path) then
+      Gem.activate(spec.name, &quot;= #{spec.version}&quot;)
+      gem_original_require path
+    else
+      raise load_error
+    end
+  end
+(...)
+end</code>
+  </pre>
+</div>
+
+
+<p>Aliasing a method, redefining it and calling the original version from the redefined method is a very familiar pattern if you have read Rails source code (called method chaining).</p>
+
+<p>So, just as the above description says, if the file can be loaded &#8220;without Rubygems&#8221; it is and Rubygems never comes into the picture. If not, we make sure that the load error comes from the file not found on the load path and then find the gemspec for that file and activate it.</p>
+
+<p>Activating it adds it to the load path, so we can call the original require safe in the knowledge that it will now succeed and we won&#8217;t get another load error this time around (and go into an infinite loop). Clever, heh?</p>
+
+<p>This is one of the cases when the code is so simple for a moment I think I could have written it myself. With its &lt;10 lines of code Rubygems is empowered to load a myriad of useful Ruby libraries. Isn&#8217;t this wonderful?</p>
 </div>
 
 
@@ -115,7 +159,7 @@
 
 
 
-<time datetime="2011-08-18 00:05:00 +0200" pubdate  updated >Aug 18<span>th</span>, 2011</time>
+<time datetime="2009-10-28 00:00:00 +0100" pubdate  updated >Oct 28<span>th</span>, 2009</time>
 
 
 
@@ -126,7 +170,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/blog/2011/08/18/migrating-to-octopress/" data-via="baaz" data-counturl="http://codigoergosum.com/blog/2011/08/18/migrating-to-octopress/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2009/10/28/rubygems-under-the-hood-hooking-into-require/" data-via="baaz" data-counturl="http://codigoergosum.com/2009/10/28/rubygems-under-the-hood-hooking-into-require/" >Tweet</a>
   
   
   <g:plusone size="medium"></g:plusone>
@@ -142,8 +186,8 @@
     <div id="disqus_thread"><div id="disqus_thread"></div>
 <script type="text/javascript">
   var disqus_shortname = 'balinterdi';
-  var disqus_identifier = 'http://codigoergosum.com/blog/2011/08/18/migrating-to-octopress/';
-  var disqus_url = 'http://codigoergosum.com/blog/2011/08/18/migrating-to-octopress/';
+  var disqus_identifier = 'http://codigoergosum.com/2009/10/28/rubygems-under-the-hood-hooking-into-require/';
+  var disqus_url = 'http://codigoergosum.com/2009/10/28/rubygems-under-the-hood-hooking-into-require/';
   //var disqus_developer = 1;
   (function() {
     var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -164,7 +208,23 @@
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2011/08/18/migrating-to-octopress/">Migrating to Octopress</a>
+        <a href="/2011/07/19/git-rebase-to-fix-your-local-commits/">Git rebase to fix your local commits</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be/">Don&#8217;t Tell Michelle, Facebook privacy as it should be</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/06/03/its-a-spec-not-a-test/">It&#8217;s a spec, not a test</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/02/16/remove-trailing-whitespaces/">Remove&#8217;em trailing whitespaces!</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/01/28/2010-is-the-year-of-the-javascript/">2010 is the year of the Javascript</a>
       </li>
     
   </ul>

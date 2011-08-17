@@ -1,0 +1,818 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Codigo Ergo Sum</title>
+  <meta name="author" content="Balint Erdi">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="canonical" href="http://codigoergosum.com/blog/page/5/index.html"/>
+  <link href="/favicon.png" rel="shortcut icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="http://s3.amazonaws.com/ender-js/jeesh.min.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/codigoergosum" rel="alternate" title="Codigo Ergo Sum" type="application/atom+xml"/>
+  
+
+  
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body  >
+  <header><hgroup>
+  <h1><a href="/">Codigo Ergo Sum</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role=navigation><ul role=subscription data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/codigoergosum" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+<form action="http://google.com/search" method="get">
+  <fieldset role="site-search">
+    <input type="hidden" name="q" value="site:codigoergosum.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+<ul role=main-navigation>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2008/10/09/javascript-method-chain/">Javascript Method Chain</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2008-10-09 00:00:00 +0200" pubdate  updated >Oct 9<span>th</span>, 2008</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>John Resig has an extraordinary advanced javascript tutorial on his <a href="http://ejohn.org/apps/learn/" target="_blank">blog</a> that he presented on <a href="http://en.oreilly.com/webexny2008/public/content/home" target="_blank">a web conference</a>. It is definitely worth a walk-through since it expands one&#8217;s javascript horizon unless one has not written a javascript framework himself.</p>
+
+<p>I played around with several of his slides learning a lot. My favorite was probably <a href="http://ejohn.org/apps/learn/#90">the last slide</a> which explains how method overloading works using the fact that <em>methodname</em>.length in javascript gives back the number of expected arguments of that function.</p>
+
+<pre lang="javascript">
+function addMethod(object, name, fn){ 
+  // Save a reference to the old method 
+  var old = object[ name ];
+ 
+  // Overwrite the method with our new one 
+  object[ name ] = function(){ 
+    // Check the number of incoming arguments, 
+    // compared to our overloaded function 
+    if ( fn.length == arguments.length ) 
+      // If there was a match, run the function 
+      return fn.apply( this, arguments ); 
+ 
+    // Otherwise, fallback to the old method 
+    else if ( typeof old === "function" ) 
+      return old.apply( this, arguments ); 
+  }; 
+} 
+ 
+function Ninjas(){ 
+  var ninjas = [ "Dean Edwards", "Sam Stephenson", "Alex Russell" ]; 
+  addMethod(this, "find", function(){ 
+    return ninjas; 
+  }); 
+  addMethod(this, "find", function(name){ 
+    var ret = []; 
+    for ( var i = 0; i < ninjas.length; i++ ) 
+      if ( ninjas[i].indexOf(name) == 0 ) 
+        ret.push( ninjas[i] ); 
+    return ret; 
+  }); 
+  addMethod(this, "find", function(first, last){ 
+    var ret = []; 
+    for ( var i = 0; i < ninjas.length; i++ ) 
+      if ( ninjas[i] == (first + " " + last) ) 
+        ret.push( ninjas[i] ); 
+    return ret; 
+  }); 
+} 
+ 
+var ninjas = new Ninjas(); 
+assert( ninjas.find().length == 3, "Finds all ninjas" ); 
+assert( ninjas.find("Sam").length == 1, "Finds ninjas by first name" ); 
+assert( ninjas.find("Dean", "Edwards").length == 1, "Finds ninjas by first and last name" ); 
+assert( ninjas.find("Alex", "X", "Russell") == null, "Does nothing" );
+</pre>
+
+
+<p>It took me some time to figure out how exactly the method calls are routed but it was an interesting process nevertheless. I guess the one tricky part to interpret is the following bit:</p>
+
+<pre lang="javascript">
+if ( fn.length == arguments.length ) 
+  // If there was a match, run the function 
+  return fn.apply( this, arguments ); 
+ 
+  // Otherwise, fallback to the old method 
+  else if ( typeof old === "function" ) 
+    return old.apply( this, arguments ); 
+  }; 
+</pre>
+
+
+<p>This makes a method chain and allows for method overloading. With the three addMethod calls in the above example a chained method is built up.</p>
+
+<p>After the call to addMethod with no arguments (the first one), the find method of the Ninjas &#8220;class&#8221; will return all ninjas if called with no arguments and do nothing if called with any number of arguments. After the call to addMethod with one single name argument the find method will return the ninjas whose first name matches the passed argument if there is only one argument, return all ninjas if it has been called with no arguments and do nothing otherwise.</p>
+
+<p>I could go on but the pattern is probably clear now. At each call of the find method, the lastly added method is matched for the number of arguments (so in the above example, it will match if the caller passed two arguments) and the method called if the match is successful. Otherwise, it will try to match the number of arguments with the method that was added before the last one, and so on.</p>
+
+<p>I am elaborating this in so much detail because</p>
+
+<ol>
+    <li>it was such a &#8220;Eureka!&#8221; moment for me when I got it. </li>
+    <li>it is an incredibly ingenious way to flex the possibilites of javascript and introduce an OOP concept into an originally non-OOP language.</li>
+
+</ol>
+
+
+<p>I think John Resig made javascript lovable again which is why he deserves my total gratitude.</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2008/10/09/javascript-method-chain/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2008/09/21/my-first-dsl-in-ruby/">My First DSL in Ruby</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2008-09-21 00:00:00 +0200" pubdate  updated >Sep 21<span>st</span>, 2008</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I read a <a href="http://www.artima.com/rubycs/articles/ruby_as_dsl.html">few</a> <a href="http://www.artima.com/rubycs/articles/ruby_as_dsl.html">posts</a> about how good fit Ruby is for building DSLs, Domain Specific Languages. Ever the curious I have been waiting for the opportunity to build a very simple one for a particular problem.</p>
+
+<p>Well, I did not have to wait very long (when you have a hammer everything looks like a nail). I needed a quick method which generates nice html graphs for <a href="http://bucionrails.com/2008/09/17/v8-javascript-engine-benchmarks/">my post about browser javascript engine benchmarking</a>. After spending a few minutes searching for a free tool (I did not want anything fluffy, just something very basic) I hit the nail in the head with my hammer. Only the nail was the generated HTML charts for my post and the hammer, (my desire to build) a DSL in Ruby.</p>
+
+<p>I would like to say it was difficult but in fact it was a piece of cake with Ruby (and armed with the knowledge of previous DSL builders). The solution is composed of the following three parts:</p>
+
+<ol>
+    <li>The DSL file which defines the charts</li>
+    <li>The interpreter which understands the definitions in the DSL file</li>
+    <li>The &#8220;controller&#8221; which just passes the data contained in the DSL file to the interpreter</li>
+</ol>
+
+
+<p>So let&#8217;s see each part separately:</p>
+
+<p><strong>browser_js_benchmarks.dsl (the DSL)</strong></p>
+
+<pre lang="ruby">
+chart "Score" do |c|
+    c.add "Safari 3.1.2" => 164
+    c.add "Firefox 3.0.1" => 156
+    c.add "Shiretoko" => 145
+    c.add "Google Chrome" => 1589
+end
+</pre>
+
+
+<p><strong>chart.rb (the interpreter)</strong></p>
+
+<pre lang="ruby">
+require "math_aux"
+
+class ChartDSL
+    
+    Template = %(<table border="0" cellspacing="5" cellpadding="5"><caption>%%CAPTION%%</caption>%%ITEMS%%</table>)
+    Background_colors = %w(red blue green yellow grey)
+    
+    attr_reader :values
+    def initialize
+        @charts = Array.new
+        @values = Hash.new
+    end
+    
+    def chart(name)     
+        @name = name
+        yield self
+        @charts.push(make_html)
+    end
+    
+    def add(name_and_value)
+        @values ||= Hash.new
+        @values.merge!(name_and_value)
+    end
+    
+    def load(filename)
+        # c = new
+        instance_eval(File.read(filename), filename)
+        write_output
+    end
+
+    def make_html
+        sorted_pairs = @values.sort_by { |v| - v[1] }
+        vals = sorted_pairs.map { |p| p[1] }
+        norm_values = MathAux::normalize(vals, 100.0)
+        html = Array.new
+        sorted_pairs.each_with_index do |pair, i|
+            name, value = pair
+            html.push(%Q(<tr><td>#{name}</td><td><div style="width:#{norm_values[i]}px;background-color:#{ChartDSL::Background_colors[i]}">&nbsp;</div></td><td>#{value}</td></tr>))
+        end
+        filled_chart = ChartDSL::Template.sub("%%CAPTION%%", @name)     
+        filled_chart.sub("%%ITEMS%%", html.join)
+    end
+    
+    def write_output
+        File.open("generated_charts.html", "w") do |f|
+            f.write(@charts)
+        end
+    end
+end
+
+</pre>
+
+
+<p><strong>chart_loader.rb (the controller)</strong></p>
+
+<pre lang="ruby">
+require "chart"
+class ChartLoader
+    def self.load_chart(dsl_filename)
+        c = ChartDSL.new
+        c.load(dsl_filename)
+    end
+end
+
+if __FILE__ == $0
+    ChartLoader.load_chart(ARGV[0])
+end
+</pre>
+
+
+<p>For the sake of completeness here is <strong>math_aux.rb</strong>:</p>
+
+<pre lang="ruby">
+module MathAux
+    def self.normalize(numbers, to=1.0)
+        norm_rat = to / numbers.max
+        numbers.map { |n| n * norm_rat }
+    end
+end
+</pre>
+
+
+<p>To generate the charts, one only has to run &#8220;the interpreter&#8221; with a dsl file as the first parameter:</p>
+
+<pre lang="ruby">
+ruby chart_loader.rb browser_js_benchmarks.dsl
+</pre>
+
+
+<p>The output is called generated_charts.html and contains the following:</p>
+
+<pre lang="xml">
+<table border="0" cellspacing="5" cellpadding="5">
+<caption>Score</caption>
+ <tr>
+  <td>Google Chrome</td>
+  <td><div style="width:100.0px;background-color:red">&nbsp;</div></td>
+  <td>1589</td>
+ </tr>
+ <tr>
+  <td>Safari 3.1.2</td>
+  <td><div style="width:10.3209565764632px;background-color:blue">&nbsp;</div</td>  <td>164</td></tr>
+ <tr>
+  <td>Firefox 3.0.1</td>
+  <td><div style="width:9.81749528005034px;background-color:green">&nbsp;</div</td> <td>156</td>
+</tr>
+<tr>
+ <td>Shiretoko</td>
+ <td><div style="width:9.12523599748269px;background-color:yellow">&nbsp;</div</td><td>145</td>
+</tr>
+</table>
+</pre>
+
+
+<p>Note that in ~30-40 code lines we have a &#8220;language interpreter&#8221;, one that understands the chart DSL and spits out some HTML code that represents the charts. Of course there is plenty of room for improvement, like having the same color denote the same actor between charts (Firefox 3.0.1 should always be the blue bar, for example, unlike in <a href="http://bucionrails.com/2008/09/17/v8-javascript-engine-benchmarks/">my post</a>), using a better solution for the template strings, adding the possibility of pie charts (although &#8220;standard&#8221; HTML is not very flexible on different chart forms, one would probably have to use a <a href="http://developer.mozilla.org/en/Canvas_tutorial">&lt;canvas&gt; </a>), and so on.</p>
+
+<p>The essential thing is that it works and it does what the particular situation demanded. It took me a couple of interrupted hours plus the time to read through two related posts which is not that much given that I now have a &#8220;tool&#8221; (once again, I feel a bit conceited to call it that) which I can use for my future posts whenever the need arises. A custom hammer for my custom nail.</p>
+
+<p>(If you care, feel free to download, use and modify the source code located <a href="http://github.com/balinterdi/chart-maker-dsl/tree/master">here</a>)</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2008/09/21/my-first-dsl-in-ruby/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2008/09/17/v8-javascript-engine-benchmarks/">V8 Javascript Engine Benchmarks</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2008-09-17 00:00:00 +0200" pubdate  updated >Sep 17<span>th</span>, 2008</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A few weeks back when I read about <a href="http://www.google.com/googlebooks/chrome">Chrome</a> I became interested in V8, a javascript engine that Google integrated in their browser and that they claimed to be very fast due to the following reasons:</p>
+
+<ul>
+    <li><strong>Hidden class transitions</strong> that enable dynamic optimizations since objects will use the same (hidden) class</li>
+    <li><strong>generating machine code</strong> instead of interpreting the source code each time</li>
+    <li><strong>incremental garbage collection</strong> which reduces the time needed for the cleanup to milliseconds and eliminates &#8220;second long pauses&#8221;</li>
+</ul>
+
+
+<p>All that sounded very promising but as an engineer by profession it left me with a desire to find out how much faster all these features made V8 (and any browser that might use it). Even more so since I love running benchmarks and compare numbers. Well, maybe Google sensed that since they provided all the necessary tools to run these tests on the <a href="http://code.google.com/apis/v8/benchmarks.html">V8 benchmark page</a> and to run them very easily.</p>
+
+<p>There are 5 different algorithms in the testing suite exercising different qualities of the javascript engine. To be fair I closed all other tabs in browsers during the testing attempting to minimize operations that can have an effect on test performance. Also, the V8 tests were run from the command line so that might skew the results a bit towards V8. Anyyway, here are the results (numbers mean execution time so smaller is better):</p>
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>Richards</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>2072</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:7.33590733590734px;background-color:blue">&nbsp;</div></td><td>152</td></tr><tr><td>Shiretoko</td><td><div style="width:5.5984555984556px;background-color:green">&nbsp;</div></td><td>116</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:4.39189189189189px;background-color:yellow">&nbsp;</div></td><td>91</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>DeltaBlue</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1753</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:9.75470621791215px;background-color:blue">&nbsp;</div></td><td>171</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:7.24472333143183px;background-color:green">&nbsp;</div></td><td>127</td></tr><tr><td>Shiretoko</td><td><div style="width:7.01654306902453px;background-color:yellow">&nbsp;</div></td><td>123</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>Crypto</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1415</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:10.6007067137809px;background-color:blue">&nbsp;</div></td><td>150</td></tr><tr><td>Shiretoko</td><td><div style="width:10.6007067137809px;background-color:green">&nbsp;</div></td><td>150</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:9.54063604240283px;background-color:yellow">&nbsp;</div></td><td>135</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>RayTrace</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1021</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:22.7228207639569px;background-color:blue">&nbsp;</div></td><td>232</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:12.3408423114594px;background-color:green">&nbsp;</div></td><td>126</td></tr><tr><td>Shiretoko</td><td><div style="width:11.1655239960823px;background-color:yellow">&nbsp;</div></td><td>114</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>EarleyBoyer</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1933</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:16.9684428349715px;background-color:blue">&nbsp;</div></td><td>328</td></tr><tr><td>Shiretoko</td><td><div style="width:13.3988618727367px;background-color:green">&nbsp;</div></td><td>259</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:9.72581479565442px;background-color:yellow">&nbsp;</div></td><td>188</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>Score</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1589</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:10.3209565764632px;background-color:blue">&nbsp;</div></td><td>164</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:9.81749528005034px;background-color:green">&nbsp;</div></td><td>156</td></tr><tr><td>Shiretoko</td><td><div style="width:9.12523599748269px;background-color:yellow">&nbsp;</div></td><td>145</td></tr></table>
+
+
+<p>The superiority of V8 stunned me so much even to push me to ask whether all this is possible. Googe Chrome that uses V8 is on average (see Score) 10 times faster than all the other browsers (that pretty much flock together). I expected to find the speed of Firefox 3.1 (codename Shiretoko) close to that of Chrome but to my surprise it does not even surpass that of the other browsers. That made me a bit disappointed since I am a big Firefox fan.</p>
+
+<p>Can it be that these benchmarks are somehow tailored to show V8&#8217;s dominance? (like some political polls are skewed to give the &#8220;correct&#8221; answer). That this is not such a far-fetched idea is supported by Mozilla&#8217;s announcement that TraceMonkey, <a href="http://www.techcrunch.com/2008/09/03/mozilla-fights-back-with-new-firefox-benchmarks/">Firefox&#8217;s javascript engine will be 16-28% faster than V8</a>. And they have their own benchmarking solution, SunSpider to prove their point.</p>
+
+<p>So the life of javascript engine developers has got a lot harder. Not only they have to implement a fast engine but also a benchmarking system that shows there is nothing as fast as theirs!</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2008/09/17/v8-javascript-engine-benchmarks/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2008/09/03/navigator-for-the-google-chrome-comicbook/">Navigator for the Google Chrome Comicbook</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2008-09-03 00:00:00 +0200" pubdate  updated >Sep 3<span>rd</span>, 2008</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The first beta version (for now only for Windows) of <a href="http://googleblog.blogspot.com/2008/09/fresh-take-on-browser.html">Google&#8217;s browser is out, </a>but I don&#8217;t think Google needs the marketing power of my post so that&#8217;s not what I want to talk about. The browser is introduced by a <a href="http://www.google.com/googlebooks/chrome/">ingenious comics</a> of 39 pages. However, the navigator is too simple, in my opinion in that you cannot skip a page so if you read until say page 19 and you have to start over (e.g you closed the browser), you have to click on the &#8220;Next&#8221; link 18 times. There is no unique URL for each page, the whole navigation is done with a javascript snippet changing the image (the cartoon strip) when the user clicks &#8220;Prev&#8221; or &#8220;Next&#8221;.</p>
+
+<p>So I took a peep at the source of the page and reverse-engineered the navigation which is simply a javascript call to goPage(&#8216;next&#8217;) when the user clicks the Next link. So now I can simply write</p>
+
+<pre lang="javascript">
+javascript:for (var i=0; i < 10; i++) goPage('next');</pre>
+
+
+<p>to the location bar to skip 10 pages ahead and do the same with &#8216;prev&#8217; to rewind 10 pages.</p>
+
+<p>I know &#8220;reverse-engineering&#8221; is way too conceited a term for this but this kind of hacking tickles my brain in a very joyful way and feels a bit like outsmarting Google. And that&#8217;s not bad at all.</p>
+
+<p><strong>UPDATE:</strong> I now realize the comics&#8217;s navigation has been redesigned so my above fix became obsolete. At least I cherish the knowledge my hack addressed a real UI problem (and did that faster than Google :) ).</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2008/09/03/navigator-for-the-google-chrome-comicbook/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2008/08/29/now-thats-what-i-call-web20-ubiquity/">Now That&#8217;s What I Call Web2.0: Ubiquity</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2008-08-29 00:00:00 +0200" pubdate  updated >Aug 29<span>th</span>, 2008</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&#8217;ve stumbled upon a great Firefox plugin, Ubiquity. It basically accesses several web services (GoogleMaps, Gmail, Flickr, etc.) via its own panel and with its own commands so that common online tasks (e.g looking up something on Wikipedia you have just found on a page) become amazingly simple. I was really stunned by how much this plugin is capable of doing after watching the <a href="http://vimeo.com/1561578?pg=embed&amp;sec=1561578" target="_blank">briefing video</a> and going through the <a href="https://wiki.mozilla.org/Labs/Ubiquity/Ubiquity_0.1_User_Tutorial" target="_blank">tutorial</a>. And that does not stop there: power users can add their own commands to extend the already vast capabilities of the plugin. It&#8217;s been a long time I&#8217;ve been so excited about a &#8220;web 2.0&#8221; tool.</p>
+
+<p><a href="http://www.azarask.in/blog/" target="_blank">Here</a> is the blog post about Ubiquity on Aza Raskin&#8217;s blog who is the main developer of the plugin.</p>
+
+<p><em>Note</em>: If you use a Mac, you&#8217;ll need <a href="http://growl.info/about.php" target="_blank">Growl</a> for Ubiquity to display its command panel.</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2008/08/29/now-thats-what-i-call-web20-ubiquity/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2008/07/17/can-less-work-be-more/">Can Less Work Be More?</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2008-07-17 00:00:00 +0200" pubdate  updated >Jul 17<span>th</span>, 2008</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I saw the <a href="http://onrails.org/articles/2008/05/31/railsconf-2008-david-heinemeier-hanssons-keynote-video">keynote speech David Heinemeier Hansson</a> gave at this year&#8217;s Railsconf in Portland and I liked it a lot. I really like the idea of following the pattern of &#8220;Less software is more&#8221; to the work we do each day. In his speech he says developers should spend one day a week discovering a subject of interest, writing code for a pet project, contributing to an open source project, etc. Basically anything but doing the work they do on the other four days of the week. This &#8220;day-off&#8221; raises the developer&#8217;s productivity so it is a net gain for the main work he is involved with, too.</p>
+
+<p>I tend to agree. However, in this post I want to elaborate rather what &#8216;be more&#8217; means in both the &#8216;less software is more&#8217; and the &#8216;less work is more&#8217; phrases. Less software means less lines of code to achieve the same tasks. Less work means less time spent working producing code to achieve the same tasks. There are two underlying concepts here that make this possible: abstraction and productivity. More precisely: the  ideas in your (hacker) head and the tools that allow you to implement these ideas in abstract, high-level  terms and thus raise your productivity.</p>
+
+<p>When you write a program, there are basically two phases of producing code that solves a problem: first, you think about how to solve it and second, you convert the ideas into code. There is always a gap between the ideas and the code you write and that the computer comprehends. The more high-level the language is, the smaller the gap that needs to be bridged. But there is a backward effect, too. Usually when you are in the first phase you already think in terms of the second. The expressive tools the language provides have a strong effect on how you think of the problem (generally you know what language your solution will be implemented in). And that is bad because it dumbs down your thinking before you get to the point where you should consider the possibilities of the language.</p>
+
+<p>I tend to think less of the language specifics in the first phase if I know the language provides all the high-level tools and provides them neatly. &#8220;For&#8221; loops skews your thinking more than -all kinds of- iterators. If I know functions are first-class objects and metaprogramming is available I worry less about how (or whether!) my abstract solution, only existing on the plane of ideas can be converted to functioning code.</p>
+
+<p>So, back to where I started, your choice of the language counts and it counts a lot. It can help you be more productive in several ways, not just the fewer-lines-of-code-to-do-the-same-thing way but also the minimizing-the-skewing-of-your-thinking way. However, a high-level language is no guarantee to achieve that. One can churn out C-like code in Ruby, it is just easier to realize you are not using the full arsenal. And that&#8217;s where it really kicks in: if you know you can basically do anything painlessly you will dare to think big, your ideas can get off the ground. Consequently they will be abstract enough for you to be more productive.</p>
+
+<p>So armed with daringly abstract ideas and tools that make it possible to put them into code, one sets out to conquer the world. The limit to the amount of code generated is the number of hours one can spend each day programming. After about ~8 hours of work is it worth to put in some more time to produce more code? <a href="http://www.extremeprogramming.org/rules/overtime.html">Probably not</a>. Our thinking breaks down pretty fast after that. I have experienced on several occasions that I could do in 10 minutes the next morning what I could not do in 2 hours the evening before. This is not about dropping the keyboard when the clock strikes 5pm, of course. It is about <a href="http://www.extremeprogramming.org/rules/velocity.html">planning for measurable progress without too much overtime</a>.</p>
+
+<p>I think David is right when asserting that replenishing your mind so it can come up with constructive ideas is equally important. I am sure there are numerous ways to attain that. Some of them are constructive activities in themselves (David&#8217;s example was playing the banjo), some may just give you peace (e.g friends, family) and some may simply drift your thoughts away from the very problem you are working on (e.g playing soccer) and help you that way.</p>
+
+<p>So what do you think about all that? Can low-level languages still have advantages over high-level ones in certain situations? Do you think the language your are programming in can have an effect on your problem-solving thoughts? What activities switch you off in the most &#8220;productive&#8221; way? What other factors have an effect on your work? (of course your working environment is very relevant). Are <a href="http://www.boston.com/bostonglobe/ideas/naps/">naps </a>worth it? When would the official Railsconf&#8217;08 videos be online? :)</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2008/07/17/can-less-work-be-more/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2008/05/27/first-mac-experiences/">First Mexperiences</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2008-05-27 00:00:00 +0200" pubdate  updated >May 27<span>th</span>, 2008</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I recently wrote <a href="http://bucionrails.com/2008/05/22/confession-of-a-conversion/">about me getting a Mac</a>, the reasons I made the switch and how I really like it. I would now like to add nuances to this overall picture. What is really cool? What is hard to get used to? Which are the things I could not find how to achieve on the Mac?</p>
+
+<h3>Non-keyboard input</h3>
+
+
+<p>I think I am one of the few who prefers the trackball (Thinkpad-style) to trackpads. For me, trackpads are clumsy, it is hard to position the cursor correctly, they make an incomfortable sound and I often click inadvertently by pushing too hard (but not hard at all). So I had thought I&#8217;d get a mouse but then I found out the usb ports are located on the left hand side of the Macbook which does not seem to logical unless Apple specifically targeted left-handed people. Or does everyone already have cordless mice?</p>
+
+<p>Anyway, I gave the trackpad a try and I was thoroughly satisfied. The trademark two-finger scrolling works miracle, clicking is silent and the trackpad is wide enough to be able to lay two-fingers on the pad and click with my thumb which serves as a right-click. Absolutely phenomenal. My plans to acquire a cordless mouse have been postponed. (Even more so since I learned from a colleague that to really get the best out of the mouse you need to <em>purchase</em> a driver. I can imagine paying for software, but for a mouse driver? that seems harsh.)</p>
+
+<h3>Managing windows and menus</h3>
+
+
+<p>Having said all about non-keyboard input I always try to minimize the time I have to lift my hands from the keyboard in all applications. Switching between applications is easy with cmd+tab and I also learned the cmd+` and cmd+~ which switches between windows of the same application and is very useful. Closing an application with cmd+q and a tab/window with cmd+w also come in handy and was easy to learn. However, one thing which I miss badly is a key combination to just go to the menu and browse there (e.g alt+f1 in gnome). I mean there are several combinations to activate certain menu items but if I do not want to learn a few dozens of them per application it seems a good idea to me to have just one and then be able to access everything. Or maybe there is, waiting for me to discover it.</p>
+
+<h3>Command line boosters</h3>
+
+
+<p>Another feature I adore in the terminal is to be able to quickly navigate. Go to the start, to the end, skip a word forwards, backwards, delete a word, etc. One extra advantage of my favorite text editor, emacs, is that its combinations coincide with those used on the command line, which is fantastic. After a while, I learned that they can all be invoked in Mac terminals, too, it is just that they seem less logical too me. For example , Esc-D is to delete from the cursor to the end of the word, why is Ctrl-W Delete the word to the left of the cursor? (found <a href="http://ie.brokethe.net/2008/2/6/mac-terminal-shortcuts">here</a>). Also, Esc is too far away to reach comfortably. I know iTerm can be programmed to respond to any key combination, so I might do some tinkering here to have a more consistent interface.</p>
+
+<h3>Installing software</h3>
+
+
+<p>Getting applications installed on your computer is quite easy with the disk image installers or one can always compile from source the advantages of which are described <a href="http://hivelogic.com/articles/2005/11/using_usr_local">in this excellent article</a>. I have to tell that the provided applications are really top notch like iTunes or iPhoto, and I haven&#8217;t even had the time to try all of them (iMovie, Garage Band, etc.). One caveat is that some applications, like iPhoto treats your data as one big library file so you need to export particular files if you need them outside of the application (how do you upload individual photos to a photo company&#8217;s site to have them developed? how do you upload an image to a photo-sharing website? you&#8217;ll need plugins or you have to export them thus duplicating the photos and wasting space). This surely suits ordinary users but advanced, tech-savvy users don&#8217;t like this kind of obfuscation, or at least I don&#8217;t.</p>
+
+<p>A big pain for me is the presence of spaces in directory names. It may be an old habit to automatically evade them but it looks amateurish to me. Which Mac (and OS/X) is certainly not. It is a great machine (and operating system) to have.</p>
+
+<p><strong>Post scriptum.</strong> I am most interested to see what <a href="http://www.fernandoguillen.info/es/blog/2008/05/23/dios-mio-que-he-hecho/">Fernando</a> has to say about his first steps with his Mac.</p>
+
+<p><strong>Update</strong> I realized the iPhoto Library file does contain the actual photos although in a shrunk version. You can&#8217;t see this in the Finder, you have to use the command line (which is ok since that can be considered as a habit that distinguishes a normal user from a power user). To be able to burn the photos to a DVD or upload them somewhere, you still have to export them and thus have your photos duplicated (even if only for the time of creating the CD/uploading the photos).</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2008/05/27/first-mac-experiences/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2008/05/22/confession-of-a-conversion/">Confession of a Conversion</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2008-05-22 00:00:00 +0200" pubdate  updated >May 22<span>nd</span>, 2008</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>My company laptop has gotten old and weary. So old that I could not even find a replacement battery and some memory for it. I could, but for half a price of a shiny new notebook that is three times stronger. I liked my old laptop, but not that much. So I went looking for a new one. I was hesitating between a Thinkpad and an ASUS since I was pretty content with both of them but the faint voice was already whispering into my ear: &#8220;get a Mac, get a Mac&#8221;.</p>
+
+<p>I&#8217;ll admit the sysadmin side of things is not my favorite part of working with a computer. I have nothing against modifying configuration files, installing software from the command line and the like but I do feel like I am wasting my time when trying to get Skype voice to work for several hours to no avail, make my laptop &#8220;soft-hibernate&#8221; when I close the lid (I got that one, finally) or set up the wifi hotspot selector icon. I know it is just a matter of time and perseverance and I like the idea that you can get it to work if you finally understand what needs to be tweaked and how. (In fact, most of the time you don&#8217;t. You just find the answer by searching on Google, copy-paste something you don&#8217;t understand and eureka, it works.). It is just that my priorities lie elsewhere. It has been said a million times but it is still true: time is too precious to spend on anything but the most important things. For me, these are writing code, learning software, discovering new tools and technologies.</p>
+
+<p>There was something more in favor of a Mac: its design. I don&#8217;t primarily mean the physical design of the laptop though in my opinion it is the <a href="hhttp://www.apple.com/macbook/design.html">best looking one</a> there is but how everything works so ingeniously and smoothly. Everything is pre-installed so I basically only had to customize a few things like creating a user (it took me a while to realize who the guy on the default avatar picture was since I was not moving too much), setting the time zone and the default keyboard layout, etc. And the fonts. Yes, the fonts above all. I remember how refreshing it was when I switched to a Gnome desktop from Windows XP several years ago. I felt the same but even stronger when I opened Firefox the first time on my new Mac. My heart is filled with joy using iTerm with the <a href="http://www.myfonts.com/fonts/apple/monaco/">Monaco font</a>. I know font types and the look of fonts should probably be a detail for stone-hearted programmers but on the other hand beauty in details is so important. I spent some time thinking whether using nicer terminal fonts makes me a happier developer and it certainly does. I could do without the whizzing windows, sliding workspaces and flamboyant icons but I can not imagine using anything with less beautiful fonts. In three weeks I have become so fond of my precious little fonts I have a hard time imagining abandoning them.</p>
+
+<p>But it is just me. What about you? What made you change to a Mac? What do you fancy most about it? Or if you are not a Mac owner, what do you like most about your Linux/Windows/etc. machine?</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2008/05/22/confession-of-a-conversion/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2008/04/21/agile-help-with-rails/">Agile Help With Rails</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2008-04-21 00:00:00 +0200" pubdate  updated >Apr 21<span>st</span>, 2008</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I have recently taken the habit of checking on <a href="http://railsforum.com">Rails forum</a> from time to time whether there are unanswered questions I can help with. The best way to see a problem in its context is to recreate it and I was amazed by how easy it is to set up a rails site and debug e.g <a href="http://railsforum.com/viewtopic.php?id=17529">a routing problem</a>.</p>
+
+<div style="margin-top:20px;margin-bottom:20px">
+<code>
+> rails railsforum_help_routing
+> createdb railsforum_help_routing_development
+(edit database.yml to set user and possibly database type)
+> script/generate model Trip
+> script/generate controller Trip
+(edit routes.rb, in this case)
+</code>
+</div>
+
+
+<p>Naturally the fact that all this takes about 5 minutes greatly leverages lending a hand to a fellow developer. Now that&#8217;s what I call agile!</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2008/04/21/agile-help-with-rails/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2008/04/12/code-syntax-highlighting/">Code Syntax Highlighting</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2008-04-12 00:00:00 +0200" pubdate  updated >Apr 12<span>th</span>, 2008</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I realized this would be a key feature of any blog that aims to include code snippets in posts right after my friend, Bronson, told me so. With Wordpress, it seems, the problem is not that there are no tools for a certain task but that there are too many. Anyway, I finally found <a href="http://wordpress.org/extend/plugins/wp-syntax/">this one</a> to perfectly suit my needs. It supports a plethora of programming/markup languages and the only thing you should add to your code blocks, is a lang attribute to the &lt;pre&gt; like so:</p>
+
+<pre lang="html4strict">
+   <pre lang="ruby">
+    (ruby code comes here)
+   </pre >
+</pre>
+
+
+<p>My code  in <a href="http://bucionrails.com/2008/04/09/quick-adaptor-my-role-model/">my earlier post</a> looks a lot better, doesn&#8217;t it?</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2008/04/12/code-syntax-highlighting/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+<nav role="pagination">
+  <div>
+    
+      <a class="prev" href="/blog/page/6/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/4/">Newer &rarr;</a>
+    
+  </div>
+</nav>
+
+<script type="text/javascript">
+    var disqus_shortname = 'balinterdi';
+    (function () {
+      var s = document.createElement('script'); s.async = true;
+      s.type = 'text/javascript';
+      s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+      (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+
+</div>
+<aside role=sidebar>
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/07/19/git-rebase-to-fix-your-local-commits/">Git rebase to fix your local commits</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be/">Don&#8217;t Tell Michelle, Facebook privacy as it should be</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/06/03/its-a-spec-not-a-test/">It&#8217;s a spec, not a test</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/02/16/remove-trailing-whitespaces/">Remove&#8217;em trailing whitespaces!</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/01/28/2010-is-the-year-of-the-javascript/">2010 is the year of the Javascript</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("baaz", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-width="208px" data-show-count="false">Follow @baaz</a>
+  
+</section>
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer><p>
+  Copyright &copy; 2011 - Balint Erdi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+</body>
+</html>

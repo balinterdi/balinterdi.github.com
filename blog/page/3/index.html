@@ -1,0 +1,771 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Codigo Ergo Sum</title>
+  <meta name="author" content="Balint Erdi">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="canonical" href="http://codigoergosum.com/blog/page/3/index.html"/>
+  <link href="/favicon.png" rel="shortcut icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="http://s3.amazonaws.com/ender-js/jeesh.min.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/codigoergosum" rel="alternate" title="Codigo Ergo Sum" type="application/atom+xml"/>
+  
+
+  
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body  >
+  <header><hgroup>
+  <h1><a href="/">Codigo Ergo Sum</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role=navigation><ul role=subscription data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/codigoergosum" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+<form action="http://google.com/search" method="get">
+  <fieldset role="site-search">
+    <input type="hidden" name="q" value="site:codigoergosum.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+<ul role=main-navigation>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/03/25/finding-missing-i18n-translations-with-missing_t/">Finding Missing I18n Translations With Missing_t</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2009-03-25 00:00:00 +0100" pubdate  updated >Mar 25<span>th</span>, 2009</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A recurring problem in an internationalized Rails project is to see which translations are missing. You could go through all the pages looking for &#8220;translation missing: en, user, new&#8221; texts. That, however is very tedious and error prone. There may be some texts you don&#8217;t even see that are missing translation. (like a title of an image).</p>
+
+<p>A better solution is to write a program that finds these. So that&#8217;s what I did. I gave it a very imaginative name: <a href="http://github.com/balinterdi/missing_t/tree/master">missing_t</a>. It&#8217;s darn simple. You first have to install the gem:</p>
+
+<pre lang="bash">
+gem install balinterdi-missing_t  
+</pre>
+
+
+<p>and then from the root of your Rails app you type:</p>
+
+<pre lang="bash">
+missing_t
+</pre>
+
+
+<p>You will see all the I18n strings that do not have translations along with the file they were found in. If you want to restrict your search for a specific language, you provide its language code as the first parameter, like so:</p>
+
+<pre lang="bash">
+missing_t fr
+</pre>
+
+
+<p>For a bit more detailed description, <a href="http://github.com/balinterdi/missing_t/tree/master">see the README</a>.</p>
+
+<p>Go ahead, give it a try, your app has the right to speak all those beautiful languages out there!</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2009/03/25/finding-missing-i18n-translations-with-missing_t/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/03/17/thrifty-track-your-expenses-easily/">Thrifty - Track Your Expenses Easily</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2009-03-17 00:00:00 +0100" pubdate  updated >Mar 17<span>th</span>, 2009</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Thrifty is a simple application I have written (and am still writing) in Sinatra that tracks your expenses. You can quickly record each spending you make and assign tags to them so you can group your expenditures easily. You can then see how much you spend in different categories (by tags) possibly narrowed down to a given date interval.</p>
+
+<p>Anyway, a web app is all about interaction so give it a try <a href="http://thrifty.heroku.com">on the test site</a> or download it from <a href="http://github.com/balinterdi/thrifty">its github repo</a> and run it locally. You&#8217;ll also find a somewhat detailed README there.</p>
+
+<p>This is a very early release so I&#8217;d appreciate any kind of feedback, be it a bug report, a comment on bad UI or anything you might find worthwhile sharing.</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2009/03/17/thrifty-track-your-expenses-easily/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/03/12/plans-for-2009-contribute-more-to-open-source-projects/">Plans for 2009 - Contribute (More) to Open Source Projects</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2009-03-12 00:00:00 +0100" pubdate  updated >Mar 12<span>th</span>, 2009</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>At the start of 2009 my friend Jaime <a href="http://www.jaimeiniesta.com/2009/01/07/mi-resumen-del-2008">resumed his previous year</a> and proposed me to do the same. It seemed a really good idea but somehow it still died down.</p>
+
+<p>I know it&#8217;s March now but I reckon it&#8217;s still ok to do this until December :) I&#8217;ll attempt to write a mini-series of posts about not so much what I did in 2008 but rather what I would like to achieve in 2009.</p>
+
+<p>When I started to work full-time with Ruby I also realized the vast possibilities and magnetism of open source projects. I could -and still can- spend hours browsing among different projects on github, peeping into their code, reading related articles, etc.</p>
+
+<p>So when I set out for this journey one of my tasks naturally became to regularly contribute to a &#8220;serious&#8221; open source project. When I got acquainted with Merb I also got to know <a href="http://datamapper.org/doku.php">DataMapper</a>, its default ORM. I admired its elegance and coherence and the more I knew of it the more I liked it. So when the maintainer position of a dm-more gem, <a href="#dm-constraints">dm-constraints*</a> seemed to be up for grabs I took the opportunity.</p>
+
+<p>That was in December and since then I sent in a few patches and merged changes implemented by others. (which I realized could sometimes be a lot more difficult than writing code :) ). I like to do this and have learned -and probably will learn- a lot so one of my plans for 2009 is to continue with dm-constraints and maybe find other open source projects I could contribute to on a regular basis.</p>
+
+<p>So, if you happen to use DataMapper, which <a href="http://bucionrails.com/2009/02/12/why-i-love-datamapper/">I strongly encourage you to do</a>, and find a bug related to foreign-key constraints, <a href="http://datamapper.lighthouseapp.com/projects/20609-datamapper">file a ticket</a> and assign it directly to me (Balint Erdi). And/or start contributing!</p>
+
+<h3>Notes</h3>
+
+
+
+
+<p id="dm-constraints">* Dm-more is the meta package that contains everything outside the core functions of DataMapper. Dm-constraints deals with foreign key constraints. If you are familiar with ActiveRecord, it is basically the options you specify with :dependent on an association.</p>
+
+</div>
+  <footer>
+    <a rel="full-article" href="/2009/03/12/plans-for-2009-contribute-more-to-open-source-projects/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/03/12/easily-quote-passage-with-mail-in-a-reply/">Easily Quote Passage With Mail in a Reply</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2009-03-12 00:00:00 +0100" pubdate  updated >Mar 12<span>th</span>, 2009</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>That was too long to twitter, so here it goes.</p>
+
+<p>If you use Mail (OS-X) when replying to a message you can select some text in the email you want to reply to and then hit reply. The new email will only include the text you selected so you don&#8217;t have to delete all the lines you don&#8217;t need. I hope someone finds this useful, I really do.</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2009/03/12/easily-quote-passage-with-mail-in-a-reply/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/02/12/why-i-love-datamapper/">Why I Love Datamapper</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2009-02-12 00:00:00 +0100" pubdate  updated >Feb 12<span>th</span>, 2009</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I wanted to find the last user in alphabetic order of their names in a Merb project that uses <a href="http://datamapper.org">Datamapper</a> (the default ORM in Merb). So I did [<a href="#love-datamapper-first">*</a>]:</p>
+
+<pre lang="bash">
+irb(main):020:0> User.all(:order => [:name]).first.name
+ ~ (0.032946) SELECT <column_names> FROM `users` ORDER BY `name` LIMIT 1
+=> "Admin User"
+</pre>
+
+
+<p>Ok, so the default sorting order is ascending but I need the last one. There are two ways to do this. Write an SQL snippet and sneak in &#8220;DESC&#8221; somewhere or reverse the collection before taking the first element. Since I was not sure how to sneak in &#8220;DESC&#8221; plus I prefer writing Ruby to writing SQL hands down, I went with the second approach:</p>
+
+<pre lang="bash">
+irb(main):021:0> User.all(:order => [:name]).reverse.first.name
+ ~ (1.033271) SELECT <column_names> FROM `users` ORDER BY `name` DESC LIMIT 1
+=> "XX XX"
+</pre>
+
+
+<p>See what happened? Instead of reverting the collection (which is extra time even if it is done very fast) Datamapper sneaked in that DESC for me! Isn&#8217;t this just brilliant? Datamapper takes the burden to write SQL off of your shoulders. You can keep writing Ruby statements you presumably love and let Datamapper take care of the SQL reaping both the comfort and the performance gain. [<a href="#love-datamapper-second">**</a>]. Also, likewise your app stays database type agnostic. Note how it is not supposed there is a RDBMS under the ORM layer. It could work with CouchDB, for example (I think there is actually work in progress for a CouchDB adapter). This is not the only reason I like Datamapper so much, so if you are still not convinced, go check out <a href="http://datamapper.org/doku.php?id=why_datamapper">some other reasons to use it</a>.</p>
+
+<hr>
+
+
+<h3>Notes</h3>
+
+
+<p id="love-datamapper-first">* I could have written this one in a simpler way:
+<pre lang="bash">
+irb(main):018:0> User.first(:order => [:name]).name
+ ~ (0.032345) SELECT <column_names> FROM `users` ORDER BY `name` LIMIT 1
+=> "Admin User"
+</pre>
+
+But you -or at least I- could not do it for the last element (there is no User.last)
+
+<p id="love-datamapper-second">** I am not suggesting not to learn SQL at all. I am all for a know-thy-tools approach (especially it it means not cluttering your markup with javascript :) ). However, having the ORM do obviously good things for you is worth it most of the time.
+</p>
+
+</div>
+  <footer>
+    <a rel="full-article" href="/2009/02/12/why-i-love-datamapper/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/02/11/deep_test-to-become-tdd-more-easily/">Deep_test to Become TDD More Easily</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2009-02-11 00:00:00 +0100" pubdate  updated >Feb 11<span>th</span>, 2009</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I am all for <acronym title="Test Driven Development">TDD</acronym>, really. I did not even waver when recently I have been working on a medium-sized Rails project and running the tests after each change took about 60-80 seconds. 60 seconds is still a lot, though, especially if you go through these cycles ~50 times a day (a wild guess). I also believe in very short test-implementation cycles to stay focused so I was starting to think about ways to keep that time down.</p>
+
+<p>Autotest, part of the <a href="http://rubyforge.org/projects/zentest/">Zentest</a> toolbox is a very good choice. It basically runs all the tests automatically after something has changed in the code and more importantly it only runs the tests it deems affected by the latest change. This helped to reduce the amount of time by reducing the number of tests that were run in each loop.</p>
+
+<p>Another I think less well-known option is <a href="http://www.somethingnimble.com/bliki/deep-test">deep_test</a> which helps to reduce testing time by increasing computational power. More precisely, it runs the tests through worker threads so you can either benefit from using deep_test if you set it up for a computer network (individual computers take from a pool of tests and then send in the results) or if you have a multi-core computer. Since many of us do nowadays, that stepped up as a viable option.</p>
+
+<p>It was quite easy to set up and the results it brought were quite remarkable. It reduced the running time of my tests by ~40% (based on a completely unscientific benchmark). One thing I experienced is that it did not really play out well with sqlite although I have not spent a lot of time trying to make it work there. I just switched to mysql and it worked seamlessly. So yeah, the next logical step was to get the better of both worlds: run only the tests that need to be run and run them on as many cores as possible. I will talk about that in a later post.</p>
+
+<p>I would very much like to hear your experiences and solutions to make TDD a breeze or just plain bearable. I cannot imagine doing real TDD if running tests takes more than a certain time limit, around maybe 90 seconds. Not only you lose a lot of time waiting for the tests to finish, more importantly you fall out of the falling test-implementation cycle, you lose focus, your mind drifts away and then the whole thing probably just does not work.</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2009/02/11/deep_test-to-become-tdd-more-easily/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/02/09/simple-to-do-list-in-sinatra/">Simple To-do List in Sinatra</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2009-02-09 00:00:00 +0100" pubdate  updated >Feb 9<span>th</span>, 2009</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>After Bence Golda&#8217;s presentation at the last <a href="http://www.meetup.com/budapest-rb/">budapest.rb meetup</a> I decided to build something easy in <a href="http://www.sinatrarb.com/">Sinatra</a> since it seemed so cool and easy to do. And I have to tell you, it really is both.</p>
+
+<p>With zero prior experience with Sinatra and only a bit of fresh <a href="http://haml.hamptoncatlin.com/">HAML</a> knowledge, <a href="http://github.com/balinterdi/todo-list/tree/master">my todolist</a> was ready in a few hours. What can you do with it? Add todos to your list and delete them when you are done. What features does it have? Unobtrusive javascript :) What does it lack? Obtrusive javascript :) User-related funcionalities, the possibility of having more lists, seeing done todos, etc. Lots of things. But with the ease of development Sinatra provides I am sure that for a simple application like this these could be added quite quickly. And then <a href="http://tadalist.com/">tadalist.com</a> would be running for its money :) (I know, it&#8217;s free).</p>
+
+<p>ps. I use an ORM, datamapper to not to have to deal with SQL directly, so you&#8217;ll have to &#8220;gem install dm-core&#8221; beyond the sinatra gems if you want to run the app.</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2009/02/09/simple-to-do-list-in-sinatra/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/02/04/strings-as-haml-render-parameters-in-sinatra-do-not-work/">Strings as Haml Render Parameters in Sinatra Do Not Work</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2009-02-04 00:00:00 +0100" pubdate  updated >Feb 4<span>th</span>, 2009</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I was intrigued by the simplicity and elegance of Sinatra as presented by Bence Golda at <a href="http://files.meetup.com/1271139/09-01-22-golda_bence-sinatra.pdf">the last budapest.rb meetup.</a>, so I decided to build a simple application with it (I am planning to talk just a little bit more about that in a later post).</p>
+
+<p>One quick thing I learned the hard way is when generating haml views in Sinatra, you have to use symbols as the name of the view, strings will just be rendered as strings. That was a tough lesson to learn coming from Rails. So while in Rails you can write:</p>
+
+<pre lang="ruby">
+  def index
+    render :action => :index
+  end
+</pre>
+
+
+<p>or</p>
+
+<pre lang="ruby">
+  def index
+    render :action => "index"
+  end
+</pre>
+
+
+<p>In Sinatra, you can only use a symbol to designate the view to be rendered:</p>
+
+<pre lang="ruby">
+get '/' do
+  haml :index
+end
+</pre>
+
+
+<p>Which makes sense, I think, since symbols (unlike strings, see <a href="#strings-symbols">below</a>) with the same name refer to the same entity which is a perfect fit for naming views, now ain&#8217;t they? Plus, I&#8217;ll admit I am in love with them symbols, with their colon in the front and all. And when they are syntax highlighted, I melt.</p>
+
+<div id="strings-symbols">
+<pre lang="bash">
+irb(main):002:0> sym1 = :index; sym2 = :index; sym1.object_id == sym2.object_id
+=> true
+irb(main):003:0> s1 = "index"; s2 = "index"; s1.object_id == s2.object_id
+=> false
+</pre>
+</div>
+
+
+
+</div>
+  <footer>
+    <a rel="full-article" href="/2009/02/04/strings-as-haml-render-parameters-in-sinatra-do-not-work/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/01/28/shoulda-blocks-active-record-macros-and-their-order/">Shoulda: Setup and Should Blocks and Don&#8217;t Wander Off the Map</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2009-01-28 00:00:00 +0100" pubdate  updated >Jan 28<span>th</span>, 2009</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&#8217;m using <a href="http://www.thoughtbot.com/projects/shoulda/">shoulda</a> for testing in a rails project and I wrote this simple test to see if my update action really updated the object and redirected to the appropriate place:</p>
+
+<pre lang="ruby">
+context "the update" do
+  setup do     # 1
+    @project = Factory(:project, :director => @user)
+    put :update, :id => @project, :project => { :name => "updated name" }
+  end
+  # 2    
+  updated_project = Project.first(:order => "created_at DESC")
+  # 3
+  should_redirect_to "project_url(updated_project)" # 4
+  should "update the attributes" do
+    assert_equal("updated name", updated_project.name) # 5
+  end  
+end
+</pre>
+
+
+<p>To my surprise, I received an &#8220;undefined local variable or method &#8216;updated_project&#8217; on both tests (#4 and #5). I figured out why and I want to share it with you. In case you are a shoulda expert, you must know the answer already and sorry for wasting your time. On the other hand, if you are new to shoulda like I am, you may find this useful.</p>
+
+<p>What shoulda does when running a &#8216;should&#8217; block is that it runs all the &#8216;setup&#8217; blocks of the contexts in which it is nested, from the outside to the inside, so this:</p>
+
+<pre lang="ruby">
+context "alpha" do
+  setup do
+    puts "A"
+  end
+  context "beta" do
+    setup do
+      puts "B"
+    end
+    context "gamma" do
+      setup do
+        puts "C"
+      end
+      should "work" do
+         puts "the only test"
+      end
+    end
+  end
+end
+</pre>
+
+
+<p>Will print</p>
+
+<pre lang="bash">
+A
+B
+C
+the only test
+</pre>
+
+
+<p>Also the area between #2 and #3 in the above test is sort of a no man&#8217;s land, since it is not in a setup block, so assignments that are executed here are completely useless. You can not use it either for side-effects since it will run before the setup block (#1 above). My advice is to simply put everything in a block, be it a &#8216;setup&#8217; or a &#8216;should&#8217; one. (the &#8216;should_redirect_to&#8217; is a macro that&#8217;s part of shoulda, it gets expanded into a block, too).</p>
+
+<p>So here is the same test correctly:</p>
+
+<pre lang="ruby">
+context "the update" do
+  setup do
+    @project = Factory(:project, :director => @user)
+    put :update, :id => @project, :project => { :name => "updated name" }
+  end
+  
+  should_redirect_to "project_url(@project)" 
+  should "update the attributes" do
+    # reload is needed to see the new state
+    @project.reload
+    assert_equal("updated name", @project.name)
+  end
+  
+end
+</pre>
+
+
+<p>Shoulda is a nice tool. There is only one I know and I like a tad better which is quite similar in structure, <a href="http://rspec.info/documentation/">rspec</a>.</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2009/01/28/shoulda-blocks-active-record-macros-and-their-order/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/01/25/mysql-table-types-and-foreign-key-constraints/">MySQL Table Types and Foreign Key Constraints</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2009-01-25 00:00:00 +0100" pubdate  updated >Jan 25<span>th</span>, 2009</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Uff, I have recently spent some time checking foreign key constraints in MySQL and I got a bit upset. The MySQL docs tell you that <a href="http://dev.mysql.com/doc/refman/5.0/en/innodb-foreign-key-constraints.html">InnoDB tables support foreign key constraints</a> but that&#8217;s not the same as saying MyISAM tables do not. More importantly, an error (or at least a warning) should be raised so that I am not relying on something that seems to be there when in fact it is not.</p>
+
+<p>Here is the raw SQL:</p>
+
+<pre lang="sql">
+CREATE TABLE `drivers` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `name` VARCHAR(100)
+);
+
+
+CREATE TABLE `cars` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `plate_number` VARCHAR(12),
+  `driver_id` INT,
+  FOREIGN KEY (`driver_id`) REFERENCES `drivers`(`id`) ON DELETE CASCADE
+);
+
+INSERT INTO drivers(name) VALUES ('bob');
+INSERT INTO drivers(name) VALUES ('alice');
+INSERT INTO cars(plate_number, driver_id) VALUES ('bbb', 1);
+INSERT INTO cars(plate_number, driver_id) VALUES ('ooo', 1);
+INSERT INTO cars(plate_number, driver_id) VALUES ('aaa', 2);
+INSERT INTO cars(plate_number, driver_id) VALUES ('lll', 2);
+</pre>
+
+
+
+
+<pre lang="shell">
+mysql> delete from drivers where id=1;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from cars;
++----+--------------+-----------+
+| id | plate_number | driver_id |
++----+--------------+-----------+
+|  1 | bbb          |         1 | 
+|  2 | ooo          |         1 | 
+|  3 | aaa          |         2 | 
+|  4 | lll          |         2 | 
++----+--------------+-----------+
+4 rows in set (0.00 sec)
+</pre>
+
+
+
+
+<pre lang="sql">
+CREATE TABLE `drivers` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `name` VARCHAR(100)
+) ENGINE=INNODB;
+
+
+CREATE TABLE `cars` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `plate_number` VARCHAR(12),
+  `driver_id` INT,
+  FOREIGN KEY (`driver_id`) REFERENCES `drivers`(`id`) ON DELETE CASCADE
+) ENGINE=INNODB;
+
+INSERT INTO drivers(name) VALUES ('bob');
+INSERT INTO drivers(name) VALUES ('alice');
+INSERT INTO cars(plate_number, driver_id) VALUES ('bbb', 1);
+INSERT INTO cars(plate_number, driver_id) VALUES ('ooo', 1);
+INSERT INTO cars(plate_number, driver_id) VALUES ('aaa', 2);
+INSERT INTO cars(plate_number, driver_id) VALUES ('lll', 2);
+</pre>
+
+
+
+
+<pre lang="shell">
+mysql> delete from drivers where id=1;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from cars;
++----+--------------+-----------+
+| id | plate_number | driver_id |
++----+--------------+-----------+
+|  3 | ppp          |         2 | 
+|  4 | eee          |         2 | 
++----+--------------+-----------+
+2 rows in set (0.00 sec)
+</pre>
+
+
+<p>I know very well one should <a href="http://bucionrails.com/2008/10/22/postgresql-pg_hbaconf-authentication/">read the manual before complaining</a> but I also think software should complain if asked something which it is not capable of doing. -1 for MySQL.</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2009/01/25/mysql-table-types-and-foreign-key-constraints/">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+<nav role="pagination">
+  <div>
+    
+      <a class="prev" href="/blog/page/4/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/2/">Newer &rarr;</a>
+    
+  </div>
+</nav>
+
+<script type="text/javascript">
+    var disqus_shortname = 'balinterdi';
+    (function () {
+      var s = document.createElement('script'); s.async = true;
+      s.type = 'text/javascript';
+      s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+      (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+
+</div>
+<aside role=sidebar>
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/07/19/git-rebase-to-fix-your-local-commits/">Git rebase to fix your local commits</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be/">Don&#8217;t Tell Michelle, Facebook privacy as it should be</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/06/03/its-a-spec-not-a-test/">It&#8217;s a spec, not a test</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/02/16/remove-trailing-whitespaces/">Remove&#8217;em trailing whitespaces!</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/01/28/2010-is-the-year-of-the-javascript/">2010 is the year of the Javascript</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("baaz", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-width="208px" data-show-count="false">Follow @baaz</a>
+  
+</section>
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer><p>
+  Copyright &copy; 2011 - Balint Erdi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+</body>
+</html>

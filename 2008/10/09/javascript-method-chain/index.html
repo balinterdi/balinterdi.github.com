@@ -1,0 +1,302 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Codigo Ergo Sum: javascript method chain</title>
+  <meta name="author" content="Balint Erdi">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="canonical" href="http://codigoergosum.com/2008/10/09/javascript-method-chain/"/>
+  <link href="/favicon.png" rel="shortcut icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="http://s3.amazonaws.com/ender-js/jeesh.min.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/codigoergosum" rel="alternate" title="Codigo Ergo Sum" type="application/atom+xml"/>
+  
+
+  
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body  >
+  <header><hgroup>
+  <h1><a href="/">Codigo Ergo Sum</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role=navigation><ul role=subscription data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/codigoergosum" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+<form action="http://google.com/search" method="get">
+  <fieldset role="site-search">
+    <input type="hidden" name="q" value="site:codigoergosum.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+<ul role=main-navigation>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry">
+  
+  <header>
+    
+      <h1 class="entry-title">Javascript Method Chain</h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2008-10-09 00:00:00 +0200" pubdate  updated >Oct 9<span>th</span>, 2008</time>
+
+
+</p>
+    
+  </header>
+
+
+<div class="entry-content"><p>John Resig has an extraordinary advanced javascript tutorial on his <a href="http://ejohn.org/apps/learn/" target="_blank">blog</a> that he presented on <a href="http://en.oreilly.com/webexny2008/public/content/home" target="_blank">a web conference</a>. It is definitely worth a walk-through since it expands one&#8217;s javascript horizon unless one has not written a javascript framework himself.</p>
+
+<p>I played around with several of his slides learning a lot. My favorite was probably <a href="http://ejohn.org/apps/learn/#90">the last slide</a> which explains how method overloading works using the fact that <em>methodname</em>.length in javascript gives back the number of expected arguments of that function.</p>
+
+<pre lang="javascript">
+function addMethod(object, name, fn){ 
+  // Save a reference to the old method 
+  var old = object[ name ];
+ 
+  // Overwrite the method with our new one 
+  object[ name ] = function(){ 
+    // Check the number of incoming arguments, 
+    // compared to our overloaded function 
+    if ( fn.length == arguments.length ) 
+      // If there was a match, run the function 
+      return fn.apply( this, arguments ); 
+ 
+    // Otherwise, fallback to the old method 
+    else if ( typeof old === "function" ) 
+      return old.apply( this, arguments ); 
+  }; 
+} 
+ 
+function Ninjas(){ 
+  var ninjas = [ "Dean Edwards", "Sam Stephenson", "Alex Russell" ]; 
+  addMethod(this, "find", function(){ 
+    return ninjas; 
+  }); 
+  addMethod(this, "find", function(name){ 
+    var ret = []; 
+    for ( var i = 0; i < ninjas.length; i++ ) 
+      if ( ninjas[i].indexOf(name) == 0 ) 
+        ret.push( ninjas[i] ); 
+    return ret; 
+  }); 
+  addMethod(this, "find", function(first, last){ 
+    var ret = []; 
+    for ( var i = 0; i < ninjas.length; i++ ) 
+      if ( ninjas[i] == (first + " " + last) ) 
+        ret.push( ninjas[i] ); 
+    return ret; 
+  }); 
+} 
+ 
+var ninjas = new Ninjas(); 
+assert( ninjas.find().length == 3, "Finds all ninjas" ); 
+assert( ninjas.find("Sam").length == 1, "Finds ninjas by first name" ); 
+assert( ninjas.find("Dean", "Edwards").length == 1, "Finds ninjas by first and last name" ); 
+assert( ninjas.find("Alex", "X", "Russell") == null, "Does nothing" );
+</pre>
+
+
+<p>It took me some time to figure out how exactly the method calls are routed but it was an interesting process nevertheless. I guess the one tricky part to interpret is the following bit:</p>
+
+<pre lang="javascript">
+if ( fn.length == arguments.length ) 
+  // If there was a match, run the function 
+  return fn.apply( this, arguments ); 
+ 
+  // Otherwise, fallback to the old method 
+  else if ( typeof old === "function" ) 
+    return old.apply( this, arguments ); 
+  }; 
+</pre>
+
+
+<p>This makes a method chain and allows for method overloading. With the three addMethod calls in the above example a chained method is built up.</p>
+
+<p>After the call to addMethod with no arguments (the first one), the find method of the Ninjas &#8220;class&#8221; will return all ninjas if called with no arguments and do nothing if called with any number of arguments. After the call to addMethod with one single name argument the find method will return the ninjas whose first name matches the passed argument if there is only one argument, return all ninjas if it has been called with no arguments and do nothing otherwise.</p>
+
+<p>I could go on but the pattern is probably clear now. At each call of the find method, the lastly added method is matched for the number of arguments (so in the above example, it will match if the caller passed two arguments) and the method called if the match is successful. Otherwise, it will try to match the number of arguments with the method that was added before the last one, and so on.</p>
+
+<p>I am elaborating this in so much detail because</p>
+
+<ol>
+    <li>it was such a &#8220;Eureka!&#8221; moment for me when I got it. </li>
+    <li>it is an incredibly ingenious way to flex the possibilites of javascript and introduce an OOP concept into an originally non-OOP language.</li>
+
+</ol>
+
+
+<p>I think John Resig made javascript lovable again which is why he deserves my total gratitude.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Balint Erdi</span></span>
+
+      
+
+
+
+
+<time datetime="2008-10-09 00:00:00 +0200" pubdate  updated >Oct 9<span>th</span>, 2008</time>
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2008/10/09/javascript-method-chain/" data-via="baaz" data-counturl="http://codigoergosum.com/2008/10/09/javascript-method-chain/" >Tweet</a>
+  
+  
+  <g:plusone size="medium"></g:plusone>
+  
+</div>
+
+    
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread"><div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'balinterdi';
+  var disqus_identifier = 'http://codigoergosum.com/2008/10/09/javascript-method-chain/';
+  var disqus_url = 'http://codigoergosum.com/2008/10/09/javascript-method-chain/';
+  //var disqus_developer = 1;
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside role=sidebar>
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/07/19/git-rebase-to-fix-your-local-commits/">Git rebase to fix your local commits</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be/">Don&#8217;t Tell Michelle, Facebook privacy as it should be</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/06/03/its-a-spec-not-a-test/">It&#8217;s a spec, not a test</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/02/16/remove-trailing-whitespaces/">Remove&#8217;em trailing whitespaces!</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/01/28/2010-is-the-year-of-the-javascript/">2010 is the year of the Javascript</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("baaz", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-width="208px" data-show-count="false">Follow @baaz</a>
+  
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer><p>
+  Copyright &copy; 2011 - Balint Erdi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+</body>
+</html>
