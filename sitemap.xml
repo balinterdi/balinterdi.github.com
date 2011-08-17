@@ -1,11 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://yoursite.com/blog/archives/</loc>
-        <lastmod>2011-08-16T23:13:08+02:00</lastmod>
+        <loc>http://codigoergosum.com/blog/2011/08/18/migrating-to-octopress/</loc>
+        <lastmod>2011-08-18T00:05:53+02:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/</loc>
-        <lastmod>2011-08-16T23:13:08+02:00</lastmod>
+        <loc>http://codigoergosum.com/blog/archives/</loc>
+        <lastmod>2011-08-18T00:05:53+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://codigoergosum.com/</loc>
+        <lastmod>2011-08-18T00:05:53+02:00</lastmod>
     </url>
 </urlset>

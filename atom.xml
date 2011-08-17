@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title>My Octopress Blog</title>
-  <link href="http://yoursite.com/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2011-08-16T23:18:51+02:00</updated>
-  <id>http://yoursite.com/</id>
+  <title>Codigo Ergo Sum</title>
+  <link href="http://codigoergosum.com/atom.xml" rel="self"/>
+  <link href="http://codigoergosum.com/"/>
+  <updated>2011-08-18T00:06:04+02:00</updated>
+  <id>http://codigoergosum.com/</id>
   <author>
-    <name>Your Name</name>
+    <name>Balint Erdi</name>
     
   </author>
 
+  
+  <entry>
+    <title>Migrating to Octopress</title>
+    <link href="http://codigoergosum.com/blog/2011/08/18/migrating-to-octopress/"/>
+    <updated>2011-08-18T00:05:00+02:00</updated>
+    <id>http://codigoergosum.com/blog/2011/08/18/migrating-to-octopress</id>
+    <content type="html">&lt;p&gt;It's so awesome.&lt;/p&gt;
+</content>
+  </entry>
   
 </feed>
