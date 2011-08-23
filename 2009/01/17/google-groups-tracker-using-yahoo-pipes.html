@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Codigo Ergo Sum: Google Groups tracker using Yahoo Pipes</title>
+  <meta name="author" content="Balint Erdi">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="canonical" href="http://codigoergosum.com/2009/01/17/google-groups-tracker-using-yahoo-pipes.html"/>
+  <link href="/favicon.png" rel="shortcut icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="http://s3.amazonaws.com/ender-js/jeesh.min.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/codigoergosum" rel="alternate" title="Codigo Ergo Sum" type="application/atom+xml"/>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-12299794-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body  >
+  <header><hgroup>
+  <h1><a href="/">Codigo Ergo Sum</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role=navigation><ul role=subscription data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/codigoergosum" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+<form action="http://google.com/search" method="get">
+  <fieldset role="site-search">
+    <input type="hidden" name="q" value="site:codigoergosum.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+<ul role=main-navigation>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry">
+  
+  <header>
+    
+      <h1 class="entry-title">Google Groups Tracker Using Yahoo Pipes</h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2009-01-17 00:00:00 +0100" pubdate  updated >Jan 17<span>th</span>, 2009</time>
+
+
+</p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I -and I suppose most of my developer mates- am subscribed to many Google Groups. When there is a topic I am interested in or a problem I posted or replied to it would be cool to get notified of changes to it. Instead of checking it five times a day to see if someone has commented on it which also slices up the big, continuous chunks of time we programmers need. Also, some groups are littered by spam topics so it would be nice to filter out all the things you are not particularly fascinated about and be left with the things you are.</p>
+
+<p>Unfortunately, Google Groups does not offer us the possibility of following certain topics (e.g by sending you an email whenever someone added his comment, a la Lighthouse). But there is a solution although I&#8217;ll admit the one I am describing below is not a particularly cunning or elegant one. If you felt the same pain and found a remedy, I am curious to know what it is, so please leave a comment.</p>
+
+<p>So, as we all know, the Internet is just a <a href="http://en.wikipedia.org/wiki/Series_of_tubes">series of tubes</a>, so the idea to use Yahoo Pipes to cobble together something came quite naturally. Ladies and gentlement, I created the <a href="http://pipes.yahoo.com/balinterdi/google_groups_issue_tracker">Googe Groups issue tracker</a>. It is capable of tracking two Google groups. You can pass three strings for each one and it generates an RSS of the items whose title have any of the strings you provide.</p>
+
+<p>I know it has many shortcomings (to say the least). What if you want to track issues for 3 groups or more? More than 3 issues per group? My puny tracker can&#8217;t do that right now since its &#8220;legoed&#8221; together from <a href="http://pipes.yahoo.com/pipes/">Yahoo Pipes</a> building blocks and so it&#8217;s not programmable. You can, however, clone my pipe, expand it to handle more groups or more expressions, enter the groups you want to track and subscribe to the resulting RSS with your reader of choice.</p>
+
+<p>It may still feel clumsy, since you have to regularly update your strings based on the issues you are interested in. I know a more general solution would be to hack together something that is more manageable and expandable which I might do soon. But it still feels so good from time to time to leave the serious, hard-thinking adult world and build Lego castles. So go ahead, don&#8217;t be shy, build your own castle and let me know about it! :)</p>
+
+<p><strong>UPDATE:</strong> Thanks to Bob, I realized Google has the very option I missed and constructed the pipe for :) However, there can still be some valid scenarios where it can be of service. As per <a href="http://jaimeiniesta.com">Jaime&#8217;s</a> comment I realized I did not really explain how to run the pipe, so let me do it through an example that is not too contrived:</p>
+
+<p>Let&#8217;s suppose you are a <a href="http://datamapper.org">DataMapper</a> expert and you want to help those newbies/impatient people who put &#8216;help&#8217; in the title of their post. In that case, you would input http://groups.google.com/group/datamapper in the &#8220;Group1 URL&#8221; box and &#8220;help&#8221; in the &#8220;Group1 - Title 1&#8221; field. At the pipe output you&#8217;d only see those posts which have help in their title, then.</p>
+
+<p>If you want to also see announcements and the convention would be to have [DM] in the title of those posts, you would then enter &#8220;[DM]&#8221; in the &#8220;Group1 - Title 2&#8221; field.</p>
+
+<p>To construct a filter which only lists ruby-quiz related posts on <a href="http://groups.google.com/group/ruby-talk-google">http://groups.google.com/group/ruby-talk-google</a> is left as an exercise to the reader :).</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Balint Erdi</span></span>
+
+      
+
+
+
+
+<time datetime="2009-01-17 00:00:00 +0100" pubdate  updated >Jan 17<span>th</span>, 2009</time>
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2009/01/17/google-groups-tracker-using-yahoo-pipes.html" data-via="baaz" data-counturl="http://codigoergosum.com/2009/01/17/google-groups-tracker-using-yahoo-pipes.html" >Tweet</a>
+  
+  
+  <g:plusone size="medium"></g:plusone>
+  
+</div>
+
+    
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread"><div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'codigoergosum';
+  var disqus_identifier = 'http://codigoergosum.com/2009/01/17/google-groups-tracker-using-yahoo-pipes.html';
+  var disqus_url = 'http://codigoergosum.com/2009/01/17/google-groups-tracker-using-yahoo-pipes.html';
+  //var disqus_developer = 1;
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside role=sidebar>
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/07/19/git-rebase-to-fix-your-local-commits.html">Git rebase to fix your local commits</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be.html">Don&#8217;t Tell Michelle, Facebook privacy as it should be</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/06/03/its-a-spec-not-a-test.html">It&#8217;s a spec, not a test</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/02/16/remove-trailing-whitespaces.html">Remove&#8217;em trailing whitespaces!</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/01/28/2010-is-the-year-of-the-javascript.html">2010 is the year of the Javascript</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("baaz", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-width="208px" data-show-count="false">Follow @baaz</a>
+  
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer><p>
+  Copyright &copy; 2011 - Balint Erdi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+</body>
+</html>

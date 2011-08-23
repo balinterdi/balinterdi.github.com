@@ -1,0 +1,300 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Codigo Ergo Sum: Git rebase to fix your local commits</title>
+  <meta name="author" content="Balint Erdi">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="canonical" href="http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html"/>
+  <link href="/favicon.png" rel="shortcut icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="http://s3.amazonaws.com/ender-js/jeesh.min.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/codigoergosum" rel="alternate" title="Codigo Ergo Sum" type="application/atom+xml"/>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-12299794-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body  >
+  <header><hgroup>
+  <h1><a href="/">Codigo Ergo Sum</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role=navigation><ul role=subscription data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/codigoergosum" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+<form action="http://google.com/search" method="get">
+  <fieldset role="site-search">
+    <input type="hidden" name="q" value="site:codigoergosum.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+<ul role=main-navigation>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry">
+  
+  <header>
+    
+      <h1 class="entry-title">Git Rebase to Fix Your Local Commits</h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2011-07-19 00:00:00 +0200" pubdate  updated >Jul 19<span>th</span>, 2011</time>
+
+
+</p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Let&#8217;s say you have the following three commits in your local repository:</p>
+
+<pre><code>% git log -3 --oneline
+b648f1a Fix propagating errors in findOrInitialize. (28 seconds ago)
+8789cd1 Non-destructive filtering for bumblebees. (12 hours ago)
+1a35285 Propagate errors the node.js way. (14 hours ago)
+</code></pre>
+
+<p>The last commit, b648f1a conceptually belongs to the first one, 1a35285.
+It only came later because say you haven&#8217;t run the tests before
+committing it and only realized later you introduced a bug. Or some
+other misdemeanor. Whatever the background is, it would be great if
+there was a way to squash the two related commits together. Turns out
+there is: interactive rebase.</p>
+
+<p>The syntax of the git-rebase is the following:</p>
+
+<pre><code>git rebase [-i | --interactive] [options] [--onto &lt;newbase&gt;]
+             &lt;upstream&gt; [&lt;branch&gt;]
+</code></pre>
+
+<p>What happens when you do git rebase is that the commits that are on the current
+branch but are not in upstream are saved. The current branch is reset to
+upstream and then the saved commits are replayed on top of this.</p>
+
+<p>It&#8217;s worth to mention that you should only do this if you have not
+pushed out these changesets to a remote where others might have pulled
+from it. Rebase creates new commits and if your collaborators pull the
+new commits, chaos can ensue. (See &#8220;Perils of Rebase&#8221; in the <a href="http://progit.org/book/ch3-6.html">ProGit
+book</a>)</p>
+
+<p>This can be used to achieve what we want:</p>
+
+<pre><code>% git rebase -i HEAD~3
+</code></pre>
+
+<p>Since the commits that are on the current branch but not on the commit
+three commits from here are the last three commits, here is what we get:</p>
+
+<pre><code>pick 1a35285 Propagate errors the node.js way.
+pick 8789cd1 Non-destructive filtering for bumblebees.
+pick b648f1a Fix propagating errors in findOrInitialize.
+</code></pre>
+
+<p>We want to meld the &#8220;fix&#8221; commit into the &#8220;propagate&#8221; commit since
+that&#8217;s how it should have been in the first place. So we move b648f1a up and
+squash it into the previous commit:</p>
+
+<p>pick 1a35285 Propagate errors the node.js way.
+squash b648f1a Fix propagating errors in findOrInitialize.
+pick 8789cd1 Non-destructive filtering for scales.</p>
+
+<p>After a successful rebase this is how the new log looks like:</p>
+
+<pre><code>% git log -3 --oneline
+73eed18 Non-destructive filtering for bumblebees. (9 seconds ago)
+1e63d17 Propagate errors the node.js way. (39 seconds ago)
+1b24891 Minor fixes in Bumblebee buzzing. (16 hours ago)
+</code></pre>
+
+<p>Note that the three commits we had before have now been nicely compacted
+into two, and the propagation commit is now consistent and fixed. It can
+now be pushed.</p>
+
+<p>ps. You might wonder what we use bumblebees for in our project. Actually
+they are faux. They serve to obfuscate real names in propietary code.
+I hope I can one day write code where bumblebees will be first-class
+citizens, though.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Balint Erdi</span></span>
+
+      
+
+
+
+
+<time datetime="2011-07-19 00:00:00 +0200" pubdate  updated >Jul 19<span>th</span>, 2011</time>
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html" data-via="baaz" data-counturl="http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html" >Tweet</a>
+  
+  
+  <g:plusone size="medium"></g:plusone>
+  
+</div>
+
+    
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread"><div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'codigoergosum';
+  var disqus_identifier = 'http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html';
+  var disqus_url = 'http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html';
+  //var disqus_developer = 1;
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside role=sidebar>
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/07/19/git-rebase-to-fix-your-local-commits.html">Git rebase to fix your local commits</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be.html">Don&#8217;t Tell Michelle, Facebook privacy as it should be</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/06/03/its-a-spec-not-a-test.html">It&#8217;s a spec, not a test</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/02/16/remove-trailing-whitespaces.html">Remove&#8217;em trailing whitespaces!</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/01/28/2010-is-the-year-of-the-javascript.html">2010 is the year of the Javascript</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("baaz", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-width="208px" data-show-count="false">Follow @baaz</a>
+  
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer><p>
+  Copyright &copy; 2011 - Balint Erdi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+</body>
+</html>

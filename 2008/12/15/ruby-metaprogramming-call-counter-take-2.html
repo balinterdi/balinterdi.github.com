@@ -1,0 +1,329 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Codigo Ergo Sum: Ruby metaprogramming: Call counter - Take 2</title>
+  <meta name="author" content="Balint Erdi">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="canonical" href="http://codigoergosum.com/2008/12/15/ruby-metaprogramming-call-counter-take-2.html"/>
+  <link href="/favicon.png" rel="shortcut icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="http://s3.amazonaws.com/ender-js/jeesh.min.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/codigoergosum" rel="alternate" title="Codigo Ergo Sum" type="application/atom+xml"/>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-12299794-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body  >
+  <header><hgroup>
+  <h1><a href="/">Codigo Ergo Sum</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role=navigation><ul role=subscription data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/codigoergosum" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+<form action="http://google.com/search" method="get">
+  <fieldset role="site-search">
+    <input type="hidden" name="q" value="site:codigoergosum.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+<ul role=main-navigation>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry">
+  
+  <header>
+    
+      <h1 class="entry-title">Ruby Metaprogramming: Call Counter - Take 2</h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2008-12-15 00:00:00 +0100" pubdate  updated >Dec 15<span>th</span>, 2008</time>
+
+
+</p>
+    
+  </header>
+
+
+<div class="entry-content"><p>So <a href="http://bucionrails.com/2008/12/06/exploring-ruby-metaprogramming-call-counter/" target="_blank">last time</a> I left you with the promise that I&#8217;d return with a solution so that the number of times a certain method was called is a class method which makes more sense than if it was an instance method. So here is the &#8220;improved version&#8221;:</p>
+
+<p><strong>call_counter.rb:</strong></p>
+
+<div>
+  <pre>
+    <code class='ruby'>module CallCounter
+        
+    def count_calls_to(method_name)
+      original_method = instance_method(method_name)
+            
+      unless class_variable_defined?(:@@call_counter):
+        class_variable_set(:@@call_counter, {})
+      end
+    
+      call_counter = class_variable_get(:@@call_counter)
+    
+      define_method(method_name) do |*args|
+        call_counter[method_name] ||= 0
+        call_counter[method_name] += 1
+        bound_original_method = original_method.bind(self)
+        bound_original_method.call(*args)
+      end
+
+      metaclass = class &lt;&lt; self; self; end
+      metaclass.instance_eval do
+
+        define_method(:calls_to) do |m|
+          call_counter[m].nil? ? 0 : call_counter[m]
+        end
+
+        define_method(:reset_counters) do
+          call_counter.each_key do |k|
+            call_counter[k] = 0
+          end
+        end
+    end
+    
+  end
+
+end</code>
+  </pre>
+</div>
+
+
+<p>What has changed is the introduction of a class variable that counts the calls on all watched methods and that the number of calls on each method is queried by calls_to(&lt;method name&gt;) instead of calls_to_&lt;method_name&gt;. A bit less magic.</p>
+
+<p><strong>call_foo.rb:</strong></p>
+
+<div>
+  <pre>
+    <code class='ruby'>require &quot;call_counter&quot;
+
+class CallFoo
+    
+  extend CallCounter
+
+  def foo; &quot;foo&quot;; end
+  def bar; &quot;bar&quot;; end
+
+  count_calls_to :foo
+  count_calls_to :bar
+
+end</code>
+  </pre>
+</div>
+
+
+<p><strong>(a snippet of) call_counter_spec.rb:</strong></p>
+
+<div>
+  <pre>
+    <code class='ruby'>require &quot;call_foo&quot;
+require &quot;spec&quot;
+    
+describe CallFoo do
+    
+  before(:each) do
+    @call_foo = CallFoo.new
+    CallFoo.reset_counters
+  end
+        
+  it &quot;should be able to count several methods' calls&quot; do
+    4.times { @call_foo.foo }
+    CallFoo.calls_to(:foo).should == 4
+    7.times { @call_foo.bar }
+    CallFoo.calls_to(:bar).should == 7
+  end
+    
+end</code>
+  </pre>
+</div>
+
+
+<p>I&#8217;m still not 100% content with this solution, the programming interface is nice now but it would be cool to get rid of the class variable somehow, possibly replacing it with closures. If you know how to achieve it, please leave a comment.</p>
+
+<p>ps. You can also get <a href="http://pastie.org/338877">the whole code in nice colored format</a> or <a href="http://pastie.org/338877.txt">the raw text version</a>.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Balint Erdi</span></span>
+
+      
+
+
+
+
+<time datetime="2008-12-15 00:00:00 +0100" pubdate  updated >Dec 15<span>th</span>, 2008</time>
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2008/12/15/ruby-metaprogramming-call-counter-take-2.html" data-via="baaz" data-counturl="http://codigoergosum.com/2008/12/15/ruby-metaprogramming-call-counter-take-2.html" >Tweet</a>
+  
+  
+  <g:plusone size="medium"></g:plusone>
+  
+</div>
+
+    
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread"><div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'codigoergosum';
+  var disqus_identifier = 'http://codigoergosum.com/2008/12/15/ruby-metaprogramming-call-counter-take-2.html';
+  var disqus_url = 'http://codigoergosum.com/2008/12/15/ruby-metaprogramming-call-counter-take-2.html';
+  //var disqus_developer = 1;
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside role=sidebar>
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/07/19/git-rebase-to-fix-your-local-commits.html">Git rebase to fix your local commits</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be.html">Don&#8217;t Tell Michelle, Facebook privacy as it should be</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/06/03/its-a-spec-not-a-test.html">It&#8217;s a spec, not a test</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/02/16/remove-trailing-whitespaces.html">Remove&#8217;em trailing whitespaces!</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/01/28/2010-is-the-year-of-the-javascript.html">2010 is the year of the Javascript</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("baaz", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-width="208px" data-show-count="false">Follow @baaz</a>
+  
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer><p>
+  Copyright &copy; 2011 - Balint Erdi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+</body>
+</html>

@@ -4,7 +4,7 @@
   <title>Codigo Ergo Sum</title>
   <link href="http://codigoergosum.com/atom.xml" rel="self"/>
   <link href="http://codigoergosum.com/"/>
-  <updated>2011-08-23T15:48:29+02:00</updated>
+  <updated>2011-08-23T15:54:03+02:00</updated>
   <id>http://codigoergosum.com/</id>
   <author>
     <name>Balint Erdi</name>
@@ -14,7 +14,7 @@
   
   <entry>
     <title>Git rebase to fix your local commits</title>
-    <link href="http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits/"/>
+    <link href="http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html"/>
     <updated>2011-07-19T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits</id>
     <content type="html">&lt;p&gt;Let's say you have the following three commits in your local repository:&lt;/p&gt;
@@ -90,7 +90,7 @@ citizens, though.&lt;/p&gt;
   
   <entry>
     <title>Don't Tell Michelle, Facebook privacy as it should be</title>
-    <link href="http://codigoergosum.com/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be/"/>
+    <link href="http://codigoergosum.com/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be.html"/>
     <updated>2010-10-10T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be</id>
     <content type="html">&lt;p&gt;It's been a quiet four months over here. My excuse is that I've been working. I joined a startup, &lt;a href=&quot;http://secretsaucepartners.com&quot;&gt;Secret Sauce Partners&lt;/a&gt; in June and we have started to build our first product a couple of weeks later. Now I am proud (actually, quite proud) to announce that we have released a first version last week.&lt;/p&gt;
@@ -117,7 +117,7 @@ citizens, though.&lt;/p&gt;
   
   <entry>
     <title>It's a spec, not a test</title>
-    <link href="http://codigoergosum.com/2010/06/03/its-a-spec-not-a-test/"/>
+    <link href="http://codigoergosum.com/2010/06/03/its-a-spec-not-a-test.html"/>
     <updated>2010-06-03T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2010/06/03/its-a-spec-not-a-test</id>
     <content type="html">&lt;p&gt;You must have heard the question several times on the Rails mailing list and different IRC channels: &quot;Should I test validates_uniqueness_of&quot;? The standard answer to that one is &quot;No, you definitely should not. It's Rails framework code, and it's already thoroughly tested. If you followed this path, you should also test whether objects are properly persisted in the database.&quot;&lt;/p&gt;
@@ -147,7 +147,7 @@ end&lt;/code&gt;
   
   <entry>
     <title>Remove'em trailing whitespaces!</title>
-    <link href="http://codigoergosum.com/2010/02/16/remove-trailing-whitespaces/"/>
+    <link href="http://codigoergosum.com/2010/02/16/remove-trailing-whitespaces.html"/>
     <updated>2010-02-16T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2010/02/16/remove-trailing-whitespaces</id>
     <content type="html">&lt;p&gt;Some of you reading this probably use TextMate. It is an excellent editor with two caveats. The first is that you can only see one file in the editing window (no screen split), the other is that there is no save hook. This latter gave me headaches since I can't stand any trailing whitespace in source code and the easiest solution would have been to run a script to remove those when the file is saved.&lt;/p&gt;
@@ -219,7 +219,7 @@ end&lt;/code&gt;
   
   <entry>
     <title>2010 is the year of the Javascript</title>
-    <link href="http://codigoergosum.com/2010/01/28/2010-is-the-year-of-the-javascript/"/>
+    <link href="http://codigoergosum.com/2010/01/28/2010-is-the-year-of-the-javascript.html"/>
     <updated>2010-01-28T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2010/01/28/2010-is-the-year-of-the-javascript</id>
     <content type="html">&lt;p&gt;If you've read the &lt;a href=&quot;http://pragprog.com/titles/tpp/the-pragmatic-programmer&quot;&gt;The Pragmatic Progammer - From Journeyman to Master&lt;/a&gt; (and if you have not, believe me, you should) you might remember one precious advice: learn a new programming language every year. So when the year draws close to its end (around April, that is) I really start thinking about which language should be the one for me next year.&lt;/p&gt;
@@ -242,7 +242,7 @@ end&lt;/code&gt;
   
   <entry>
     <title>Twuckoo 0.3.5 - With email notification</title>
-    <link href="http://codigoergosum.com/2010/01/26/twuckoo-0.3.5-with-email-notification/"/>
+    <link href="http://codigoergosum.com/2010/01/26/twuckoo-0.3.5-with-email-notification.html"/>
     <updated>2010-01-26T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2010/01/26/twuckoo-0.3.5-with-email-notification</id>
     <content type="html">&lt;p&gt;As some of you might know, I am running a &lt;a href=&quot;http://twitter.com/pragthinklearn&quot;&gt;few&lt;/a&gt; &lt;a href=&quot;http://twitter.com/daily_oblique&quot;&gt;twitter&lt;/a&gt; &lt;a href=&quot;http://twitter.com/wikipedia_tfa&quot;&gt;channels&lt;/a&gt; that use my brainchild, &lt;a href=&quot;http://github.com/balinterdi/twuckoo&quot;&gt;twuckoo&lt;/a&gt;, to periodically send a tweet.&lt;/p&gt;
@@ -277,7 +277,7 @@ end&lt;/code&gt;
   
   <entry>
     <title>My tech book list for 2009</title>
-    <link href="http://codigoergosum.com/2010/01/11/my-tech-book-list-for-2009/"/>
+    <link href="http://codigoergosum.com/2010/01/11/my-tech-book-list-for-2009.html"/>
     <updated>2010-01-11T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2010/01/11/my-tech-book-list-for-2009</id>
     <content type="html">&lt;p&gt;The title probably tells it all, below is the list of technical books I read in 2009. I am -unfortunately :)- not getting paid for any recommendation that lies herein.&lt;/p&gt;
@@ -324,7 +324,7 @@ end&lt;/code&gt;
   
   <entry>
     <title>i15r handles non-english source</title>
-    <link href="http://codigoergosum.com/2010/01/08/i15r-works-with-non-english-source/"/>
+    <link href="http://codigoergosum.com/2010/01/08/i15r-works-with-non-english-source.html"/>
     <updated>2010-01-08T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2010/01/08/i15r-works-with-non-english-source</id>
     <content type="html">&lt;p&gt;The other day thinking about how &lt;a href=&quot;http://github.com/balinterdi/i15r&quot;&gt;i15r&lt;/a&gt; could be improved I realized that there are times when the language of the non-internationalized site is not English (surprise, surprise). Add to this that lots of languages have &quot;special&quot; characters, characters that may not be properly found and replaced by the matchers. So I first learned the basics of &lt;a href=&quot;http://blog.grayproductions.net/articles/understanding_m17n&quot;&gt;how Ruby handles encodings&lt;/a&gt; (from &lt;a href=&quot;http://blog.grayproductions.net/&quot;&gt;James Edward Gray's&lt;/a&gt; excellent series) and then adjusted a few matchers to catch those special characters, too. (Note: one can't underestimate the utility of a spec suite that covers most of the code)&lt;/p&gt;
@@ -346,7 +346,7 @@ end&lt;/code&gt;
   
   <entry>
     <title>New year, new blog</title>
-    <link href="http://codigoergosum.com/2010/01/04/new-year-new-blog/"/>
+    <link href="http://codigoergosum.com/2010/01/04/new-year-new-blog.html"/>
     <updated>2010-01-04T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2010/01/04/new-year-new-blog</id>
     <content type="html">&lt;p&gt;I guess it all began with &lt;a href=&quot;http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html&quot;&gt;this blog post&lt;/a&gt;. I saw that there is another way for composing a blog post than typing it into a textarea with a WYSIWYG interface (which is, by the way, never really WYSIWYG). It also seemed a lot cooler, something a &quot;real hacker&quot; would prefer hands down. The decision to switch my blog over to a textarea-free motor has been subconsciously made the time I read that post but the implementation needed a year to be realized. I reckon the final push was to see how easy &lt;a href=&quot;http://lackac.hu/2009/11/19/blog-migralas.html&quot;&gt;the migration of the blog's content&lt;/a&gt; is.&lt;/p&gt;
@@ -391,7 +391,7 @@ end&lt;/code&gt;
   
   <entry>
     <title>i15r 0.3.1 is out - now with haml matchers!</title>
-    <link href="http://codigoergosum.com/2009/12/14/i15r-031-is-out-now-with-haml-matchers/"/>
+    <link href="http://codigoergosum.com/2009/12/14/i15r-031-is-out-now-with-haml-matchers.html"/>
     <updated>2009-12-14T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2009/12/14/i15r-031-is-out-now-with-haml-matchers</id>
     <content type="html">&lt;p&gt;I've just released a new version of the &lt;a href=&quot;http://github.com/balinterdi/i15r&quot;&gt;i15r gem&lt;/a&gt; which alleviates the tedious task of internationalizing a Rails site by finding the &quot;static&quot; texts and replacing them with I18n message strings.&lt;/p&gt;
@@ -402,7 +402,7 @@ end&lt;/code&gt;
   
   <entry>
     <title>Rubygems under the hood: hooking into require</title>
-    <link href="http://codigoergosum.com/2009/10/28/rubygems-under-the-hood-hooking-into-require/"/>
+    <link href="http://codigoergosum.com/2009/10/28/rubygems-under-the-hood-hooking-into-require.html"/>
     <updated>2009-10-28T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2009/10/28/rubygems-under-the-hood-hooking-into-require</id>
     <content type="html">&lt;p&gt;(See &lt;a href=&quot;http://bucionrails.com/2009/10/20/rubygems-under-the-hood-introduction/&quot;&gt;the introduction&lt;/a&gt; to the series.)&lt;/p&gt;
@@ -455,7 +455,7 @@ end&lt;/code&gt;
   
   <entry>
     <title>RubyGems under the hood: Introduction</title>
-    <link href="http://codigoergosum.com/2009/10/20/rubygems-under-the-hood-introduction/"/>
+    <link href="http://codigoergosum.com/2009/10/20/rubygems-under-the-hood-introduction.html"/>
     <updated>2009-10-20T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2009/10/20/rubygems-under-the-hood-introduction</id>
     <content type="html">&lt;p&gt;I am not sure about you, but one thing I keep bumping into while developing ruby applications is rubygem version conflicts. If you have ever come across &quot;can't activate activesupport (= 2.3.4, runtime) for [], already activated activesupport-2.3.3 for []&quot; type of errors, you might be sympathetic to the cause.&lt;/p&gt;
@@ -479,7 +479,7 @@ end&lt;/code&gt;
   
   <entry>
     <title>Cucumber meets Selenium meets Integrity</title>
-    <link href="http://codigoergosum.com/2009/09/25/cucumber-meets-selenium-meets-integrity/"/>
+    <link href="http://codigoergosum.com/2009/09/25/cucumber-meets-selenium-meets-integrity.html"/>
     <updated>2009-09-25T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2009/09/25/cucumber-meets-selenium-meets-integrity</id>
     <content type="html">&lt;p&gt;&lt;a href=&quot;http://martinfowler.com/articles/continuousIntegration.html&quot; title=&quot;Continuous Integration&quot;&gt;Continuous Integration&lt;/a&gt; (CI) is a basic building block of any project done in TDD style. In brief, having a CI server properly set up guarantees that developers can rest assured that the application passes all its tests and can thus be deployed at any moment. It does this by sending some kind of a warning if something is broken so it can be fixed immediately.&lt;/p&gt;
@@ -572,7 +572,7 @@ apt-get install xvfb&lt;/code&gt;
   
   <entry>
     <title>A prime example of not eating your own dog food</title>
-    <link href="http://codigoergosum.com/2009/07/14/a-prime-example-of-not-eating-your-own-dog-food/"/>
+    <link href="http://codigoergosum.com/2009/07/14/a-prime-example-of-not-eating-your-own-dog-food.html"/>
     <updated>2009-07-14T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2009/07/14/a-prime-example-of-not-eating-your-own-dog-food</id>
     <content type="html">&lt;p&gt;I realized how 20th century (plus boring and error-prone) it is to write one's invoices by hand. So I went looking for an invoicing application. My expectations were quite low: I wanted one which can be used from my MacBook, has some basic functions that cut down on typing (e.g a client &quot;database&quot;), has a decent design and UI, can make out invoices in different currencies and did not cost more than ~$100.&lt;/p&gt;
@@ -591,7 +591,7 @@ apt-get install xvfb&lt;/code&gt;
   
   <entry>
     <title>John Doe is dull: the importance of choosing good user names in tests</title>
-    <link href="http://codigoergosum.com/2009/07/12/john-doe-is-dull-the-importance-of-choosing-good-user-names-in-tests/"/>
+    <link href="http://codigoergosum.com/2009/07/12/john-doe-is-dull-the-importance-of-choosing-good-user-names-in-tests.html"/>
     <updated>2009-07-12T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2009/07/12/john-doe-is-dull-the-importance-of-choosing-good-user-names-in-tests</id>
     <content type="html">&lt;p&gt;We, developers, have to come up with user names all the time. In this glorious, pioneer era of TDD, more than ever we have to not only enter them into text fields but write them in test files that are part of the code and thus are clearly visible and permanent.&lt;/p&gt;
@@ -608,7 +608,7 @@ apt-get install xvfb&lt;/code&gt;
   
   <entry>
     <title>The hashtag (HRT) retweet bot gemified</title>
-    <link href="http://codigoergosum.com/2009/07/10/the-hashtag-hrt-retweet-bot-gemified/"/>
+    <link href="http://codigoergosum.com/2009/07/10/the-hashtag-hrt-retweet-bot-gemified.html"/>
     <updated>2009-07-10T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2009/07/10/the-hashtag-hrt-retweet-bot-gemified</id>
     <content type="html">&lt;p&gt;A very simple twitter bot that retweeted everything that was tagged by a certain tag was put together for Scotland on Rails '09. Then, &lt;a href=&quot;http://www.jaimeiniesta.com/&quot;&gt;Jaime Iniesta&lt;/a&gt; adapted it for Euruko '09. I then forked from his repository, made a few simplifications and minor improvements and DRY-d its configuration.&lt;/p&gt;
@@ -623,7 +623,7 @@ apt-get install xvfb&lt;/code&gt;
   
   <entry>
     <title>Pragmatic Thinking and Learning on Twitter</title>
-    <link href="http://codigoergosum.com/2009/07/03/pragmatic-thinking-and-learning-on-twitter/"/>
+    <link href="http://codigoergosum.com/2009/07/03/pragmatic-thinking-and-learning-on-twitter.html"/>
     <updated>2009-07-03T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2009/07/03/pragmatic-thinking-and-learning-on-twitter</id>
     <content type="html">&lt;p&gt;Some of you may be aware of my grandiose plans with my twitter mini-framework named &lt;a href=&quot;http://bucionrails.com/2009/06/22/twuckoo/&quot;&gt;twuckoo&lt;/a&gt;. For my part I am constantly thinking about -hopefully reasonable- ways that it could be used for the better of mankind :)&lt;/p&gt;
@@ -640,7 +640,7 @@ apt-get install xvfb&lt;/code&gt;
   
   <entry>
     <title>installing ruby on a linode slice</title>
-    <link href="http://codigoergosum.com/2009/07/02/installing-ruby-on-a-linode-slice/"/>
+    <link href="http://codigoergosum.com/2009/07/02/installing-ruby-on-a-linode-slice.html"/>
     <updated>2009-07-02T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2009/07/02/installing-ruby-on-a-linode-slice</id>
     <content type="html">&lt;p&gt;To be able to experiment freely and find a store for my &lt;a href=&quot;http://bucionrails.com/2009/06/22/twuckoo/&quot;&gt;twuckoos&lt;/a&gt; and other goodies I have recently purchased a Linode 360 slice and had Ubuntu 9.04 installed on it. Next thing was setting up ruby (ruby 1.8.6, to be precise).&lt;/p&gt;
@@ -751,7 +751,7 @@ $ sudo make install&lt;/pre&gt;
   
   <entry>
     <title>twuckoo - my twitter mini framework</title>
-    <link href="http://codigoergosum.com/2009/06/22/twuckoo-my-twitter-mini-framework/"/>
+    <link href="http://codigoergosum.com/2009/06/22/twuckoo-my-twitter-mini-framework.html"/>
     <updated>2009-06-22T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2009/06/22/twuckoo-my-twitter-mini-framework</id>
     <content type="html">&lt;p&gt;I am reading Andy Hunt's excellent Pragmatic Thinking and Learning book. There is a section about so called &quot;oblique strategies&quot;, short, mysterious phrases that exercise your mind and make you look at problems from another perspective (e.g &quot;repetition is a form of change&quot;).&lt;/p&gt;
@@ -779,7 +779,7 @@ $ sudo make install&lt;/pre&gt;
   
   <entry>
     <title>upstream or downstream?</title>
-    <link href="http://codigoergosum.com/2009/04/27/upstream-or-downstream/"/>
+    <link href="http://codigoergosum.com/2009/04/27/upstream-or-downstream.html"/>
     <updated>2009-04-27T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2009/04/27/upstream-or-downstream</id>
     <content type="html">&lt;p&gt;With the proliferation of &lt;a href=&quot;http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html&quot;&gt;middleware applications&lt;/a&gt; the mentions of upstream and downstream servers has intensified so I decided to get to the end of this and find out what exactly an upstream server is. I first looked up &lt;a href=&quot;http://en.wikipedia.org/wiki/Upstream_server&quot;&gt;wikipedia&lt;/a&gt;:&lt;/p&gt;

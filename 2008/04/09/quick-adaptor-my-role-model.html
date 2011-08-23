@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Codigo Ergo Sum</title>
+  <title>Codigo Ergo Sum: Quick adaptor - my role model</title>
   <meta name="author" content="Balint Erdi">
   
 
@@ -16,7 +16,7 @@
 
   
 
-  <link rel="canonical" href="http://codigoergosum.com/blog/page/6/index.html"/>
+  <link rel="canonical" href="http://codigoergosum.com/2008/04/09/quick-adaptor-my-role-model.html"/>
   <link href="/favicon.png" rel="shortcut icon" />
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -90,15 +90,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
-
-
-
-  <article>
-    
+      <div>
+<article class="hentry">
+  
   <header>
     
-      <h1 class="entry-title"><a href="/2008/04/09/quick-adaptor-my-role-model.html">Quick Adaptor - My Role Model</a></h1>
+      <h1 class="entry-title">Quick Adaptor - My Role Model</h1>
     
     
       <p class="meta">
@@ -114,7 +111,7 @@
   </header>
 
 
-  <div class="entry-content"><p>I returned two weeks ago from the fantastic <a href="http://www.euruko2008.org/">Euruko 2008 conference</a> in Prague dazzled by the outstanding presentations and the power of Ruby. It is hard to pick a favorite but I especially liked David Black&#8217;s &#8220;Per-Object Behavior in Ruby&#8221; (slides hopefully coming up) mainly because I am a sucker for metaprogramming and the true object-orientedness of Ruby in all its glory.</p>
+<div class="entry-content"><p>I returned two weeks ago from the fantastic <a href="http://www.euruko2008.org/">Euruko 2008 conference</a> in Prague dazzled by the outstanding presentations and the power of Ruby. It is hard to pick a favorite but I especially liked David Black&#8217;s &#8220;Per-Object Behavior in Ruby&#8221; (slides hopefully coming up) mainly because I am a sucker for metaprogramming and the true object-orientedness of Ruby in all its glory.</p>
 
 <p>One fundamental concept was the singleton class which I think I&#8217;ve finally understood from this session. His example was the OpenStruct class whose instances learn to respond to all messages sent to them (this is Smalltalk/Ruby parlance, we could also say they learn to handle method calls) instead of throwing a NoMethodError. So I thought a great way to gain an insight of how this works is to actually code that up myself. Here is what I got:</p>
 
@@ -239,34 +236,62 @@ end
 
 <p>ps. I have also taken a look at how Matz&#8217;s <a href="http://www.ruby-doc.org/stdlib/libdoc/ostruct/rdoc/index.html">OpenStruct class</a> accomplishes the same (well, much more :) ). It uses a table of fields where each new &#8220;member method&#8221; is defined. Nice.</p>
 </div>
+
+
   <footer>
-    <a rel="full-article" href="/2008/04/09/quick-adaptor-my-role-model.html">Read on &rarr;</a>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Balint Erdi</span></span>
+
+      
+
+
+
+
+<time datetime="2008-04-09 00:00:00 +0200" pubdate  updated >Apr 9<span>th</span>, 2008</time>
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2008/04/09/quick-adaptor-my-role-model.html" data-via="baaz" data-counturl="http://codigoergosum.com/2008/04/09/quick-adaptor-my-role-model.html" >Tweet</a>
+  
+  
+  <g:plusone size="medium"></g:plusone>
+  
+</div>
+
+    
   </footer>
+</article>
 
-
-  </article>
-
-<nav role="pagination">
-  <div>
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-    <a class="next" href="/blog/page/5/">Newer &rarr;</a>
-    
-  </div>
-</nav>
-
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread"><div id="disqus_thread"></div>
 <script type="text/javascript">
-    var disqus_shortname = 'codigoergosum';
-    (function () {
-      var s = document.createElement('script'); s.async = true;
-      s.type = 'text/javascript';
-      s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
-      (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-    }());
+  var disqus_shortname = 'codigoergosum';
+  var disqus_identifier = 'http://codigoergosum.com/2008/04/09/quick-adaptor-my-role-model.html';
+  var disqus_url = 'http://codigoergosum.com/2008/04/09/quick-adaptor-my-role-model.html';
+  //var disqus_developer = 1;
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
 </script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
+
 <aside role=sidebar>
   
     <section>
@@ -317,6 +342,7 @@ end
 
   
 </aside>
+
 
     </div>
   </div>

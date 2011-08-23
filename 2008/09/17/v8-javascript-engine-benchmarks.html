@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Codigo Ergo Sum: V8 javascript engine benchmarks</title>
+  <meta name="author" content="Balint Erdi">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="canonical" href="http://codigoergosum.com/2008/09/17/v8-javascript-engine-benchmarks.html"/>
+  <link href="/favicon.png" rel="shortcut icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="http://s3.amazonaws.com/ender-js/jeesh.min.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/codigoergosum" rel="alternate" title="Codigo Ergo Sum" type="application/atom+xml"/>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-12299794-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body  >
+  <header><hgroup>
+  <h1><a href="/">Codigo Ergo Sum</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role=navigation><ul role=subscription data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/codigoergosum" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+<form action="http://google.com/search" method="get">
+  <fieldset role="site-search">
+    <input type="hidden" name="q" value="site:codigoergosum.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+<ul role=main-navigation>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry">
+  
+  <header>
+    
+      <h1 class="entry-title">V8 Javascript Engine Benchmarks</h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2008-09-17 00:00:00 +0200" pubdate  updated >Sep 17<span>th</span>, 2008</time>
+
+
+</p>
+    
+  </header>
+
+
+<div class="entry-content"><p>A few weeks back when I read about <a href="http://www.google.com/googlebooks/chrome">Chrome</a> I became interested in V8, a javascript engine that Google integrated in their browser and that they claimed to be very fast due to the following reasons:</p>
+
+<ul>
+    <li><strong>Hidden class transitions</strong> that enable dynamic optimizations since objects will use the same (hidden) class</li>
+    <li><strong>generating machine code</strong> instead of interpreting the source code each time</li>
+    <li><strong>incremental garbage collection</strong> which reduces the time needed for the cleanup to milliseconds and eliminates &#8220;second long pauses&#8221;</li>
+</ul>
+
+
+<p>All that sounded very promising but as an engineer by profession it left me with a desire to find out how much faster all these features made V8 (and any browser that might use it). Even more so since I love running benchmarks and compare numbers. Well, maybe Google sensed that since they provided all the necessary tools to run these tests on the <a href="http://code.google.com/apis/v8/benchmarks.html">V8 benchmark page</a> and to run them very easily.</p>
+
+<p>There are 5 different algorithms in the testing suite exercising different qualities of the javascript engine. To be fair I closed all other tabs in browsers during the testing attempting to minimize operations that can have an effect on test performance. Also, the V8 tests were run from the command line so that might skew the results a bit towards V8. Anyyway, here are the results (numbers mean execution time so smaller is better):</p>
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>Richards</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>2072</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:7.33590733590734px;background-color:blue">&nbsp;</div></td><td>152</td></tr><tr><td>Shiretoko</td><td><div style="width:5.5984555984556px;background-color:green">&nbsp;</div></td><td>116</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:4.39189189189189px;background-color:yellow">&nbsp;</div></td><td>91</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>DeltaBlue</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1753</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:9.75470621791215px;background-color:blue">&nbsp;</div></td><td>171</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:7.24472333143183px;background-color:green">&nbsp;</div></td><td>127</td></tr><tr><td>Shiretoko</td><td><div style="width:7.01654306902453px;background-color:yellow">&nbsp;</div></td><td>123</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>Crypto</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1415</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:10.6007067137809px;background-color:blue">&nbsp;</div></td><td>150</td></tr><tr><td>Shiretoko</td><td><div style="width:10.6007067137809px;background-color:green">&nbsp;</div></td><td>150</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:9.54063604240283px;background-color:yellow">&nbsp;</div></td><td>135</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>RayTrace</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1021</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:22.7228207639569px;background-color:blue">&nbsp;</div></td><td>232</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:12.3408423114594px;background-color:green">&nbsp;</div></td><td>126</td></tr><tr><td>Shiretoko</td><td><div style="width:11.1655239960823px;background-color:yellow">&nbsp;</div></td><td>114</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>EarleyBoyer</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1933</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:16.9684428349715px;background-color:blue">&nbsp;</div></td><td>328</td></tr><tr><td>Shiretoko</td><td><div style="width:13.3988618727367px;background-color:green">&nbsp;</div></td><td>259</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:9.72581479565442px;background-color:yellow">&nbsp;</div></td><td>188</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>Score</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1589</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:10.3209565764632px;background-color:blue">&nbsp;</div></td><td>164</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:9.81749528005034px;background-color:green">&nbsp;</div></td><td>156</td></tr><tr><td>Shiretoko</td><td><div style="width:9.12523599748269px;background-color:yellow">&nbsp;</div></td><td>145</td></tr></table>
+
+
+<p>The superiority of V8 stunned me so much even to push me to ask whether all this is possible. Googe Chrome that uses V8 is on average (see Score) 10 times faster than all the other browsers (that pretty much flock together). I expected to find the speed of Firefox 3.1 (codename Shiretoko) close to that of Chrome but to my surprise it does not even surpass that of the other browsers. That made me a bit disappointed since I am a big Firefox fan.</p>
+
+<p>Can it be that these benchmarks are somehow tailored to show V8&#8217;s dominance? (like some political polls are skewed to give the &#8220;correct&#8221; answer). That this is not such a far-fetched idea is supported by Mozilla&#8217;s announcement that TraceMonkey, <a href="http://www.techcrunch.com/2008/09/03/mozilla-fights-back-with-new-firefox-benchmarks/">Firefox&#8217;s javascript engine will be 16-28% faster than V8</a>. And they have their own benchmarking solution, SunSpider to prove their point.</p>
+
+<p>So the life of javascript engine developers has got a lot harder. Not only they have to implement a fast engine but also a benchmarking system that shows there is nothing as fast as theirs!</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Balint Erdi</span></span>
+
+      
+
+
+
+
+<time datetime="2008-09-17 00:00:00 +0200" pubdate  updated >Sep 17<span>th</span>, 2008</time>
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2008/09/17/v8-javascript-engine-benchmarks.html" data-via="baaz" data-counturl="http://codigoergosum.com/2008/09/17/v8-javascript-engine-benchmarks.html" >Tweet</a>
+  
+  
+  <g:plusone size="medium"></g:plusone>
+  
+</div>
+
+    
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread"><div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'codigoergosum';
+  var disqus_identifier = 'http://codigoergosum.com/2008/09/17/v8-javascript-engine-benchmarks.html';
+  var disqus_url = 'http://codigoergosum.com/2008/09/17/v8-javascript-engine-benchmarks.html';
+  //var disqus_developer = 1;
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside role=sidebar>
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/07/19/git-rebase-to-fix-your-local-commits.html">Git rebase to fix your local commits</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be.html">Don&#8217;t Tell Michelle, Facebook privacy as it should be</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/06/03/its-a-spec-not-a-test.html">It&#8217;s a spec, not a test</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/02/16/remove-trailing-whitespaces.html">Remove&#8217;em trailing whitespaces!</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/01/28/2010-is-the-year-of-the-javascript.html">2010 is the year of the Javascript</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("baaz", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-width="208px" data-show-count="false">Follow @baaz</a>
+  
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer><p>
+  Copyright &copy; 2011 - Balint Erdi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+</body>
+</html>

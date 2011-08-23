@@ -1,0 +1,381 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Codigo Ergo Sum: My first DSL in Ruby</title>
+  <meta name="author" content="Balint Erdi">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="canonical" href="http://codigoergosum.com/2008/09/21/my-first-dsl-in-ruby.html"/>
+  <link href="/favicon.png" rel="shortcut icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="http://s3.amazonaws.com/ender-js/jeesh.min.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/codigoergosum" rel="alternate" title="Codigo Ergo Sum" type="application/atom+xml"/>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-12299794-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body  >
+  <header><hgroup>
+  <h1><a href="/">Codigo Ergo Sum</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role=navigation><ul role=subscription data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/codigoergosum" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+<form action="http://google.com/search" method="get">
+  <fieldset role="site-search">
+    <input type="hidden" name="q" value="site:codigoergosum.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+<ul role=main-navigation>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry">
+  
+  <header>
+    
+      <h1 class="entry-title">My First DSL in Ruby</h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2008-09-21 00:00:00 +0200" pubdate  updated >Sep 21<span>st</span>, 2008</time>
+
+
+</p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I read a <a href="http://www.artima.com/rubycs/articles/ruby_as_dsl.html">few</a> <a href="http://www.artima.com/rubycs/articles/ruby_as_dsl.html">posts</a> about how good fit Ruby is for building DSLs, Domain Specific Languages. Ever the curious I have been waiting for the opportunity to build a very simple one for a particular problem.</p>
+
+<p>Well, I did not have to wait very long (when you have a hammer everything looks like a nail). I needed a quick method which generates nice html graphs for <a href="http://bucionrails.com/2008/09/17/v8-javascript-engine-benchmarks/">my post about browser javascript engine benchmarking</a>. After spending a few minutes searching for a free tool (I did not want anything fluffy, just something very basic) I hit the nail in the head with my hammer. Only the nail was the generated HTML charts for my post and the hammer, (my desire to build) a DSL in Ruby.</p>
+
+<p>I would like to say it was difficult but in fact it was a piece of cake with Ruby (and armed with the knowledge of previous DSL builders). The solution is composed of the following three parts:</p>
+
+<ol>
+    <li>The DSL file which defines the charts</li>
+    <li>The interpreter which understands the definitions in the DSL file</li>
+    <li>The &#8220;controller&#8221; which just passes the data contained in the DSL file to the interpreter</li>
+</ol>
+
+
+<p>So let&#8217;s see each part separately:</p>
+
+<p><strong>browser_js_benchmarks.dsl (the DSL)</strong></p>
+
+<pre lang="ruby">
+chart "Score" do |c|
+    c.add "Safari 3.1.2" => 164
+    c.add "Firefox 3.0.1" => 156
+    c.add "Shiretoko" => 145
+    c.add "Google Chrome" => 1589
+end
+</pre>
+
+
+<p><strong>chart.rb (the interpreter)</strong></p>
+
+<pre lang="ruby">
+require "math_aux"
+
+class ChartDSL
+    
+    Template = %(<table border="0" cellspacing="5" cellpadding="5"><caption>%%CAPTION%%</caption>%%ITEMS%%</table>)
+    Background_colors = %w(red blue green yellow grey)
+    
+    attr_reader :values
+    def initialize
+        @charts = Array.new
+        @values = Hash.new
+    end
+    
+    def chart(name)     
+        @name = name
+        yield self
+        @charts.push(make_html)
+    end
+    
+    def add(name_and_value)
+        @values ||= Hash.new
+        @values.merge!(name_and_value)
+    end
+    
+    def load(filename)
+        # c = new
+        instance_eval(File.read(filename), filename)
+        write_output
+    end
+
+    def make_html
+        sorted_pairs = @values.sort_by { |v| - v[1] }
+        vals = sorted_pairs.map { |p| p[1] }
+        norm_values = MathAux::normalize(vals, 100.0)
+        html = Array.new
+        sorted_pairs.each_with_index do |pair, i|
+            name, value = pair
+            html.push(%Q(<tr><td>#{name}</td><td><div style="width:#{norm_values[i]}px;background-color:#{ChartDSL::Background_colors[i]}">&nbsp;</div></td><td>#{value}</td></tr>))
+        end
+        filled_chart = ChartDSL::Template.sub("%%CAPTION%%", @name)     
+        filled_chart.sub("%%ITEMS%%", html.join)
+    end
+    
+    def write_output
+        File.open("generated_charts.html", "w") do |f|
+            f.write(@charts)
+        end
+    end
+end
+
+</pre>
+
+
+<p><strong>chart_loader.rb (the controller)</strong></p>
+
+<pre lang="ruby">
+require "chart"
+class ChartLoader
+    def self.load_chart(dsl_filename)
+        c = ChartDSL.new
+        c.load(dsl_filename)
+    end
+end
+
+if __FILE__ == $0
+    ChartLoader.load_chart(ARGV[0])
+end
+</pre>
+
+
+<p>For the sake of completeness here is <strong>math_aux.rb</strong>:</p>
+
+<pre lang="ruby">
+module MathAux
+    def self.normalize(numbers, to=1.0)
+        norm_rat = to / numbers.max
+        numbers.map { |n| n * norm_rat }
+    end
+end
+</pre>
+
+
+<p>To generate the charts, one only has to run &#8220;the interpreter&#8221; with a dsl file as the first parameter:</p>
+
+<pre lang="ruby">
+ruby chart_loader.rb browser_js_benchmarks.dsl
+</pre>
+
+
+<p>The output is called generated_charts.html and contains the following:</p>
+
+<pre lang="xml">
+<table border="0" cellspacing="5" cellpadding="5">
+<caption>Score</caption>
+ <tr>
+  <td>Google Chrome</td>
+  <td><div style="width:100.0px;background-color:red">&nbsp;</div></td>
+  <td>1589</td>
+ </tr>
+ <tr>
+  <td>Safari 3.1.2</td>
+  <td><div style="width:10.3209565764632px;background-color:blue">&nbsp;</div</td>  <td>164</td></tr>
+ <tr>
+  <td>Firefox 3.0.1</td>
+  <td><div style="width:9.81749528005034px;background-color:green">&nbsp;</div</td> <td>156</td>
+</tr>
+<tr>
+ <td>Shiretoko</td>
+ <td><div style="width:9.12523599748269px;background-color:yellow">&nbsp;</div</td><td>145</td>
+</tr>
+</table>
+</pre>
+
+
+<p>Note that in ~30-40 code lines we have a &#8220;language interpreter&#8221;, one that understands the chart DSL and spits out some HTML code that represents the charts. Of course there is plenty of room for improvement, like having the same color denote the same actor between charts (Firefox 3.0.1 should always be the blue bar, for example, unlike in <a href="http://bucionrails.com/2008/09/17/v8-javascript-engine-benchmarks/">my post</a>), using a better solution for the template strings, adding the possibility of pie charts (although &#8220;standard&#8221; HTML is not very flexible on different chart forms, one would probably have to use a <a href="http://developer.mozilla.org/en/Canvas_tutorial">&lt;canvas&gt; </a>), and so on.</p>
+
+<p>The essential thing is that it works and it does what the particular situation demanded. It took me a couple of interrupted hours plus the time to read through two related posts which is not that much given that I now have a &#8220;tool&#8221; (once again, I feel a bit conceited to call it that) which I can use for my future posts whenever the need arises. A custom hammer for my custom nail.</p>
+
+<p>(If you care, feel free to download, use and modify the source code located <a href="http://github.com/balinterdi/chart-maker-dsl/tree/master">here</a>)</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Balint Erdi</span></span>
+
+      
+
+
+
+
+<time datetime="2008-09-21 00:00:00 +0200" pubdate  updated >Sep 21<span>st</span>, 2008</time>
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2008/09/21/my-first-dsl-in-ruby.html" data-via="baaz" data-counturl="http://codigoergosum.com/2008/09/21/my-first-dsl-in-ruby.html" >Tweet</a>
+  
+  
+  <g:plusone size="medium"></g:plusone>
+  
+</div>
+
+    
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread"><div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'codigoergosum';
+  var disqus_identifier = 'http://codigoergosum.com/2008/09/21/my-first-dsl-in-ruby.html';
+  var disqus_url = 'http://codigoergosum.com/2008/09/21/my-first-dsl-in-ruby.html';
+  //var disqus_developer = 1;
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside role=sidebar>
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/07/19/git-rebase-to-fix-your-local-commits.html">Git rebase to fix your local commits</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be.html">Don&#8217;t Tell Michelle, Facebook privacy as it should be</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/06/03/its-a-spec-not-a-test.html">It&#8217;s a spec, not a test</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/02/16/remove-trailing-whitespaces.html">Remove&#8217;em trailing whitespaces!</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2010/01/28/2010-is-the-year-of-the-javascript.html">2010 is the year of the Javascript</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("baaz", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-width="208px" data-show-count="false">Follow @baaz</a>
+  
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer><p>
+  Copyright &copy; 2011 - Balint Erdi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+</body>
+</html>
