@@ -208,7 +208,7 @@
     </url>
     <url>
         <loc>http://codigoergosum.com/2010/01/08/i15r-works-with-non-english-source.html</loc>
-        <lastmod>2011-08-18T00:16:59+02:00</lastmod>
+        <lastmod>2011-09-05T22:03:05+02:00</lastmod>
     </url>
     <url>
         <loc>http://codigoergosum.com/2010/01/11/my-tech-book-list-for-2009.html</loc>
@@ -216,7 +216,7 @@
     </url>
     <url>
         <loc>http://codigoergosum.com/2010/01/26/twuckoo-0.3.5-with-email-notification.html</loc>
-        <lastmod>2011-08-18T00:16:59+02:00</lastmod>
+        <lastmod>2011-09-05T22:04:02+02:00</lastmod>
     </url>
     <url>
         <loc>http://codigoergosum.com/2010/01/28/2010-is-the-year-of-the-javascript.html</loc>
@@ -224,11 +224,11 @@
     </url>
     <url>
         <loc>http://codigoergosum.com/2010/02/16/remove-trailing-whitespaces.html</loc>
-        <lastmod>2011-08-18T00:16:59+02:00</lastmod>
+        <lastmod>2011-09-05T22:01:48+02:00</lastmod>
     </url>
     <url>
         <loc>http://codigoergosum.com/2010/06/03/its-a-spec-not-a-test.html</loc>
-        <lastmod>2011-08-18T00:16:59+02:00</lastmod>
+        <lastmod>2011-09-05T21:56:43+02:00</lastmod>
     </url>
     <url>
         <loc>
@@ -238,14 +238,18 @@
     </url>
     <url>
         <loc>http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html</loc>
-        <lastmod>2011-08-18T00:17:31+02:00</lastmod>
+        <lastmod>2011-09-05T21:55:10+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://codigoergosum.com/2011/09/05/powered-by-octopress.html</loc>
+        <lastmod>2011-09-05T22:06:37+02:00</lastmod>
     </url>
     <url>
         <loc>http://codigoergosum.com/blog/archives/</loc>
-        <lastmod>2011-08-18T00:49:35+02:00</lastmod>
+        <lastmod>2011-09-05T22:06:37+02:00</lastmod>
     </url>
     <url>
         <loc>http://codigoergosum.com/</loc>
-        <lastmod>2011-08-18T00:49:35+02:00</lastmod>
+        <lastmod>2011-09-05T22:06:37+02:00</lastmod>
     </url>
 </urlset>

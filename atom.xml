@@ -4,7 +4,7 @@
   <title>Codigo Ergo Sum</title>
   <link href="http://codigoergosum.com/atom.xml" rel="self"/>
   <link href="http://codigoergosum.com/"/>
-  <updated>2011-08-23T15:54:03+02:00</updated>
+  <updated>2011-09-05T22:06:44+02:00</updated>
   <id>http://codigoergosum.com/</id>
   <author>
     <name>Balint Erdi</name>
@@ -13,17 +13,47 @@
 
   
   <entry>
+    <title>Powered by Octopress</title>
+    <link href="http://codigoergosum.com/2011/09/05/powered-by-octopress.html"/>
+    <updated>2011-09-05T21:22:00+02:00</updated>
+    <id>http://codigoergosum.com/2011/09/05/powered-by-octopress</id>
+    <content type="html">&lt;p&gt;&lt;a href=&quot;http://octopress.org/&quot;&gt;Octopress&lt;/a&gt; is a blogging engine on top of Jekyll. It got my attention
+since it provides themes and a layout that looks great on mobile
+devices, too.&lt;/p&gt;
+
+&lt;p&gt;I had been playing with the idea to do my own simplistic theming long enough
+to realize that I would never do it. The other feature I like is its plugin system:
+some I'll use right away (e.g Github style codeblock) but I also like
+the idea that I can write a plugin for any specific need that might
+arise later.&lt;/p&gt;
+
+&lt;p&gt;I had had my blog on Jekyll so migration was not really hard. I hit a
+few minor roadblocks on the way but &lt;a href=&quot;http://octopress.org/docs/&quot;&gt;documentation&lt;/a&gt; is great and the author,
+Brandon Mathis was really helpful on the &lt;a href=&quot;https://convore.com/octopress/&quot;&gt;support forum&lt;/a&gt; so
+I could eventually sort them out.&lt;/p&gt;
+
+&lt;p&gt;If you like to &lt;a href=&quot;http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html&quot;&gt;blog like a hacker&lt;/a&gt;, want to own your
+content and don't want to be bothered with styling, I encourage you to
+join &lt;a href=&quot;https://github.com/imathis/octopress/wiki/Octopress-Sites&quot;&gt;the squid team&lt;/a&gt;.&lt;/p&gt;
+</content>
+  </entry>
+  
+  <entry>
     <title>Git rebase to fix your local commits</title>
     <link href="http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html"/>
     <updated>2011-07-19T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits</id>
     <content type="html">&lt;p&gt;Let's say you have the following three commits in your local repository:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;% git log -3 --oneline
-b648f1a Fix propagating errors in findOrInitialize. (28 seconds ago)
-8789cd1 Non-destructive filtering for bumblebees. (12 hours ago)
-1a35285 Propagate errors the node.js way. (14 hours ago)
-&lt;/code&gt;&lt;/pre&gt;
+&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;span class='line'&gt;2&lt;/span&gt;
+&lt;span class='line'&gt;3&lt;/span&gt;
+&lt;span class='line'&gt;4&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;% git log -3 --oneline
+&lt;/div&gt;&lt;div class='line'&gt;b648f1a Fix propagating errors in findOrInitialize. (28 seconds ago)
+&lt;/div&gt;&lt;div class='line'&gt;8789cd1 Non-destructive filtering for bumblebees. (12 hours ago)
+&lt;/div&gt;&lt;div class='line'&gt;1a35285 Propagate errors the node.js way. (14 hours ago)&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+
 
 &lt;p&gt;The last commit, b648f1a conceptually belongs to the first one, 1a35285.
 It only came later because say you haven't run the tests before
@@ -34,9 +64,11 @@ there is: interactive rebase.&lt;/p&gt;
 
 &lt;p&gt;The syntax of the git-rebase is the following:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;git rebase [-i | --interactive] [options] [--onto &amp;lt;newbase&amp;gt;]
-             &amp;lt;upstream&amp;gt; [&amp;lt;branch&amp;gt;]
-&lt;/code&gt;&lt;/pre&gt;
+&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;span class='line'&gt;2&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;git rebase [-i | --interactive] [options] [--onto &amp;lt;newbase&gt;]
+&lt;/div&gt;&lt;div class='line'&gt;             &amp;lt;upstream&gt; [&amp;lt;branch&gt;]&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+
 
 &lt;p&gt;What happens when you do git rebase is that the commits that are on the current
 branch but are not in upstream are saved. The current branch is reset to
@@ -50,32 +82,44 @@ book&lt;/a&gt;)&lt;/p&gt;
 
 &lt;p&gt;This can be used to achieve what we want:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;% git rebase -i HEAD~3
-&lt;/code&gt;&lt;/pre&gt;
+&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;% git rebase -i HEAD~3&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+
 
 &lt;p&gt;Since the commits that are on the current branch but not on the commit
 three commits from here are the last three commits, here is what we get:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;pick 1a35285 Propagate errors the node.js way.
-pick 8789cd1 Non-destructive filtering for bumblebees.
-pick b648f1a Fix propagating errors in findOrInitialize.
-&lt;/code&gt;&lt;/pre&gt;
+&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;span class='line'&gt;2&lt;/span&gt;
+&lt;span class='line'&gt;3&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;pick 1a35285 Propagate errors the node.js way.
+&lt;/div&gt;&lt;div class='line'&gt;pick 8789cd1 Non-destructive filtering for bumblebees.
+&lt;/div&gt;&lt;div class='line'&gt;pick b648f1a Fix propagating errors in findOrInitialize.&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+
 
 &lt;p&gt;We want to meld the &quot;fix&quot; commit into the &quot;propagate&quot; commit since
 that's how it should have been in the first place. So we move b648f1a up and
 squash it into the previous commit:&lt;/p&gt;
 
-&lt;p&gt;pick 1a35285 Propagate errors the node.js way.
-squash b648f1a Fix propagating errors in findOrInitialize.
-pick 8789cd1 Non-destructive filtering for scales.&lt;/p&gt;
+&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;span class='line'&gt;2&lt;/span&gt;
+&lt;span class='line'&gt;3&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;pick 1a35285 Propagate errors the node.js way.
+&lt;/div&gt;&lt;div class='line'&gt;squash b648f1a Fix propagating errors in findOrInitialize.
+&lt;/div&gt;&lt;div class='line'&gt;pick 8789cd1 Non-destructive filtering for scales.&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+
 
 &lt;p&gt;After a successful rebase this is how the new log looks like:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;% git log -3 --oneline
-73eed18 Non-destructive filtering for bumblebees. (9 seconds ago)
-1e63d17 Propagate errors the node.js way. (39 seconds ago)
-1b24891 Minor fixes in Bumblebee buzzing. (16 hours ago)
-&lt;/code&gt;&lt;/pre&gt;
+&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;span class='line'&gt;2&lt;/span&gt;
+&lt;span class='line'&gt;3&lt;/span&gt;
+&lt;span class='line'&gt;4&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;% git log -3 --oneline
+&lt;/div&gt;&lt;div class='line'&gt;73eed18 Non-destructive filtering for bumblebees. (9 seconds ago)
+&lt;/div&gt;&lt;div class='line'&gt;1e63d17 Propagate errors the node.js way. (39 seconds ago)
+&lt;/div&gt;&lt;div class='line'&gt;1b24891 Minor fixes in Bumblebee buzzing. (16 hours ago)&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+
 
 &lt;p&gt;Note that the three commits we had before have now been nicely compacted
 into two, and the propagation commit is now consistent and fixed. It can
@@ -126,17 +170,22 @@ citizens, though.&lt;/p&gt;
 
 &lt;p&gt;That, in turn, comes down to tests vs. specs (short for specifications) and this is again an opportunity for specs to shine. If you write specs instead of tests (or, to put it in a more mind-warping way: if your tests are actually specs), then the above question is a no-brainer: it's part of the specification that no two users can have the same email address, so you must have a spec for it:&lt;/p&gt;
 
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='ruby'&gt;describe User do
-  it &amp;quot;has a unique email address&amp;quot; do
-    Factory(:user, :email =&amp;gt; &amp;quot;jeff@topnotch.com&amp;quot;)
-    lambda { Factory(:user, :email =&amp;gt; &amp;quot;jeff@topnotch.com&amp;quot;) }.should
-     raise_error(ActiveRecord::RecordInvalid)
-  end
-end&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;user_spec.rb &lt;/span&gt;&lt;/figcaption&gt;
+ &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;span class='line'&gt;2&lt;/span&gt;
+&lt;span class='line'&gt;3&lt;/span&gt;
+&lt;span class='line'&gt;4&lt;/span&gt;
+&lt;span class='line'&gt;5&lt;/span&gt;
+&lt;span class='line'&gt;6&lt;/span&gt;
+&lt;span class='line'&gt;7&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='rb'&gt;&lt;div class='line'&gt;&lt;span class=&quot;n&quot;&gt;describe&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;User&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;  &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;has a unique email address&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;no&quot;&gt;Factory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:email&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;jeff@topnotch.com&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;nb&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Factory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:email&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;jeff@topnotch.com&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;should&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;     &lt;span class=&quot;n&quot;&gt;raise_error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ActiveRecord&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;RecordInvalid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
 
 
 &lt;p&gt;On the other hand, if you stick with calling your tests tests (how orthodox! ;) ) then not only you have to think (which consumes a lot of resources), but you can also come to the wrong conclusion and emit a strong business requirement from your test suite. And then you might not remember to have the implementation for it after modifying the code for whatever reason. And then bad things might happen.&lt;/p&gt;
@@ -154,61 +203,76 @@ end&lt;/code&gt;
 
 &lt;p&gt;Without further ado I'll paste my solution below. Obviously this is not a difficult task to accomplish so the goal is to share not to show off. I use Git for SCM and the following solution parses out the files that have been modified and runs the whitespace eraser script for those. If you use something else (why do you?) you should obviously change the first building block:&lt;/p&gt;
 
-&lt;p&gt;parse_modified_files_from_git_status.rb&lt;/p&gt;
-
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='ruby'&gt;#!/usr/bin/env ruby -wn
-modified_file_pattern = /^#\s+(?:modified|new file):\s+(.*)$/
-puts $1  if modified_file_pattern =~ $_&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
-
-
-&lt;p&gt;rm_trailing_whitespace.rb&lt;/p&gt;
-
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='ruby'&gt;#!/usr/bin/env ruby -wn
-$:.unshift(File.dirname(__FILE__))
-
-require &amp;quot;trailing_whitespace_eraser&amp;quot;
-TrailingWhiteSpaceEraser.rm_trailing_whitespace!($_)&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;parse_modified_files_from_git_status.rb &lt;/span&gt;&lt;/figcaption&gt;
+ &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;span class='line'&gt;2&lt;/span&gt;
+&lt;span class='line'&gt;3&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='rb'&gt;&lt;div class='line'&gt;&lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env ruby -wn&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;&lt;span class=&quot;n&quot;&gt;modified_file_pattern&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;/^#\s+(?:modified|new file):\s+(.*)$/&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;&lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;vg&quot;&gt;$1&lt;/span&gt;  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;modified_file_pattern&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=~&lt;/span&gt; &lt;span class=&quot;vg&quot;&gt;$_&lt;/span&gt;
+&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
 
 
-&lt;p&gt;trailing_whitespace_eraser.rb&lt;/p&gt;
 
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='ruby'&gt;class TrailingWhiteSpaceEraser
-  FILE_TYPES = [&amp;quot;rb&amp;quot;, &amp;quot;feature&amp;quot;, &amp;quot;yml&amp;quot;, &amp;quot;erb&amp;quot;, &amp;quot;haml&amp;quot;]
 
-  def self.rm_trailing_whitespace_from_file!(file)
-    trimmed = File.readlines(file).map do |line|
-      line.gsub(/[\t ]+$/, &amp;quot;&amp;quot;)
-    end
-    open(file, &amp;quot;w&amp;quot;) { |f| f.write(trimmed) }
-  end
+&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;rm_trailing_whitespace.rb &lt;/span&gt;&lt;/figcaption&gt;
+ &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;span class='line'&gt;2&lt;/span&gt;
+&lt;span class='line'&gt;3&lt;/span&gt;
+&lt;span class='line'&gt;4&lt;/span&gt;
+&lt;span class='line'&gt;5&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='rb'&gt;&lt;div class='line'&gt;&lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env ruby -wn&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;&lt;span class=&quot;vg&quot;&gt;$:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unshift&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dirname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;__FILE__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;
+&lt;/div&gt;&lt;div class='line'&gt;&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;trailing_whitespace_eraser&amp;quot;&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;&lt;span class=&quot;no&quot;&gt;TrailingWhiteSpaceEraser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rm_trailing_whitespace!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;vg&quot;&gt;$_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
 
-  def self.rm_trailing_whitespace!(root)
-    root = File.expand_path(root)
-    files = File.directory?(root) ? Dir.glob(&amp;quot;#{root}/**/*.{#{FILE_TYPES.join(',')}}&amp;quot;) : [root]
-    files.each { |file| rm_trailing_whitespace_from_file!(file.chomp) }
-  end
-end&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+
+
+
+&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;trailing_whitespace_eraser.rb &lt;/span&gt;&lt;/figcaption&gt;
+ &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;span class='line'&gt;2&lt;/span&gt;
+&lt;span class='line'&gt;3&lt;/span&gt;
+&lt;span class='line'&gt;4&lt;/span&gt;
+&lt;span class='line'&gt;5&lt;/span&gt;
+&lt;span class='line'&gt;6&lt;/span&gt;
+&lt;span class='line'&gt;7&lt;/span&gt;
+&lt;span class='line'&gt;8&lt;/span&gt;
+&lt;span class='line'&gt;9&lt;/span&gt;
+&lt;span class='line'&gt;10&lt;/span&gt;
+&lt;span class='line'&gt;11&lt;/span&gt;
+&lt;span class='line'&gt;12&lt;/span&gt;
+&lt;span class='line'&gt;13&lt;/span&gt;
+&lt;span class='line'&gt;14&lt;/span&gt;
+&lt;span class='line'&gt;15&lt;/span&gt;
+&lt;span class='line'&gt;16&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='rb'&gt;&lt;div class='line'&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;TrailingWhiteSpaceEraser&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;  &lt;span class=&quot;no&quot;&gt;FILE_TYPES&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;rb&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;feature&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;yml&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;erb&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;haml&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;
+&lt;/div&gt;&lt;div class='line'&gt;  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;rm_trailing_whitespace_from_file!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;n&quot;&gt;trimmed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;readlines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;      &lt;span class=&quot;n&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gsub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/[\t ]+$/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;nb&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;w&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;trimmed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;
+&lt;/div&gt;&lt;div class='line'&gt;  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;rm_trailing_whitespace!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expand_path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;n&quot;&gt;files&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;directory?&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/**/*.{&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;FILE_TYPES&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;,&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;}&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;n&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rm_trailing_whitespace_from_file!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chomp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/div&gt;&lt;div class='line'&gt;&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
 
 
 &lt;p&gt;And then you run it by typing:&lt;/p&gt;
 
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='bash'&gt;git status | parse_modified_files_from_git_status.rb | rm_trailing_whitespace.rb&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;rtwsp.sh &lt;/span&gt;&lt;/figcaption&gt;
+ &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='sh'&gt;&lt;div class='line'&gt;git status | parse_modified_files_from_git_status.rb | rm_trailing_whitespace.rb
+&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
 
 
 &lt;p&gt;If you decide to use this, it is more convenient to &lt;a href=&quot;http://gist.github.com/raw/305654/568290aa63ee3b0b3748b5041654f94ce45f4e5b/erase_trailing_whitespace.rb&quot;&gt;download the raw source&lt;/a&gt;&lt;/p&gt;
@@ -253,20 +317,18 @@ end&lt;/code&gt;
 
 &lt;p&gt;To install it, add &lt;a href=&quot;http://gemcutter.org&quot;&gt;gemcutter&lt;/a&gt; to the list of gem sources if you haven't already:&lt;/p&gt;
 
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='bash'&gt;gem source --add http://gemcutter.org&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;install.sh &lt;/span&gt;&lt;/figcaption&gt;
+ &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='sh'&gt;&lt;div class='line'&gt;gem &lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt; --add http://gemcutter.org
+&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
 
 
 &lt;p&gt;And install twuckoo:&lt;/p&gt;
 
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='bash'&gt;gem install twuckoo&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;install.sh &lt;/span&gt;&lt;/figcaption&gt;
+ &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='sh'&gt;&lt;div class='line'&gt;gem install twuckoo
+&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
 
 
 &lt;p&gt;You might be thinking that it would be more straightforward to have the program replenish itself so that no intervention from the part of the developer is needed. And you would be right, this could be a task for the next version. I still think it is a good idea to send a notification so the (wo)man in charge knows it happened.&lt;/p&gt;
@@ -333,11 +395,10 @@ end&lt;/code&gt;
 
 &lt;p&gt;So if you think this is a valuable addition or just have not tried i15r yet, go get it:&lt;/p&gt;
 
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='bash'&gt;gem install i15r --source http://gemcutter.org&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;install.sh &lt;/span&gt;&lt;/figcaption&gt;
+ &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='sh'&gt;&lt;div class='line'&gt;gem install i15r --source http://gemcutter.org
+&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
 
 
 
@@ -774,49 +835,6 @@ $ sudo make install&lt;/pre&gt;
 &lt;p&gt;Once more, I encourage you to scan through &lt;a href=&quot;http://github.com/balinterdi/twuckoo/&quot;&gt;the README&lt;/a&gt;, devise your own module and let me know about it. Any feedback is very welcome.&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Note:&lt;/em&gt; For my Hungarian-speaking readers, I gave a &lt;a href=&quot;http://docs.google.com/Presentation?id=dccxt9fm_3g8nf5fm5&quot;&gt;lightning talk about twuckoo&lt;/a&gt; at the latest budapest.rb meetup.&lt;/p&gt;
-</content>
-  </entry>
-  
-  <entry>
-    <title>upstream or downstream?</title>
-    <link href="http://codigoergosum.com/2009/04/27/upstream-or-downstream.html"/>
-    <updated>2009-04-27T00:00:00+02:00</updated>
-    <id>http://codigoergosum.com/2009/04/27/upstream-or-downstream</id>
-    <content type="html">&lt;p&gt;With the proliferation of &lt;a href=&quot;http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html&quot;&gt;middleware applications&lt;/a&gt; the mentions of upstream and downstream servers has intensified so I decided to get to the end of this and find out what exactly an upstream server is. I first looked up &lt;a href=&quot;http://en.wikipedia.org/wiki/Upstream_server&quot;&gt;wikipedia&lt;/a&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-In &lt;a title=&quot;Computer networking&quot; href=&quot;http://en.wikipedia.org/wiki/Computer_networking&quot;&gt;computer networking&lt;/a&gt;, &lt;strong&gt;upstream server&lt;/strong&gt; refers to a &lt;a title=&quot;Server (computing)&quot; href=&quot;http://en.wikipedia.org/wiki/Server_(computing)&quot;&gt;server&lt;/a&gt; that provides service to another server. In other words, upstream server is a server that is located higher in the &lt;a title=&quot;Hierarchy&quot; href=&quot;http://en.wikipedia.org/wiki/Hierarchy&quot;&gt;hierarchy&lt;/a&gt; of servers.
-&lt;/blockquote&gt;
-
-
-&lt;p&gt;Ok, so based on this simplistic definition, a sketch of a request's route to the application server and the response back can be illustrated like this:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://bucionrails.com/wp-content/uploads/2009/04/request-stack.jpg&quot; border=&quot;0&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;In this drawing, the middleware is an upstream server to the underlying application since it provides a service to it (be it caching, url mapping, exception handling and &lt;a href=&quot;http://github.com/rack/rack-contrib/tree/master&quot;&gt;plenty of others&lt;/a&gt;).&lt;/p&gt;
-
-&lt;p&gt;So now with my definition established, I was looking for examples in the wild that support it. &lt;a href=&quot;http://mwrc2009.confreaks.com/13-mar-2009-11-05-in-a-world-of-middleware-who-needs-monolithic-applications-jon-crosby.html&quot;&gt;Jon Crosby's excellent presentation&lt;/a&gt; at the MountainWest Ruby Conference used upstream in this context as far as I remember. Check one.&lt;/p&gt;
-
-&lt;p&gt;Browsing the source code of &lt;a href=&quot;http://github.com/rtomayko/rack-cache/tree/master&quot;&gt;rack-cache&lt;/a&gt; -which, by the way, I strongly encourage you to do if you want to understand caching (better) or just like the look of clean Ruby code- I realized Ryan Tomayko's definition of upstream coincides with the above one since he uses downstream in the code to refer to the component/application below the rack-cache component. Check two.&lt;/p&gt;
-
-&lt;p&gt;I recently set up an nginx web server as a front end server to a mongrel cluster that runs a Rails application. Ok, so in this case, the nginx server must be the upstream server since requests hit there first and then are passed to the mongrels. One must hear the sound of collapse of cards in my head when I saw the following &lt;a href=&quot;http://wiki.nginx.org/NginxHttpUpstreamModule&quot;&gt;nginx directive&lt;/a&gt;:&lt;/p&gt;
-
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='bash'&gt;upstream production_mongrels {
-  server 127.0.0.1:8000;
-  server 127.0.0.1:8001;
-  server 127.0.0.1:8002;
-}&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
-
-
-&lt;p&gt;Hmm, what? Nginx is above the component it provides a load-balancing service to so by any -ok, by my- definition the directive should say &quot;downstream&quot; and not &quot;upstream&quot;.&lt;/p&gt;
-
-&lt;p&gt;I realize that the request arrow on the diagram moving from top to bottom is a matter of convention and that it probably correlates with the fact that most languages write from the top to the bottom. Nevertheless, as far as I know Nginx is made by a Russian guy and Russians write top to bottom, too, so he should still use &quot;downstream&quot; for the directive, now shouldn't he? Or did he simply start to sketch up boxes and arrows from bottom to top for the sake of it when designing his web server?&lt;/p&gt;
-
-&lt;p&gt;Summing up, I think the above described convention is the common one but since it is not standardized there will always be people and software that uses it the other way around. I am not overly confident though, so please tell me about your definition or just point to examples which support or contradict mine.&lt;/p&gt;
 </content>
   </entry>
   

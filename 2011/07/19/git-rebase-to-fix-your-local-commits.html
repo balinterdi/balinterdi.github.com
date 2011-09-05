@@ -113,11 +113,15 @@
 
 <div class="entry-content"><p>Let&#8217;s say you have the following three commits in your local repository:</p>
 
-<pre><code>% git log -3 --oneline
-b648f1a Fix propagating errors in findOrInitialize. (28 seconds ago)
-8789cd1 Non-destructive filtering for bumblebees. (12 hours ago)
-1a35285 Propagate errors the node.js way. (14 hours ago)
-</code></pre>
+<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
+<span class='line'>2</span>
+<span class='line'>3</span>
+<span class='line'>4</span>
+</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>% git log -3 --oneline
+</div><div class='line'>b648f1a Fix propagating errors in findOrInitialize. (28 seconds ago)
+</div><div class='line'>8789cd1 Non-destructive filtering for bumblebees. (12 hours ago)
+</div><div class='line'>1a35285 Propagate errors the node.js way. (14 hours ago)</div></code></pre></td></tr></table></div></figure></div>
+
 
 <p>The last commit, b648f1a conceptually belongs to the first one, 1a35285.
 It only came later because say you haven&#8217;t run the tests before
@@ -128,9 +132,11 @@ there is: interactive rebase.</p>
 
 <p>The syntax of the git-rebase is the following:</p>
 
-<pre><code>git rebase [-i | --interactive] [options] [--onto &lt;newbase&gt;]
-             &lt;upstream&gt; [&lt;branch&gt;]
-</code></pre>
+<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
+<span class='line'>2</span>
+</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>git rebase [-i | --interactive] [options] [--onto &lt;newbase>]
+</div><div class='line'>             &lt;upstream> [&lt;branch>]</div></code></pre></td></tr></table></div></figure></div>
+
 
 <p>What happens when you do git rebase is that the commits that are on the current
 branch but are not in upstream are saved. The current branch is reset to
@@ -144,32 +150,44 @@ book</a>)</p>
 
 <p>This can be used to achieve what we want:</p>
 
-<pre><code>% git rebase -i HEAD~3
-</code></pre>
+<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
+</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>% git rebase -i HEAD~3</div></code></pre></td></tr></table></div></figure></div>
+
 
 <p>Since the commits that are on the current branch but not on the commit
 three commits from here are the last three commits, here is what we get:</p>
 
-<pre><code>pick 1a35285 Propagate errors the node.js way.
-pick 8789cd1 Non-destructive filtering for bumblebees.
-pick b648f1a Fix propagating errors in findOrInitialize.
-</code></pre>
+<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
+<span class='line'>2</span>
+<span class='line'>3</span>
+</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>pick 1a35285 Propagate errors the node.js way.
+</div><div class='line'>pick 8789cd1 Non-destructive filtering for bumblebees.
+</div><div class='line'>pick b648f1a Fix propagating errors in findOrInitialize.</div></code></pre></td></tr></table></div></figure></div>
+
 
 <p>We want to meld the &#8220;fix&#8221; commit into the &#8220;propagate&#8221; commit since
 that&#8217;s how it should have been in the first place. So we move b648f1a up and
 squash it into the previous commit:</p>
 
-<p>pick 1a35285 Propagate errors the node.js way.
-squash b648f1a Fix propagating errors in findOrInitialize.
-pick 8789cd1 Non-destructive filtering for scales.</p>
+<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
+<span class='line'>2</span>
+<span class='line'>3</span>
+</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>pick 1a35285 Propagate errors the node.js way.
+</div><div class='line'>squash b648f1a Fix propagating errors in findOrInitialize.
+</div><div class='line'>pick 8789cd1 Non-destructive filtering for scales.</div></code></pre></td></tr></table></div></figure></div>
+
 
 <p>After a successful rebase this is how the new log looks like:</p>
 
-<pre><code>% git log -3 --oneline
-73eed18 Non-destructive filtering for bumblebees. (9 seconds ago)
-1e63d17 Propagate errors the node.js way. (39 seconds ago)
-1b24891 Minor fixes in Bumblebee buzzing. (16 hours ago)
-</code></pre>
+<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
+<span class='line'>2</span>
+<span class='line'>3</span>
+<span class='line'>4</span>
+</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>% git log -3 --oneline
+</div><div class='line'>73eed18 Non-destructive filtering for bumblebees. (9 seconds ago)
+</div><div class='line'>1e63d17 Propagate errors the node.js way. (39 seconds ago)
+</div><div class='line'>1b24891 Minor fixes in Bumblebee buzzing. (16 hours ago)</div></code></pre></td></tr></table></div></figure></div>
+
 
 <p>Note that the three commits we had before have now been nicely compacted
 into two, and the propagation commit is now consistent and fixed. It can
@@ -243,6 +261,10 @@ citizens, though.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2011/09/05/powered-by-octopress.html">Powered by Octopress</a>
+      </li>
+    
+      <li class="post">
         <a href="/2011/07/19/git-rebase-to-fix-your-local-commits.html">Git rebase to fix your local commits</a>
       </li>
     
@@ -256,10 +278,6 @@ citizens, though.</p>
     
       <li class="post">
         <a href="/2010/02/16/remove-trailing-whitespaces.html">Remove&#8217;em trailing whitespaces!</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2010/01/28/2010-is-the-year-of-the-javascript.html">2010 is the year of the Javascript</a>
       </li>
     
   </ul>

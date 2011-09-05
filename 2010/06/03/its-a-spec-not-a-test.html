@@ -117,17 +117,22 @@
 
 <p>That, in turn, comes down to tests vs. specs (short for specifications) and this is again an opportunity for specs to shine. If you write specs instead of tests (or, to put it in a more mind-warping way: if your tests are actually specs), then the above question is a no-brainer: it&#8217;s part of the specification that no two users can have the same email address, so you must have a spec for it:</p>
 
-<div>
-  <pre>
-    <code class='ruby'>describe User do
-  it &quot;has a unique email address&quot; do
-    Factory(:user, :email =&gt; &quot;jeff@topnotch.com&quot;)
-    lambda { Factory(:user, :email =&gt; &quot;jeff@topnotch.com&quot;) }.should
-     raise_error(ActiveRecord::RecordInvalid)
-  end
-end</code>
-  </pre>
-</div>
+<div><figure role=code><figcaption><span>user_spec.rb </span></figcaption>
+ <div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
+<span class='line'>2</span>
+<span class='line'>3</span>
+<span class='line'>4</span>
+<span class='line'>5</span>
+<span class='line'>6</span>
+<span class='line'>7</span>
+</pre></td><td class='code' width='100%'><pre><code class='rb'><div class='line'><span class="n">describe</span> <span class="no">User</span> <span class="k">do</span>
+</div><div class='line'>  <span class="n">it</span> <span class="s2">&quot;has a unique email address&quot;</span> <span class="k">do</span>
+</div><div class='line'>    <span class="no">Factory</span><span class="p">(</span><span class="ss">:user</span><span class="p">,</span> <span class="ss">:email</span> <span class="o">=&gt;</span> <span class="s2">&quot;jeff@topnotch.com&quot;</span><span class="p">)</span>
+</div><div class='line'>    <span class="nb">lambda</span> <span class="p">{</span> <span class="no">Factory</span><span class="p">(</span><span class="ss">:user</span><span class="p">,</span> <span class="ss">:email</span> <span class="o">=&gt;</span> <span class="s2">&quot;jeff@topnotch.com&quot;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span>
+</div><div class='line'>     <span class="n">raise_error</span><span class="p">(</span><span class="no">ActiveRecord</span><span class="o">::</span><span class="no">RecordInvalid</span><span class="p">)</span>
+</div><div class='line'>  <span class="k">end</span>
+</div><div class='line'><span class="k">end</span>
+</div></code></pre></td></tr></table></div></figure></div>
 
 
 <p>On the other hand, if you stick with calling your tests tests (how orthodox! ;) ) then not only you have to think (which consumes a lot of resources), but you can also come to the wrong conclusion and emit a strong business requirement from your test suite. And then you might not remember to have the implementation for it after modifying the code for whatever reason. And then bad things might happen.</p>
@@ -197,6 +202,10 @@ end</code>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2011/09/05/powered-by-octopress.html">Powered by Octopress</a>
+      </li>
+    
+      <li class="post">
         <a href="/2011/07/19/git-rebase-to-fix-your-local-commits.html">Git rebase to fix your local commits</a>
       </li>
     
@@ -210,10 +219,6 @@ end</code>
     
       <li class="post">
         <a href="/2010/02/16/remove-trailing-whitespaces.html">Remove&#8217;em trailing whitespaces!</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2010/01/28/2010-is-the-year-of-the-javascript.html">2010 is the year of the Javascript</a>
       </li>
     
   </ul>

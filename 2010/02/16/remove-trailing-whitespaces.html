@@ -115,61 +115,76 @@
 
 <p>Without further ado I&#8217;ll paste my solution below. Obviously this is not a difficult task to accomplish so the goal is to share not to show off. I use Git for SCM and the following solution parses out the files that have been modified and runs the whitespace eraser script for those. If you use something else (why do you?) you should obviously change the first building block:</p>
 
-<p>parse_modified_files_from_git_status.rb</p>
-
-<div>
-  <pre>
-    <code class='ruby'>#!/usr/bin/env ruby -wn
-modified_file_pattern = /^#\s+(?:modified|new file):\s+(.*)$/
-puts $1  if modified_file_pattern =~ $_</code>
-  </pre>
-</div>
-
-
-<p>rm_trailing_whitespace.rb</p>
-
-<div>
-  <pre>
-    <code class='ruby'>#!/usr/bin/env ruby -wn
-$:.unshift(File.dirname(__FILE__))
-
-require &quot;trailing_whitespace_eraser&quot;
-TrailingWhiteSpaceEraser.rm_trailing_whitespace!($_)</code>
-  </pre>
-</div>
+<div><figure role=code><figcaption><span>parse_modified_files_from_git_status.rb </span></figcaption>
+ <div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
+<span class='line'>2</span>
+<span class='line'>3</span>
+</pre></td><td class='code' width='100%'><pre><code class='rb'><div class='line'><span class="c1">#!/usr/bin/env ruby -wn</span>
+</div><div class='line'><span class="n">modified_file_pattern</span> <span class="o">=</span> <span class="sr">/^#\s+(?:modified|new file):\s+(.*)$/</span>
+</div><div class='line'><span class="nb">puts</span> <span class="vg">$1</span>  <span class="k">if</span> <span class="n">modified_file_pattern</span> <span class="o">=~</span> <span class="vg">$_</span>
+</div></code></pre></td></tr></table></div></figure></div>
 
 
-<p>trailing_whitespace_eraser.rb</p>
 
-<div>
-  <pre>
-    <code class='ruby'>class TrailingWhiteSpaceEraser
-  FILE_TYPES = [&quot;rb&quot;, &quot;feature&quot;, &quot;yml&quot;, &quot;erb&quot;, &quot;haml&quot;]
 
-  def self.rm_trailing_whitespace_from_file!(file)
-    trimmed = File.readlines(file).map do |line|
-      line.gsub(/[\t ]+$/, &quot;&quot;)
-    end
-    open(file, &quot;w&quot;) { |f| f.write(trimmed) }
-  end
+<div><figure role=code><figcaption><span>rm_trailing_whitespace.rb </span></figcaption>
+ <div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
+<span class='line'>2</span>
+<span class='line'>3</span>
+<span class='line'>4</span>
+<span class='line'>5</span>
+</pre></td><td class='code' width='100%'><pre><code class='rb'><div class='line'><span class="c1">#!/usr/bin/env ruby -wn</span>
+</div><div class='line'><span class="vg">$:</span><span class="o">.</span><span class="n">unshift</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">))</span>
+</div><div class='line'>
+</div><div class='line'><span class="nb">require</span> <span class="s2">&quot;trailing_whitespace_eraser&quot;</span>
+</div><div class='line'><span class="no">TrailingWhiteSpaceEraser</span><span class="o">.</span><span class="n">rm_trailing_whitespace!</span><span class="p">(</span><span class="vg">$_</span><span class="p">)</span>
+</div></code></pre></td></tr></table></div></figure></div>
 
-  def self.rm_trailing_whitespace!(root)
-    root = File.expand_path(root)
-    files = File.directory?(root) ? Dir.glob(&quot;#{root}/**/*.{#{FILE_TYPES.join(',')}}&quot;) : [root]
-    files.each { |file| rm_trailing_whitespace_from_file!(file.chomp) }
-  end
-end</code>
-  </pre>
-</div>
+
+
+
+<div><figure role=code><figcaption><span>trailing_whitespace_eraser.rb </span></figcaption>
+ <div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
+<span class='line'>2</span>
+<span class='line'>3</span>
+<span class='line'>4</span>
+<span class='line'>5</span>
+<span class='line'>6</span>
+<span class='line'>7</span>
+<span class='line'>8</span>
+<span class='line'>9</span>
+<span class='line'>10</span>
+<span class='line'>11</span>
+<span class='line'>12</span>
+<span class='line'>13</span>
+<span class='line'>14</span>
+<span class='line'>15</span>
+<span class='line'>16</span>
+</pre></td><td class='code' width='100%'><pre><code class='rb'><div class='line'><span class="k">class</span> <span class="nc">TrailingWhiteSpaceEraser</span>
+</div><div class='line'>  <span class="no">FILE_TYPES</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="s2">&quot;feature&quot;</span><span class="p">,</span> <span class="s2">&quot;yml&quot;</span><span class="p">,</span> <span class="s2">&quot;erb&quot;</span><span class="p">,</span> <span class="s2">&quot;haml&quot;</span><span class="o">]</span>
+</div><div class='line'>
+</div><div class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">rm_trailing_whitespace_from_file!</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</div><div class='line'>    <span class="n">trimmed</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">readlines</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span>
+</div><div class='line'>      <span class="n">line</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/[\t ]+$/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+</div><div class='line'>    <span class="k">end</span>
+</div><div class='line'>    <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">trimmed</span><span class="p">)</span> <span class="p">}</span>
+</div><div class='line'>  <span class="k">end</span>
+</div><div class='line'>
+</div><div class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">rm_trailing_whitespace!</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+</div><div class='line'>    <span class="n">root</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+</div><div class='line'>    <span class="n">files</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">directory?</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="p">?</span> <span class="no">Dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">root</span><span class="si">}</span><span class="s2">/**/*.{</span><span class="si">#{</span><span class="no">FILE_TYPES</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">}&quot;</span><span class="p">)</span> <span class="p">:</span> <span class="o">[</span><span class="n">root</span><span class="o">]</span>
+</div><div class='line'>    <span class="n">files</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">file</span><span class="o">|</span> <span class="n">rm_trailing_whitespace_from_file!</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">chomp</span><span class="p">)</span> <span class="p">}</span>
+</div><div class='line'>  <span class="k">end</span>
+</div><div class='line'><span class="k">end</span>
+</div></code></pre></td></tr></table></div></figure></div>
 
 
 <p>And then you run it by typing:</p>
 
-<div>
-  <pre>
-    <code class='bash'>git status | parse_modified_files_from_git_status.rb | rm_trailing_whitespace.rb</code>
-  </pre>
-</div>
+<div><figure role=code><figcaption><span>rtwsp.sh </span></figcaption>
+ <div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
+</pre></td><td class='code' width='100%'><pre><code class='sh'><div class='line'>git status | parse_modified_files_from_git_status.rb | rm_trailing_whitespace.rb
+</div></code></pre></td></tr></table></div></figure></div>
 
 
 <p>If you decide to use this, it is more convenient to <a href="http://gist.github.com/raw/305654/568290aa63ee3b0b3748b5041654f94ce45f4e5b/erase_trailing_whitespace.rb">download the raw source</a></p>
@@ -239,6 +254,10 @@ end</code>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2011/09/05/powered-by-octopress.html">Powered by Octopress</a>
+      </li>
+    
+      <li class="post">
         <a href="/2011/07/19/git-rebase-to-fix-your-local-commits.html">Git rebase to fix your local commits</a>
       </li>
     
@@ -252,10 +271,6 @@ end</code>
     
       <li class="post">
         <a href="/2010/02/16/remove-trailing-whitespaces.html">Remove&#8217;em trailing whitespaces!</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2010/01/28/2010-is-the-year-of-the-javascript.html">2010 is the year of the Javascript</a>
       </li>
     
   </ul>
