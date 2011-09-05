@@ -6,27 +6,22 @@ Some of you reading this probably use TextMate. It is an excellent editor with t
 
 Without further ado I'll paste my solution below. Obviously this is not a difficult task to accomplish so the goal is to share not to show off. I use Git for SCM and the following solution parses out the files that have been modified and runs the whitespace eraser script for those. If you use something else (why do you?) you should obviously change the first building block:
 
-parse_modified_files_from_git_status.rb
 
-{% highlight ruby %}
+{% codeblock parse_modified_files_from_git_status.rb %}
 #!/usr/bin/env ruby -wn
 modified_file_pattern = /^#\s+(?:modified|new file):\s+(.*)$/
 puts $1  if modified_file_pattern =~ $_
-{% endhighlight %}
+{% endcodeblock %}
 
-rm_trailing_whitespace.rb
-
-{% highlight ruby %}
+{% codeblock rm_trailing_whitespace.rb %}
 #!/usr/bin/env ruby -wn
 $:.unshift(File.dirname(__FILE__))
 
 require "trailing_whitespace_eraser"
 TrailingWhiteSpaceEraser.rm_trailing_whitespace!($_)
-{% endhighlight %}
+{% endcodeblock %}
 
-trailing_whitespace_eraser.rb
-
-{% highlight ruby %}
+{% codeblock trailing_whitespace_eraser.rb %}
 
 class TrailingWhiteSpaceEraser
   FILE_TYPES = ["rb", "feature", "yml", "erb", "haml"]
@@ -44,13 +39,13 @@ class TrailingWhiteSpaceEraser
     files.each { |file| rm_trailing_whitespace_from_file!(file.chomp) }
   end
 end
-{% endhighlight %}
+{% endcodeblock %}
 
 And then you run it by typing:
 
-{% highlight bash %}
+{% codeblock rtwsp.sh %}
 git status | parse_modified_files_from_git_status.rb | rm_trailing_whitespace.rb
-{% endhighlight %}
+{% endcodeblock %}
 
 If you decide to use this, it is more convenient to [download the raw source](http://gist.github.com/raw/305654/568290aa63ee3b0b3748b5041654f94ce45f4e5b/erase_trailing_whitespace.rb)
 

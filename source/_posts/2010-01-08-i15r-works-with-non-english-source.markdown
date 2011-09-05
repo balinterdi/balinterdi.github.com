@@ -9,9 +9,9 @@ The specs pass but I am pretty certain there are some cases where the matchers m
 
 So if you think this is a valuable addition or just have not tried i15r yet, go get it:
 
-{% highlight bash %}
+{% codeblock install.sh %}
 gem install i15r --source http://gemcutter.org
-{% endhighlight %}
+{% endcodeblock %}
 
 [i15r_repo]: http://github.com/balinterdi/i15r
 [ruby_encoding_series]: http://blog.grayproductions.net/articles/understanding_m17n

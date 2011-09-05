@@ -8,7 +8,7 @@ I think, however, that the question is wrong and thus you can not give a correct
 
 That, in turn, comes down to tests vs. specs (short for specifications) and this is again an opportunity for specs to shine. If you write specs instead of tests (or, to put it in a more mind-warping way: if your tests are actually specs), then the above question is a no-brainer: it's part of the specification that no two users can have the same email address, so you must have a spec for it:
 
-{% highlight ruby %}
+{% codeblock user_spec.rb %}
 describe User do
   it "has a unique email address" do
     Factory(:user, :email => "jeff@topnotch.com")
@@ -16,7 +16,7 @@ describe User do
      raise_error(ActiveRecord::RecordInvalid)
   end
 end
-{% endhighlight %}
+{% endcodeblock %}
 
 On the other hand, if you stick with calling your tests tests (how orthodox! ;) ) then not only you have to think (which consumes a lot of resources), but you can also come to the wrong conclusion and emit a strong business requirement from your test suite. And then you might not remember to have the implementation for it after modifying the code for whatever reason. And then bad things might happen.
 
