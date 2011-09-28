@@ -98,6 +98,55 @@
     
   <header>
     
+      <h1 class="entry-title"><a href="/2009/06/22/twuckoo-my-twitter-mini-framework.html">Twuckoo - My Twitter Mini Framework</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2009-06-22 00:00:00 +0200" pubdate  updated >Jun 22<span>nd</span>, 2009</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I am reading Andy Hunt&#8217;s excellent Pragmatic Thinking and Learning book. There is a section about so called &#8220;oblique strategies&#8221;, short, mysterious phrases that exercise your mind and make you look at problems from another perspective (e.g &#8220;repetition is a form of change&#8221;).</p>
+
+<p>The suggested intake was once a day and there was a free application that did just this for Apple computers. However, the application was so outdated that I could no longer run it on my laptop. So, I set out to write that application and after a bit of thinking decided to make a twitter account where I (&#8220;I&#8221; meaning a script that I wrote :) ) would post an oblique strategy each day and then just follow that account. This way, I can also spread the knowledge around.</p>
+
+<p>Thus <a title="Twuckoo" href="http://github.com/balinterdi/twuckoo/tree/master">Twuckoo</a> was born. Twuckoo is a simple program (relying on <a href="http://github.com/cjohansen/twibot/tree/master">twibot</a> for communication with twitter) that lets you periodically post a message on a twitter account. It can fetch the messages from a file, from a database, from the web or whereever you want it to retrieve them from. Its very modular in nature so it delegates the task of getting the next message to twitter and storing the posts to the module. here is currently one generic module, the one that fetches them from a file, and one that fetches them from wikipedia&#8217;s main page. I strongly hope that it is very easy for you to write your own module for your own purpose. Twuckoo aims to follow the &#8220;provide-what&#8217;s-needed-and-then-just-get-out-of-the-way&#8221; principle. Go check out <a href="http://github.com/balinterdi/twuckoo/tree/master">the README</a> for further details.</p>
+
+<p>It&#8217;s quite easy to install and run. You can find an example for the file-fetcher module at <a href="http://twitter.com/daily_oblique">http://twitter.com/daily_oblique</a> and <a href="http://twitter.com/wikipedia_tfa">http://twitter.com/wikipedia_tfa</a> grabs &#8220;Today&#8217;s Featured Article&#8221; from wikipedia and posts the title and the link so you can grow a little wiser each day :)</p>
+
+<p>Since it is modular it&#8217;s very extensible. I kept the API very simple so writing modules should be a piece of cake. Each module has to define the following methods:</p>
+
+<ol>
+<li><strong>load_tweets</strong> Loads the messages that can be twittered.</li>
+<li><strong>next</strong> Gets the next message that will be posted.</li>
+<li><strong>store</strong> Store the tweet after it had been posted.</li>
+</ol>
+
+
+<p>Once more, I encourage you to scan through <a href="http://github.com/balinterdi/twuckoo/">the README</a>, devise your own module and let me know about it. Any feedback is very welcome.</p>
+
+<p><em>Note:</em> For my Hungarian-speaking readers, I gave a <a href="http://docs.google.com/Presentation?id=dccxt9fm_3g8nf5fm5">lightning talk about twuckoo</a> at the latest budapest.rb meetup.</p>
+</div>
+  <footer>
+    <a rel="full-article" href="/2009/06/22/twuckoo-my-twitter-mini-framework.html">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
       <h1 class="entry-title"><a href="/2009/04/27/upstream-or-downstream.html">Upstream or Downstream?</a></h1>
     
     
@@ -536,113 +585,6 @@ irb(main):003:0> s1 = "index"; s2 = "index"; s1.object_id == s2.object_id
 
   </article>
 
-
-  <article>
-    
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/01/28/shoulda-blocks-active-record-macros-and-their-order.html">Shoulda: Setup and Should Blocks and Don&#8217;t Wander Off the Map</a></h1>
-    
-    
-      <p class="meta">
-
-
-
-
-<time datetime="2009-01-28 00:00:00 +0100" pubdate  updated >Jan 28<span>th</span>, 2009</time>
-
-
-</p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I&#8217;m using <a href="http://www.thoughtbot.com/projects/shoulda/">shoulda</a> for testing in a rails project and I wrote this simple test to see if my update action really updated the object and redirected to the appropriate place:</p>
-
-<pre lang="ruby">
-context "the update" do
-  setup do     # 1
-    @project = Factory(:project, :director => @user)
-    put :update, :id => @project, :project => { :name => "updated name" }
-  end
-  # 2    
-  updated_project = Project.first(:order => "created_at DESC")
-  # 3
-  should_redirect_to "project_url(updated_project)" # 4
-  should "update the attributes" do
-    assert_equal("updated name", updated_project.name) # 5
-  end  
-end
-</pre>
-
-
-<p>To my surprise, I received an &#8220;undefined local variable or method &#8216;updated_project&#8217; on both tests (#4 and #5). I figured out why and I want to share it with you. In case you are a shoulda expert, you must know the answer already and sorry for wasting your time. On the other hand, if you are new to shoulda like I am, you may find this useful.</p>
-
-<p>What shoulda does when running a &#8216;should&#8217; block is that it runs all the &#8216;setup&#8217; blocks of the contexts in which it is nested, from the outside to the inside, so this:</p>
-
-<pre lang="ruby">
-context "alpha" do
-  setup do
-    puts "A"
-  end
-  context "beta" do
-    setup do
-      puts "B"
-    end
-    context "gamma" do
-      setup do
-        puts "C"
-      end
-      should "work" do
-         puts "the only test"
-      end
-    end
-  end
-end
-</pre>
-
-
-<p>Will print</p>
-
-<pre lang="bash">
-A
-B
-C
-the only test
-</pre>
-
-
-<p>Also the area between #2 and #3 in the above test is sort of a no man&#8217;s land, since it is not in a setup block, so assignments that are executed here are completely useless. You can not use it either for side-effects since it will run before the setup block (#1 above). My advice is to simply put everything in a block, be it a &#8216;setup&#8217; or a &#8216;should&#8217; one. (the &#8216;should_redirect_to&#8217; is a macro that&#8217;s part of shoulda, it gets expanded into a block, too).</p>
-
-<p>So here is the same test correctly:</p>
-
-<pre lang="ruby">
-context "the update" do
-  setup do
-    @project = Factory(:project, :director => @user)
-    put :update, :id => @project, :project => { :name => "updated name" }
-  end
-  
-  should_redirect_to "project_url(@project)" 
-  should "update the attributes" do
-    # reload is needed to see the new state
-    @project.reload
-    assert_equal("updated name", @project.name)
-  end
-  
-end
-</pre>
-
-
-<p>Shoulda is a nice tool. There is only one I know and I like a tad better which is quite similar in structure, <a href="http://rspec.info/documentation/">rspec</a>.</p>
-</div>
-  <footer>
-    <a rel="full-article" href="/2009/01/28/shoulda-blocks-active-record-macros-and-their-order.html">Read on &rarr;</a>
-  </footer>
-
-
-  </article>
-
 <nav role="pagination">
   <div>
     
@@ -673,6 +615,10 @@ end
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2011/09/28/five-wasted-years-futility-of-university-education.html">Five wasted years - on the futility of university education</a>
+      </li>
+    
+      <li class="post">
         <a href="/2011/09/05/powered-by-octopress.html">Powered by Octopress</a>
       </li>
     
@@ -686,10 +632,6 @@ end
     
       <li class="post">
         <a href="/2010/06/03/its-a-spec-not-a-test.html">It&#8217;s a spec, not a test</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2010/02/16/remove-trailing-whitespaces.html">Remove&#8217;em trailing whitespaces!</a>
       </li>
     
   </ul>
