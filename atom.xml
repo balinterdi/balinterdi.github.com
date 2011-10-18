@@ -4,7 +4,7 @@
   <title>Codigo Ergo Sum</title>
   <link href="http://codigoergosum.com/atom.xml" rel="self"/>
   <link href="http://codigoergosum.com/"/>
-  <updated>2011-10-19T01:05:24+02:00</updated>
+  <updated>2011-10-19T01:09:14+02:00</updated>
   <id>http://codigoergosum.com/</id>
   <author>
     <name>Balint Erdi</name>
@@ -60,7 +60,7 @@ h = setInterval -&amp;gt;
 , 100&lt;/code&gt;&lt;/pre&gt;&lt;/noscript&gt;&lt;/div&gt;
 
 
-
+&lt;p&gt;And that's it. I hope this simple example pushes you up on that pesky learning curve.&lt;/p&gt;
 </content>
   </entry>
   
