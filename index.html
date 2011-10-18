@@ -98,6 +98,79 @@
     
   <header>
     
+      <h1 class="entry-title"><a href="/2011/10/19/event_loop_primer.html">Event Loop Primer</a></h1>
+    
+    
+      <p class="meta">
+
+
+
+
+<time datetime="2011-10-19 00:06:00 +0200" pubdate  updated >Oct 19<span>th</span>, 2011</time>
+
+
+</p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I recently got into developing a web application with node.js (aka <a href="http://teddziuba.com/2011/10/node-js-is-cancer.html">cancer</a>).
+Coming from a synchronous world, it took (and to be honest, still takes)
+quite a while to grok how writing asynchronous code differs from my
+previous experiences (AJAX calls with jQuery only go that far).</p>
+
+<p>As with many fine technologies or methods (TDD, NoSQL, functional
+programming come to mind) it&#8217;s your whole
+thinking that has to change. In this post I want to share an example
+from <a href="http://pragprog.com/book/tbcoffee/coffeescript">Trevor Burnham&#8217;s excellent Coffeescript book</a> that gave me one
+of those aha moments.</p>
+
+<div><script src='https://gist.github.com/1297011.js?file='></script>
+<noscript><pre><code>countdown = 10
+h = setInterval -&gt;
+ countdown--
+, 100
+do (-&gt;) until countdown is 0
+clearInterval h
+console.log 'Surprise!'</code></pre></noscript></div>
+
+
+<p>(If you don&#8217;t read Coffeescript code, you can go to the <a href="http://jashkenas.github.com/coffee-script/">Coffeescript web site</a>
+and paste the above example in to get compiled Javascript)</p>
+
+<p>The example above is broken. It gets stuck at the <code>until countdown is 0</code>
+row. In an event loop system events (callbacks) only get run after the &#8220;main line&#8221;
+of execution (or, in other words, all other code) has completed.
+So the until loop blocks out the callback of the setInterval,
+countdown never gets decremented and thus an endless loop ensues.</p>
+
+<p>I&#8217;m sure that there are many ways to fix this, I came up with the
+following (and wonder if there is one closer to the original):</p>
+
+<div><script src='https://gist.github.com/1297018.js?file='></script>
+<noscript><pre><code>countdown = 10
+h = setInterval -&gt;
+  countdown--
+  if countdown is 0
+    console.log 'Surprise'
+    clearInterval h
+, 100</code></pre></noscript></div>
+
+
+
+</div>
+  <footer>
+    <a rel="full-article" href="/2011/10/19/event_loop_primer.html">Read on &rarr;</a>
+  </footer>
+
+
+  </article>
+
+
+  <article>
+    
+  <header>
+    
       <h1 class="entry-title"><a href="/2011/09/28/five-wasted-years-futility-of-university-education.html">Five Wasted Years - on the Futility of University Education</a></h1>
     
     
@@ -789,48 +862,6 @@ citizens, though.</p>
 
   </article>
 
-
-  <article>
-    
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/01/08/i15r-works-with-non-english-source.html">I15r Handles Non-english Source</a></h1>
-    
-    
-      <p class="meta">
-
-
-
-
-<time datetime="2010-01-08 00:00:00 +0100" pubdate  updated >Jan 8<span>th</span>, 2010</time>
-
-
-</p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>The other day thinking about how <a href="http://github.com/balinterdi/i15r">i15r</a> could be improved I realized that there are times when the language of the non-internationalized site is not English (surprise, surprise). Add to this that lots of languages have &#8220;special&#8221; characters, characters that may not be properly found and replaced by the matchers. So I first learned the basics of <a href="http://blog.grayproductions.net/articles/understanding_m17n">how Ruby handles encodings</a> (from <a href="http://blog.grayproductions.net/">James Edward Gray&#8217;s</a> excellent series) and then adjusted a few matchers to catch those special characters, too. (Note: one can&#8217;t underestimate the utility of a spec suite that covers most of the code)</p>
-
-<p>The specs pass but I am pretty certain there are some cases where the matchers might not be up to the task. If you come through such a case, please <a href="http://github.com/balinterdi/i15r/issues">submit a bug report</a>. Since there has been a huge improvement in <a href="http://blog.grayproductions.net/articles/ruby_19s_string">string encoding in Ruby 1.9</a> (basically, strings now have an encoding as opposed to in <a href="http://blog.grayproductions.net/articles/bytes_and_characters_in_ruby_18">Ruby 1.8</a>), there might be some cases where strings are properly internationalized using Ruby 1.9 but not with 1.8.</p>
-
-<p>So if you think this is a valuable addition or just have not tried i15r yet, go get it:</p>
-
-<div><figure role=code><figcaption><span>install.sh </span></figcaption>
- <div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
-</pre></td><td class='code' width='100%'><pre><code class='sh'><div class='line'>gem install i15r --source http://gemcutter.org
-</div></code></pre></td></tr></table></div></figure></div>
-
-
-
-</div>
-  <footer>
-    <a rel="full-article" href="/2010/01/08/i15r-works-with-non-english-source.html">Read on &rarr;</a>
-  </footer>
-
-
-  </article>
-
 <nav role="pagination">
   <div>
     
@@ -859,6 +890,10 @@ citizens, though.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2011/10/19/event_loop_primer.html">Event loop primer</a>
+      </li>
+    
+      <li class="post">
         <a href="/2011/09/28/five-wasted-years-futility-of-university-education.html">Five wasted years - on the futility of university education</a>
       </li>
     
@@ -872,10 +907,6 @@ citizens, though.</p>
     
       <li class="post">
         <a href="/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be.html">Don&#8217;t Tell Michelle, Facebook privacy as it should be</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2010/06/03/its-a-spec-not-a-test.html">It&#8217;s a spec, not a test</a>
       </li>
     
   </ul>

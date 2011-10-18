@@ -4,13 +4,65 @@
   <title>Codigo Ergo Sum</title>
   <link href="http://codigoergosum.com/atom.xml" rel="self"/>
   <link href="http://codigoergosum.com/"/>
-  <updated>2011-09-29T00:03:02+02:00</updated>
+  <updated>2011-10-19T01:05:24+02:00</updated>
   <id>http://codigoergosum.com/</id>
   <author>
     <name>Balint Erdi</name>
     
   </author>
 
+  
+  <entry>
+    <title>Event loop primer</title>
+    <link href="http://codigoergosum.com/2011/10/19/event_loop_primer.html"/>
+    <updated>2011-10-19T00:06:00+02:00</updated>
+    <id>http://codigoergosum.com/2011/10/19/event_loop_primer</id>
+    <content type="html">&lt;p&gt;I recently got into developing a web application with node.js (aka &lt;a href=&quot;http://teddziuba.com/2011/10/node-js-is-cancer.html&quot;&gt;cancer&lt;/a&gt;).
+Coming from a synchronous world, it took (and to be honest, still takes)
+quite a while to grok how writing asynchronous code differs from my
+previous experiences (AJAX calls with jQuery only go that far).&lt;/p&gt;
+
+&lt;p&gt;As with many fine technologies or methods (TDD, NoSQL, functional
+programming come to mind) it's your whole
+thinking that has to change. In this post I want to share an example
+from &lt;a href=&quot;http://pragprog.com/book/tbcoffee/coffeescript&quot;&gt;Trevor Burnham's excellent Coffeescript book&lt;/a&gt; that gave me one
+of those aha moments.&lt;/p&gt;
+
+&lt;div&gt;&lt;script src='https://gist.github.com/1297011.js?file='&gt;&lt;/script&gt;
+&lt;noscript&gt;&lt;pre&gt;&lt;code&gt;countdown = 10
+h = setInterval -&amp;gt;
+ countdown--
+, 100
+do (-&amp;gt;) until countdown is 0
+clearInterval h
+console.log 'Surprise!'&lt;/code&gt;&lt;/pre&gt;&lt;/noscript&gt;&lt;/div&gt;
+
+
+&lt;p&gt;(If you don't read Coffeescript code, you can go to the &lt;a href=&quot;http://jashkenas.github.com/coffee-script/&quot;&gt;Coffeescript web site&lt;/a&gt;
+and paste the above example in to get compiled Javascript)&lt;/p&gt;
+
+&lt;p&gt;The example above is broken. It gets stuck at the &lt;code&gt;until countdown is 0&lt;/code&gt;
+row. In an event loop system events (callbacks) only get run after the &quot;main line&quot;
+of execution (or, in other words, all other code) has completed.
+So the until loop blocks out the callback of the setInterval,
+countdown never gets decremented and thus an endless loop ensues.&lt;/p&gt;
+
+&lt;p&gt;I'm sure that there are many ways to fix this, I came up with the
+following (and wonder if there is one closer to the original):&lt;/p&gt;
+
+&lt;div&gt;&lt;script src='https://gist.github.com/1297018.js?file='&gt;&lt;/script&gt;
+&lt;noscript&gt;&lt;pre&gt;&lt;code&gt;countdown = 10
+h = setInterval -&amp;gt;
+  countdown--
+  if countdown is 0
+    console.log 'Surprise'
+    clearInterval h
+, 100&lt;/code&gt;&lt;/pre&gt;&lt;/noscript&gt;&lt;/div&gt;
+
+
+
+</content>
+  </entry>
   
   <entry>
     <title>Five wasted years - on the futility of university education</title>
@@ -831,117 +883,6 @@ apt-get install xvfb&lt;/code&gt;
 &lt;p&gt;So there you have it, &lt;a href=&quot;https://twitter.com/pragthinklearn&quot;&gt;a twitter account that will serve you an advice each day&lt;/a&gt; just so that you can &quot;refactor your wetware&quot; (the subtitle of the book) and hopefully help you be a better craftsman.&lt;/p&gt;
 
 &lt;p&gt;And now, my little twuckoo, on to world domination!&lt;/p&gt;
-</content>
-  </entry>
-  
-  <entry>
-    <title>installing ruby on a linode slice</title>
-    <link href="http://codigoergosum.com/2009/07/02/installing-ruby-on-a-linode-slice.html"/>
-    <updated>2009-07-02T00:00:00+02:00</updated>
-    <id>http://codigoergosum.com/2009/07/02/installing-ruby-on-a-linode-slice</id>
-    <content type="html">&lt;p&gt;To be able to experiment freely and find a store for my &lt;a href=&quot;http://bucionrails.com/2009/06/22/twuckoo/&quot;&gt;twuckoos&lt;/a&gt; and other goodies I have recently purchased a Linode 360 slice and had Ubuntu 9.04 installed on it. Next thing was setting up ruby (ruby 1.8.6, to be precise).&lt;/p&gt;
-
-&lt;p&gt;When deciding about how to install ruby, in part I wanted to have flexibility but mostly I wanted to feel like I am a professional sysadmin for some hours so I balked at pre-built ruby packages and went with the roll-your-own approach. I'll summarize below the process and some pitfalls I encountered so it might help someone.&lt;/p&gt;
-
-&lt;h2&gt;Some basic tools&lt;/h2&gt;
-
-
-&lt;p&gt;First, you will need wget (or curl) to download the sources you will need along the way, so:&lt;/p&gt;
-
-&lt;pre lang=&quot;bash&quot;&gt;$ sudo apt-get install wget&lt;/pre&gt;
-
-
-&lt;p&gt;Also, before you stare dumbly at the screen (like I did) wondering why can't the stupid machine run make when the Makefile is clearly there in the directory , don't forget to install make:&lt;/p&gt;
-
-&lt;pre lang=&quot;bash&quot;&gt;$ sudo apt-get install make&lt;/pre&gt;
-
-
-&lt;h2&gt;Updating the package repos&lt;/h2&gt;
-
-
-&lt;p&gt;Plus, since we'll be installing packages that are found in the &quot;universe&quot; namespace (or whatever it is called) you should uncomment the below two lines in /etc/apt/sources.list :&lt;/p&gt;
-
-&lt;pre lang=&quot;bash&quot;&gt;deb http://us.archive.ubuntu.com/ubuntu/ jaunty universe
-deb-src http://us.archive.ubuntu.com/ubuntu/ jaunty universe&lt;/pre&gt;
-
-
-&lt;p&gt;... and then update your package index:&lt;/p&gt;
-
-&lt;pre lang=&quot;bash&quot;&gt;$ sudo apt-get update&lt;/pre&gt;
-
-
-&lt;h2&gt;Installing some packages ruby needs&lt;/h2&gt;
-
-
-&lt;p&gt;Before we download and build ruby, however, it is recommendable to have the zlib and openssl libraries so ruby can already bind to them. This is one of the things that is a lot easier to see with hindsight, but here I am, blogging this to you:&lt;/p&gt;
-
-&lt;pre lang=&quot;bash&quot;&gt;$ sudo apt-get install zlib1g zlib1g-dev zlibc
-$ sudo apt-get install openssl&lt;/pre&gt;
-
-
-&lt;p&gt;It turns out from &lt;a href=&quot;http://www.ruby-forum.com/topic/71774&quot;&gt;this thread&lt;/a&gt;, that the zlib bindings are part of ruby since 1.8.6 so you will not need the libzlib-ruby package.&lt;/p&gt;
-
-&lt;p&gt;Now, on to ruby itself.&lt;/p&gt;
-
-&lt;h2&gt;Ruby &amp;amp; Rubygems&lt;/h2&gt;
-
-
-&lt;pre lang=&quot;bash&quot;&gt;$ wget ftp://ftp.ruby-lang.org/pub/ruby/ruby-1.8.6-p369.tar.bz2
-(untar and cd to new directory)
-$ ./configure
-configure: error: no acceptable C compiler found in $PATH&lt;/pre&gt;
-
-
-&lt;p&gt;Piece of cake:&lt;/p&gt;
-
-&lt;pre lang=&quot;bash&quot;&gt;$ sudo apt-get install gcc
-$ ./configure
-configure: error: in `/home/balint/ruby-1.8.6-p369':
-configure: error: C compiler cannot create executables
-See `config.log' for more details.&lt;/pre&gt;
-
-
-&lt;p&gt;A bit harder, but I have quickly found the answer &lt;a href=&quot;http://ubuntuforums.org/showthread.php?t=17033&quot;&gt;here&lt;/a&gt;, and then did:&lt;/p&gt;
-
-&lt;pre lang=&quot;bash&quot;&gt;$ sudo apt-get install libc6-dev g++
-$ ./configure
-$ make
-$ sudo make install
-$ ruby -e &quot;p 'hello from linode slice'&quot;
-&quot;hello from linode slice&quot;&lt;/pre&gt;
-
-
-&lt;p&gt;Rolling!&lt;/p&gt;
-
-&lt;p&gt;However, we all know that a ruby installation without gems is a toothless tiger (lion?) so we'll install rubygems last, first downloading the source, and then installing it:&lt;/p&gt;
-
-&lt;pre lang=&quot;bash&quot;&gt;$ wget http://rubyforge.org/frs/download.php/57643/rubygems-1.3.4.tgz
-(untar and cd to new directory)
-$ sudo ruby setup.rb&lt;/pre&gt;
-
-
-&lt;p&gt;If you want to use gems stored on github (and you probably do) it is convenient to add the gem github repository to your gem sources:&lt;/p&gt;
-
-&lt;pre lang=&quot;bash&quot;&gt;$ gem source -a http://gems.github.com
-$ sudo gem install balinterdi-twuckoo&lt;/pre&gt;
-
-
-&lt;p&gt;Ok, that's all. I hope you have found this useful.&lt;/p&gt;
-
-&lt;hr /&gt;&lt;em&gt;Note:&lt;/em&gt;
-
-
-&lt;p&gt;If you receive an error message similar to the following when trying to install a gem:&lt;/p&gt;
-
-&lt;pre lang=&quot;bash&quot;&gt;/usr/local/lib/ruby/site_ruby/1.8/rubygems/custom_require.rb:31:in `gem_original_require': no such file to load -- zlib (LoadError)&lt;/pre&gt;
-
-
-&lt;p&gt;Then you need to install the appropriate lib package and recompile ruby. Go to the directory where you unpacked the ruby source to and do:&lt;/p&gt;
-
-&lt;pre lang=&quot;bash&quot;&gt;$ make clean
-$ make
-$ sudo make install&lt;/pre&gt;
-
 </content>
   </entry>
   

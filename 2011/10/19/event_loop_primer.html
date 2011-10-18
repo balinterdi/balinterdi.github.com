@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Codigo Ergo Sum: John Doe is dull: the importance of choosing good user names in tests</title>
+  <title>Codigo Ergo Sum: Event loop primer</title>
   <meta name="author" content="Balint Erdi">
   
 
@@ -16,7 +16,7 @@
 
   
 
-  <link rel="canonical" href="http://codigoergosum.com/2009/07/12/john-doe-is-dull-the-importance-of-choosing-good-user-names-in-tests.html"/>
+  <link rel="canonical" href="http://codigoergosum.com/2011/10/19/event_loop_primer.html"/>
   <link href="/favicon.png" rel="shortcut icon" />
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -95,7 +95,7 @@
   
   <header>
     
-      <h1 class="entry-title">John Doe Is Dull: The Importance of Choosing Good User Names in Tests</h1>
+      <h1 class="entry-title">Event Loop Primer</h1>
     
     
       <p class="meta">
@@ -103,7 +103,7 @@
 
 
 
-<time datetime="2009-07-12 00:00:00 +0200" pubdate  updated >Jul 12<span>th</span>, 2009</time>
+<time datetime="2011-10-19 00:06:00 +0200" pubdate  updated >Oct 19<span>th</span>, 2011</time>
 
 
 </p>
@@ -111,15 +111,50 @@
   </header>
 
 
-<div class="entry-content"><p>We, developers, have to come up with user names all the time. In this glorious, pioneer era of TDD, more than ever we have to not only enter them into text fields but write them in test files that are part of the code and thus are clearly visible and permanent.</p>
+<div class="entry-content"><p>I recently got into developing a web application with node.js (aka <a href="http://teddziuba.com/2011/10/node-js-is-cancer.html">cancer</a>).
+Coming from a synchronous world, it took (and to be honest, still takes)
+quite a while to grok how writing asynchronous code differs from my
+previous experiences (AJAX calls with jQuery only go that far).</p>
 
-<p>So it is important to give good names, but what is a good name like? I am not thinking about the semantics of the name (whether it has accented letters, or if it has two or three parts, etc.) but look at them from a very personal point of view: whether it makes you, the programmer, satisfied with your choice of names or bored with repeating the same old names you used in other projects and even in those projects, you had copied them from somewhere.</p>
+<p>As with many fine technologies or methods (TDD, NoSQL, functional
+programming come to mind) it&#8217;s your whole
+thinking that has to change. In this post I want to share an example
+from <a href="http://pragprog.com/book/tbcoffee/coffeescript">Trevor Burnham&#8217;s excellent Coffeescript book</a> that gave me one
+of those aha moments.</p>
 
-<p>So when writing your first test where a user is needed, stop for a moment and imagine a world which you like and which is amusing in the context of your application&#8217;s domain (like <a href="http://www.youtube.com/watch?v=F2kAnTZBnTg">philosophers playing soccer</a>, Luddites attending a technology conference, etc.). Pick some names and let the feeling that you have created something instead of just using old, boring names fill you with contentment. Whenever you need an other name, take one from your world. If you need further data (e.g date of birth) about your test users you can even do a little bit of research.</p>
+<div><script src='https://gist.github.com/1297011.js?file='></script>
+<noscript><pre><code>countdown = 10
+h = setInterval -&gt;
+ countdown--
+, 100
+do (-&gt;) until countdown is 0
+clearInterval h
+console.log 'Surprise!'</code></pre></noscript></div>
 
-<p>Though investing energy in this may reduce the time you spend writing code, compared to all the hours you put into a project, it is negligible. Nurturing this &#8220;subculture&#8221; in your tests can be very entertaining so you have a good time developing and are less prone to boredom. I think it pays off. We, Ruby programmers all know how important it is to be happy while programming and the effect it has on our productivity.</p>
 
-<p>And besides, do you know of anyone who is called John Doe?</p>
+<p>(If you don&#8217;t read Coffeescript code, you can go to the <a href="http://jashkenas.github.com/coffee-script/">Coffeescript web site</a>
+and paste the above example in to get compiled Javascript)</p>
+
+<p>The example above is broken. It gets stuck at the <code>until countdown is 0</code>
+row. In an event loop system events (callbacks) only get run after the &#8220;main line&#8221;
+of execution (or, in other words, all other code) has completed.
+So the until loop blocks out the callback of the setInterval,
+countdown never gets decremented and thus an endless loop ensues.</p>
+
+<p>I&#8217;m sure that there are many ways to fix this, I came up with the
+following (and wonder if there is one closer to the original):</p>
+
+<div><script src='https://gist.github.com/1297018.js?file='></script>
+<noscript><pre><code>countdown = 10
+h = setInterval -&gt;
+  countdown--
+  if countdown is 0
+    console.log 'Surprise'
+    clearInterval h
+, 100</code></pre></noscript></div>
+
+
+
 </div>
 
 
@@ -135,7 +170,7 @@
 
 
 
-<time datetime="2009-07-12 00:00:00 +0200" pubdate  updated >Jul 12<span>th</span>, 2009</time>
+<time datetime="2011-10-19 00:06:00 +0200" pubdate  updated >Oct 19<span>th</span>, 2011</time>
 
 
 
@@ -146,7 +181,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2009/07/12/john-doe-is-dull-the-importance-of-choosing-good-user-names-in-tests.html" data-via="baaz" data-counturl="http://codigoergosum.com/2009/07/12/john-doe-is-dull-the-importance-of-choosing-good-user-names-in-tests.html" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2011/10/19/event_loop_primer.html" data-via="baaz" data-counturl="http://codigoergosum.com/2011/10/19/event_loop_primer.html" >Tweet</a>
   
   
   <g:plusone size="medium"></g:plusone>
@@ -162,8 +197,8 @@
     <div id="disqus_thread"><div id="disqus_thread"></div>
 <script type="text/javascript">
   var disqus_shortname = 'codigoergosum';
-  var disqus_identifier = 'http://codigoergosum.com/2009/07/12/john-doe-is-dull-the-importance-of-choosing-good-user-names-in-tests.html';
-  var disqus_url = 'http://codigoergosum.com/2009/07/12/john-doe-is-dull-the-importance-of-choosing-good-user-names-in-tests.html';
+  var disqus_identifier = 'http://codigoergosum.com/2011/10/19/event_loop_primer.html';
+  var disqus_url = 'http://codigoergosum.com/2011/10/19/event_loop_primer.html';
   //var disqus_developer = 1;
   (function() {
     var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
