@@ -34,6 +34,8 @@ following (and wonder if there is one closer to the original):
 
 And that's it. I hope this simple example pushes you up on that pesky learning curve.
 
+(The snippet was published by the kind permission of the author.)
+
 [1]: http://teddziuba.com/2011/10/node-js-is-cancer.html
 [2]: http://pragprog.com/book/tbcoffee/coffeescript
 [3]: http://jashkenas.github.com/coffee-script/
