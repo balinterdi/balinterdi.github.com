@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Codigo Ergo Sum: installing ruby on a linode slice</title>
+  <title>Codigo Ergo Sum: An Annotated Assortment on Mockist Testing</title>
   <meta name="author" content="Balint Erdi">
   
 
@@ -16,7 +16,7 @@
 
   
 
-  <link rel="canonical" href="http://codigoergosum.com/2009/07/02/installing-ruby-on-a-linode-slice.html"/>
+  <link rel="canonical" href="http://codigoergosum.com/2011/11/30/an-annotated-assortment-on-mockist-testing.html"/>
   <link href="/favicon.png" rel="shortcut icon" />
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -95,7 +95,7 @@
   
   <header>
     
-      <h1 class="entry-title">Installing Ruby on a Linode Slice</h1>
+      <h1 class="entry-title">An Annotated Assortment on Mockist Testing</h1>
     
     
       <p class="meta">
@@ -103,7 +103,7 @@
 
 
 
-<time datetime="2009-07-02 00:00:00 +0200" pubdate  updated >Jul 2<span>nd</span>, 2009</time>
+<time datetime="2011-11-30 21:30:00 +0100" pubdate  updated >Nov 30<span>th</span>, 2011</time>
 
 
 </p>
@@ -111,109 +111,51 @@
   </header>
 
 
-<div class="entry-content"><p>To be able to experiment freely and find a store for my <a href="http://bucionrails.com/2009/06/22/twuckoo/">twuckoos</a> and other goodies I have recently purchased a Linode 360 slice and had Ubuntu 9.04 installed on it. Next thing was setting up ruby (ruby 1.8.6, to be precise).</p>
+<div class="entry-content"><p>Most of us read blog posts every day. We read them, take an idea out of
+them and then, most of the time, forget about them. Some of them are stashed
+away in the back of our minds, ready to jump out if we face a related
+problem.</p>
 
-<p>When deciding about how to install ruby, in part I wanted to have flexibility but mostly I wanted to feel like I am a professional sysadmin for some hours so I balked at pre-built ruby packages and went with the roll-your-own approach. I&#8217;ll summarize below the process and some pitfalls I encountered so it might help someone.</p>
+<p>A precious few of them, however, we keep thinking back to without a specific
+reason.</p>
 
-<h2>Some basic tools</h2>
+<p>I&#8217;ve bitten by the &#8220;mockist&#8221; testing bug when I read <a href="http://jamesgolick.com/2010/3/14/crazy-heretical-and-awesome-the-way-i-write-rails-apps.html">this one</a> a while ago. It expresses a contrarian opinion
+about how to test Rails applications which struck me as odd at the time.
+That&#8217;s probably the reason I read it several times.</p>
 
+<p>A few weeks ago I watched Gregory Moeck&#8217;s <a href="http://confreaks.net/videos/659-rubyconf2011-why-you-don-t-get-mock-objects">Why You Don&#8217;t Get Mock Objects</a> and I was stung by the same bug only more deeply,
+this time.</p>
 
-<p>First, you will need wget (or curl) to download the sources you will need along the way, so:</p>
+<p>Using that video as a starting point I then roamed Gregory&#8217;s blog for
+more and felt like I was beginning to grasp it. Now, obviously, I&#8217;m at the
+beginning of this journey and still have a lot of teeth-cutting to do.
+Nevertheless, I want to share with you the gems I&#8217;ve found so far.</p>
 
-<pre lang="bash">$ sudo apt-get install wget</pre>
+<p>Gregory&#8217;s blog has a very good primer on the difference between stubs
+and mocks: <a href="http://gmoeck.github.com/2011/10/26/stubbing-is-not-enough">&#8220;Stubbing is Not Enough&#8221;</a>. I&#8217;d even go
+as far as to claim that it explains its subject better than Martin
+Fowler&#8217;s classic <a href="http://martinfowler.com/articles/mocksArentStubs.html">&#8220;Stubs Are Not Mocks&#8221;</a>, although that
+latter goes into more detail and is a definite must-read, too.</p>
 
+<p>James Golick has another great piece that drives home the point better
+than his first post I mentioned: <a href="http://jamesgolick.com/2010/3/10/on-mocks-and-mockist-testing.html">&#8220;On Mocks and Mockist Testing&#8221;</a>.</p>
 
-<p>Also, before you stare dumbly at the screen (like I did) wondering why can&#8217;t the stupid machine run make when the Makefile is clearly there in the directory , don&#8217;t forget to install make:</p>
+<p>Along comes Avdi Grimm with his strict sounding <a href="http://avdi.org/devblog/2011/07/05/demeter-its-not-just-a-good-idea-its-the-law/">&#8220;Demeter: It’s not just a good idea. It’s the law.&#8221;</a>
+, with a very interesting discussion in the comments. The same gentleman
+wrote <a href="http://avdi.org/devblog/2011/09/06/making-a-mockery-of-tdd/">&#8220;Making a Mockery of TDD&#8221;</a> in which he
+touches on the concept of using mocks as a design tool.</p>
 
-<pre lang="bash">$ sudo apt-get install make</pre>
+<p>Nick Kallen&#8217;s <a href="http://magicscalingsprinkles.wordpress.com/2010/02/08/why-i-love-everything-you-hate-about-java/">&#8220;Why I love everything you hate about Java&#8221;</a> is clearly provocative
+and definitely worth to contemplate on. It is also the only one of the bunch that
+does not use Ruby (but Scala) for the code examples.</p>
 
+<p>Finally it seems like the fountainhead in the matter is the <a href="growing">&#8220;Growing Object-Oriented Software, Guided by Tests&#8221;</a>
+book by Steve Freeman and Nat Pryce. I&#8217;ve only gotten until putting it
+on my reading list so please chime in if you did read it.</p>
 
-<h2>Updating the package repos</h2>
-
-
-<p>Plus, since we&#8217;ll be installing packages that are found in the &#8220;universe&#8221; namespace (or whatever it is called) you should uncomment the below two lines in /etc/apt/sources.list :</p>
-
-<pre lang="bash">deb http://us.archive.ubuntu.com/ubuntu/ jaunty universe
-deb-src http://us.archive.ubuntu.com/ubuntu/ jaunty universe</pre>
-
-
-<p>&#8230; and then update your package index:</p>
-
-<pre lang="bash">$ sudo apt-get update</pre>
-
-
-<h2>Installing some packages ruby needs</h2>
-
-
-<p>Before we download and build ruby, however, it is recommendable to have the zlib and openssl libraries so ruby can already bind to them. This is one of the things that is a lot easier to see with hindsight, but here I am, blogging this to you:</p>
-
-<pre lang="bash">$ sudo apt-get install zlib1g zlib1g-dev zlibc
-$ sudo apt-get install openssl</pre>
-
-
-<p>It turns out from <a href="http://www.ruby-forum.com/topic/71774">this thread</a>, that the zlib bindings are part of ruby since 1.8.6 so you will not need the libzlib-ruby package.</p>
-
-<p>Now, on to ruby itself.</p>
-
-<h2>Ruby &amp; Rubygems</h2>
-
-
-<pre lang="bash">$ wget ftp://ftp.ruby-lang.org/pub/ruby/ruby-1.8.6-p369.tar.bz2
-(untar and cd to new directory)
-$ ./configure
-configure: error: no acceptable C compiler found in $PATH</pre>
-
-
-<p>Piece of cake:</p>
-
-<pre lang="bash">$ sudo apt-get install gcc
-$ ./configure
-configure: error: in `/home/balint/ruby-1.8.6-p369':
-configure: error: C compiler cannot create executables
-See `config.log' for more details.</pre>
-
-
-<p>A bit harder, but I have quickly found the answer <a href="http://ubuntuforums.org/showthread.php?t=17033">here</a>, and then did:</p>
-
-<pre lang="bash">$ sudo apt-get install libc6-dev g++
-$ ./configure
-$ make
-$ sudo make install
-$ ruby -e "p 'hello from linode slice'"
-"hello from linode slice"</pre>
-
-
-<p>Rolling!</p>
-
-<p>However, we all know that a ruby installation without gems is a toothless tiger (lion?) so we&#8217;ll install rubygems last, first downloading the source, and then installing it:</p>
-
-<pre lang="bash">$ wget http://rubyforge.org/frs/download.php/57643/rubygems-1.3.4.tgz
-(untar and cd to new directory)
-$ sudo ruby setup.rb</pre>
-
-
-<p>If you want to use gems stored on github (and you probably do) it is convenient to add the gem github repository to your gem sources:</p>
-
-<pre lang="bash">$ gem source -a http://gems.github.com
-$ sudo gem install balinterdi-twuckoo</pre>
-
-
-<p>Ok, that&#8217;s all. I hope you have found this useful.</p>
-
-<hr /><em>Note:</em>
-
-
-<p>If you receive an error message similar to the following when trying to install a gem:</p>
-
-<pre lang="bash">/usr/local/lib/ruby/site_ruby/1.8/rubygems/custom_require.rb:31:in `gem_original_require': no such file to load -- zlib (LoadError)</pre>
-
-
-<p>Then you need to install the appropriate lib package and recompile ruby. Go to the directory where you unpacked the ruby source to and do:</p>
-
-<pre lang="bash">$ make clean
-$ make
-$ sudo make install</pre>
-
+<p>Please, also pipe in if there are any materials in the subject you&#8217;d
+recommend. It would also be cool to see open source projects that extensively use mocks for testing, the only
+one I found so far is <a href="https://github.com/jamesgolick/friendly">friendly</a>.</p>
 </div>
 
 
@@ -229,7 +171,7 @@ $ sudo make install</pre>
 
 
 
-<time datetime="2009-07-02 00:00:00 +0200" pubdate  updated >Jul 2<span>nd</span>, 2009</time>
+<time datetime="2011-11-30 21:30:00 +0100" pubdate  updated >Nov 30<span>th</span>, 2011</time>
 
 
 
@@ -240,7 +182,7 @@ $ sudo make install</pre>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2009/07/02/installing-ruby-on-a-linode-slice.html" data-via="baaz" data-counturl="http://codigoergosum.com/2009/07/02/installing-ruby-on-a-linode-slice.html" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2011/11/30/an-annotated-assortment-on-mockist-testing.html" data-via="baaz" data-counturl="http://codigoergosum.com/2011/11/30/an-annotated-assortment-on-mockist-testing.html" >Tweet</a>
   
   
   <g:plusone size="medium"></g:plusone>
@@ -256,8 +198,8 @@ $ sudo make install</pre>
     <div id="disqus_thread"><div id="disqus_thread"></div>
 <script type="text/javascript">
   var disqus_shortname = 'codigoergosum';
-  var disqus_identifier = 'http://codigoergosum.com/2009/07/02/installing-ruby-on-a-linode-slice.html';
-  var disqus_url = 'http://codigoergosum.com/2009/07/02/installing-ruby-on-a-linode-slice.html';
+  var disqus_identifier = 'http://codigoergosum.com/2011/11/30/an-annotated-assortment-on-mockist-testing.html';
+  var disqus_url = 'http://codigoergosum.com/2011/11/30/an-annotated-assortment-on-mockist-testing.html';
   //var disqus_developer = 1;
   (function() {
     var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

@@ -4,13 +4,66 @@
   <title>Codigo Ergo Sum</title>
   <link href="http://codigoergosum.com/atom.xml" rel="self"/>
   <link href="http://codigoergosum.com/"/>
-  <updated>2011-10-23T21:29:38+02:00</updated>
+  <updated>2011-11-30T22:31:46+01:00</updated>
   <id>http://codigoergosum.com/</id>
   <author>
     <name>Balint Erdi</name>
     
   </author>
 
+  
+  <entry>
+    <title>An Annotated Assortment on Mockist Testing</title>
+    <link href="http://codigoergosum.com/2011/11/30/an-annotated-assortment-on-mockist-testing.html"/>
+    <updated>2011-11-30T21:30:00+01:00</updated>
+    <id>http://codigoergosum.com/2011/11/30/an-annotated-assortment-on-mockist-testing</id>
+    <content type="html">&lt;p&gt;Most of us read blog posts every day. We read them, take an idea out of
+them and then, most of the time, forget about them. Some of them are stashed
+away in the back of our minds, ready to jump out if we face a related
+problem.&lt;/p&gt;
+
+&lt;p&gt;A precious few of them, however, we keep thinking back to without a specific
+reason.&lt;/p&gt;
+
+&lt;p&gt;I've bitten by the &quot;mockist&quot; testing bug when I read &lt;a href=&quot;http://jamesgolick.com/2010/3/14/crazy-heretical-and-awesome-the-way-i-write-rails-apps.html&quot;&gt;this one&lt;/a&gt; a while ago. It expresses a contrarian opinion
+about how to test Rails applications which struck me as odd at the time.
+That's probably the reason I read it several times.&lt;/p&gt;
+
+&lt;p&gt;A few weeks ago I watched Gregory Moeck's &lt;a href=&quot;http://confreaks.net/videos/659-rubyconf2011-why-you-don-t-get-mock-objects&quot;&gt;Why You Don't Get Mock Objects&lt;/a&gt; and I was stung by the same bug only more deeply,
+this time.&lt;/p&gt;
+
+&lt;p&gt;Using that video as a starting point I then roamed Gregory's blog for
+more and felt like I was beginning to grasp it. Now, obviously, I'm at the
+beginning of this journey and still have a lot of teeth-cutting to do.
+Nevertheless, I want to share with you the gems I've found so far.&lt;/p&gt;
+
+&lt;p&gt;Gregory's blog has a very good primer on the difference between stubs
+and mocks: &lt;a href=&quot;http://gmoeck.github.com/2011/10/26/stubbing-is-not-enough&quot;&gt;&quot;Stubbing is Not Enough&quot;&lt;/a&gt;. I'd even go
+as far as to claim that it explains its subject better than Martin
+Fowler's classic &lt;a href=&quot;http://martinfowler.com/articles/mocksArentStubs.html&quot;&gt;&quot;Stubs Are Not Mocks&quot;&lt;/a&gt;, although that
+latter goes into more detail and is a definite must-read, too.&lt;/p&gt;
+
+&lt;p&gt;James Golick has another great piece that drives home the point better
+than his first post I mentioned: &lt;a href=&quot;http://jamesgolick.com/2010/3/10/on-mocks-and-mockist-testing.html&quot;&gt;&quot;On Mocks and Mockist Testing&quot;&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Along comes Avdi Grimm with his strict sounding &lt;a href=&quot;http://avdi.org/devblog/2011/07/05/demeter-its-not-just-a-good-idea-its-the-law/&quot;&gt;&quot;Demeter: It’s not just a good idea. It’s the law.&quot;&lt;/a&gt;
+, with a very interesting discussion in the comments. The same gentleman
+wrote &lt;a href=&quot;http://avdi.org/devblog/2011/09/06/making-a-mockery-of-tdd/&quot;&gt;&quot;Making a Mockery of TDD&quot;&lt;/a&gt; in which he
+touches on the concept of using mocks as a design tool.&lt;/p&gt;
+
+&lt;p&gt;Nick Kallen's &lt;a href=&quot;http://magicscalingsprinkles.wordpress.com/2010/02/08/why-i-love-everything-you-hate-about-java/&quot;&gt;&quot;Why I love everything you hate about Java&quot;&lt;/a&gt; is clearly provocative
+and definitely worth to contemplate on. It is also the only one of the bunch that
+does not use Ruby (but Scala) for the code examples.&lt;/p&gt;
+
+&lt;p&gt;Finally it seems like the fountainhead in the matter is the &lt;a href=&quot;growing&quot;&gt;&quot;Growing Object-Oriented Software, Guided by Tests&quot;&lt;/a&gt;
+book by Steve Freeman and Nat Pryce. I've only gotten until putting it
+on my reading list so please chime in if you did read it.&lt;/p&gt;
+
+&lt;p&gt;Please, also pipe in if there are any materials in the subject you'd
+recommend. It would also be cool to see open source projects that extensively use mocks for testing, the only
+one I found so far is &lt;a href=&quot;https://github.com/jamesgolick/friendly&quot;&gt;friendly&lt;/a&gt;.&lt;/p&gt;
+</content>
+  </entry>
   
   <entry>
     <title>Event loop primer</title>
@@ -868,23 +921,6 @@ apt-get install xvfb&lt;/code&gt;
 &lt;p&gt;I also set up &lt;a href=&quot;http://twitter.com/budapestrb&quot;&gt;a twitter account for the budapest.rb&lt;/a&gt; group where an instance of the HRT bot will post any tweets that have been tagged with #budapestrb. So, my fellow budapest.rb programmers, if you have anything to say about the budapest.rb, just make sure you include the #budapestrb tag in your tweet and watch the HRT bot repeat it.&lt;/p&gt;
 
 &lt;p&gt;To launch your own hashtag retweet bot, just follow the instructions in &lt;a href=&quot;http://github.com/balinterdi/hashtag_retweet_bot&quot;&gt;the README&lt;/a&gt;.&lt;/p&gt;
-</content>
-  </entry>
-  
-  <entry>
-    <title>Pragmatic Thinking and Learning on Twitter</title>
-    <link href="http://codigoergosum.com/2009/07/03/pragmatic-thinking-and-learning-on-twitter.html"/>
-    <updated>2009-07-03T00:00:00+02:00</updated>
-    <id>http://codigoergosum.com/2009/07/03/pragmatic-thinking-and-learning-on-twitter</id>
-    <content type="html">&lt;p&gt;Some of you may be aware of my grandiose plans with my twitter mini-framework named &lt;a href=&quot;http://bucionrails.com/2009/06/22/twuckoo/&quot;&gt;twuckoo&lt;/a&gt;. For my part I am constantly thinking about -hopefully reasonable- ways that it could be used for the better of mankind :)&lt;/p&gt;
-
-&lt;p&gt;The other part of the story is my enthusiasm with Pragmatic Programmers books. I have recently started &lt;a href=&quot;http://pragprog.com/titles/ahptl/pragmatic-thinking-and-learning&quot;&gt;Pragmatic Thinking and Learning&lt;/a&gt; by Andy Hunt which is also a very good one and found the familiar &quot;resuming card&quot; at the end. This card sums up the wisdom of the book in short phrases just so that you can recall what you read quickly. It is a great idea and can be found in other PP books, too.&lt;/p&gt;
-
-&lt;p&gt;So I asked at a PP email address which seemed to be closest to copyright questions whether I have the right to do this. To my surprise, it was the author himself, &lt;a href=&quot;http://blog.toolshed.com/&quot;&gt;Andy Hunt&lt;/a&gt;, who answered me and kindly gave me permission for the book in question. (Once again, thank you, Andy!)&lt;/p&gt;
-
-&lt;p&gt;So there you have it, &lt;a href=&quot;https://twitter.com/pragthinklearn&quot;&gt;a twitter account that will serve you an advice each day&lt;/a&gt; just so that you can &quot;refactor your wetware&quot; (the subtitle of the book) and hopefully help you be a better craftsman.&lt;/p&gt;
-
-&lt;p&gt;And now, my little twuckoo, on to world domination!&lt;/p&gt;
 </content>
   </entry>
   
