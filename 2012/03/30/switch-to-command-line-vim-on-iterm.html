@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Codigo Ergo Sum: Why I love Datamapper</title>
+  <title>Codigo Ergo Sum: Switch to Command Line Vim on iTerm</title>
   <meta name="author" content="Balint Erdi">
   
 
@@ -16,7 +16,7 @@
 
   
 
-  <link rel="canonical" href="http://codigoergosum.com/2009/02/12/why-i-love-datamapper.html"/>
+  <link rel="canonical" href="http://codigoergosum.com/2012/03/30/switch-to-command-line-vim-on-iterm.html"/>
   <link href="/favicon.png" rel="shortcut icon" />
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -95,7 +95,7 @@
   
   <header>
     
-      <h1 class="entry-title">Why I Love Datamapper</h1>
+      <h1 class="entry-title">Switch to Command Line Vim on iTerm</h1>
     
     
       <p class="meta">
@@ -103,7 +103,7 @@
 
 
 
-<time datetime="2009-02-12 00:00:00 +0100" pubdate  updated >Feb 12<span>th</span>, 2009</time>
+<time datetime="2012-03-30 12:04:00 +0200" pubdate  updated >Mar 30<span>th</span>, 2012</time>
 
 
 </p>
@@ -111,44 +111,47 @@
   </header>
 
 
-<div class="entry-content"><p>I wanted to find the last user in alphabetic order of their names in a Merb project that uses <a href="http://datamapper.org">Datamapper</a> (the default ORM in Merb). So I did [<a href="#love-datamapper-first">*</a>]:</p>
+<div class="entry-content"><p>Switching between applications is more of a mental context switch than just switching between the panes in the same window. Or at least that&#8217;s what I told myself when I decided I switch from using macvim to the simple command line version. It also brings me pretty close to using tmux which I would primarily use to send commands between panes. Most of the posts about using tmux only briefly touch on switching to command line vim so I thought I&#8217;d fill in the gap somewhat.</p>
 
-<pre lang="bash">
-irb(main):020:0> User.all(:order => [:name]).first.name
- ~ (0.032946) SELECT <column_names> FROM `users` ORDER BY `name` LIMIT 1
-=> "Admin User"
-</pre>
+<p>I use iTerm2 on a MacBook Pro and run 10.6.8 (Snow Leopard), although I think it should run
+fine under Lion, too.</p>
 
+<p>First, you&#8217;ll have to install a fairly recent vim. Homebrew has a policy of not having packages which the operating system already provides, but fortunately there is a <a href="https://github.com/Homebrew/homebrew-dupes">homebrew-dupes</a> repository that has vim:</p>
 
-<p>Ok, so the default sorting order is ascending but I need the last one. There are two ways to do this. Write an SQL snippet and sneak in &#8220;DESC&#8221; somewhere or reverse the collection before taking the first element. Since I was not sure how to sneak in &#8220;DESC&#8221; plus I prefer writing Ruby to writing SQL hands down, I went with the second approach:</p>
-
-<pre lang="bash">
-irb(main):021:0> User.all(:order => [:name]).reverse.first.name
- ~ (1.033271) SELECT <column_names> FROM `users` ORDER BY `name` DESC LIMIT 1
-=> "XX XX"
-</pre>
+<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
+</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>$ brew install --HEAD https://raw.github.com/Homebrew/homebrew-dupes/master/vim.rb</div></code></pre></td></tr></table></div></figure></div>
 
 
-<p>See what happened? Instead of reverting the collection (which is extra time even if it is done very fast) Datamapper sneaked in that DESC for me! Isn&#8217;t this just brilliant? Datamapper takes the burden to write SQL off of your shoulders. You can keep writing Ruby statements you presumably love and let Datamapper take care of the SQL reaping both the comfort and the performance gain. [<a href="#love-datamapper-second">**</a>]. Also, likewise your app stays database type agnostic. Note how it is not supposed there is a RDBMS under the ORM layer. It could work with CouchDB, for example (I think there is actually work in progress for a CouchDB adapter). This is not the only reason I like Datamapper so much, so if you are still not convinced, go check out <a href="http://datamapper.org/doku.php?id=why_datamapper">some other reasons to use it</a>.</p>
+<p>This will configure, make and install vim.</p>
 
-<hr>
+<p>Next, I looked for a theme that looks good on both a light and a dark background and has iTerm support (a colorscheme for the terminal emulator). I&#8217;ve found <a href="http://ethanschoonover.com/solarized">Ethan Schoonover&#8217;s solarized theme</a> really cool. Just follow the steps in the <a href="https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized">README of the repository</a> to download both the vim and the iTerm colorscheme.</p>
+
+<p>To install the iTerm colorscheme, go to Preferences -> Profiles to select your
+profile and then click the Colors tab. There is a &#8220;Load Presets&#8221; dropdown from
+which you have to choose Import and find the solarized itermcolors file.</p>
+
+<p>To use the vim colorscheme you have to add the colors file to somewhere where
+vim finds it. There are many ways to do this, so check out the <a href="https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized">README</a> to
+find the method that suits you.</p>
+
+<p>Once, done you have to set the colorscheme in your vimrc:</p>
+
+<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
+</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>colorscheme solarized</div></code></pre></td></tr></table></div></figure></div>
 
 
-<h3>Notes</h3>
+<p>(vim finds out the appropriate background automatically, so you don&#8217;t have to
+explicitly set the background)</p>
+
+<p>I was all set up and most things worked just like in the GUI version. One thing that bugged me was that my cursor keys stopped working. I don&#8217;t use them for moving and text input but I do for cycling in the command history or flipping between file matches for Command-T. It took me a while to find out that iTerm sends a wrong escape sequence for the arrow keys. I could fix that by selecting another set of key presets for the terminal&#8217;s profile. In iTerm, go to Preferences -> Profiles and select your profile. Select Keys, then Load Preset and select xTerm with Numeric Keypad.</p>
+
+<p>There is one more trick I find handy. If you set</p>
+
+<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
+</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>set clipboard=unnamed</div></code></pre></td></tr></table></div></figure></div>
 
 
-<p id="love-datamapper-first">* I could have written this one in a simpler way:
-<pre lang="bash">
-irb(main):018:0> User.first(:order => [:name]).name
- ~ (0.032345) SELECT <column_names> FROM `users` ORDER BY `name` LIMIT 1
-=> "Admin User"
-</pre>
-
-But you -or at least I- could not do it for the last element (there is no User.last)
-
-<p id="love-datamapper-second">** I am not suggesting not to learn SQL at all. I am all for a know-thy-tools approach (especially it it means not cluttering your markup with javascript :) ). However, having the ORM do obviously good things for you is worth it most of the time.
-</p>
-
+<p>in your config, then anything you copy from vim by the usual vim commands (y, d, x, etc.) will be available on your system clipboard and thus pastable.</p>
 </div>
 
 
@@ -164,7 +167,7 @@ But you -or at least I- could not do it for the last element (there is no User.l
 
 
 
-<time datetime="2009-02-12 00:00:00 +0100" pubdate  updated >Feb 12<span>th</span>, 2009</time>
+<time datetime="2012-03-30 12:04:00 +0200" pubdate  updated >Mar 30<span>th</span>, 2012</time>
 
 
 
@@ -175,7 +178,7 @@ But you -or at least I- could not do it for the last element (there is no User.l
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2009/02/12/why-i-love-datamapper.html" data-via="baaz" data-counturl="http://codigoergosum.com/2009/02/12/why-i-love-datamapper.html" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2012/03/30/switch-to-command-line-vim-on-iterm.html" data-via="baaz" data-counturl="http://codigoergosum.com/2012/03/30/switch-to-command-line-vim-on-iterm.html" >Tweet</a>
   
   
   <g:plusone size="medium"></g:plusone>
@@ -191,8 +194,8 @@ But you -or at least I- could not do it for the last element (there is no User.l
     <div id="disqus_thread"><div id="disqus_thread"></div>
 <script type="text/javascript">
   var disqus_shortname = 'codigoergosum';
-  var disqus_identifier = 'http://codigoergosum.com/2009/02/12/why-i-love-datamapper.html';
-  var disqus_url = 'http://codigoergosum.com/2009/02/12/why-i-love-datamapper.html';
+  var disqus_identifier = 'http://codigoergosum.com/2012/03/30/switch-to-command-line-vim-on-iterm.html';
+  var disqus_url = 'http://codigoergosum.com/2012/03/30/switch-to-command-line-vim-on-iterm.html';
   //var disqus_developer = 1;
   (function() {
     var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

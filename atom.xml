@@ -4,13 +4,62 @@
   <title>Codigo Ergo Sum</title>
   <link href="http://codigoergosum.com/atom.xml" rel="self"/>
   <link href="http://codigoergosum.com/"/>
-  <updated>2011-11-30T22:31:46+01:00</updated>
+  <updated>2012-03-31T14:05:26+02:00</updated>
   <id>http://codigoergosum.com/</id>
   <author>
     <name>Balint Erdi</name>
     
   </author>
 
+  
+  <entry>
+    <title>Switch to Command Line Vim on iTerm</title>
+    <link href="http://codigoergosum.com/2012/03/30/switch-to-command-line-vim-on-iterm.html"/>
+    <updated>2012-03-30T12:04:00+02:00</updated>
+    <id>http://codigoergosum.com/2012/03/30/switch-to-command-line-vim-on-iterm</id>
+    <content type="html">&lt;p&gt;Switching between applications is more of a mental context switch than just switching between the panes in the same window. Or at least that's what I told myself when I decided I switch from using macvim to the simple command line version. It also brings me pretty close to using tmux which I would primarily use to send commands between panes. Most of the posts about using tmux only briefly touch on switching to command line vim so I thought I'd fill in the gap somewhat.&lt;/p&gt;
+
+&lt;p&gt;I use iTerm2 on a MacBook Pro and run 10.6.8 (Snow Leopard), although I think it should run
+fine under Lion, too.&lt;/p&gt;
+
+&lt;p&gt;First, you'll have to install a fairly recent vim. Homebrew has a policy of not having packages which the operating system already provides, but fortunately there is a &lt;a href=&quot;https://github.com/Homebrew/homebrew-dupes&quot;&gt;homebrew-dupes&lt;/a&gt; repository that has vim:&lt;/p&gt;
+
+&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;$ brew install --HEAD https://raw.github.com/Homebrew/homebrew-dupes/master/vim.rb&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This will configure, make and install vim.&lt;/p&gt;
+
+&lt;p&gt;Next, I looked for a theme that looks good on both a light and a dark background and has iTerm support (a colorscheme for the terminal emulator). I've found &lt;a href=&quot;http://ethanschoonover.com/solarized&quot;&gt;Ethan Schoonover's solarized theme&lt;/a&gt; really cool. Just follow the steps in the &lt;a href=&quot;https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized&quot;&gt;README of the repository&lt;/a&gt; to download both the vim and the iTerm colorscheme.&lt;/p&gt;
+
+&lt;p&gt;To install the iTerm colorscheme, go to Preferences -&gt; Profiles to select your
+profile and then click the Colors tab. There is a &quot;Load Presets&quot; dropdown from
+which you have to choose Import and find the solarized itermcolors file.&lt;/p&gt;
+
+&lt;p&gt;To use the vim colorscheme you have to add the colors file to somewhere where
+vim finds it. There are many ways to do this, so check out the &lt;a href=&quot;https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized&quot;&gt;README&lt;/a&gt; to
+find the method that suits you.&lt;/p&gt;
+
+&lt;p&gt;Once, done you have to set the colorscheme in your vimrc:&lt;/p&gt;
+
+&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;colorscheme solarized&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+
+
+&lt;p&gt;(vim finds out the appropriate background automatically, so you don't have to
+explicitly set the background)&lt;/p&gt;
+
+&lt;p&gt;I was all set up and most things worked just like in the GUI version. One thing that bugged me was that my cursor keys stopped working. I don't use them for moving and text input but I do for cycling in the command history or flipping between file matches for Command-T. It took me a while to find out that iTerm sends a wrong escape sequence for the arrow keys. I could fix that by selecting another set of key presets for the terminal's profile. In iTerm, go to Preferences -&gt; Profiles and select your profile. Select Keys, then Load Preset and select xTerm with Numeric Keypad.&lt;/p&gt;
+
+&lt;p&gt;There is one more trick I find handy. If you set&lt;/p&gt;
+
+&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;set clipboard=unnamed&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+
+
+&lt;p&gt;in your config, then anything you copy from vim by the usual vim commands (y, d, x, etc.) will be available on your system clipboard and thus pastable.&lt;/p&gt;
+</content>
+  </entry>
   
   <entry>
     <title>An Annotated Assortment on Mockist Testing</title>
@@ -906,21 +955,6 @@ apt-get install xvfb&lt;/code&gt;
 &lt;p&gt;Though investing energy in this may reduce the time you spend writing code, compared to all the hours you put into a project, it is negligible. Nurturing this &quot;subculture&quot; in your tests can be very entertaining so you have a good time developing and are less prone to boredom. I think it pays off. We, Ruby programmers all know how important it is to be happy while programming and the effect it has on our productivity.&lt;/p&gt;
 
 &lt;p&gt;And besides, do you know of anyone who is called John Doe?&lt;/p&gt;
-</content>
-  </entry>
-  
-  <entry>
-    <title>The hashtag (HRT) retweet bot gemified</title>
-    <link href="http://codigoergosum.com/2009/07/10/the-hashtag-hrt-retweet-bot-gemified.html"/>
-    <updated>2009-07-10T00:00:00+02:00</updated>
-    <id>http://codigoergosum.com/2009/07/10/the-hashtag-hrt-retweet-bot-gemified</id>
-    <content type="html">&lt;p&gt;A very simple twitter bot that retweeted everything that was tagged by a certain tag was put together for Scotland on Rails '09. Then, &lt;a href=&quot;http://www.jaimeiniesta.com/&quot;&gt;Jaime Iniesta&lt;/a&gt; adapted it for Euruko '09. I then forked from his repository, made a few simplifications and minor improvements and DRY-d its configuration.&lt;/p&gt;
-
-&lt;p&gt;Maybe most importantly I then turned it into [a gem][hashtag_retweet_home] so that configuration files (including the bot's which has the credentials for the twitter account) do not have to be included in the repository.&lt;/p&gt;
-
-&lt;p&gt;I also set up &lt;a href=&quot;http://twitter.com/budapestrb&quot;&gt;a twitter account for the budapest.rb&lt;/a&gt; group where an instance of the HRT bot will post any tweets that have been tagged with #budapestrb. So, my fellow budapest.rb programmers, if you have anything to say about the budapest.rb, just make sure you include the #budapestrb tag in your tweet and watch the HRT bot repeat it.&lt;/p&gt;
-
-&lt;p&gt;To launch your own hashtag retweet bot, just follow the instructions in &lt;a href=&quot;http://github.com/balinterdi/hashtag_retweet_bot&quot;&gt;the README&lt;/a&gt;.&lt;/p&gt;
 </content>
   </entry>
   
