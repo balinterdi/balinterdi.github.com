@@ -1,0 +1,7 @@
+countdown = 10
+h = setInterval ->
+  countdown--
+  if countdown is 0
+    console.log 'Surprise'
+    clearInterval h
+, 100

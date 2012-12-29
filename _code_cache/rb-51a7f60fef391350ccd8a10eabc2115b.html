@@ -1,0 +1,5 @@
+<div class="highlight"><pre><span class="c1">#!/usr/bin/env ruby -wn</span>
+<span class="n">modified_file_pattern</span> <span class="o">=</span> <span class="sr">/^#\s+(?:modified|new file):\s+(.*)$/</span>
+<span class="nb">puts</span> <span class="vg">$1</span>  <span class="k">if</span> <span class="n">modified_file_pattern</span> <span class="o">=~</span> <span class="vg">$_</span>
+</pre>
+</div>

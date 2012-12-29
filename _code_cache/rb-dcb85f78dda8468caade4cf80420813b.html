@@ -1,0 +1,18 @@
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">TrailingWhiteSpaceEraser</span>
+  <span class="no">FILE_TYPES</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="s2">&quot;feature&quot;</span><span class="p">,</span> <span class="s2">&quot;yml&quot;</span><span class="p">,</span> <span class="s2">&quot;erb&quot;</span><span class="p">,</span> <span class="s2">&quot;haml&quot;</span><span class="o">]</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">rm_trailing_whitespace_from_file!</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">trimmed</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">readlines</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span>
+      <span class="n">line</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/[\t ]+$/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">trimmed</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">rm_trailing_whitespace!</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">directory?</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="p">?</span> <span class="no">Dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">root</span><span class="si">}</span><span class="s2">/**/*.{</span><span class="si">#{</span><span class="no">FILE_TYPES</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">}&quot;</span><span class="p">)</span> <span class="p">:</span> <span class="o">[</span><span class="n">root</span><span class="o">]</span>
+    <span class="n">files</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">file</span><span class="o">|</span> <span class="n">rm_trailing_whitespace_from_file!</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">chomp</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+</div>

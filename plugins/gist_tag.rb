@@ -16,7 +16,7 @@ module Jekyll
       super
       @text           = text
       @cache_disabled = false
-      @cache_folder   = File.expand_path "../_gist_cache", File.dirname(__FILE__)
+      @cache_folder   = File.expand_path "../.gist-cache", File.dirname(__FILE__)
       FileUtils.mkdir_p @cache_folder
     end
 
@@ -40,7 +40,9 @@ module Jekyll
     end
 
     def script_url_for(gist_id, filename)
-      "https://gist.github.com/#{gist_id}.js?file=#{filename}"
+      url = "https://gist.github.com/#{gist_id}.js"
+      url = "#{url}?file=#{filename}" unless filename.nil? or filename.empty?
+      url
     end
 
     def get_gist_url_for(gist, file)
@@ -71,7 +73,13 @@ module Jekyll
     def get_gist_from_web(gist, file)
       gist_url          = get_gist_url_for gist, file
       raw_uri           = URI.parse gist_url
-      https             = Net::HTTP.new raw_uri.host, raw_uri.port
+      proxy             = ENV['http_proxy']
+      if proxy
+        proxy_uri       = URI.parse(proxy)
+        https           = Net::HTTP::Proxy(proxy_uri.host, proxy_uri.port).new raw_uri.host, raw_uri.port
+      else
+        https           = Net::HTTP.new raw_uri.host, raw_uri.port
+      end
       https.use_ssl     = true
       https.verify_mode = OpenSSL::SSL::VERIFY_NONE
       request           = Net::HTTP::Get.new raw_uri.request_uri
