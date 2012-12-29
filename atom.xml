@@ -4,13 +4,134 @@
   <title>Codigo Ergo Sum</title>
   <link href="http://codigoergosum.com/atom.xml" rel="self"/>
   <link href="http://codigoergosum.com/"/>
-  <updated>2012-05-15T15:04:16+02:00</updated>
+  <updated>2012-12-29T23:30:59+01:00</updated>
   <id>http://codigoergosum.com/</id>
   <author>
     <name>Balint Erdi</name>
     
   </author>
 
+  
+  <entry>
+    <title>Lessons learned from solving 4Clojure problems</title>
+    <link href="http://codigoergosum.com/2012/12/29/lessons-learned-from-solving-4clojure-problems.html"/>
+    <updated>2012-12-29T14:55:00+01:00</updated>
+    <id>http://codigoergosum.com/2012/12/29/lessons-learned-from-solving-4clojure-problems</id>
+    <content type="html">&lt;p&gt;A few days ago I completed the last problem on the &lt;a href=&quot;http://4clojure.com&quot;&gt;4Clojure&lt;/a&gt; site. If you
+want to learn Clojure, solving these problems is a great way to do it. Several
+of its features -that I'll highlight below- make it a great learning tool. Other
+features probably arise from &lt;a href=&quot;http://clojure.org/&quot;&gt;Clojure&lt;/a&gt; being a
+(pragmatic) functional programming language. Coming from mostly an OO background
+these were also new to me and thus deserve their own paragraph.&lt;/p&gt;
+
+&lt;p&gt;I hope that after reading through the list you'll end up being persuaded of the
+merits and want to solve (some of) the problems yourself. If you do, please let
+me know how it went and what you learned from it.&lt;/p&gt;
+
+&lt;p&gt;If you really get stuck, there is a &lt;a href=&quot;https://groups.google.com/forum/?fromgroups#!forum/4clojure&quot;&gt;Google group dedicated to the 4Clojure
+problems&lt;/a&gt;. You can also leave a comment here so I can help or go directly to
+check &lt;a href=&quot;https://gist.github.com/raw/4008944/9c0577566b9a87e8db03332bf71b6d0b1140748e/4clojure.clj&quot;&gt;my solutions&lt;/a&gt;. Let's jump in.&lt;/p&gt;
+
+&lt;h2&gt;Why is 4Clojure a great learning tool?&lt;/h2&gt;
+
+&lt;h3&gt;Looking at others' solutions&lt;/h3&gt;
+
+&lt;p&gt;After solving a problem, you can check how the users you follow solved it.
+That's arguably the most important feature when it comes to learning since it
+is essentially a code reading exercise when the functionality of the code is
+well-known (since it solves the same problem you've solved) and the authors are
+probably more proficient.&lt;/p&gt;
+
+&lt;p&gt;On several occasions I saw solutions that were both more concise and clearer
+than mine (especially when tackling a hard problem). Dealing with the
+inferiority complex on the very short term is dwarved by how much wisdom you
+gain from these. For what it's worth, the users I learned most from are
+&lt;a href=&quot;http://www.4clojure.com/user/hypirion&quot;&gt;hypirion&lt;/a&gt;,
+&lt;a href=&quot;http://www.4clojure.com/user/jafingerhut&quot;&gt;jafingerhut&lt;/a&gt; and
+&lt;a href=&quot;http://www.4clojure.com/user/chouser&quot;&gt;chouser&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;(If you'd like to follow me, I'm &lt;a href=&quot;http://www.4clojure.com/user/balint&quot;&gt;balint&lt;/a&gt;
+there.)&lt;/p&gt;
+
+&lt;h3&gt;Executable, well thought-out test cases&lt;/h3&gt;
+
+&lt;p&gt;To submit your solution, you paste your code into a textbox and click a button.
+The test cases, which are visible, are then checked one by one. If all the
+lamps become green, your solution is accepted. If not, you get an error
+message and have to try again.&lt;/p&gt;
+
+&lt;p&gt;This method has several advantages. First of all, it eliminates the imprecisions
+you might have had after reading the description of the problem. Second, it
+gives you a set of examples to work against. Third, they force you to think
+deeper about the problem since they are constructed to reject a partial
+solution.&lt;/p&gt;
+
+&lt;h3&gt;Timeouts&lt;/h3&gt;
+
+&lt;p&gt;Your solution can be functional and pass all the test cases but if it does not
+finish in a certain time, it will get rejected. I bumped into this on several
+occasions. Most of the time it was because I came up with the brute force
+solution to a hard problem and hoped I'd get away with it. In other cases it was
+because of a technical issue, like allocating too much memory.&lt;/p&gt;
+
+&lt;p&gt;In the first case, it made me think again about the problem (see Hammock-Driven
+Development) and come up with a more ingenious solution. In the second case, I
+learned something about a technical aspect of the language. In both cases, I
+grew a bit wiser about optimization -which is a &quot;real-world&quot; coding skill- so
+I'm happy the authors of 4clojure chose to implement this constraint.&lt;/p&gt;
+
+&lt;h2&gt;What does one learn about (functional) programming?&lt;/h2&gt;
+
+&lt;h3&gt;Hammock-Driven Development&lt;/h3&gt;
+
+&lt;p&gt;Also known as “step-away from the computer to solve hard problems”, Hammock-Driven
+Development is a term coined by Rich Hickey, the creator of Clojure, in a &lt;a href=&quot;http://www.youtube.com/watch?v=f84n5oFoZBc&quot;&gt;keynote
+speech&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Apparently ridiculing Test Driven Development (TDD), HDD holds that the most
+important activity to solve a hard problem is to think deeply about it without
+any distractions. Most of the time sitting in front of the computer is a
+distraction in itself since it begs to be typed on and prevents actual deep thinking
+to happen.&lt;/p&gt;
+
+&lt;p&gt;This one is really hard to get used to because whenever we write code we feel like
+we're getting closer to a solution. Thinking, on the other hand, does not
+provide any tangible output.&lt;/p&gt;
+
+&lt;p&gt;However, HDD has rung ever more true with me as I progressed. When tackling hard
+problems, I tended to think about them for some time and then started to type in
+actual code. The problem was, when I felt that the solution became convoluted I
+did not go back to the proverbial hammock but carried on with the implementation.
+Most of the time it either turned out to be a dead-end or a solution I'd much
+better hide.&lt;/p&gt;
+
+&lt;p&gt;Even more importantly, a cleaner solution is one that is easier for
+others to understand. Since code is mainly for others to read and occasionally
+for computers to execute, more thinking up-front results in less time spent
+developing and maintaining the code down the line.&lt;/p&gt;
+
+&lt;h3&gt;The REPL is a powerful developer tool&lt;/h3&gt;
+
+&lt;p&gt;The power of the REPL is one those realizations most of us coming from OO will
+come to. Since FP languages have &lt;a href=&quot;http://www.infoq.com/presentations/Are-We-There-Yet-Rich-Hickey&quot;&gt;very little state&lt;/a&gt; and side-effects and
+thus a lot of idempotency, trying things at the REPL is taken to the next
+level. You launch a REPL once and then copy-paste the building blocks of your
+solution between your editor and the REPL (and there are &lt;a href=&quot;https://github.com/jpalardy/vim-slime&quot;&gt;better&lt;/a&gt;
+&lt;a href=&quot;https://github.com/kingtim/nrepl.el&quot;&gt;solutions&lt;/a&gt; then copy-pasting).&lt;/p&gt;
+
+&lt;h3&gt;Use higher level functions&lt;/h3&gt;
+
+&lt;p&gt;FP languages strive to have a small set of data structures and a high number of
+functions that operate on them. Clojure is no exception. Though it's not hard to
+assemble the higher-level function you need yourself, in the majority of cases,
+it's just extra work: it's probably already defined in the core.&lt;/p&gt;
+
+&lt;p&gt;This is something that I learned by reading others' solutions and learning
+about awesome functions (&lt;a href=&quot;http://clojuredocs.org/clojure_core/clojure.core/frequencies&quot;&gt;frequencies&lt;/a&gt;, &lt;a href=&quot;http://clojuredocs.org/clojure_core/clojure.core/merge-with&quot;&gt;merge-with&lt;/a&gt;, &lt;a href=&quot;http://clojuredocs.org/clojure_core/clojure.core/condp&quot;&gt;condp&lt;/a&gt; come to mind).
+After a while I looked up the high-level function myself from &lt;a href=&quot;http://clojure.org/cheatsheet&quot;&gt;the
+cheatsheet&lt;/a&gt;.&lt;/p&gt;
+</content>
+  </entry>
   
   <entry>
     <title>Switch to Command Line Vim on iTerm</title>
@@ -938,23 +1059,6 @@ apt-get install xvfb&lt;/code&gt;
 &lt;p&gt;&quot;There is still a glimmer of hope.&quot; - I thought. I checked the Hungarian scene still thinking it could not be that difficult to meet my expectations. Well, apparently I was wrong. The &lt;a href=&quot;http://szamlazz.hu&quot;&gt;ones&lt;/a&gt; &lt;a href=&quot;http://cipo.hu&quot;&gt;I&lt;/a&gt; &lt;a href=&quot;https://symbion.eu/&quot;&gt;found&lt;/a&gt; are either overcomplicated to use, look like home pages in the 80s or are way too expensive. Sometimes all of these. So I put off the challenge of finding an acceptable piece of software and got back of writing invoices manually.&lt;/p&gt;
 
 &lt;p&gt;Now you might wonder where &lt;a href=&quot;http://en.wikipedia.org/wiki/Eating_one%27s_own_dog_food&quot;&gt;the dog food&lt;/a&gt; is in the story. Well, today I received the invoice from the company of my purchase of the Basic version of the application. It was written manually on an invoice sheet :) That's tantamount of Steve Jobs using a PC with Windows Vista.&lt;/p&gt;
-</content>
-  </entry>
-  
-  <entry>
-    <title>John Doe is dull: the importance of choosing good user names in tests</title>
-    <link href="http://codigoergosum.com/2009/07/12/john-doe-is-dull-the-importance-of-choosing-good-user-names-in-tests.html"/>
-    <updated>2009-07-12T00:00:00+02:00</updated>
-    <id>http://codigoergosum.com/2009/07/12/john-doe-is-dull-the-importance-of-choosing-good-user-names-in-tests</id>
-    <content type="html">&lt;p&gt;We, developers, have to come up with user names all the time. In this glorious, pioneer era of TDD, more than ever we have to not only enter them into text fields but write them in test files that are part of the code and thus are clearly visible and permanent.&lt;/p&gt;
-
-&lt;p&gt;So it is important to give good names, but what is a good name like? I am not thinking about the semantics of the name (whether it has accented letters, or if it has two or three parts, etc.) but look at them from a very personal point of view: whether it makes you, the programmer, satisfied with your choice of names or bored with repeating the same old names you used in other projects and even in those projects, you had copied them from somewhere.&lt;/p&gt;
-
-&lt;p&gt;So when writing your first test where a user is needed, stop for a moment and imagine a world which you like and which is amusing in the context of your application's domain (like &lt;a href=&quot;http://www.youtube.com/watch?v=F2kAnTZBnTg&quot;&gt;philosophers playing soccer&lt;/a&gt;, Luddites attending a technology conference, etc.). Pick some names and let the feeling that you have created something instead of just using old, boring names fill you with contentment. Whenever you need an other name, take one from your world. If you need further data (e.g date of birth) about your test users you can even do a little bit of research.&lt;/p&gt;
-
-&lt;p&gt;Though investing energy in this may reduce the time you spend writing code, compared to all the hours you put into a project, it is negligible. Nurturing this &quot;subculture&quot; in your tests can be very entertaining so you have a good time developing and are less prone to boredom. I think it pays off. We, Ruby programmers all know how important it is to be happy while programming and the effect it has on our productivity.&lt;/p&gt;
-
-&lt;p&gt;And besides, do you know of anyone who is called John Doe?&lt;/p&gt;
 </content>
   </entry>
   
