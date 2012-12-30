@@ -90,10 +90,10 @@ delicious_count: 3
 
 # Disqus Comments
 disqus_short_name: codigoergosum
+disqus_show_comment_count: false
 
 # Google Analytics
 google_analytics_tracking_id: UA-12299794-2
-disqus_show_comment_count: true
 
 # Facebook Like
 facebook_like: false
