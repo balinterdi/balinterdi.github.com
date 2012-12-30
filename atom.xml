@@ -1,1065 +1,1050 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title>Codigo Ergo Sum</title>
+  <title><![CDATA[Codigo Ergo Sum]]></title>
   <link href="http://codigoergosum.com/atom.xml" rel="self"/>
   <link href="http://codigoergosum.com/"/>
-  <updated>2012-12-29T23:35:54+01:00</updated>
+  <updated>2012-12-30T01:11:34+01:00</updated>
   <id>http://codigoergosum.com/</id>
   <author>
-    <name>Balint Erdi</name>
+    <name><![CDATA[Balint Erdi]]></name>
     
   </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
   
   <entry>
-    <title>Lessons learned from solving 4Clojure problems</title>
+    <title type="html"><![CDATA[Lessons learned from solving 4Clojure problems]]></title>
     <link href="http://codigoergosum.com/2012/12/29/lessons-learned-from-solving-4clojure-problems.html"/>
     <updated>2012-12-29T14:55:00+01:00</updated>
     <id>http://codigoergosum.com/2012/12/29/lessons-learned-from-solving-4clojure-problems</id>
-    <content type="html">&lt;p&gt;A few days ago I completed the last problem on the &lt;a href=&quot;http://4clojure.com&quot;&gt;4Clojure&lt;/a&gt; site. If you
+    <content type="html"><![CDATA[<p>A few days ago I completed the last problem on the <a href="http://4clojure.com">4Clojure</a> site. If you
 want to learn Clojure, solving these problems is a great way to do it. Several
-of its features -that I'll highlight below- make it a great learning tool. Other
-features probably arise from &lt;a href=&quot;http://clojure.org/&quot;&gt;Clojure&lt;/a&gt; being a
+of its features -that I&#8217;ll highlight below- make it a great learning tool. Other
+features probably arise from <a href="http://clojure.org/">Clojure</a> being a
 (pragmatic) functional programming language. Coming from mostly an OO background
-these were also new to me and thus deserve their own paragraph.&lt;/p&gt;
+these were also new to me and thus deserve their own paragraph.</p>
 
-&lt;p&gt;I hope that after reading through the list you'll end up being persuaded of the
+<p>I hope that after reading through the list you&#8217;ll end up being persuaded of the
 merits and want to solve (some of) the problems yourself. If you do, please let
-me know how it went and what you learned from it.&lt;/p&gt;
+me know how it went and what you learned from it.</p>
 
-&lt;p&gt;If you really get stuck, there is a &lt;a href=&quot;https://groups.google.com/forum/?fromgroups#!forum/4clojure&quot;&gt;Google group dedicated to the 4Clojure
-problems&lt;/a&gt;. You can also leave a comment here so I can help or go directly to
-check &lt;a href=&quot;https://gist.github.com/raw/4008944/9c0577566b9a87e8db03332bf71b6d0b1140748e/4clojure.clj&quot;&gt;my solutions&lt;/a&gt;. Let's jump in.&lt;/p&gt;
+<p>If you really get stuck, there is a <a href="https://groups.google.com/forum/?fromgroups#!forum/4clojure">Google group dedicated to the 4Clojure
+problems</a>. You can also leave a comment here so I can help or go directly to
+check <a href="https://gist.github.com/raw/4008944/9c0577566b9a87e8db03332bf71b6d0b1140748e/4clojure.clj">my solutions</a>. Let&#8217;s jump in.</p>
 
-&lt;h2&gt;Why is 4Clojure a great learning tool?&lt;/h2&gt;
+<h2>Why is 4Clojure a great learning tool?</h2>
 
-&lt;h3&gt;Looking at others' solutions&lt;/h3&gt;
+<h3>Looking at others&#8217; solutions</h3>
 
-&lt;p&gt;After solving a problem, you can check how the users you follow solved it.
-That's arguably the most important feature when it comes to learning since it
+<p>After solving a problem, you can check how the users you follow solved it.
+That&#8217;s arguably the most important feature when it comes to learning since it
 is essentially a code reading exercise when the functionality of the code is
-well-known (since it solves the same problem you've solved) and the authors are
-probably more proficient.&lt;/p&gt;
+well-known (since it solves the same problem you&#8217;ve solved) and the authors are
+probably more proficient.</p>
 
-&lt;p&gt;On several occasions I saw solutions that were both more concise and clearer
+<p>On several occasions I saw solutions that were both more concise and clearer
 than mine (especially when tackling a hard problem). Dealing with the
 inferiority complex on the very short term is dwarved by how much wisdom you
-gain from these. For what it's worth, the users I learned most from are
-&lt;a href=&quot;http://www.4clojure.com/user/hypirion&quot;&gt;hypirion&lt;/a&gt;,
-&lt;a href=&quot;http://www.4clojure.com/user/jafingerhut&quot;&gt;jafingerhut&lt;/a&gt; and
-&lt;a href=&quot;http://www.4clojure.com/user/chouser&quot;&gt;chouser&lt;/a&gt;.&lt;/p&gt;
+gain from these. For what it&#8217;s worth, the users I learned most from are
+<a href="http://www.4clojure.com/user/hypirion">hypirion</a>,
+<a href="http://www.4clojure.com/user/jafingerhut">jafingerhut</a> and
+<a href="http://www.4clojure.com/user/chouser">chouser</a>.</p>
 
-&lt;p&gt;(If you'd like to follow me, I'm &lt;a href=&quot;http://www.4clojure.com/user/balint&quot;&gt;balint&lt;/a&gt;
-there.)&lt;/p&gt;
+<p>(If you&#8217;d like to follow me, I&#8217;m <a href="http://www.4clojure.com/user/balint">balint</a>
+there.)</p>
 
-&lt;h3&gt;Executable, well thought-out test cases&lt;/h3&gt;
+<h3>Executable, well thought-out test cases</h3>
 
-&lt;p&gt;To submit your solution, you paste your code into a textbox and click a button.
+<p>To submit your solution, you paste your code into a textbox and click a button.
 The test cases, which are visible, are then checked one by one. If all the
 lamps become green, your solution is accepted. If not, you get an error
-message and have to try again.&lt;/p&gt;
+message and have to try again.</p>
 
-&lt;p&gt;This method has several advantages. First of all, it eliminates the imprecisions
+<p>This method has several advantages. First of all, it eliminates the imprecisions
 you might have had after reading the description of the problem. Second, it
 gives you a set of examples to work against. Third, they force you to think
 deeper about the problem since they are constructed to reject a partial
-solution.&lt;/p&gt;
+solution.</p>
 
-&lt;h3&gt;Timeouts&lt;/h3&gt;
+<h3>Timeouts</h3>
 
-&lt;p&gt;Your solution can be functional and pass all the test cases but if it does not
+<p>Your solution can be functional and pass all the test cases but if it does not
 finish in a certain time, it will get rejected. I bumped into this on several
 occasions. Most of the time it was because I came up with the brute force
-solution to a hard problem and hoped I'd get away with it. In other cases it was
-because of a technical issue, like allocating too much memory.&lt;/p&gt;
+solution to a hard problem and hoped I&#8217;d get away with it. In other cases it was
+because of a technical issue, like allocating too much memory.</p>
 
-&lt;p&gt;In the first case, it made me think again about the problem (see Hammock-Driven
+<p>In the first case, it made me think again about the problem (see Hammock-Driven
 Development) and come up with a more ingenious solution. In the second case, I
 learned something about a technical aspect of the language. In both cases, I
-grew a bit wiser about optimization -which is a &quot;real-world&quot; coding skill- so
-I'm happy the authors of 4clojure chose to implement this constraint.&lt;/p&gt;
+grew a bit wiser about optimization -which is a &#8220;real-world&#8221; coding skill- so
+I&#8217;m happy the authors of 4clojure chose to implement this constraint.</p>
 
-&lt;h2&gt;What does one learn about (functional) programming?&lt;/h2&gt;
+<h2>What does one learn about (functional) programming?</h2>
 
-&lt;h3&gt;Hammock-Driven Development&lt;/h3&gt;
+<h3>Hammock-Driven Development</h3>
 
-&lt;p&gt;Also known as “step-away from the computer to solve hard problems”, Hammock-Driven
-Development is a term coined by Rich Hickey, the creator of Clojure, in a &lt;a href=&quot;http://www.youtube.com/watch?v=f84n5oFoZBc&quot;&gt;keynote
-speech&lt;/a&gt;.&lt;/p&gt;
+<p>Also known as “step-away from the computer to solve hard problems”, Hammock-Driven
+Development is a term coined by Rich Hickey, the creator of Clojure, in a <a href="http://www.youtube.com/watch?v=f84n5oFoZBc">keynote
+speech</a>.</p>
 
-&lt;p&gt;Apparently ridiculing Test Driven Development (TDD), HDD holds that the most
+<p>Apparently ridiculing Test Driven Development (TDD), HDD holds that the most
 important activity to solve a hard problem is to think deeply about it without
 any distractions. Most of the time sitting in front of the computer is a
 distraction in itself since it begs to be typed on and prevents actual deep thinking
-to happen.&lt;/p&gt;
+to happen.</p>
 
-&lt;p&gt;This one is really hard to get used to because whenever we write code we feel like
-we're getting closer to a solution. Thinking, on the other hand, does not
-provide any tangible output.&lt;/p&gt;
+<p>This one is really hard to get used to because whenever we write code we feel like
+we&#8217;re getting closer to a solution. Thinking, on the other hand, does not
+provide any tangible output.</p>
 
-&lt;p&gt;However, HDD has rung ever more true with me as I progressed. When tackling hard
+<p>However, HDD has rung ever more true with me as I progressed. When tackling hard
 problems, I tended to think about them for some time and then started to type in
 actual code. The problem was, when I felt that the solution became convoluted I
 did not go back to the proverbial hammock but carried on with the implementation.
-Most of the time it either turned out to be a dead-end or a solution I'd much
-better hide.&lt;/p&gt;
+Most of the time it either turned out to be a dead-end or a solution I&#8217;d much
+better hide.</p>
 
-&lt;p&gt;Even more importantly, a cleaner solution is one that is easier for
+<p>Even more importantly, a cleaner solution is one that is easier for
 others to understand. Since code is mainly for others to read and occasionally
 for computers to execute, more thinking up-front results in less time spent
-developing and maintaining the code down the line.&lt;/p&gt;
+developing and maintaining the code down the line.</p>
 
-&lt;h3&gt;The REPL is a powerful developer tool&lt;/h3&gt;
+<h3>The REPL is a powerful developer tool</h3>
 
-&lt;p&gt;The power of the REPL is one those realizations most of us coming from OO will
-come to. Since FP languages have &lt;a href=&quot;http://www.infoq.com/presentations/Are-We-There-Yet-Rich-Hickey&quot;&gt;very little state&lt;/a&gt; and side-effects and
+<p>The power of the REPL is one those realizations most of us coming from OO will
+come to. Since FP languages have <a href="http://www.infoq.com/presentations/Are-We-There-Yet-Rich-Hickey">very little state</a> and side-effects and
 thus a lot of idempotency, trying things at the REPL is taken to the next
 level. You launch a REPL once and then copy-paste the building blocks of your
-solution between your editor and the REPL (and there are &lt;a href=&quot;https://github.com/jpalardy/vim-slime&quot;&gt;better&lt;/a&gt;
-&lt;a href=&quot;https://github.com/kingtim/nrepl.el&quot;&gt;solutions&lt;/a&gt; then copy-pasting).&lt;/p&gt;
+solution between your editor and the REPL (and there are <a href="https://github.com/jpalardy/vim-slime">better</a>
+<a href="https://github.com/kingtim/nrepl.el">solutions</a> then copy-pasting).</p>
 
-&lt;h3&gt;Use higher level functions&lt;/h3&gt;
+<h3>Use higher level functions</h3>
 
-&lt;p&gt;FP languages strive to have a small set of data structures and a high number of
-functions that operate on them. Clojure is no exception. Though it's not hard to
+<p>FP languages strive to have a small set of data structures and a high number of
+functions that operate on them. Clojure is no exception. Though it&#8217;s not hard to
 assemble the higher-level function you need yourself, in the majority of cases,
-it's just extra work: it's probably already defined in the core.&lt;/p&gt;
+it&#8217;s just extra work: it&#8217;s probably already defined in the core.</p>
 
-&lt;p&gt;This is something that I learned by reading others' solutions and learning
-about awesome functions (&lt;a href=&quot;http://clojuredocs.org/clojure_core/clojure.core/frequencies&quot;&gt;frequencies&lt;/a&gt;, &lt;a href=&quot;http://clojuredocs.org/clojure_core/clojure.core/merge-with&quot;&gt;merge-with&lt;/a&gt;, &lt;a href=&quot;http://clojuredocs.org/clojure_core/clojure.core/condp&quot;&gt;condp&lt;/a&gt; come to mind).
-After a while I looked up the high-level function myself from &lt;a href=&quot;http://clojure.org/cheatsheet&quot;&gt;the
-cheatsheet&lt;/a&gt;.&lt;/p&gt;
-</content>
+<p>This is something that I learned by reading others&#8217; solutions and learning
+about awesome functions (<a href="http://clojuredocs.org/clojure_core/clojure.core/frequencies">frequencies</a>, <a href="http://clojuredocs.org/clojure_core/clojure.core/merge-with">merge-with</a>, <a href="http://clojuredocs.org/clojure_core/clojure.core/condp">condp</a> come to mind).
+After a while I looked up the high-level function myself from <a href="http://clojure.org/cheatsheet">the
+cheatsheet</a>.</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>Switch to Command Line Vim on iTerm</title>
+    <title type="html"><![CDATA[Switch to Command Line Vim on iTerm]]></title>
     <link href="http://codigoergosum.com/2012/03/30/switch-to-command-line-vim-on-iterm.html"/>
     <updated>2012-03-30T12:04:00+02:00</updated>
     <id>http://codigoergosum.com/2012/03/30/switch-to-command-line-vim-on-iterm</id>
-    <content type="html">&lt;p&gt;Switching between applications is more of a mental context switch than just switching between the panes in the same window. Or at least that's what I told myself when I decided I switch from using macvim to the simple command line version. It also brings me pretty close to using tmux which I would primarily use to send commands between panes. Most of the posts about using tmux only briefly touch on switching to command line vim so I thought I'd fill in the gap somewhat.&lt;/p&gt;
+    <content type="html"><![CDATA[<p>Switching between applications is more of a mental context switch than just switching between the panes in the same window. Or at least that&#8217;s what I told myself when I decided I switch from using macvim to the simple command line version. It also brings me pretty close to using tmux which I would primarily use to send commands between panes. Most of the posts about using tmux only briefly touch on switching to command line vim so I thought I&#8217;d fill in the gap somewhat.</p>
 
-&lt;p&gt;I use iTerm2 on a MacBook Pro and run 10.6.8 (Snow Leopard), although I think it should run
-fine under Lion, too.&lt;/p&gt;
+<p>I use iTerm2 on a MacBook Pro and run 10.6.8 (Snow Leopard), although I think it should run
+fine under Lion, too.</p>
 
-&lt;p&gt;First, you'll have to install a fairly recent vim. Homebrew has a policy of not having packages which the operating system already provides, but fortunately there is a &lt;a href=&quot;https://github.com/Homebrew/homebrew-dupes&quot;&gt;homebrew-dupes&lt;/a&gt; repository that has vim:&lt;/p&gt;
+<p>First, you&#8217;ll have to install a fairly recent vim. Homebrew has a policy of not having packages which the operating system already provides, but fortunately there is a <a href="https://github.com/Homebrew/homebrew-dupes">homebrew-dupes</a> repository that has vim:</p>
 
-&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;$ brew install --HEAD https://raw.github.com/Homebrew/homebrew-dupes/master/vim.rb&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This will configure, make and install vim.&lt;/p&gt;
-
-&lt;p&gt;Next, I looked for a theme that looks good on both a light and a dark background and has iTerm support (a colorscheme for the terminal emulator). I've found &lt;a href=&quot;http://ethanschoonover.com/solarized&quot;&gt;Ethan Schoonover's solarized theme&lt;/a&gt; really cool. Just follow the steps in the &lt;a href=&quot;https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized&quot;&gt;README of the repository&lt;/a&gt; to download both the vim and the iTerm colorscheme.&lt;/p&gt;
-
-&lt;p&gt;To install the iTerm colorscheme, go to Preferences -&gt; Profiles to select your
-profile and then click the Colors tab. There is a &quot;Load Presets&quot; dropdown from
-which you have to choose Import and find the solarized itermcolors file.&lt;/p&gt;
-
-&lt;p&gt;To use the vim colorscheme you have to add the colors file to somewhere where
-vim finds it. There are many ways to do this, so check out the &lt;a href=&quot;https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized&quot;&gt;README&lt;/a&gt; to
-find the method that suits you.&lt;/p&gt;
-
-&lt;p&gt;Once, done you have to set the colorscheme in your vimrc:&lt;/p&gt;
-
-&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;colorscheme solarized&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew install --HEAD https://raw.github.com/Homebrew/homebrew-dupes/master/vim.rb</span></code></pre></td></tr></table></div></figure>
 
 
-&lt;p&gt;(vim finds out the appropriate background automatically, so you don't have to
-explicitly set the background)&lt;/p&gt;
+<p>This will configure, make and install vim.</p>
 
-&lt;p&gt;I was all set up and most things worked just like in the GUI version. One thing that bugged me was that my cursor keys stopped working. I don't use them for moving and text input but I do for cycling in the command history or flipping between file matches for Command-T. It took me a while to find out that iTerm sends a wrong escape sequence for the arrow keys. I could fix that by selecting another set of key presets for the terminal's profile. In iTerm, go to Preferences -&gt; Profiles and select your profile. Select Keys, then Load Preset and select xTerm with Numeric Keypad.&lt;/p&gt;
+<p>Next, I looked for a theme that looks good on both a light and a dark background and has iTerm support (a colorscheme for the terminal emulator). I&#8217;ve found <a href="http://ethanschoonover.com/solarized">Ethan Schoonover&#8217;s solarized theme</a> really cool. Just follow the steps in the <a href="https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized">README of the repository</a> to download both the vim and the iTerm colorscheme.</p>
 
-&lt;p&gt;There is one more trick I find handy. If you set&lt;/p&gt;
+<p>To install the iTerm colorscheme, go to Preferences -> Profiles to select your
+profile and then click the Colors tab. There is a &#8220;Load Presets&#8221; dropdown from
+which you have to choose Import and find the solarized itermcolors file.</p>
 
-&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;set clipboard=unnamed&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+<p>To use the vim colorscheme you have to add the colors file to somewhere where
+vim finds it. There are many ways to do this, so check out the <a href="https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized">README</a> to
+find the method that suits you.</p>
+
+<p>Once, done you have to set the colorscheme in your vimrc:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>colorscheme solarized</span></code></pre></td></tr></table></div></figure>
 
 
-&lt;p&gt;in your config, then anything you copy from vim by the usual vim commands (y, d, x, etc.) will be available on your system clipboard and thus pastable.&lt;/p&gt;
-</content>
+<p>(vim finds out the appropriate background automatically, so you don&#8217;t have to
+explicitly set the background)</p>
+
+<p>I was all set up and most things worked just like in the GUI version. One thing that bugged me was that my cursor keys stopped working. I don&#8217;t use them for moving and text input but I do for cycling in the command history or flipping between file matches for Command-T. It took me a while to find out that iTerm sends a wrong escape sequence for the arrow keys. I could fix that by selecting another set of key presets for the terminal&#8217;s profile. In iTerm, go to Preferences -> Profiles and select your profile. Select Keys, then Load Preset and select xTerm with Numeric Keypad.</p>
+
+<p>There is one more trick I find handy. If you set</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>set clipboard=unnamed</span></code></pre></td></tr></table></div></figure>
+
+
+<p>in your config, then anything you copy from vim by the usual vim commands (y, d, x, etc.) will be available on your system clipboard and thus pastable.</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>An Annotated Assortment on Mockist Testing</title>
+    <title type="html"><![CDATA[An Annotated Assortment on Mockist Testing]]></title>
     <link href="http://codigoergosum.com/2011/11/30/an-annotated-assortment-on-mockist-testing.html"/>
     <updated>2011-11-30T21:30:00+01:00</updated>
     <id>http://codigoergosum.com/2011/11/30/an-annotated-assortment-on-mockist-testing</id>
-    <content type="html">&lt;p&gt;Most of us read blog posts every day. We read them, take an idea out of
+    <content type="html"><![CDATA[<p>Most of us read blog posts every day. We read them, take an idea out of
 them and then, most of the time, forget about them. Some of them are stashed
 away in the back of our minds, ready to jump out if we face a related
-problem.&lt;/p&gt;
+problem.</p>
 
-&lt;p&gt;A precious few of them, however, we keep thinking back to without a specific
-reason.&lt;/p&gt;
+<p>A precious few of them, however, we keep thinking back to without a specific
+reason.</p>
 
-&lt;p&gt;I've bitten by the &quot;mockist&quot; testing bug when I read &lt;a href=&quot;http://jamesgolick.com/2010/3/14/crazy-heretical-and-awesome-the-way-i-write-rails-apps.html&quot;&gt;this one&lt;/a&gt; a while ago. It expresses a contrarian opinion
+<p>I&#8217;ve bitten by the &#8220;mockist&#8221; testing bug when I read <a href="http://jamesgolick.com/2010/3/14/crazy-heretical-and-awesome-the-way-i-write-rails-apps.html">this one</a> a while ago. It expresses a contrarian opinion
 about how to test Rails applications which struck me as odd at the time.
-That's probably the reason I read it several times.&lt;/p&gt;
+That&#8217;s probably the reason I read it several times.</p>
 
-&lt;p&gt;A few weeks ago I watched Gregory Moeck's &lt;a href=&quot;http://confreaks.net/videos/659-rubyconf2011-why-you-don-t-get-mock-objects&quot;&gt;Why You Don't Get Mock Objects&lt;/a&gt; and I was stung by the same bug only more deeply,
-this time.&lt;/p&gt;
+<p>A few weeks ago I watched Gregory Moeck&#8217;s <a href="http://confreaks.net/videos/659-rubyconf2011-why-you-don-t-get-mock-objects">Why You Don&#8217;t Get Mock Objects</a> and I was stung by the same bug only more deeply,
+this time.</p>
 
-&lt;p&gt;Using that video as a starting point I then roamed Gregory's blog for
-more and felt like I was beginning to grasp it. Now, obviously, I'm at the
+<p>Using that video as a starting point I then roamed Gregory&#8217;s blog for
+more and felt like I was beginning to grasp it. Now, obviously, I&#8217;m at the
 beginning of this journey and still have a lot of teeth-cutting to do.
-Nevertheless, I want to share with you the gems I've found so far.&lt;/p&gt;
+Nevertheless, I want to share with you the gems I&#8217;ve found so far.</p>
 
-&lt;p&gt;Gregory's blog has a very good primer on the difference between stubs
-and mocks: &lt;a href=&quot;http://gmoeck.github.com/2011/10/26/stubbing-is-not-enough&quot;&gt;&quot;Stubbing is Not Enough&quot;&lt;/a&gt;. I'd even go
+<p>Gregory&#8217;s blog has a very good primer on the difference between stubs
+and mocks: <a href="http://gmoeck.github.com/2011/10/26/stubbing-is-not-enough">&#8220;Stubbing is Not Enough&#8221;</a>. I&#8217;d even go
 as far as to claim that it explains its subject better than Martin
-Fowler's classic &lt;a href=&quot;http://martinfowler.com/articles/mocksArentStubs.html&quot;&gt;&quot;Stubs Are Not Mocks&quot;&lt;/a&gt;, although that
-latter goes into more detail and is a definite must-read, too.&lt;/p&gt;
+Fowler&#8217;s classic <a href="http://martinfowler.com/articles/mocksArentStubs.html">&#8220;Stubs Are Not Mocks&#8221;</a>, although that
+latter goes into more detail and is a definite must-read, too.</p>
 
-&lt;p&gt;James Golick has another great piece that drives home the point better
-than his first post I mentioned: &lt;a href=&quot;http://jamesgolick.com/2010/3/10/on-mocks-and-mockist-testing.html&quot;&gt;&quot;On Mocks and Mockist Testing&quot;&lt;/a&gt;.&lt;/p&gt;
+<p>James Golick has another great piece that drives home the point better
+than his first post I mentioned: <a href="http://jamesgolick.com/2010/3/10/on-mocks-and-mockist-testing.html">&#8220;On Mocks and Mockist Testing&#8221;</a>.</p>
 
-&lt;p&gt;Along comes Avdi Grimm with his strict sounding &lt;a href=&quot;http://avdi.org/devblog/2011/07/05/demeter-its-not-just-a-good-idea-its-the-law/&quot;&gt;&quot;Demeter: It’s not just a good idea. It’s the law.&quot;&lt;/a&gt;
+<p>Along comes Avdi Grimm with his strict sounding <a href="http://avdi.org/devblog/2011/07/05/demeter-its-not-just-a-good-idea-its-the-law/">&#8220;Demeter: It’s not just a good idea. It’s the law.&#8221;</a>
 , with a very interesting discussion in the comments. The same gentleman
-wrote &lt;a href=&quot;http://avdi.org/devblog/2011/09/06/making-a-mockery-of-tdd/&quot;&gt;&quot;Making a Mockery of TDD&quot;&lt;/a&gt; in which he
-touches on the concept of using mocks as a design tool.&lt;/p&gt;
+wrote <a href="http://avdi.org/devblog/2011/09/06/making-a-mockery-of-tdd/">&#8220;Making a Mockery of TDD&#8221;</a> in which he
+touches on the concept of using mocks as a design tool.</p>
 
-&lt;p&gt;Nick Kallen's &lt;a href=&quot;http://magicscalingsprinkles.wordpress.com/2010/02/08/why-i-love-everything-you-hate-about-java/&quot;&gt;&quot;Why I love everything you hate about Java&quot;&lt;/a&gt; is clearly provocative
+<p>Nick Kallen&#8217;s <a href="http://magicscalingsprinkles.wordpress.com/2010/02/08/why-i-love-everything-you-hate-about-java/">&#8220;Why I love everything you hate about Java&#8221;</a> is clearly provocative
 and definitely worth to contemplate on. It is also the only one of the bunch that
-does not use Ruby (but Scala) for the code examples.&lt;/p&gt;
+does not use Ruby (but Scala) for the code examples.</p>
 
-&lt;p&gt;Finally it seems like the fountainhead in the matter is the &lt;a href=&quot;growing&quot;&gt;&quot;Growing Object-Oriented Software, Guided by Tests&quot;&lt;/a&gt;
-book by Steve Freeman and Nat Pryce. I've only gotten until putting it
-on my reading list so please chime in if you did read it.&lt;/p&gt;
+<p>Finally it seems like the fountainhead in the matter is the <a href="growing">&#8220;Growing Object-Oriented Software, Guided by Tests&#8221;</a>
+book by Steve Freeman and Nat Pryce. I&#8217;ve only gotten until putting it
+on my reading list so please chime in if you did read it.</p>
 
-&lt;p&gt;Please, also pipe in if there are any materials in the subject you'd
+<p>Please, also pipe in if there are any materials in the subject you&#8217;d
 recommend. It would also be cool to see open source projects that extensively use mocks for testing, the only
-one I found so far is &lt;a href=&quot;https://github.com/jamesgolick/friendly&quot;&gt;friendly&lt;/a&gt;.&lt;/p&gt;
-</content>
+one I found so far is <a href="https://github.com/jamesgolick/friendly">friendly</a>.</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>Event loop primer</title>
+    <title type="html"><![CDATA[Event loop primer]]></title>
     <link href="http://codigoergosum.com/2011/10/19/event_loop_primer.html"/>
     <updated>2011-10-19T00:06:00+02:00</updated>
     <id>http://codigoergosum.com/2011/10/19/event_loop_primer</id>
-    <content type="html">&lt;p&gt;I recently got into developing a web application with node.js (aka &lt;a href=&quot;http://teddziuba.com/2011/10/node-js-is-cancer.html&quot;&gt;cancer&lt;/a&gt;).
+    <content type="html"><![CDATA[<p>I recently got into developing a web application with node.js (aka <a href="http://teddziuba.com/2011/10/node-js-is-cancer.html">cancer</a>).
 Coming from a synchronous world, it took (and to be honest, still takes)
 quite a while to grok how writing asynchronous code differs from my
-previous experiences (AJAX calls with jQuery only go that far).&lt;/p&gt;
+previous experiences (AJAX calls with jQuery only go that far).</p>
 
-&lt;p&gt;As with many fine technologies or methods (TDD, NoSQL, functional
-programming come to mind) it's your whole
+<p>As with many fine technologies or methods (TDD, NoSQL, functional
+programming come to mind) it&#8217;s your whole
 thinking that has to change. In this post I want to share an example
-from &lt;a href=&quot;http://pragprog.com/book/tbcoffee/coffeescript&quot;&gt;Trevor Burnham's excellent Coffeescript book&lt;/a&gt; that gave me one
-of those aha moments.&lt;/p&gt;
+from <a href="http://pragprog.com/book/tbcoffee/coffeescript">Trevor Burnham&#8217;s excellent Coffeescript book</a> that gave me one
+of those aha moments.</p>
 
-&lt;div&gt;&lt;script src='https://gist.github.com/1297011.js?file='&gt;&lt;/script&gt;
-&lt;noscript&gt;&lt;pre&gt;&lt;code&gt;countdown = 10
-h = setInterval -&amp;gt;
+<div><script src='https://gist.github.com/1297011.js'></script>
+<noscript><pre><code>countdown = 10
+h = setInterval -&gt;
  countdown--
 , 100
-do (-&amp;gt;) until countdown is 0
+do (-&gt;) until countdown is 0
 clearInterval h
-console.log 'Surprise!'&lt;/code&gt;&lt;/pre&gt;&lt;/noscript&gt;&lt;/div&gt;
+console.log 'Surprise!'</code></pre></noscript></div>
 
 
-&lt;p&gt;(If you don't read Coffeescript code, you can go to the &lt;a href=&quot;http://jashkenas.github.com/coffee-script/&quot;&gt;Coffeescript web site&lt;/a&gt;
-and paste the above example in to get compiled Javascript)&lt;/p&gt;
+<p>(If you don&#8217;t read Coffeescript code, you can go to the <a href="http://jashkenas.github.com/coffee-script/">Coffeescript web site</a>
+and paste the above example in to get compiled Javascript)</p>
 
-&lt;p&gt;The example above is broken. It gets stuck at the &lt;code&gt;until countdown is 0&lt;/code&gt;
-row. In an event loop system events (callbacks) only get run after the &quot;main line&quot;
+<p>The example above is broken. It gets stuck at the <code>until countdown is 0</code>
+row. In an event loop system events (callbacks) only get run after the &#8220;main line&#8221;
 of execution (or, in other words, all other code) has completed.
 So the until loop blocks out the callback of the setInterval,
-countdown never gets decremented and thus an endless loop ensues.&lt;/p&gt;
+countdown never gets decremented and thus an endless loop ensues.</p>
 
-&lt;p&gt;I'm sure that there are many ways to fix this, I came up with the
-following (and wonder if there is one closer to the original):&lt;/p&gt;
+<p>I&#8217;m sure that there are many ways to fix this, I came up with the
+following (and wonder if there is one closer to the original):</p>
 
-&lt;div&gt;&lt;script src='https://gist.github.com/1297018.js?file='&gt;&lt;/script&gt;
-&lt;noscript&gt;&lt;pre&gt;&lt;code&gt;countdown = 10
-h = setInterval -&amp;gt;
+<div><script src='https://gist.github.com/1297018.js'></script>
+<noscript><pre><code>countdown = 10
+h = setInterval -&gt;
   countdown--
   if countdown is 0
     console.log 'Surprise'
     clearInterval h
-, 100&lt;/code&gt;&lt;/pre&gt;&lt;/noscript&gt;&lt;/div&gt;
+, 100</code></pre></noscript></div>
 
 
-&lt;p&gt;And that's it. I hope this simple example pushes you up on that pesky learning curve.&lt;/p&gt;
+<p>And that&#8217;s it. I hope this simple example pushes you up on that pesky learning curve.</p>
 
-&lt;p&gt;(The snippet was published by the kind permission of the author.)&lt;/p&gt;
-</content>
+<p>(The snippet was published by the kind permission of the author.)</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>Five wasted years - on the futility of university education</title>
+    <title type="html"><![CDATA[Five wasted years - on the futility of university education]]></title>
     <link href="http://codigoergosum.com/2011/09/28/five-wasted-years-futility-of-university-education.html"/>
     <updated>2011-09-28T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2011/09/28/five-wasted-years-futility-of-university-education</id>
-    <content type="html">&lt;p&gt;I graduated from the Technical University of Budapest to earn a M.Sc. in
-Software Engineering. Albeit it is supposed to be an asset on my CV I'll
-argue below that the long years of university education was just not worth it.&lt;/p&gt;
+    <content type="html"><![CDATA[<p>I graduated from the Technical University of Budapest to earn a M.Sc. in
+Software Engineering. Albeit it is supposed to be an asset on my CV I&#8217;ll
+argue below that the long years of university education was just not worth it.</p>
 
-&lt;p&gt;When trying to summarize what advantage university education
+<p>When trying to summarize what advantage university education
 brought me there is precious little I can think of. Five years is a lot of
-time to spend without actually getting something out of it for one's
-professional career.&lt;/p&gt;
+time to spend without actually getting something out of it for one&#8217;s
+professional career.</p>
 
-&lt;p&gt;Obviously I've formed my opinion based on my university experience which
-might not (and probably &lt;em&gt;is&lt;/em&gt; not) be applicable to all higher education.
+<p>Obviously I&#8217;ve formed my opinion based on my university experience which
+might not (and probably <em>is</em> not) be applicable to all higher education.
 Philosophy, economics and law all require different formation
 and practice might be harder (or outright dangerous) to attain in some
-areas (think medicine).&lt;/p&gt;
+areas (think medicine).</p>
 
-&lt;p&gt;Also, there is a great variance between countries although even the famously high-standard
+<p>Also, there is a great variance between countries although even the famously high-standard
 US education system seems to yield not actual but rather
-looks-good-on-my-CV benefits, say some &lt;a href=&quot;http://techcrunch.com/2011/04/10/peter-thiel-were-in-a-bubble-and-its-not-the-internet-its-higher-education/&quot; title=&quot;Peter Thiel: Education Bubble&quot;&gt;smart&lt;/a&gt; &lt;a href=&quot;http://www.economist.com/node/18750658&quot; title=&quot;Stephen Wolfram&quot;&gt;guys&lt;/a&gt;.&lt;/p&gt;
+looks-good-on-my-CV benefits, say some <a href="http://techcrunch.com/2011/04/10/peter-thiel-were-in-a-bubble-and-its-not-the-internet-its-higher-education/" title="Peter Thiel: Education Bubble">smart</a> <a href="http://www.economist.com/node/18750658" title="Stephen Wolfram">guys</a>.</p>
 
-&lt;h2&gt;Learn to learn?&lt;/h2&gt;
+<h2>Learn to learn?</h2>
 
-&lt;p&gt;Tech is changing extremely rapidly. Today's hotness could be a thing of
+<p>Tech is changing extremely rapidly. Today&#8217;s hotness could be a thing of
 the past in a few years. Consequently universities should not try to keep up with the
 pace and teach students state-of-the-art stuff. Higher education needs to transcend
 short-term utility and provide a base one can build on for the rest of
-his career. So we were told or made to believe.&lt;/p&gt;
+his career. So we were told or made to believe.</p>
 
-&lt;p&gt;What is probably considered the essence of higher education is &quot;learn to
-learn&quot;. It is the idea that universities need to teach future-engineers
+<p>What is probably considered the essence of higher education is &#8220;learn to
+learn&#8221;. It is the idea that universities need to teach future-engineers
 how to quickly adapt to new fields and techniques (programming
-languages, databases, architectures, etc.).&lt;/p&gt;
+languages, databases, architectures, etc.).</p>
 
-&lt;p&gt;This is appealing but universities don't do that. I had to sit through
+<p>This is appealing but universities don&#8217;t do that. I had to sit through
 long hours of material not even vaguely related to software engineering.
 The practical stuff (e.g programming languages) was taught with stone age style methods
 (programming on paper).  The other subjects, those that were supposed to provide us the broad
-vision, I suppose, were way too much in volume and failed to achieve that goal.&lt;/p&gt;
+vision, I suppose, were way too much in volume and failed to achieve that goal.</p>
 
-&lt;h2&gt;Make to learn&lt;/h2&gt;
+<h2>Make to learn</h2>
 
-&lt;p&gt;In my current job I'm lucky to work with some guys who dropped out of
+<p>In my current job I&#8217;m lucky to work with some guys who dropped out of
 college and started to work. They might not
-know about &lt;a href=&quot;http://en.wikipedia.org/wiki/Prim's_algorithm&quot; title=&quot;Prim's algorithm&quot;&gt;Prim's algorithm&lt;/a&gt; or the &lt;a href=&quot;http://en.wikipedia.org/wiki/Intermediate_value_theorem&quot; title=&quot;Intermediate value theorem&quot;&gt;intermediate value theorem&lt;/a&gt;,
+know about <a href="http://en.wikipedia.org/wiki/Prim's_algorithm" title="Prim's algorithm">Prim&#8217;s algorithm</a> or the <a href="http://en.wikipedia.org/wiki/Intermediate_value_theorem" title="Intermediate value theorem">intermediate value theorem</a>,
 but I think the result of the time they spent making things greatly surpass the time I
-spent learning the above.&lt;/p&gt;
+spent learning the above.</p>
 
-&lt;p&gt;Programming (or, in its more CV-friendly, hire-me name: software
+<p>Programming (or, in its more CV-friendly, hire-me name: software
 engineering) is a task that could be the modern equivalent of wood carving.
 You can learn all that you want about the craft, the only thing that
 really matters is doing it, a lot. Only, programming is way better.
 There is virtually no waste (unless you publish what you make :) ) and
-the tools are more accessible and cheaper.&lt;/p&gt;
+the tools are more accessible and cheaper.</p>
 
-&lt;p&gt;Take it from someone who, unlike most kiddos at the university, started
+<p>Take it from someone who, unlike most kiddos at the university, started
 programming late: it feels awkward and weird at first. And then the
-second and third time, too. Slowly, though, you start to feel like it's actually
-fun and sometimes more than that. You're building something which you'll
+second and third time, too. Slowly, though, you start to feel like it&#8217;s actually
+fun and sometimes more than that. You&#8217;re building something which you&#8217;ll
 look at ashamedly a few months later but at least your program does something extraordinary,
-like sorting a list of numbers. That's science!&lt;/p&gt;
+like sorting a list of numbers. That&#8217;s science!</p>
 
-&lt;p&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/B-tree&quot; title=&quot;B-tree&quot;&gt;Math data constructs&lt;/a&gt;, probability theory and cryptography notwithstanding,
-have you got this feeling of coolness (dare I say, awe) out of university lectures?&lt;/p&gt;
+<p><a href="http://en.wikipedia.org/wiki/B-tree" title="B-tree">Math data constructs</a>, probability theory and cryptography notwithstanding,
+have you got this feeling of coolness (dare I say, awe) out of university lectures?</p>
 
-&lt;h2&gt;Total waste, really?&lt;/h2&gt;
+<h2>Total waste, really?</h2>
 
-&lt;p&gt;In fairness, and as a measure to counter my arrogance, I had to consider arguments
-on the pro-education side, too. Here is what I came up with:&lt;/p&gt;
+<p>In fairness, and as a measure to counter my arrogance, I had to consider arguments
+on the pro-education side, too. Here is what I came up with:</p>
 
-&lt;h3&gt;Math&lt;/h3&gt;
+<h3>Math</h3>
 
-&lt;p&gt;When faced with a programming challenge I
+<p>When faced with a programming challenge I
 can recall on some occasions an algorithm used to resolve a similar problem.
-That's not to say you can't google up a solution if you have a vague
+That&#8217;s not to say you can&#8217;t google up a solution if you have a vague
 idea what to look for. Nevertheless if you can mentally page through the solutions
 for a given problem from your university classes, their time and space
 needs and their constraints then you surely save a lot of time.
 I forgot all the relevant facts about any algorithm and have to look it
-up every single time, but it could be me.&lt;/p&gt;
+up every single time, but it could be me.</p>
 
-&lt;h3&gt;Deciding on one's vocation&lt;/h3&gt;
+<h3>Deciding on one&#8217;s vocation</h3>
 
-&lt;p&gt;Most kids don't know what to do with their life when they are 18. Real
+<p>Most kids don&#8217;t know what to do with their life when they are 18. Real
 life still seems distant and most want a few more years of canteen,
 beers and idling. Whether it is beneficial for them or society
 (taxpayers) as a whole to be allowed to do that is another matter.
-Nevertheless, I'm convinced that a high number of students can have a
-clearer picture about whether they want to do &quot;computer science&quot; for the
-rest of their lives after a couple of years.&lt;/p&gt;
+Nevertheless, I&#8217;m convinced that a high number of students can have a
+clearer picture about whether they want to do &#8220;computer science&#8221; for the
+rest of their lives after a couple of years.</p>
 
-&lt;h3&gt;Outstanding teachers&lt;/h3&gt;
+<h3>Outstanding teachers</h3>
 
-&lt;p&gt;Even though I reckon you can learn everything you need to know on your
+<p>Even though I reckon you can learn everything you need to know on your
 own (from the Internet), having a good teacher can squeeze your
 learning curve. Although I believe this is more attainable with a small
-group (and even more in a one-to-one, mentoring relationship) it's
+group (and even more in a one-to-one, mentoring relationship) it&#8217;s
 definitely possible for an outstanding teacher to speed up absorbing
 knowledge with a bigger group, too. Unfortunately, with one notable
 exception, my teachers were not of this type, but
-that's a weak argument against college education in general.&lt;/p&gt;
+that&#8217;s a weak argument against college education in general.</p>
 
-&lt;p&gt;Even if all these pro-education arguments are valid, however, a couple
+<p>Even if all these pro-education arguments are valid, however, a couple
 of years is surely enough to derive all the advantages they bring.
-Then, you still have 3 years to go and carve wood.&lt;/p&gt;
+Then, you still have 3 years to go and carve wood.</p>
 
-&lt;h2&gt;On navigation&lt;/h2&gt;
+<h2>On navigation</h2>
 
-&lt;p&gt;Let me finally share a quote I've just found in Walden by H.D. Thoreau and that
-summarizes my intent with this post in one swell sentence:&lt;/p&gt;
+<p>Let me finally share a quote I&#8217;ve just found in Walden by H.D. Thoreau and that
+summarizes my intent with this post in one swell sentence:</p>
 
-&lt;blockquote&gt;&lt;p&gt;To my astonishment I was informed on leaving college that I had studied&lt;br/&gt;navigation! -- why, if I had taken one turn down the harbor I should&lt;br/&gt;have known more about it.&lt;/p&gt;&lt;footer&gt;&lt;strong&gt;Henry David Thoreau&lt;/strong&gt;&lt;cite&gt;Walden&lt;/cite&gt;&lt;/footer&gt;&lt;/blockquote&gt;
+<blockquote><p>To my astonishment I was informed on leaving college that I had studied<br/>navigation! &#8211; why, if I had taken one turn down the harbor I should<br/>have known more about it.</p><footer><strong>Henry David Thoreau</strong> <cite>Walden</cite></footer></blockquote>
 
 
-&lt;h2&gt;Please defend the status quo (or indulge in bashing it)&lt;/h2&gt;
+<h2>Please defend the status quo (or indulge in bashing it)</h2>
 
-&lt;p&gt;As I stated in the introduction, my opinion is just a drop in the ocean,
+<p>As I stated in the introduction, my opinion is just a drop in the ocean,
 a tiny slice in a big cake, a lone voice in the NY Stock Exchange (you
-get my point).&lt;/p&gt;
+get my point).</p>
 
-&lt;p&gt;If you &lt;a href=&quot;http://www.codigoergosum.com/2011/09/28/five-wasted-years-futility-of-university-education.html&quot; title=&quot;Comments&quot;&gt;share your opinion&lt;/a&gt;, there will be two voices already and we'll
+<p>If you <a href="http://www.codigoergosum.com/2011/09/28/five-wasted-years-futility-of-university-education.html" title="Comments">share your opinion</a>, there will be two voices already and we&#8217;ll
 have more information to decide about whether we should advise our children to go
-to college, for example. Then three. We may even reach four voices.&lt;/p&gt;
+to college, for example. Then three. We may even reach four voices.</p>
 
-&lt;p&gt;Joking aside, if you went to college to learn computer science in Hungary
-or in another country, I'm interested to &lt;a href=&quot;http://www.codigoergosum.com/2011/09/28/five-wasted-years-futility-of-university-education.html&quot; title=&quot;Comments&quot;&gt;hear your opinion&lt;/a&gt;. If you
-studied something else, don't be discouraged, please &lt;a href=&quot;http://www.codigoergosum.com/2011/09/28/five-wasted-years-futility-of-university-education.html&quot; title=&quot;Comments&quot;&gt;share also&lt;/a&gt;. My
-points are mostly valid for computer science but I'm curious to hear
-which other fields they hold true in (or in which fields they don't).&lt;/p&gt;
-</content>
+<p>Joking aside, if you went to college to learn computer science in Hungary
+or in another country, I&#8217;m interested to <a href="http://www.codigoergosum.com/2011/09/28/five-wasted-years-futility-of-university-education.html" title="Comments">hear your opinion</a>. If you
+studied something else, don&#8217;t be discouraged, please <a href="http://www.codigoergosum.com/2011/09/28/five-wasted-years-futility-of-university-education.html" title="Comments">share also</a>. My
+points are mostly valid for computer science but I&#8217;m curious to hear
+which other fields they hold true in (or in which fields they don&#8217;t).</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>Powered by Octopress</title>
+    <title type="html"><![CDATA[Powered by Octopress]]></title>
     <link href="http://codigoergosum.com/2011/09/05/powered-by-octopress.html"/>
     <updated>2011-09-05T21:22:00+02:00</updated>
     <id>http://codigoergosum.com/2011/09/05/powered-by-octopress</id>
-    <content type="html">&lt;p&gt;&lt;a href=&quot;http://octopress.org/&quot;&gt;Octopress&lt;/a&gt; is a blogging engine on top of Jekyll. It got my attention
+    <content type="html"><![CDATA[<p><a href="http://octopress.org/">Octopress</a> is a blogging engine on top of Jekyll. It got my attention
 since it provides themes and a layout that looks great on mobile
-devices, too.&lt;/p&gt;
+devices, too.</p>
 
-&lt;p&gt;I had been playing with the idea to do my own simplistic theming long enough
+<p>I had been playing with the idea to do my own simplistic theming long enough
 to realize that I would never do it. The other feature I like is its plugin system:
-some I'll use right away (e.g Github style codeblock) but I also like
+some I&#8217;ll use right away (e.g Github style codeblock) but I also like
 the idea that I can write a plugin for any specific need that might
-arise later.&lt;/p&gt;
+arise later.</p>
 
-&lt;p&gt;I had had my blog on Jekyll so migration was not really hard. I hit a
-few minor roadblocks on the way but &lt;a href=&quot;http://octopress.org/docs/&quot;&gt;documentation&lt;/a&gt; is great and the author,
-Brandon Mathis was really helpful on the &lt;a href=&quot;https://convore.com/octopress/&quot;&gt;support forum&lt;/a&gt; so
-I could eventually sort them out.&lt;/p&gt;
+<p>I had had my blog on Jekyll so migration was not really hard. I hit a
+few minor roadblocks on the way but <a href="http://octopress.org/docs/">documentation</a> is great and the author,
+Brandon Mathis was really helpful on the <a href="https://convore.com/octopress/">support forum</a> so
+I could eventually sort them out.</p>
 
-&lt;p&gt;If you like to &lt;a href=&quot;http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html&quot;&gt;blog like a hacker&lt;/a&gt;, want to own your
-content and don't want to be bothered with styling, I encourage you to
-join &lt;a href=&quot;https://github.com/imathis/octopress/wiki/Octopress-Sites&quot;&gt;the squid team&lt;/a&gt;.&lt;/p&gt;
-</content>
+<p>If you like to <a href="http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html">blog like a hacker</a>, want to own your
+content and don&#8217;t want to be bothered with styling, I encourage you to
+join <a href="https://github.com/imathis/octopress/wiki/Octopress-Sites">the squid team</a>.</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>Git rebase to fix your local commits</title>
+    <title type="html"><![CDATA[Git rebase to fix your local commits]]></title>
     <link href="http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html"/>
     <updated>2011-07-19T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits</id>
-    <content type="html">&lt;p&gt;Let's say you have the following three commits in your local repository:&lt;/p&gt;
+    <content type="html"><![CDATA[<p>Let&#8217;s say you have the following three commits in your local repository:</p>
 
-&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;span class='line'&gt;2&lt;/span&gt;
-&lt;span class='line'&gt;3&lt;/span&gt;
-&lt;span class='line'&gt;4&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;% git log -3 --oneline
-&lt;/div&gt;&lt;div class='line'&gt;b648f1a Fix propagating errors in findOrInitialize. (28 seconds ago)
-&lt;/div&gt;&lt;div class='line'&gt;8789cd1 Non-destructive filtering for bumblebees. (12 hours ago)
-&lt;/div&gt;&lt;div class='line'&gt;1a35285 Propagate errors the node.js way. (14 hours ago)&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>% git log -3 --oneline
+</span><span class='line'>b648f1a Fix propagating errors in findOrInitialize. (28 seconds ago)
+</span><span class='line'>8789cd1 Non-destructive filtering for bumblebees. (12 hours ago)
+</span><span class='line'>1a35285 Propagate errors the node.js way. (14 hours ago)</span></code></pre></td></tr></table></div></figure>
 
 
-&lt;p&gt;The last commit, b648f1a conceptually belongs to the first one, 1a35285.
-It only came later because say you haven't run the tests before
+<p>The last commit, b648f1a conceptually belongs to the first one, 1a35285.
+It only came later because say you haven&#8217;t run the tests before
 committing it and only realized later you introduced a bug. Or some
 other misdemeanor. Whatever the background is, it would be great if
 there was a way to squash the two related commits together. Turns out
-there is: interactive rebase.&lt;/p&gt;
+there is: interactive rebase.</p>
 
-&lt;p&gt;The syntax of the git-rebase is the following:&lt;/p&gt;
+<p>The syntax of the git-rebase is the following:</p>
 
-&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;span class='line'&gt;2&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;git rebase [-i | --interactive] [options] [--onto &amp;lt;newbase&gt;]
-&lt;/div&gt;&lt;div class='line'&gt;             &amp;lt;upstream&gt; [&amp;lt;branch&gt;]&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git rebase [-i | --interactive] [options] [--onto &lt;newbase>]
+</span><span class='line'>             &lt;upstream> [&lt;branch>]</span></code></pre></td></tr></table></div></figure>
 
 
-&lt;p&gt;What happens when you do git rebase is that the commits that are on the current
+<p>What happens when you do git rebase is that the commits that are on the current
 branch but are not in upstream are saved. The current branch is reset to
-upstream and then the saved commits are replayed on top of this.&lt;/p&gt;
+upstream and then the saved commits are replayed on top of this.</p>
 
-&lt;p&gt;It's worth to mention that you should only do this if you have not
+<p>It&#8217;s worth to mention that you should only do this if you have not
 pushed out these changesets to a remote where others might have pulled
 from it. Rebase creates new commits and if your collaborators pull the
-new commits, chaos can ensue. (See &quot;Perils of Rebase&quot; in the &lt;a href=&quot;http://progit.org/book/ch3-6.html&quot;&gt;ProGit
-book&lt;/a&gt;)&lt;/p&gt;
+new commits, chaos can ensue. (See &#8220;Perils of Rebase&#8221; in the <a href="http://progit.org/book/ch3-6.html">ProGit
+book</a>)</p>
 
-&lt;p&gt;This can be used to achieve what we want:&lt;/p&gt;
+<p>This can be used to achieve what we want:</p>
 
-&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;% git rebase -i HEAD~3&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Since the commits that are on the current branch but not on the commit
-three commits from here are the last three commits, here is what we get:&lt;/p&gt;
-
-&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;span class='line'&gt;2&lt;/span&gt;
-&lt;span class='line'&gt;3&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;pick 1a35285 Propagate errors the node.js way.
-&lt;/div&gt;&lt;div class='line'&gt;pick 8789cd1 Non-destructive filtering for bumblebees.
-&lt;/div&gt;&lt;div class='line'&gt;pick b648f1a Fix propagating errors in findOrInitialize.&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>% git rebase -i HEAD~3</span></code></pre></td></tr></table></div></figure>
 
 
-&lt;p&gt;We want to meld the &quot;fix&quot; commit into the &quot;propagate&quot; commit since
-that's how it should have been in the first place. So we move b648f1a up and
-squash it into the previous commit:&lt;/p&gt;
+<p>Since the commits that are on the current branch but not on the commit
+three commits from here are the last three commits, here is what we get:</p>
 
-&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;span class='line'&gt;2&lt;/span&gt;
-&lt;span class='line'&gt;3&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;pick 1a35285 Propagate errors the node.js way.
-&lt;/div&gt;&lt;div class='line'&gt;squash b648f1a Fix propagating errors in findOrInitialize.
-&lt;/div&gt;&lt;div class='line'&gt;pick 8789cd1 Non-destructive filtering for scales.&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-&lt;p&gt;After a successful rebase this is how the new log looks like:&lt;/p&gt;
-
-&lt;div&gt;&lt;figure role=code&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;span class='line'&gt;2&lt;/span&gt;
-&lt;span class='line'&gt;3&lt;/span&gt;
-&lt;span class='line'&gt;4&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class=''&gt;&lt;div class='line'&gt;% git log -3 --oneline
-&lt;/div&gt;&lt;div class='line'&gt;73eed18 Non-destructive filtering for bumblebees. (9 seconds ago)
-&lt;/div&gt;&lt;div class='line'&gt;1e63d17 Propagate errors the node.js way. (39 seconds ago)
-&lt;/div&gt;&lt;div class='line'&gt;1b24891 Minor fixes in Bumblebee buzzing. (16 hours ago)&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pick 1a35285 Propagate errors the node.js way.
+</span><span class='line'>pick 8789cd1 Non-destructive filtering for bumblebees.
+</span><span class='line'>pick b648f1a Fix propagating errors in findOrInitialize.</span></code></pre></td></tr></table></div></figure>
 
 
-&lt;p&gt;Note that the three commits we had before have now been nicely compacted
+<p>We want to meld the &#8220;fix&#8221; commit into the &#8220;propagate&#8221; commit since
+that&#8217;s how it should have been in the first place. So we move b648f1a up and
+squash it into the previous commit:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pick 1a35285 Propagate errors the node.js way.
+</span><span class='line'>squash b648f1a Fix propagating errors in findOrInitialize.
+</span><span class='line'>pick 8789cd1 Non-destructive filtering for scales.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After a successful rebase this is how the new log looks like:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>% git log -3 --oneline
+</span><span class='line'>73eed18 Non-destructive filtering for bumblebees. (9 seconds ago)
+</span><span class='line'>1e63d17 Propagate errors the node.js way. (39 seconds ago)
+</span><span class='line'>1b24891 Minor fixes in Bumblebee buzzing. (16 hours ago)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that the three commits we had before have now been nicely compacted
 into two, and the propagation commit is now consistent and fixed. It can
-now be pushed.&lt;/p&gt;
+now be pushed.</p>
 
-&lt;p&gt;ps. You might wonder what we use bumblebees for in our project. Actually
+<p>ps. You might wonder what we use bumblebees for in our project. Actually
 they are faux. They serve to obfuscate real names in propietary code.
 I hope I can one day write code where bumblebees will be first-class
-citizens, though.&lt;/p&gt;
-</content>
+citizens, though.</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>Don't Tell Michelle, Facebook privacy as it should be</title>
+    <title type="html"><![CDATA[Don't Tell Michelle, Facebook privacy as it should be]]></title>
     <link href="http://codigoergosum.com/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be.html"/>
     <updated>2010-10-10T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be</id>
-    <content type="html">&lt;p&gt;It's been a quiet four months over here. My excuse is that I've been working. I joined a startup, &lt;a href=&quot;http://secretsaucepartners.com&quot;&gt;Secret Sauce Partners&lt;/a&gt; in June and we have started to build our first product a couple of weeks later. Now I am proud (actually, quite proud) to announce that we have released a first version last week.&lt;/p&gt;
+    <content type="html"><![CDATA[<p>It&#8217;s been a quiet four months over here. My excuse is that I&#8217;ve been working. I joined a startup, <a href="http://secretsaucepartners.com">Secret Sauce Partners</a> in June and we have started to build our first product a couple of weeks later. Now I am proud (actually, quite proud) to announce that we have released a first version last week.</p>
 
-&lt;h2&gt;The problem we are solving&lt;/h2&gt;
+<h2>The problem we are solving</h2>
 
-&lt;p&gt;I'm sure you have a Facebook account. You probably have around &lt;a href=&quot;http://www.facebook.com/press/info.php?statistics&quot;&gt;130 &quot;friends&quot;&lt;/a&gt;. Chances are you want to share lots of things but on several occasions you don't want to tell everybody. Sure, you can create friend lists and post to them based on what you want to say. Or, you can pick individual friends for your message (good luck with that if you would like to speak to more than 3 friends). It would definitely make sense (and would hugely improve the state of the world!) if you only showed your Farmville achievements to your friends who play Farmville and nobody else. Especially not your colleagues during work hours.&lt;/p&gt;
+<p>I&#8217;m sure you have a Facebook account. You probably have around <a href="http://www.facebook.com/press/info.php?statistics">130 &#8220;friends&#8221;</a>. Chances are you want to share lots of things but on several occasions you don&#8217;t want to tell everybody. Sure, you can create friend lists and post to them based on what you want to say. Or, you can pick individual friends for your message (good luck with that if you would like to speak to more than 3 friends). It would definitely make sense (and would hugely improve the state of the world!) if you only showed your Farmville achievements to your friends who play Farmville and nobody else. Especially not your colleagues during work hours.</p>
 
-&lt;p&gt;Wouldn't it be cool if you did not have to fiddle with setting the proper audience of your posts every single time you share something? If the people whom you post to would be determined from the content and the context of your message? Better still, if friends that join later could not see your posts prior to that?&lt;/p&gt;
+<p>Wouldn&#8217;t it be cool if you did not have to fiddle with setting the proper audience of your posts every single time you share something? If the people whom you post to would be determined from the content and the context of your message? Better still, if friends that join later could not see your posts prior to that?</p>
 
-&lt;h2&gt;The solution&lt;/h2&gt;
+<h2>The solution</h2>
 
-&lt;p&gt;Let's go back to Farmville-land (I know, I know, but bear with me for a few more minutes). If you only want to show your Farmville posts to selected people the only way to achieve it is to set your default privacy to that list of selected friends prior to diving in to FarmVille. Then you set it back to your default posting setting. Not quite comfortable.&lt;/p&gt;
+<p>Let&#8217;s go back to Farmville-land (I know, I know, but bear with me for a few more minutes). If you only want to show your Farmville posts to selected people the only way to achieve it is to set your default privacy to that list of selected friends prior to diving in to FarmVille. Then you set it back to your default posting setting. Not quite comfortable.</p>
 
-&lt;p&gt;That's where our application comes into the picture. To solve the above problem, you set up a rule that says:
-&quot;Hide posts from Farmville posted during Work Hours from my Co-Workers&quot;. You lay back, go feed your piggies, and water your sunflowers safe in the knowledge that your colleagues will not know about it. Suppose you don't want your mom to know where you spend your weekends. Here is your rule: &quot;Hide All posts from Foursquare from Family&quot;. Feeling the urge to swear like a sailor some times and don't want your little cousins or nieces to know about it? &quot;Always hide posts with Swear Words from Kids&quot;. Don't want to spam your Twitter followers on Facebook? &quot;Always hide posts from Twitter from Twitter followers&quot;. Then, there are the &quot;Show&quot; rules*. For example, an even more sensible rule for Farmville posts could be: &quot;Always show posts from Farmville to Players&quot;.
-(* &quot;Show rules&quot; are the next feature we are going to work on.)&lt;/p&gt;
+<p>That&#8217;s where our application comes into the picture. To solve the above problem, you set up a rule that says:
+&#8220;Hide posts from Farmville posted during Work Hours from my Co-Workers&#8221;. You lay back, go feed your piggies, and water your sunflowers safe in the knowledge that your colleagues will not know about it. Suppose you don&#8217;t want your mom to know where you spend your weekends. Here is your rule: &#8220;Hide All posts from Foursquare from Family&#8221;. Feeling the urge to swear like a sailor some times and don&#8217;t want your little cousins or nieces to know about it? &#8220;Always hide posts with Swear Words from Kids&#8221;. Don&#8217;t want to spam your Twitter followers on Facebook? &#8220;Always hide posts from Twitter from Twitter followers&#8221;. Then, there are the &#8220;Show&#8221; rules*. For example, an even more sensible rule for Farmville posts could be: &#8220;Always show posts from Farmville to Players&#8221;.
+(* &#8220;Show rules&#8221; are the next feature we are going to work on.)</p>
 
-&lt;p&gt;You see, the possibilities are endless, so why don't you &lt;a href=&quot;http://donttellmichelle.com/&quot;&gt;set up your own rules and give it a try&lt;/a&gt;? I bet you will never want to go back to (broken) standard Facebook privacy setting.&lt;/p&gt;
+<p>You see, the possibilities are endless, so why don&#8217;t you <a href="http://donttellmichelle.com/">set up your own rules and give it a try</a>? I bet you will never want to go back to (broken) standard Facebook privacy setting.</p>
 
-&lt;p&gt;Ah, and if you don't want your wife to know how much high-cholesterol food you eat, then &lt;a href=&quot;http://blogs.suntimes.com/sweet/2010/03/dont_tell_michelle_obama_says.html&quot;&gt;&quot;Don't Tell Michelle&quot;&lt;/a&gt;&lt;/p&gt;
-</content>
+<p>Ah, and if you don&#8217;t want your wife to know how much high-cholesterol food you eat, then <a href="http://blogs.suntimes.com/sweet/2010/03/dont_tell_michelle_obama_says.html">&#8220;Don&#8217;t Tell Michelle&#8221;</a></p>
+]]></content>
   </entry>
   
   <entry>
-    <title>It's a spec, not a test</title>
+    <title type="html"><![CDATA[It's a spec, not a test]]></title>
     <link href="http://codigoergosum.com/2010/06/03/its-a-spec-not-a-test.html"/>
     <updated>2010-06-03T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2010/06/03/its-a-spec-not-a-test</id>
-    <content type="html">&lt;p&gt;You must have heard the question several times on the Rails mailing list and different IRC channels: &quot;Should I test validates_uniqueness_of&quot;? The standard answer to that one is &quot;No, you definitely should not. It's Rails framework code, and it's already thoroughly tested. If you followed this path, you should also test whether objects are properly persisted in the database.&quot;&lt;/p&gt;
+    <content type="html"><![CDATA[<p>You must have heard the question several times on the Rails mailing list and different IRC channels: &#8220;Should I test validates_uniqueness_of&#8221;? The standard answer to that one is &#8220;No, you definitely should not. It&#8217;s Rails framework code, and it&#8217;s already thoroughly tested. If you followed this path, you should also test whether objects are properly persisted in the database.&#8221;</p>
 
-&lt;p&gt;I think, however, that the question is wrong and thus you can not give a correct answer. It is wrong because validates_uniqueness_of is the implementation, not the requirement. If you approach it from this angle, the question turns into whether you should test the specific implementation or whether you should verify that (business) requirements are met.&lt;/p&gt;
+<p>I think, however, that the question is wrong and thus you can not give a correct answer. It is wrong because validates_uniqueness_of is the implementation, not the requirement. If you approach it from this angle, the question turns into whether you should test the specific implementation or whether you should verify that (business) requirements are met.</p>
 
-&lt;p&gt;That, in turn, comes down to tests vs. specs (short for specifications) and this is again an opportunity for specs to shine. If you write specs instead of tests (or, to put it in a more mind-warping way: if your tests are actually specs), then the above question is a no-brainer: it's part of the specification that no two users can have the same email address, so you must have a spec for it:&lt;/p&gt;
+<p>That, in turn, comes down to tests vs. specs (short for specifications) and this is again an opportunity for specs to shine. If you write specs instead of tests (or, to put it in a more mind-warping way: if your tests are actually specs), then the above question is a no-brainer: it&#8217;s part of the specification that no two users can have the same email address, so you must have a spec for it:</p>
 
-&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;user_spec.rb &lt;/span&gt;&lt;/figcaption&gt;
- &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;span class='line'&gt;2&lt;/span&gt;
-&lt;span class='line'&gt;3&lt;/span&gt;
-&lt;span class='line'&gt;4&lt;/span&gt;
-&lt;span class='line'&gt;5&lt;/span&gt;
-&lt;span class='line'&gt;6&lt;/span&gt;
-&lt;span class='line'&gt;7&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='rb'&gt;&lt;div class='line'&gt;&lt;span class=&quot;n&quot;&gt;describe&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;User&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;  &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;has a unique email address&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;no&quot;&gt;Factory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:email&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;jeff@topnotch.com&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;nb&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Factory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:email&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;jeff@topnotch.com&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;should&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;     &lt;span class=&quot;n&quot;&gt;raise_error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ActiveRecord&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;RecordInvalid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+<figure class='code'><figcaption><span>user_spec.rb </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="n">describe</span> <span class="no">User</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">it</span> <span class="s2">&quot;has a unique email address&quot;</span> <span class="k">do</span>
+</span><span class='line'>    <span class="no">Factory</span><span class="p">(</span><span class="ss">:user</span><span class="p">,</span> <span class="ss">:email</span> <span class="o">=&gt;</span> <span class="s2">&quot;jeff@topnotch.com&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">lambda</span> <span class="p">{</span> <span class="no">Factory</span><span class="p">(</span><span class="ss">:user</span><span class="p">,</span> <span class="ss">:email</span> <span class="o">=&gt;</span> <span class="s2">&quot;jeff@topnotch.com&quot;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span>
+</span><span class='line'>     <span class="n">raise_error</span><span class="p">(</span><span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:RecordInvalid</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-&lt;p&gt;On the other hand, if you stick with calling your tests tests (how orthodox! ;) ) then not only you have to think (which consumes a lot of resources), but you can also come to the wrong conclusion and emit a strong business requirement from your test suite. And then you might not remember to have the implementation for it after modifying the code for whatever reason. And then bad things might happen.&lt;/p&gt;
+<p>On the other hand, if you stick with calling your tests tests (how orthodox! ;) ) then not only you have to think (which consumes a lot of resources), but you can also come to the wrong conclusion and emit a strong business requirement from your test suite. And then you might not remember to have the implementation for it after modifying the code for whatever reason. And then bad things might happen.</p>
 
-&lt;p&gt;(This thought came to me when coming to work in the subway this morning. I was never quite comfortable with the name &quot;specs&quot; but now it's starting to make a lot of sense to me. You are encouraged to disagree. Dissent is what makes the world progress.)&lt;/p&gt;
-</content>
+<p>(This thought came to me when coming to work in the subway this morning. I was never quite comfortable with the name &#8220;specs&#8221; but now it&#8217;s starting to make a lot of sense to me. You are encouraged to disagree. Dissent is what makes the world progress.)</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>Remove'em trailing whitespaces!</title>
+    <title type="html"><![CDATA[Remove'em trailing whitespaces!]]></title>
     <link href="http://codigoergosum.com/2010/02/16/remove-trailing-whitespaces.html"/>
     <updated>2010-02-16T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2010/02/16/remove-trailing-whitespaces</id>
-    <content type="html">&lt;p&gt;Some of you reading this probably use TextMate. It is an excellent editor with two caveats. The first is that you can only see one file in the editing window (no screen split), the other is that there is no save hook. This latter gave me headaches since I can't stand any trailing whitespace in source code and the easiest solution would have been to run a script to remove those when the file is saved.&lt;/p&gt;
+    <content type="html"><![CDATA[<p>Some of you reading this probably use TextMate. It is an excellent editor with two caveats. The first is that you can only see one file in the editing window (no screen split), the other is that there is no save hook. This latter gave me headaches since I can&#8217;t stand any trailing whitespace in source code and the easiest solution would have been to run a script to remove those when the file is saved.</p>
 
-&lt;p&gt;Without further ado I'll paste my solution below. Obviously this is not a difficult task to accomplish so the goal is to share not to show off. I use Git for SCM and the following solution parses out the files that have been modified and runs the whitespace eraser script for those. If you use something else (why do you?) you should obviously change the first building block:&lt;/p&gt;
+<p>Without further ado I&#8217;ll paste my solution below. Obviously this is not a difficult task to accomplish so the goal is to share not to show off. I use Git for SCM and the following solution parses out the files that have been modified and runs the whitespace eraser script for those. If you use something else (why do you?) you should obviously change the first building block:</p>
 
-&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;parse_modified_files_from_git_status.rb &lt;/span&gt;&lt;/figcaption&gt;
- &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;span class='line'&gt;2&lt;/span&gt;
-&lt;span class='line'&gt;3&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='rb'&gt;&lt;div class='line'&gt;&lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env ruby -wn&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;&lt;span class=&quot;n&quot;&gt;modified_file_pattern&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;/^#\s+(?:modified|new file):\s+(.*)$/&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;&lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;vg&quot;&gt;$1&lt;/span&gt;  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;modified_file_pattern&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=~&lt;/span&gt; &lt;span class=&quot;vg&quot;&gt;$_&lt;/span&gt;
-&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-
-&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;rm_trailing_whitespace.rb &lt;/span&gt;&lt;/figcaption&gt;
- &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;span class='line'&gt;2&lt;/span&gt;
-&lt;span class='line'&gt;3&lt;/span&gt;
-&lt;span class='line'&gt;4&lt;/span&gt;
-&lt;span class='line'&gt;5&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='rb'&gt;&lt;div class='line'&gt;&lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env ruby -wn&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;&lt;span class=&quot;vg&quot;&gt;$:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unshift&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dirname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;__FILE__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;
-&lt;/div&gt;&lt;div class='line'&gt;&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;trailing_whitespace_eraser&amp;quot;&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;&lt;span class=&quot;no&quot;&gt;TrailingWhiteSpaceEraser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rm_trailing_whitespace!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;vg&quot;&gt;$_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+<figure class='code'><figcaption><span>parse_modified_files_from_git_status.rb </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="c1">#!/usr/bin/env ruby -wn</span>
+</span><span class='line'><span class="n">modified_file_pattern</span> <span class="o">=</span> <span class="sr">/^#\s+(?:modified|new file):\s+(.*)$/</span>
+</span><span class='line'><span class="nb">puts</span> <span class="vg">$1</span>  <span class="k">if</span> <span class="n">modified_file_pattern</span> <span class="o">=~</span> <span class="vg">$_</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 
 
-&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;trailing_whitespace_eraser.rb &lt;/span&gt;&lt;/figcaption&gt;
- &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;span class='line'&gt;2&lt;/span&gt;
-&lt;span class='line'&gt;3&lt;/span&gt;
-&lt;span class='line'&gt;4&lt;/span&gt;
-&lt;span class='line'&gt;5&lt;/span&gt;
-&lt;span class='line'&gt;6&lt;/span&gt;
-&lt;span class='line'&gt;7&lt;/span&gt;
-&lt;span class='line'&gt;8&lt;/span&gt;
-&lt;span class='line'&gt;9&lt;/span&gt;
-&lt;span class='line'&gt;10&lt;/span&gt;
-&lt;span class='line'&gt;11&lt;/span&gt;
-&lt;span class='line'&gt;12&lt;/span&gt;
-&lt;span class='line'&gt;13&lt;/span&gt;
-&lt;span class='line'&gt;14&lt;/span&gt;
-&lt;span class='line'&gt;15&lt;/span&gt;
-&lt;span class='line'&gt;16&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='rb'&gt;&lt;div class='line'&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;TrailingWhiteSpaceEraser&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;  &lt;span class=&quot;no&quot;&gt;FILE_TYPES&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;rb&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;feature&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;yml&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;erb&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;haml&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;
-&lt;/div&gt;&lt;div class='line'&gt;  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;rm_trailing_whitespace_from_file!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;n&quot;&gt;trimmed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;readlines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;      &lt;span class=&quot;n&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gsub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/[\t ]+$/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;nb&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;w&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;trimmed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;
-&lt;/div&gt;&lt;div class='line'&gt;  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;rm_trailing_whitespace!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expand_path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;n&quot;&gt;files&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;directory?&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/**/*.{&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;FILE_TYPES&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;,&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;}&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;    &lt;span class=&quot;n&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rm_trailing_whitespace_from_file!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chomp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/div&gt;&lt;div class='line'&gt;&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+<figure class='code'><figcaption><span>rm_trailing_whitespace.rb </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="c1">#!/usr/bin/env ruby -wn</span>
+</span><span class='line'><span class="vg">$:</span><span class="o">.</span><span class="n">unshift</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">require</span> <span class="s2">&quot;trailing_whitespace_eraser&quot;</span>
+</span><span class='line'><span class="no">TrailingWhiteSpaceEraser</span><span class="o">.</span><span class="n">rm_trailing_whitespace!</span><span class="p">(</span><span class="vg">$_</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-&lt;p&gt;And then you run it by typing:&lt;/p&gt;
-
-&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;rtwsp.sh &lt;/span&gt;&lt;/figcaption&gt;
- &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='sh'&gt;&lt;div class='line'&gt;git status | parse_modified_files_from_git_status.rb | rm_trailing_whitespace.rb
-&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
 
 
-&lt;p&gt;If you decide to use this, it is more convenient to &lt;a href=&quot;http://gist.github.com/raw/305654/568290aa63ee3b0b3748b5041654f94ce45f4e5b/erase_trailing_whitespace.rb&quot;&gt;download the raw source&lt;/a&gt;&lt;/p&gt;
+<figure class='code'><figcaption><span>trailing_whitespace_eraser.rb </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="k">class</span> <span class="nc">TrailingWhiteSpaceEraser</span>
+</span><span class='line'>  <span class="no">FILE_TYPES</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="s2">&quot;feature&quot;</span><span class="p">,</span> <span class="s2">&quot;yml&quot;</span><span class="p">,</span> <span class="s2">&quot;erb&quot;</span><span class="p">,</span> <span class="s2">&quot;haml&quot;</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">rm_trailing_whitespace_from_file!</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">trimmed</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">readlines</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span>
+</span><span class='line'>      <span class="n">line</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/[\t ]+$/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>    <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">trimmed</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">rm_trailing_whitespace!</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">root</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">files</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">directory?</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="p">?</span> <span class="no">Dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">root</span><span class="si">}</span><span class="s2">/**/*.{</span><span class="si">#{</span><span class="no">FILE_TYPES</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">}&quot;</span><span class="p">)</span> <span class="p">:</span> <span class="o">[</span><span class="n">root</span><span class="o">]</span>
+</span><span class='line'>    <span class="n">files</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">file</span><span class="o">|</span> <span class="n">rm_trailing_whitespace_from_file!</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">chomp</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
 
-&lt;p&gt;Hopefully I did my tiny bit to have less trailing whitespace in OS code.&lt;/p&gt;
-</content>
+
+<p>And then you run it by typing:</p>
+
+<figure class='code'><figcaption><span>rtwsp.sh </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>git status | parse_modified_files_from_git_status.rb | rm_trailing_whitespace.rb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you decide to use this, it is more convenient to <a href="http://gist.github.com/raw/305654/568290aa63ee3b0b3748b5041654f94ce45f4e5b/erase_trailing_whitespace.rb">download the raw source</a></p>
+
+<p>Hopefully I did my tiny bit to have less trailing whitespace in OS code.</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>2010 is the year of the Javascript</title>
+    <title type="html"><![CDATA[2010 is the year of the Javascript]]></title>
     <link href="http://codigoergosum.com/2010/01/28/2010-is-the-year-of-the-javascript.html"/>
     <updated>2010-01-28T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2010/01/28/2010-is-the-year-of-the-javascript</id>
-    <content type="html">&lt;p&gt;If you've read the &lt;a href=&quot;http://pragprog.com/titles/tpp/the-pragmatic-programmer&quot;&gt;The Pragmatic Progammer - From Journeyman to Master&lt;/a&gt; (and if you have not, believe me, you should) you might remember one precious advice: learn a new programming language every year. So when the year draws close to its end (around April, that is) I really start thinking about which language should be the one for me next year.&lt;/p&gt;
+    <content type="html"><![CDATA[<p>If you&#8217;ve read the <a href="http://pragprog.com/titles/tpp/the-pragmatic-programmer">The Pragmatic Progammer - From Journeyman to Master</a> (and if you have not, believe me, you should) you might remember one precious advice: learn a new programming language every year. So when the year draws close to its end (around April, that is) I really start thinking about which language should be the one for me next year.</p>
 
-&lt;p&gt;This reflection is very pleasant; it is such a joy to immerse oneself into a new language, to slowly discover its structure, its subtleties and learn new ways of thinking, of approaching a problem (because that's probably the biggest gain of it, even surpassing adding another language to your arsenal) that its prospect is already rewarding in itself.&lt;/p&gt;
+<p>This reflection is very pleasant; it is such a joy to immerse oneself into a new language, to slowly discover its structure, its subtleties and learn new ways of thinking, of approaching a problem (because that&#8217;s probably the biggest gain of it, even surpassing adding another language to your arsenal) that its prospect is already rewarding in itself.</p>
 
-&lt;p&gt;My choice in 2009 fell on &lt;a href=&quot;http://clojure.org&quot;&gt;Clojure&lt;/a&gt;. I love functional programming, its elegance, its cleanness, its statelessness and after getting my feet wet with &lt;a href=&quot;http://www.paulgraham.com/acl.html&quot;&gt;ANSI Common LISP&lt;/a&gt; a while ago I felt like Clojure would propel me on my way of becoming an FP guru. Guided by &lt;a href=&quot;http://pragprog.com/titles/shcloj&quot;&gt;a great book&lt;/a&gt; I wrote a couple of, admittedly &lt;a href=&quot;http://github.com/balinterdi/clojure_exercises/blob/master/lzw/compressor.clj&quot;&gt;not too difficult&lt;/a&gt; &lt;a href=&quot;http://github.com/balinterdi/clojure_exercises/tree/master/sudoku/game.clj&quot;&gt;exercises&lt;/a&gt;  (hey, a &lt;a href=&quot;http://github.com/balinterdi/clojure_exercises/tree/master/sudoku/game.clj&quot;&gt;sudoku solver&lt;/a&gt; is already something, isn't it?) and I would certainly like to continue to do more with it in 2010.&lt;/p&gt;
+<p>My choice in 2009 fell on <a href="http://clojure.org">Clojure</a>. I love functional programming, its elegance, its cleanness, its statelessness and after getting my feet wet with <a href="http://www.paulgraham.com/acl.html">ANSI Common LISP</a> a while ago I felt like Clojure would propel me on my way of becoming an FP guru. Guided by <a href="http://pragprog.com/titles/shcloj">a great book</a> I wrote a couple of, admittedly <a href="http://github.com/balinterdi/clojure_exercises/blob/master/lzw/compressor.clj">not too difficult</a> <a href="http://github.com/balinterdi/clojure_exercises/tree/master/sudoku/game.clj">exercises</a>  (hey, a <a href="http://github.com/balinterdi/clojure_exercises/tree/master/sudoku/game.clj">sudoku solver</a> is already something, isn&#8217;t it?) and I would certainly like to continue to do more with it in 2010.</p>
 
-&lt;p&gt;Now, on to 2010.&lt;/p&gt;
+<p>Now, on to 2010.</p>
 
-&lt;p&gt;&lt;a href=&quot;http://mir.aculo.us&quot;&gt;Thomas Fuchs&lt;/a&gt; is certainly right when he predicts that &lt;a href=&quot;http://mir.aculo.us/2010/01/07/web-developments-next-decade/&quot;&gt;Javascript will play an increasingly significant role in web development&lt;/a&gt;. I was definitely wrong when I had thought of JS as an undebuggable, structure- and featureless, incoherent language. Of course, you can write Javascript code that is like this but I now think that -at least in the case of Javascript- this tells more about the craftsman than about the language.&lt;/p&gt;
+<p><a href="http://mir.aculo.us">Thomas Fuchs</a> is certainly right when he predicts that <a href="http://mir.aculo.us/2010/01/07/web-developments-next-decade/">Javascript will play an increasingly significant role in web development</a>. I was definitely wrong when I had thought of JS as an undebuggable, structure- and featureless, incoherent language. Of course, you can write Javascript code that is like this but I now think that -at least in the case of Javascript- this tells more about the craftsman than about the language.</p>
 
-&lt;p&gt;Make no mistakes, I can already do Javascript! I can miraculously make a check box appear if you click on a link, or update a database record without reloading the page when you press a button and a ton more such wizardry, really. However, I always felt like there was a whole lot more to Javascript than putting some dumb-looking functions in a file and then include it from my html (no, I don't think inlining it makes a difference) and I felt uneasy about my javascript functions just standing there on their own without any apparent belonging to a group or some kind of cohesive force or idea that holds them together.&lt;/p&gt;
+<p>Make no mistakes, I can already do Javascript! I can miraculously make a check box appear if you click on a link, or update a database record without reloading the page when you press a button and a ton more such wizardry, really. However, I always felt like there was a whole lot more to Javascript than putting some dumb-looking functions in a file and then include it from my html (no, I don&#8217;t think inlining it makes a difference) and I felt uneasy about my javascript functions just standing there on their own without any apparent belonging to a group or some kind of cohesive force or idea that holds them together.</p>
 
-&lt;p&gt;My recent enthusiasm comes from the fact that I had to browse through some of the source code of &lt;a href=&quot;http://script.aculo.us/&quot;&gt;scriptaculous&lt;/a&gt; and I really liked what I saw. The enthusiasm &lt;a href=&quot;http://www.codigoergosum.com/2008/10/09/javascript-method-chain.html&quot;&gt;is not totally new&lt;/a&gt; but looking at that source code demolished the last shreds of my Javascript skepticism, so to speak. So a year later than &lt;a href=&quot;http://www.rubyrailways.com/learn-at-least-one-new-language-every-year/&quot;&gt;Peter Szinek&lt;/a&gt; I am hopping on the same train: Javascript, here I come! If you have read a good book that enhanced your Javascript foo, please tell me about it in the comments.&lt;/p&gt;
+<p>My recent enthusiasm comes from the fact that I had to browse through some of the source code of <a href="http://script.aculo.us/">scriptaculous</a> and I really liked what I saw. The enthusiasm <a href="http://www.codigoergosum.com/2008/10/09/javascript-method-chain.html">is not totally new</a> but looking at that source code demolished the last shreds of my Javascript skepticism, so to speak. So a year later than <a href="http://www.rubyrailways.com/learn-at-least-one-new-language-every-year/">Peter Szinek</a> I am hopping on the same train: Javascript, here I come! If you have read a good book that enhanced your Javascript foo, please tell me about it in the comments.</p>
 
-&lt;p&gt;And you? Have you already chosen your language for 2010?&lt;/p&gt;
-</content>
+<p>And you? Have you already chosen your language for 2010?</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>Twuckoo 0.3.5 - With email notification</title>
+    <title type="html"><![CDATA[Twuckoo 0.3.5 - With email notification]]></title>
     <link href="http://codigoergosum.com/2010/01/26/twuckoo-0.3.5-with-email-notification.html"/>
     <updated>2010-01-26T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2010/01/26/twuckoo-0.3.5-with-email-notification</id>
-    <content type="html">&lt;p&gt;As some of you might know, I am running a &lt;a href=&quot;http://twitter.com/pragthinklearn&quot;&gt;few&lt;/a&gt; &lt;a href=&quot;http://twitter.com/daily_oblique&quot;&gt;twitter&lt;/a&gt; &lt;a href=&quot;http://twitter.com/wikipedia_tfa&quot;&gt;channels&lt;/a&gt; that use my brainchild, &lt;a href=&quot;http://github.com/balinterdi/twuckoo&quot;&gt;twuckoo&lt;/a&gt;, to periodically send a tweet.&lt;/p&gt;
+    <content type="html"><![CDATA[<p>As some of you might know, I am running a <a href="http://twitter.com/pragthinklearn">few</a> <a href="http://twitter.com/daily_oblique">twitter</a> <a href="http://twitter.com/wikipedia_tfa">channels</a> that use my brainchild, <a href="http://github.com/balinterdi/twuckoo">twuckoo</a>, to periodically send a tweet.</p>
 
-&lt;p&gt;In &lt;a href=&quot;http://twitter.com/pragthinklearn&quot;&gt;two&lt;/a&gt; &lt;a href=&quot;http://twitter.com/daily_oblique&quot;&gt;of&lt;/a&gt; these cases the program takes its next message from a file and takes care not to tweet the same thing twice by keeping track of the messages already sent. This means, however, that the pool of sendable messages are depleted after a while and the script simply does not send any more tweets, the channel becomes dead.&lt;/p&gt;
+<p>In <a href="http://twitter.com/pragthinklearn">two</a> <a href="http://twitter.com/daily_oblique">of</a> these cases the program takes its next message from a file and takes care not to tweet the same thing twice by keeping track of the messages already sent. This means, however, that the pool of sendable messages are depleted after a while and the script simply does not send any more tweets, the channel becomes dead.</p>
 
-&lt;p&gt;This has happened a couple of times in the past and I only realized it with a few days of delay which is kind of awkward (if you were subscribed to one of these accounts, I apologize). So I decided to have twuckoo send a notification in this case so I can go in and refill its queue. Hence twuckoo version 0.3.5 was born which sends an email to the address set in the configuration file when it failed to send a message.&lt;/p&gt;
+<p>This has happened a couple of times in the past and I only realized it with a few days of delay which is kind of awkward (if you were subscribed to one of these accounts, I apologize). So I decided to have twuckoo send a notification in this case so I can go in and refill its queue. Hence twuckoo version 0.3.5 was born which sends an email to the address set in the configuration file when it failed to send a message.</p>
 
-&lt;p&gt;To install it, add &lt;a href=&quot;http://gemcutter.org&quot;&gt;gemcutter&lt;/a&gt; to the list of gem sources if you haven't already:&lt;/p&gt;
+<p>To install it, add <a href="http://gemcutter.org">gemcutter</a> to the list of gem sources if you haven&#8217;t already:</p>
 
-&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;install.sh &lt;/span&gt;&lt;/figcaption&gt;
- &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='sh'&gt;&lt;div class='line'&gt;gem &lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt; --add http://gemcutter.org
-&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-&lt;p&gt;And install twuckoo:&lt;/p&gt;
-
-&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;install.sh &lt;/span&gt;&lt;/figcaption&gt;
- &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='sh'&gt;&lt;div class='line'&gt;gem install twuckoo
-&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+<figure class='code'><figcaption><span>install.sh </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>gem <span class="nb">source</span> --add http://gemcutter.org
+</span></code></pre></td></tr></table></div></figure>
 
 
-&lt;p&gt;You might be thinking that it would be more straightforward to have the program replenish itself so that no intervention from the part of the developer is needed. And you would be right, this could be a task for the next version. I still think it is a good idea to send a notification so the (wo)man in charge knows it happened.&lt;/p&gt;
+<p>And install twuckoo:</p>
 
-&lt;p&gt;So go ahead, have a look at &lt;a href=&quot;http://github.com/balinterdi/twuckoo&quot;&gt;the README&lt;/a&gt;, set up your own twitter channel and don't fret about when the queue would run dry. You'll be notified.&lt;/p&gt;
-</content>
+<figure class='code'><figcaption><span>install.sh </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>gem install twuckoo
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You might be thinking that it would be more straightforward to have the program replenish itself so that no intervention from the part of the developer is needed. And you would be right, this could be a task for the next version. I still think it is a good idea to send a notification so the (wo)man in charge knows it happened.</p>
+
+<p>So go ahead, have a look at <a href="http://github.com/balinterdi/twuckoo">the README</a>, set up your own twitter channel and don&#8217;t fret about when the queue would run dry. You&#8217;ll be notified.</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>My tech book list for 2009</title>
+    <title type="html"><![CDATA[My tech book list for 2009]]></title>
     <link href="http://codigoergosum.com/2010/01/11/my-tech-book-list-for-2009.html"/>
     <updated>2010-01-11T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2010/01/11/my-tech-book-list-for-2009</id>
-    <content type="html">&lt;p&gt;The title probably tells it all, below is the list of technical books I read in 2009. I am -unfortunately :)- not getting paid for any recommendation that lies herein.&lt;/p&gt;
+    <content type="html"><![CDATA[<p>The title probably tells it all, below is the list of technical books I read in 2009. I am -unfortunately :)- not getting paid for any recommendation that lies herein.</p>
 
-&lt;h2&gt;&lt;a href=&quot;http://www.pragprog.com/titles/mjwti/&quot;&gt;My Job Went to India&lt;/a&gt; &lt;span class=&quot;author&quot;&gt;&lt;em&gt;by Chad Fowler&lt;/em&gt;&lt;/span&gt;&lt;/h2&gt;
+<h2><a href="http://www.pragprog.com/titles/mjwti/">My Job Went to India</a> <span class="author"><em>by Chad Fowler</em></span></h2>
 
-&lt;p&gt;This one is a real motivation booster. Or it might function like love in the case of separated lovers: if you were motivated in the first place, you'll get a kick out of this book and want to do everything it recommends right from the next day. If you were not it might depress you to have to do so many things to stay afloat. Full of useful advices mostly drawn from the author's personal experience in India. 5/5!&lt;/p&gt;
+<p>This one is a real motivation booster. Or it might function like love in the case of separated lovers: if you were motivated in the first place, you&#8217;ll get a kick out of this book and want to do everything it recommends right from the next day. If you were not it might depress you to have to do so many things to stay afloat. Full of useful advices mostly drawn from the author&#8217;s personal experience in India. 5/5!</p>
 
-&lt;p&gt;(There is a second, reworked version under the name: &lt;a href=&quot;http://pragprog.com/titles/cfcar2/the-passionate-programmer&quot;&gt;The Passionate Programmer&lt;/a&gt;, you should probably buy that one.)&lt;/p&gt;
+<p>(There is a second, reworked version under the name: <a href="http://pragprog.com/titles/cfcar2/the-passionate-programmer">The Passionate Programmer</a>, you should probably buy that one.)</p>
 
-&lt;h2&gt;&lt;a href=&quot;http://www.joelonsoftware.com/uibook/fog0000000249.html&quot;&gt;User Interface Design for Programmers&lt;/a&gt; &lt;span class=&quot;author&quot;&gt;&lt;em&gt;by Joel Spolsky&lt;/em&gt;&lt;/span&gt;&lt;/h2&gt;
+<h2><a href="http://www.joelonsoftware.com/uibook/fog0000000249.html">User Interface Design for Programmers</a> <span class="author"><em>by Joel Spolsky</em></span></h2>
 
-&lt;p&gt;I real like Joel Spolsky's essays both for the content and for his witty style. I laughed out loud on several remarks in this book, too. The book reaffirms how important good UI is, makes it accessible for programmers by giving guidelines and provides some examples of good (and especially bad) examples. Its style makes the &quot;dry&quot; technical stuff fun to read.&lt;/p&gt;
+<p>I real like Joel Spolsky&#8217;s essays both for the content and for his witty style. I laughed out loud on several remarks in this book, too. The book reaffirms how important good UI is, makes it accessible for programmers by giving guidelines and provides some examples of good (and especially bad) examples. Its style makes the &#8220;dry&#8221; technical stuff fun to read.</p>
 
-&lt;h2&gt;&lt;a href=&quot;http://www.pomodorotechnique.com/resources.html&quot;&gt;The Pomodoro Technique&lt;/a&gt; &lt;span class=&quot;author&quot;&gt;&lt;em&gt;by Francesco Cirillo&lt;/em&gt;&lt;/span&gt;&lt;/h2&gt;
+<h2><a href="http://www.pomodorotechnique.com/resources.html">The Pomodoro Technique</a> <span class="author"><em>by Francesco Cirillo</em></span></h2>
 
-&lt;p&gt;A time-management and productivity tool, the Pomodoro Technique is the latest craze. The technique can be summarized in a few paragraphs, the details fill about 40 pages which comprise this book. &lt;a href=&quot;http://www.pomodorotechnique.com/resources/cirillo/ThePomodoroTechnique_v1-3.pdf&quot;&gt;The e-book&lt;/a&gt; can be downloaded for free. Although I do not follow all the advices described in the book fully (like administering the tasks you have done at the end of each day) I think the technique is a great way to achieve focus especially if you have problems with it. (The PragProgs have also recently published &lt;a href=&quot;http://pragprog.com/titles/snfocus/pomodoro-technique-illustrated&quot;&gt;a book about it&lt;/a&gt;)&lt;/p&gt;
+<p>A time-management and productivity tool, the Pomodoro Technique is the latest craze. The technique can be summarized in a few paragraphs, the details fill about 40 pages which comprise this book. <a href="http://www.pomodorotechnique.com/resources/cirillo/ThePomodoroTechnique_v1-3.pdf">The e-book</a> can be downloaded for free. Although I do not follow all the advices described in the book fully (like administering the tasks you have done at the end of each day) I think the technique is a great way to achieve focus especially if you have problems with it. (The PragProgs have also recently published <a href="http://pragprog.com/titles/snfocus/pomodoro-technique-illustrated">a book about it</a>)</p>
 
-&lt;h2&gt;&lt;a href=&quot;http://pragprog.com/titles/shcloj&quot;&gt;Programming Clojure&lt;/a&gt; &lt;span class=&quot;author&quot;&gt;&lt;em&gt;by Stuart Halloway&lt;/em&gt;&lt;/span&gt;&lt;/h2&gt;
+<h2><a href="http://pragprog.com/titles/shcloj">Programming Clojure</a> <span class="author"><em>by Stuart Halloway</em></span></h2>
 
-&lt;p&gt;Clojure is a functional programming language that runs in the JVM (hence the &quot;j&quot;, I guess). This excellent book contains everything you need to know to start (and continue) programming in Clojure from multimethods to infinite sequences, from ways to deal with concurrency to understanding and writing macros. Clojure rocks and so does this book!&lt;/p&gt;
+<p>Clojure is a functional programming language that runs in the JVM (hence the &#8220;j&#8221;, I guess). This excellent book contains everything you need to know to start (and continue) programming in Clojure from multimethods to infinite sequences, from ways to deal with concurrency to understanding and writing macros. Clojure rocks and so does this book!</p>
 
-&lt;h2&gt;&lt;a href=&quot;http://www.sitepoint.com/books/design1/&quot;&gt;The Principles of Beautiful Web Design&lt;/a&gt; &lt;span class=&quot;author&quot;&gt;&lt;em&gt;by Jason Beaird&lt;/em&gt;&lt;/span&gt;&lt;/h2&gt;
+<h2><a href="http://www.sitepoint.com/books/design1/">The Principles of Beautiful Web Design</a> <span class="author"><em>by Jason Beaird</em></span></h2>
 
-&lt;p&gt;I bought this book to be able to do a fancier design than putting black text on white background and using ugly textboxes with Times Roman fonts. It has certainly lived up to this goal and it has some very practical advices and links to resources (I particularly liked the chapter about color). Just as its title says, it explains principles rather than implementation details, which is what I was looking for. That said, I still feel I need another book (and a decent amount of practice, of course) to beam me to the level I had planned to reach before buying it. Any suggestions?&lt;/p&gt;
+<p>I bought this book to be able to do a fancier design than putting black text on white background and using ugly textboxes with Times Roman fonts. It has certainly lived up to this goal and it has some very practical advices and links to resources (I particularly liked the chapter about color). Just as its title says, it explains principles rather than implementation details, which is what I was looking for. That said, I still feel I need another book (and a decent amount of practice, of course) to beam me to the level I had planned to reach before buying it. Any suggestions?</p>
 
-&lt;h2&gt;&lt;a href=&quot;http://www.bookdepository.co.uk/book/9780321146533/Test-Driven-Development&quot;&gt;Test-Driven Development By Example&lt;/a&gt; &lt;span class=&quot;author&quot;&gt;&lt;em&gt;by Kent Beck&lt;/em&gt;&lt;/span&gt;&lt;/h2&gt;
+<h2><a href="http://www.bookdepository.co.uk/book/9780321146533/Test-Driven-Development">Test-Driven Development By Example</a> <span class="author"><em>by Kent Beck</em></span></h2>
 
-&lt;p&gt;A true classic, I reckon this book is a must-read for anyone aspiring to adhere to TDD or in fact for anyone already doing it at any level of mastery. In the first two chapters two distinct functionalities are developed (the first one, the Money example, in Java, the second, the xUnit example, in Python) by tiny steps using TDD, at each step pondering on the problem at hand and giving an explanation of the chosen solution. The third and final chapter deals with TDD patterns and is an invaluable addition to the first two chapters. Now that I am writing about it I feel like I should reread this book in 2010 (and then probably once every year). Red, green, refactor!&lt;/p&gt;
+<p>A true classic, I reckon this book is a must-read for anyone aspiring to adhere to TDD or in fact for anyone already doing it at any level of mastery. In the first two chapters two distinct functionalities are developed (the first one, the Money example, in Java, the second, the xUnit example, in Python) by tiny steps using TDD, at each step pondering on the problem at hand and giving an explanation of the chosen solution. The third and final chapter deals with TDD patterns and is an invaluable addition to the first two chapters. Now that I am writing about it I feel like I should reread this book in 2010 (and then probably once every year). Red, green, refactor!</p>
 
-&lt;h2&gt;&lt;a href=&quot;http://pragprog.com/titles/ahptl&quot;&gt;Pragmatic Thinking and Learning&lt;/a&gt; &lt;span class=&quot;author&quot;&gt;&lt;em&gt;by Andy Hunt&lt;/em&gt;&lt;/span&gt;&lt;/h2&gt;
+<h2><a href="http://pragprog.com/titles/ahptl">Pragmatic Thinking and Learning</a> <span class="author"><em>by Andy Hunt</em></span></h2>
 
-&lt;p&gt;The fact that I have not finished only goes to show its splendidness, I simply don't want it to end yet. (I read this in a Paul Graham essay but I can't find it right now). Its subtitle, &quot;Refactor your wetware&quot;, is telling: it shows you how to make yourself more productive by harnessing the innate capabilities of your brain and debugging its intrinsic &quot;bugs&quot;. I guess it is also a very refreshing read because it is about our mind and its workings and not some dry technical stuff. The stories and anecdotes linked to some of the sections makes it easy to recall the message. In fact, I liked this book so much I created a &lt;a href=&quot;http://github.com/balinterdi/twuckoo/&quot;&gt;&quot;twitter mini-framework&quot;&lt;/a&gt; and &lt;a href=&quot;http://twitter.com/pragthinklearn&quot;&gt;a twitter channel&lt;/a&gt; for the concise version of the advices.&lt;/p&gt;
+<p>The fact that I have not finished only goes to show its splendidness, I simply don&#8217;t want it to end yet. (I read this in a Paul Graham essay but I can&#8217;t find it right now). Its subtitle, &#8220;Refactor your wetware&#8221;, is telling: it shows you how to make yourself more productive by harnessing the innate capabilities of your brain and debugging its intrinsic &#8220;bugs&#8221;. I guess it is also a very refreshing read because it is about our mind and its workings and not some dry technical stuff. The stories and anecdotes linked to some of the sections makes it easy to recall the message. In fact, I liked this book so much I created a <a href="http://github.com/balinterdi/twuckoo/">&#8220;twitter mini-framework&#8221;</a> and <a href="http://twitter.com/pragthinklearn">a twitter channel</a> for the concise version of the advices.</p>
 
-&lt;h2&gt;Life is not just about stubbing, view helpers and achromatic color schemes&lt;/h2&gt;
+<h2>Life is not just about stubbing, view helpers and achromatic color schemes</h2>
 
-&lt;p&gt;On a Christmas evening, I sat down on a comfy sofa with &lt;a href=&quot;http://www.amazon.com/Révolutions-J-M-G-Clézio/dp/2070768538&quot;&gt;Révolutions by J.M.G. Le Clézio&lt;/a&gt; in my hand and was totally immersed in it right from page one. I realized I need occasions like this to repeatedly remind myself how much I miss of life if I only ever read technical books. (Sadly, my list of novels I read last year is a lot shorter than the above one but I heartily recommend you &lt;a href=&quot;http://www.goodreads.com/book/show/128029.A_Thousand_Splendid_Suns&quot;&gt;A Thousand Splendid Suns by Khaled Hosseini&lt;/a&gt; and &lt;a href=&quot;http://www.goodreads.com/book/show/887407.Poisson_D_or&quot;&gt;Poisson d'or by J.M.G. Le Clézio&lt;/a&gt;)&lt;/p&gt;
+<p>On a Christmas evening, I sat down on a comfy sofa with <a href="http://www.amazon.com/Révolutions-J-M-G-Clézio/dp/2070768538">Révolutions by J.M.G. Le Clézio</a> in my hand and was totally immersed in it right from page one. I realized I need occasions like this to repeatedly remind myself how much I miss of life if I only ever read technical books. (Sadly, my list of novels I read last year is a lot shorter than the above one but I heartily recommend you <a href="http://www.goodreads.com/book/show/128029.A_Thousand_Splendid_Suns">A Thousand Splendid Suns by Khaled Hosseini</a> and <a href="http://www.goodreads.com/book/show/887407.Poisson_D_or">Poisson d&#8217;or by J.M.G. Le Clézio</a>)</p>
 
-&lt;h2&gt;Any good books you have read?&lt;/h2&gt;
+<h2>Any good books you have read?</h2>
 
-&lt;p&gt;I am also making a (so far, only mental) list of books for this year and would like to hear your opinion, too. So have you read any books lately that you would passionately recommend for others?&lt;/p&gt;
-</content>
+<p>I am also making a (so far, only mental) list of books for this year and would like to hear your opinion, too. So have you read any books lately that you would passionately recommend for others?</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>i15r handles non-english source</title>
+    <title type="html"><![CDATA[i15r handles non-english source]]></title>
     <link href="http://codigoergosum.com/2010/01/08/i15r-works-with-non-english-source.html"/>
     <updated>2010-01-08T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2010/01/08/i15r-works-with-non-english-source</id>
-    <content type="html">&lt;p&gt;The other day thinking about how &lt;a href=&quot;http://github.com/balinterdi/i15r&quot;&gt;i15r&lt;/a&gt; could be improved I realized that there are times when the language of the non-internationalized site is not English (surprise, surprise). Add to this that lots of languages have &quot;special&quot; characters, characters that may not be properly found and replaced by the matchers. So I first learned the basics of &lt;a href=&quot;http://blog.grayproductions.net/articles/understanding_m17n&quot;&gt;how Ruby handles encodings&lt;/a&gt; (from &lt;a href=&quot;http://blog.grayproductions.net/&quot;&gt;James Edward Gray's&lt;/a&gt; excellent series) and then adjusted a few matchers to catch those special characters, too. (Note: one can't underestimate the utility of a spec suite that covers most of the code)&lt;/p&gt;
+    <content type="html"><![CDATA[<p>The other day thinking about how <a href="http://github.com/balinterdi/i15r">i15r</a> could be improved I realized that there are times when the language of the non-internationalized site is not English (surprise, surprise). Add to this that lots of languages have &#8220;special&#8221; characters, characters that may not be properly found and replaced by the matchers. So I first learned the basics of <a href="http://blog.grayproductions.net/articles/understanding_m17n">how Ruby handles encodings</a> (from <a href="http://blog.grayproductions.net/">James Edward Gray&#8217;s</a> excellent series) and then adjusted a few matchers to catch those special characters, too. (Note: one can&#8217;t underestimate the utility of a spec suite that covers most of the code)</p>
 
-&lt;p&gt;The specs pass but I am pretty certain there are some cases where the matchers might not be up to the task. If you come through such a case, please &lt;a href=&quot;http://github.com/balinterdi/i15r/issues&quot;&gt;submit a bug report&lt;/a&gt;. Since there has been a huge improvement in &lt;a href=&quot;http://blog.grayproductions.net/articles/ruby_19s_string&quot;&gt;string encoding in Ruby 1.9&lt;/a&gt; (basically, strings now have an encoding as opposed to in &lt;a href=&quot;http://blog.grayproductions.net/articles/bytes_and_characters_in_ruby_18&quot;&gt;Ruby 1.8&lt;/a&gt;), there might be some cases where strings are properly internationalized using Ruby 1.9 but not with 1.8.&lt;/p&gt;
+<p>The specs pass but I am pretty certain there are some cases where the matchers might not be up to the task. If you come through such a case, please <a href="http://github.com/balinterdi/i15r/issues">submit a bug report</a>. Since there has been a huge improvement in <a href="http://blog.grayproductions.net/articles/ruby_19s_string">string encoding in Ruby 1.9</a> (basically, strings now have an encoding as opposed to in <a href="http://blog.grayproductions.net/articles/bytes_and_characters_in_ruby_18">Ruby 1.8</a>), there might be some cases where strings are properly internationalized using Ruby 1.9 but not with 1.8.</p>
 
-&lt;p&gt;So if you think this is a valuable addition or just have not tried i15r yet, go get it:&lt;/p&gt;
+<p>So if you think this is a valuable addition or just have not tried i15r yet, go get it:</p>
 
-&lt;div&gt;&lt;figure role=code&gt;&lt;figcaption&gt;&lt;span&gt;install.sh &lt;/span&gt;&lt;/figcaption&gt;
- &lt;div class=&quot;highlight&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre class=&quot;line-numbers&quot;&gt;&lt;span class='line'&gt;1&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code' width='100%'&gt;&lt;pre&gt;&lt;code class='sh'&gt;&lt;div class='line'&gt;gem install i15r --source http://gemcutter.org
-&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+<figure class='code'><figcaption><span>install.sh </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>gem install i15r --source http://gemcutter.org
+</span></code></pre></td></tr></table></div></figure>
 
 
 
-</content>
+]]></content>
   </entry>
   
   <entry>
-    <title>New year, new blog</title>
+    <title type="html"><![CDATA[New year, new blog]]></title>
     <link href="http://codigoergosum.com/2010/01/04/new-year-new-blog.html"/>
     <updated>2010-01-04T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2010/01/04/new-year-new-blog</id>
-    <content type="html">&lt;p&gt;I guess it all began with &lt;a href=&quot;http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html&quot;&gt;this blog post&lt;/a&gt;. I saw that there is another way for composing a blog post than typing it into a textarea with a WYSIWYG interface (which is, by the way, never really WYSIWYG). It also seemed a lot cooler, something a &quot;real hacker&quot; would prefer hands down. The decision to switch my blog over to a textarea-free motor has been subconsciously made the time I read that post but the implementation needed a year to be realized. I reckon the final push was to see how easy &lt;a href=&quot;http://lackac.hu/2009/11/19/blog-migralas.html&quot;&gt;the migration of the blog's content&lt;/a&gt; is.&lt;/p&gt;
+    <content type="html"><![CDATA[<p>I guess it all began with <a href="http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html">this blog post</a>. I saw that there is another way for composing a blog post than typing it into a textarea with a WYSIWYG interface (which is, by the way, never really WYSIWYG). It also seemed a lot cooler, something a &#8220;real hacker&#8221; would prefer hands down. The decision to switch my blog over to a textarea-free motor has been subconsciously made the time I read that post but the implementation needed a year to be realized. I reckon the final push was to see how easy <a href="http://lackac.hu/2009/11/19/blog-migralas.html">the migration of the blog&#8217;s content</a> is.</p>
 
-&lt;h2&gt;The tools&lt;/h2&gt;
+<h2>The tools</h2>
 
-&lt;p&gt;I decided to use &lt;a href=&quot;http://github.com/mojombo/jekyll&quot;&gt;Jekyll&lt;/a&gt;, a static-site generator since it integrates nicely with Github and has all the features I need. Being a static-site generator I needed a client-side solution to handle comments. I chose &lt;a href=&quot;http://disqus.com/&quot;&gt;Disqus&lt;/a&gt; because that's the one I knew and liked but there are &lt;a href=&quot;http://intensedebate.com/&quot;&gt;alternatives&lt;/a&gt;.&lt;/p&gt;
+<p>I decided to use <a href="http://github.com/mojombo/jekyll">Jekyll</a>, a static-site generator since it integrates nicely with Github and has all the features I need. Being a static-site generator I needed a client-side solution to handle comments. I chose <a href="http://disqus.com/">Disqus</a> because that&#8217;s the one I knew and liked but there are <a href="http://intensedebate.com/">alternatives</a>.</p>
 
-&lt;h2&gt;The process&lt;/h2&gt;
+<h2>The process</h2>
 
-&lt;h3&gt;Content migration&lt;/h3&gt;
+<h3>Content migration</h3>
 
-&lt;p&gt;I needed continuity and thus migrating the old posts and comments. Fortunately Jekyll includes &lt;a href=&quot;http://wiki.github.com/mojombo/jekyll/blog-migrations&quot;&gt;migration scripts for several blog motors&lt;/a&gt;, among them Wordpress, so that was a piece of cake, everything worked out of the box.&lt;/p&gt;
+<p>I needed continuity and thus migrating the old posts and comments. Fortunately Jekyll includes <a href="http://wiki.github.com/mojombo/jekyll/blog-migrations">migration scripts for several blog motors</a>, among them Wordpress, so that was a piece of cake, everything worked out of the box.</p>
 
-&lt;p&gt;For the comments, I used &lt;a href=&quot;http://gist.github.com/261852&quot;&gt;a modified version of Lackac's script&lt;/a&gt;, that he so kindly directed my attention to (thank you, Lackac). Clearly it was more work than migrating the posts but nothing to shy away from. (If you plan to switch from Wordpress to Disqus I believe you'll be able to use &lt;a href=&quot;http://gist.github.com/261852&quot;&gt;the script&lt;/a&gt; with a few minor modifications.)&lt;/p&gt;
+<p>For the comments, I used <a href="http://gist.github.com/261852">a modified version of Lackac&#8217;s script</a>, that he so kindly directed my attention to (thank you, Lackac). Clearly it was more work than migrating the posts but nothing to shy away from. (If you plan to switch from Wordpress to Disqus I believe you&#8217;ll be able to use <a href="http://gist.github.com/261852">the script</a> with a few minor modifications.)</p>
 
-&lt;h3&gt;New design&lt;/h3&gt;
+<h3>New design</h3>
 
-&lt;p&gt;For my Wordpress blog, I used a design template that looked ok but was in PHP and was a PITA to modify or to add some styling to. Since I am looking to improve my capabilities as a designer I thought designing my own blog would be a suitable task to get my hands dirty with. I am not concealing the fact that I borrowed ideas from &lt;a href=&quot;http://www.briancasel.com/&quot;&gt;several&lt;/a&gt; &lt;a href=&quot;http://tom.preston-werner.com/&quot;&gt;blogs&lt;/a&gt; I liked but hey, they say it's not a shame to copy good ideas so what's wrong with that?&lt;/p&gt;
+<p>For my Wordpress blog, I used a design template that looked ok but was in PHP and was a PITA to modify or to add some styling to. Since I am looking to improve my capabilities as a designer I thought designing my own blog would be a suitable task to get my hands dirty with. I am not concealing the fact that I borrowed ideas from <a href="http://www.briancasel.com/">several</a> <a href="http://tom.preston-werner.com/">blogs</a> I liked but hey, they say it&#8217;s not a shame to copy good ideas so what&#8217;s wrong with that?</p>
 
-&lt;h3&gt;Layout, site feed, etc. with Jekyll&lt;/h3&gt;
+<h3>Layout, site feed, etc. with Jekyll</h3>
 
-&lt;p&gt;Have I said I love open source? There is a Jekyll wiki that lists &lt;a href=&quot;http://wiki.github.com/mojombo/jekyll/sites&quot;&gt;Jekyll sites&lt;/a&gt; along with a link to their sources so seeing how to set up my blog with Jekyll was quite straightforward. I guess this was still the most time-consuming part of all but I did not really have to think of anything, the steps are well-defined. (Here is the &lt;a href=&quot;http://github.com/balinterdi/balinterdi.github.com&quot;&gt;source of my blog&lt;/a&gt; if you'd like to take a glimpse.)&lt;/p&gt;
+<p>Have I said I love open source? There is a Jekyll wiki that lists <a href="http://wiki.github.com/mojombo/jekyll/sites">Jekyll sites</a> along with a link to their sources so seeing how to set up my blog with Jekyll was quite straightforward. I guess this was still the most time-consuming part of all but I did not really have to think of anything, the steps are well-defined. (Here is the <a href="http://github.com/balinterdi/balinterdi.github.com">source of my blog</a> if you&#8217;d like to take a glimpse.)</p>
 
-&lt;h3&gt;Buying a Github plan to be able to use a non-github domain&lt;/h3&gt;
+<h3>Buying a Github plan to be able to use a non-github domain</h3>
 
-&lt;p&gt;If you'd like to host your blog under a custom domain (&lt;a href=&quot;http://codigoergosum.com&quot;&gt;http://codigoergosum.com&lt;/a&gt; instead of &lt;a href=&quot;http://balinterdi.github.com&quot;&gt;http://balinterdi.github.com&lt;/a&gt;) you'll need to buy a Github plan. Starting at 7$/month for the Micro plan it's not an insurmountable obstacle, in fact it costs less than the Wordpress hosting I am moving away from.&lt;/p&gt;
+<p>If you&#8217;d like to host your blog under a custom domain (<a href="http://codigoergosum.com">http://codigoergosum.com</a> instead of <a href="http://balinterdi.github.com">http://balinterdi.github.com</a>) you&#8217;ll need to buy a Github plan. Starting at 7$/month for the Micro plan it&#8217;s not an insurmountable obstacle, in fact it costs less than the Wordpress hosting I am moving away from.</p>
 
-&lt;h2&gt;Changing the name&lt;/h2&gt;
+<h2>Changing the name</h2>
 
-&lt;p&gt;Back in the spring of 2008, returning from the &lt;a href=&quot;http://www.euruko2008.org/&quot;&gt;European Ruby conference&lt;/a&gt; (and having finished &lt;a href=&quot;http://pragprog.com/titles/tpp/the-pragmatic-programmer&quot;&gt;The Pragmatic Programmer&lt;/a&gt; on the train) my mind was buzzing with new ideas and I could not wait to set myself on a craftsman's journey.&lt;/p&gt;
+<p>Back in the spring of 2008, returning from the <a href="http://www.euruko2008.org/">European Ruby conference</a> (and having finished <a href="http://pragprog.com/titles/tpp/the-pragmatic-programmer">The Pragmatic Programmer</a> on the train) my mind was buzzing with new ideas and I could not wait to set myself on a craftsman&#8217;s journey.</p>
 
-&lt;p&gt;I felt I needed a blog immediately. The hard part of course was coming up with a name. Since I felt it was more important to get something going than to idle on finding the perfect one (I guess we can call this agile, can't we? :)), I launched &lt;a href=&quot;http://bucionrails.com&quot;&gt;http://bucionrails.com&lt;/a&gt;. During the almost two years that have passed since that day I have grown somewhat uncomfortable with that name so I decided to change it. I hope you like &lt;a href=&quot;http://en.wikipedia.org/wiki/Descartes&quot;&gt;the new one&lt;/a&gt; :). (I set up a feed redirection with Feedburner to notify you of the feed URL change after 15 days but you could directly subscribe to the &lt;a href=&quot;http://feeds.feedburner.com/codigoergosum&quot;&gt;new feed now&lt;/a&gt;)&lt;/p&gt;
+<p>I felt I needed a blog immediately. The hard part of course was coming up with a name. Since I felt it was more important to get something going than to idle on finding the perfect one (I guess we can call this agile, can&#8217;t we? :)), I launched <a href="http://bucionrails.com">http://bucionrails.com</a>. During the almost two years that have passed since that day I have grown somewhat uncomfortable with that name so I decided to change it. I hope you like <a href="http://en.wikipedia.org/wiki/Descartes">the new one</a> :). (I set up a feed redirection with Feedburner to notify you of the feed URL change after 15 days but you could directly subscribe to the <a href="http://feeds.feedburner.com/codigoergosum">new feed now</a>)</p>
 
-&lt;h2&gt;The end result&lt;/h2&gt;
+<h2>The end result</h2>
 
-&lt;p&gt;It felt appropriate to start the new year with a new blog and -to my surprise- the switch was a lot easier than I had thought. I hope you, the faithful readers of my blog, welcome the change and ameliorate it with your precious comments.&lt;/p&gt;
+<p>It felt appropriate to start the new year with a new blog and -to my surprise- the switch was a lot easier than I had thought. I hope you, the faithful readers of my blog, welcome the change and ameliorate it with your precious comments.</p>
 
-&lt;p&gt;Now I am blogging like a hacker, too!&lt;/p&gt;
-</content>
+<p>Now I am blogging like a hacker, too!</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>i15r 0.3.1 is out - now with haml matchers!</title>
+    <title type="html"><![CDATA[i15r 0.3.1 is out - now with haml matchers!]]></title>
     <link href="http://codigoergosum.com/2009/12/14/i15r-031-is-out-now-with-haml-matchers.html"/>
     <updated>2009-12-14T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2009/12/14/i15r-031-is-out-now-with-haml-matchers</id>
-    <content type="html">&lt;p&gt;I've just released a new version of the &lt;a href=&quot;http://github.com/balinterdi/i15r&quot;&gt;i15r gem&lt;/a&gt; which alleviates the tedious task of internationalizing a Rails site by finding the &quot;static&quot; texts and replacing them with I18n message strings.&lt;/p&gt;
+    <content type="html"><![CDATA[<p>I&#8217;ve just released a new version of the <a href="http://github.com/balinterdi/i15r">i15r gem</a> which alleviates the tedious task of internationalizing a Rails site by finding the &#8220;static&#8221; texts and replacing them with I18n message strings.</p>
 
-&lt;p&gt;The good news -and probably the reason I am writing a blog post about it- is that it can now process &lt;a href=&quot;http://haml-lang.com/&quot;&gt;haml&lt;/a&gt; files, too. This must cheer up those who -like me- have come to like haml so much they now use it for their projects. So &lt;a href=&quot;http://gemcutter.org/gems/i15r&quot;&gt;go get it&lt;/a&gt; and let me know how it works for you.&lt;/p&gt;
-</content>
+<p>The good news -and probably the reason I am writing a blog post about it- is that it can now process <a href="http://haml-lang.com/">haml</a> files, too. This must cheer up those who -like me- have come to like haml so much they now use it for their projects. So <a href="http://gemcutter.org/gems/i15r">go get it</a> and let me know how it works for you.</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>Rubygems under the hood: hooking into require</title>
+    <title type="html"><![CDATA[Rubygems under the hood: hooking into require]]></title>
     <link href="http://codigoergosum.com/2009/10/28/rubygems-under-the-hood-hooking-into-require.html"/>
     <updated>2009-10-28T00:00:00+01:00</updated>
     <id>http://codigoergosum.com/2009/10/28/rubygems-under-the-hood-hooking-into-require</id>
-    <content type="html">&lt;p&gt;(See &lt;a href=&quot;http://bucionrails.com/2009/10/20/rubygems-under-the-hood-introduction/&quot;&gt;the introduction&lt;/a&gt; to the series.)&lt;/p&gt;
+    <content type="html"><![CDATA[<p>(See <a href="http://bucionrails.com/2009/10/20/rubygems-under-the-hood-introduction/">the introduction</a> to the series.)</p>
 
-&lt;p&gt;When you want to pull in a Ruby library, you require it. The library you require has to be on Ruby's load path ($LOAD_PATH) in order to succeed. So let's see how Rubygems hooks into this process.&lt;/p&gt;
+<p>When you want to pull in a Ruby library, you require it. The library you require has to be on Ruby&#8217;s load path ($LOAD_PATH) in order to succeed. So let&#8217;s see how Rubygems hooks into this process.</p>
 
-&lt;p&gt;The secret lies in custom_require.rb. You'll see a nice comment near the top.&lt;/p&gt;
+<p>The secret lies in custom_require.rb. You&#8217;ll see a nice comment near the top.</p>
 
-&lt;blockquote&gt;
-When you call &quot;require 'x'&quot;, this is what happens:
+<blockquote>
+When you call &#8220;require &#8216;x&#8217;&#8221;, this is what happens:
   * If the file can be loaded from the existing Ruby loadpath, it is.
   * Otherwise, installed gems are searched for a file that matches.
-If it's found in gem 'y', that gem is activated (added to the loadpath).
-&lt;/blockquote&gt;
+If it&#8217;s found in gem &#8216;y&#8217;, that gem is activated (added to the loadpath).
+</blockquote>
 
 
-&lt;p&gt;In fact, that explanation looks so straightforward to me that I doubt if I can add more words to precise it, so let's look at the code together:&lt;/p&gt;
+<p>In fact, that explanation looks so straightforward to me that I doubt if I can add more words to precise it, so let&#8217;s look at the code together:</p>
 
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='ruby'&gt;module Kernel
+<div>
+  <pre><code class='ruby'>module Kernel
   alias gem_original_require require
   (...)
   def require(path) # :doc:
     gem_original_require path
-  rescue LoadError =&amp;gt; load_error
+  rescue LoadError =&gt; load_error
     if load_error.message =~ /#{Regexp.escape path}\z/ and
        spec = Gem.searcher.find(path) then
-      Gem.activate(spec.name, &amp;quot;= #{spec.version}&amp;quot;)
+      Gem.activate(spec.name, &quot;= #{spec.version}&quot;)
       gem_original_require path
     else
       raise load_error
     end
   end
 (...)
-end&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+end</code></pre>
+</div>
 
 
-&lt;p&gt;Aliasing a method, redefining it and calling the original version from the redefined method is a very familiar pattern if you have read Rails source code (called method chaining).&lt;/p&gt;
+<p>Aliasing a method, redefining it and calling the original version from the redefined method is a very familiar pattern if you have read Rails source code (called method chaining).</p>
 
-&lt;p&gt;So, just as the above description says, if the file can be loaded &quot;without Rubygems&quot; it is and Rubygems never comes into the picture. If not, we make sure that the load error comes from the file not found on the load path and then find the gemspec for that file and activate it.&lt;/p&gt;
+<p>So, just as the above description says, if the file can be loaded &#8220;without Rubygems&#8221; it is and Rubygems never comes into the picture. If not, we make sure that the load error comes from the file not found on the load path and then find the gemspec for that file and activate it.</p>
 
-&lt;p&gt;Activating it adds it to the load path, so we can call the original require safe in the knowledge that it will now succeed and we won't get another load error this time around (and go into an infinite loop). Clever, heh?&lt;/p&gt;
+<p>Activating it adds it to the load path, so we can call the original require safe in the knowledge that it will now succeed and we won&#8217;t get another load error this time around (and go into an infinite loop). Clever, heh?</p>
 
-&lt;p&gt;This is one of the cases when the code is so simple for a moment I think I could have written it myself. With its &amp;lt;10 lines of code Rubygems is empowered to load a myriad of useful Ruby libraries. Isn't this wonderful?&lt;/p&gt;
-</content>
+<p>This is one of the cases when the code is so simple for a moment I think I could have written it myself. With its &lt;10 lines of code Rubygems is empowered to load a myriad of useful Ruby libraries. Isn&#8217;t this wonderful?</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>RubyGems under the hood: Introduction</title>
+    <title type="html"><![CDATA[RubyGems under the hood: Introduction]]></title>
     <link href="http://codigoergosum.com/2009/10/20/rubygems-under-the-hood-introduction.html"/>
     <updated>2009-10-20T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2009/10/20/rubygems-under-the-hood-introduction</id>
-    <content type="html">&lt;p&gt;I am not sure about you, but one thing I keep bumping into while developing ruby applications is rubygem version conflicts. If you have ever come across &quot;can't activate activesupport (= 2.3.4, runtime) for [], already activated activesupport-2.3.3 for []&quot; type of errors, you might be sympathetic to the cause.&lt;/p&gt;
+    <content type="html"><![CDATA[<p>I am not sure about you, but one thing I keep bumping into while developing ruby applications is rubygem version conflicts. If you have ever come across &#8220;can&#8217;t activate activesupport (= 2.3.4, runtime) for [], already activated activesupport-2.3.3 for []&#8221; type of errors, you might be sympathetic to the cause.</p>
 
-&lt;p&gt;Since &lt;a href=&quot;http://rubygems.org/&quot;&gt;rubygems&lt;/a&gt; was and is being written by some &lt;a href=&quot;http://chadfowler.com&quot;&gt;excellent&lt;/a&gt; &lt;a href=&quot;http://richkilmer.blogs.com/&quot;&gt;Ruby&lt;/a&gt; &lt;a href=&quot;http://onestepback.org/&quot;&gt;minds&lt;/a&gt; I knew the fault probably lies with me and not with the tool. Being a &lt;a href=&quot;http://manifesto.softwarecraftsmanship.org/&quot;&gt;motivated and proud craftsman&lt;/a&gt; I felt like I needed to know my tools and rubygems is probably the number one tool most of us Ruby developers use on a daily basis.&lt;/p&gt;
+<p>Since <a href="http://rubygems.org/">rubygems</a> was and is being written by some <a href="http://chadfowler.com">excellent</a> <a href="http://richkilmer.blogs.com/">Ruby</a> <a href="http://onestepback.org/">minds</a> I knew the fault probably lies with me and not with the tool. Being a <a href="http://manifesto.softwarecraftsmanship.org/">motivated and proud craftsman</a> I felt like I needed to know my tools and rubygems is probably the number one tool most of us Ruby developers use on a daily basis.</p>
 
-&lt;p&gt;I intend to write a mini-series of Rubygems posts. A post will be added to the series when I explore some murky corner of rubygems inner mechanics. Some of the time this will come from a particular problem I come across while coding while on other occasions I might just look into the source code and try to understand what a particular piece of code does.&lt;/p&gt;
+<p>I intend to write a mini-series of Rubygems posts. A post will be added to the series when I explore some murky corner of rubygems inner mechanics. Some of the time this will come from a particular problem I come across while coding while on other occasions I might just look into the source code and try to understand what a particular piece of code does.</p>
 
-&lt;p&gt;Now, I realized that when I read on a blog: &quot;I will go into more detail about X in a forthcoming post&quot;, it is the surest sign that you will never read about X again. At least not on that very blog. And I am not saying this in a mean way, I think it is very natural for our plans to change (&quot;evolve&quot; may sound better) even on the short term. So I am aiming low and hoping to give you more than you expected. (Notice I wrote &quot;mini-series&quot; which may just mean a couple of posts.)&lt;/p&gt;
+<p>Now, I realized that when I read on a blog: &#8220;I will go into more detail about X in a forthcoming post&#8221;, it is the surest sign that you will never read about X again. At least not on that very blog. And I am not saying this in a mean way, I think it is very natural for our plans to change (&#8220;evolve&#8221; may sound better) even on the short term. So I am aiming low and hoping to give you more than you expected. (Notice I wrote &#8220;mini-series&#8221; which may just mean a couple of posts.)</p>
 
-&lt;h2&gt;Do not set your expectations high&lt;/h2&gt;
+<h2>Do not set your expectations high</h2>
 
 
-&lt;p&gt;I am absolutely not a Rubygems expert so please do not be fooled by the &quot;under the hood&quot; title. This will not be commensurate to &lt;a href=&quot;http://weblog.jamisbuck.org/2006/10/2/under-the-hood-rails-routing-dsl&quot;&gt;Jamis Buck's series on Rails routing&lt;/a&gt;. I do not -yet?- have a deep insight and I am not even a contributor to Rubygems.&lt;/p&gt;
+<p>I am absolutely not a Rubygems expert so please do not be fooled by the &#8220;under the hood&#8221; title. This will not be commensurate to <a href="http://weblog.jamisbuck.org/2006/10/2/under-the-hood-rails-routing-dsl">Jamis Buck&#8217;s series on Rails routing</a>. I do not -yet?- have a deep insight and I am not even a contributor to Rubygems.</p>
 
-&lt;p&gt;The forthcoming :) series is just a humble attempt to gain an understanding of a very important part of the Ruby arsenal. I hope to understand it better by explaining to you how it works and I hope you will understand it better by reading my explanation. And last, but not least, I hope we'll both spend less time debugging those tricky issues.&lt;/p&gt;
+<p>The forthcoming :) series is just a humble attempt to gain an understanding of a very important part of the Ruby arsenal. I hope to understand it better by explaining to you how it works and I hope you will understand it better by reading my explanation. And last, but not least, I hope we&#8217;ll both spend less time debugging those tricky issues.</p>
 
-&lt;p&gt;Having said that, I encourage you to participate in the series. Tell me about a particular problem you had with Rubygems. Correct me if I am wrong. Point me to an article where all this is already explained, and much better. Give feedback so this might evolve to be a discussion rather than an academic lecture. Thank you.&lt;/p&gt;
-</content>
+<p>Having said that, I encourage you to participate in the series. Tell me about a particular problem you had with Rubygems. Correct me if I am wrong. Point me to an article where all this is already explained, and much better. Give feedback so this might evolve to be a discussion rather than an academic lecture. Thank you.</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>Cucumber meets Selenium meets Integrity</title>
+    <title type="html"><![CDATA[Cucumber meets Selenium meets Integrity]]></title>
     <link href="http://codigoergosum.com/2009/09/25/cucumber-meets-selenium-meets-integrity.html"/>
     <updated>2009-09-25T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2009/09/25/cucumber-meets-selenium-meets-integrity</id>
-    <content type="html">&lt;p&gt;&lt;a href=&quot;http://martinfowler.com/articles/continuousIntegration.html&quot; title=&quot;Continuous Integration&quot;&gt;Continuous Integration&lt;/a&gt; (CI) is a basic building block of any project done in TDD style. In brief, having a CI server properly set up guarantees that developers can rest assured that the application passes all its tests and can thus be deployed at any moment. It does this by sending some kind of a warning if something is broken so it can be fixed immediately.&lt;/p&gt;
+    <content type="html"><![CDATA[<p><a href="http://martinfowler.com/articles/continuousIntegration.html" title="Continuous Integration">Continuous Integration</a> (CI) is a basic building block of any project done in TDD style. In brief, having a CI server properly set up guarantees that developers can rest assured that the application passes all its tests and can thus be deployed at any moment. It does this by sending some kind of a warning if something is broken so it can be fixed immediately.</p>
 
-&lt;p&gt;Now I noticed that if a CI server is not in the mix right from the beginning of project, chances are it will never be, that was one of the first things I installed on a new Rails project. My server of choice is &lt;a href=&quot;http://integrityapp.com&quot;&gt;Integrity&lt;/a&gt; mostly because it is so easy to set up and quite straightforward to use.&lt;/p&gt;
+<p>Now I noticed that if a CI server is not in the mix right from the beginning of project, chances are it will never be, that was one of the first things I installed on a new Rails project. My server of choice is <a href="http://integrityapp.com">Integrity</a> mostly because it is so easy to set up and quite straightforward to use.</p>
 
-&lt;p&gt;Ok, so next we need some tests that Integrity will run at each commit and make sure the app can still be built. As a high-level acceptance test framework, I use &lt;a href=&quot;http://cukes.info&quot;&gt;Cucumber&lt;/a&gt;, which plays very nicely with &lt;a href=&quot;http://seleniumhq.org&quot;&gt;Selenium&lt;/a&gt; for automated in-browser testing. Since nowadays even the most basic web application will have some amount of client-side scripting code (that is, javascript) if you really want to test the features of your application you'll need Selenium tests.&lt;/p&gt;
+<p>Ok, so next we need some tests that Integrity will run at each commit and make sure the app can still be built. As a high-level acceptance test framework, I use <a href="http://cukes.info">Cucumber</a>, which plays very nicely with <a href="http://seleniumhq.org">Selenium</a> for automated in-browser testing. Since nowadays even the most basic web application will have some amount of client-side scripting code (that is, javascript) if you really want to test the features of your application you&#8217;ll need Selenium tests.</p>
 
-&lt;p&gt;That's when matters get a bit more complicated when it comes to integrating these with the Integrity server. Why? Because on the server you usually don't have the &quot;desktop environment&quot; which is available on the machine you do the development on. By default, you don't run a desktop manager and have a graphic display on a server. A tool called &lt;a href=&quot;http://linux.about.com/cs/linux101/g/xvfb.htm&quot;&gt;xvfb&lt;/a&gt; comes into a picture that emulate a dumb framebuffer so you can still programs that need a graphic display.&lt;/p&gt;
+<p>That&#8217;s when matters get a bit more complicated when it comes to integrating these with the Integrity server. Why? Because on the server you usually don&#8217;t have the &#8220;desktop environment&#8221; which is available on the machine you do the development on. By default, you don&#8217;t run a desktop manager and have a graphic display on a server. A tool called <a href="http://linux.about.com/cs/linux101/g/xvfb.htm">xvfb</a> comes into a picture that emulate a dumb framebuffer so you can still programs that need a graphic display.</p>
 
-&lt;p&gt;To have some practical guidance, here's what I did on an Ubuntu server to enable all of the above:&lt;/p&gt;
+<p>To have some practical guidance, here&#8217;s what I did on an Ubuntu server to enable all of the above:</p>
 
-&lt;p&gt;Install java since Selenium runs in the JVM:&lt;/p&gt;
+<p>Install java since Selenium runs in the JVM:</p>
 
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='bash'&gt;apt-get install java-common sun-java6-jre&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+<div>
+  <pre><code class='bash'>apt-get install java-common sun-java6-jre</code></pre>
+</div>
 
 
-&lt;p&gt;Install firefox since that's what Selenium runs by default and that's a very good choice.&lt;/p&gt;
+<p>Install firefox since that&#8217;s what Selenium runs by default and that&#8217;s a very good choice.</p>
 
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='bash'&gt;apt-get install apt-get install firefox&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+<div>
+  <pre><code class='bash'>apt-get install apt-get install firefox</code></pre>
+</div>
 
 
-&lt;p&gt;Install X since that's what the xvfb launches and Xvfb itself.&lt;/p&gt;
+<p>Install X since that&#8217;s what the xvfb launches and Xvfb itself.</p>
 
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='bash'&gt;apt-get install xorg xserver-xorg
-apt-get install xvfb&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+<div>
+  <pre><code class='bash'>apt-get install xorg xserver-xorg
+apt-get install xvfb</code></pre>
+</div>
 
 
-&lt;p&gt;Next I found a &lt;a href=&quot;http://wiki.openqa.org/display/SRC/Selenium-RC+and+Continuous+Integration&quot;&gt;wiki&lt;/a&gt; that describes how to launch the Xvfb correctly. Log into the server and do:&lt;/p&gt;
+<p>Next I found a <a href="http://wiki.openqa.org/display/SRC/Selenium-RC+and+Continuous+Integration">wiki</a> that describes how to launch the Xvfb correctly. Log into the server and do:</p>
 
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='bash'&gt;startx -- `which Xvfb` :1 -screen 0 1024x768x24 2&amp;gt;&amp;amp;1 &amp;gt;/dev/null &amp;amp;&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+<div>
+  <pre><code class='bash'>startx -- `which Xvfb` :1 -screen 0 1024x768x24 2&gt;&amp;1 &gt;/dev/null &amp;</code></pre>
+</div>
 
 
-&lt;p&gt;So Xvfb will run on the DISPLAY :1. So far so good. But something was still not quite right. When integrity launched the test suite that included some Cucumber-Selenium tests I received an error message basically saying that no browser sessions could be started. And the solution to that, in fact, is where this post wants to get at.&lt;/p&gt;
+<p>So Xvfb will run on the DISPLAY :1. So far so good. But something was still not quite right. When integrity launched the test suite that included some Cucumber-Selenium tests I received an error message basically saying that no browser sessions could be started. And the solution to that, in fact, is where this post wants to get at.</p>
 
-&lt;p&gt;After a decent amount of head-scratching and code mining I realized that the Selenium server starts the browser on the same display where the server itself (the jar file) runs. I have found the relevant code that assembles the command that starts the Selenium server in the selenium-client gem and figured it was not meant to be run in graphic hardware-less environment since I saw no options to define which display it should run on. So as an &lt;a href=&quot;http://github.com/balinterdi/selenium-client/commit/37094df174b5c52cb68d041f7dc940e501b3e438&quot;&gt;easy hack I added the hardcoded &quot;DISPLAY=:1&quot; before it&lt;/a&gt; and crossed my fingers.&lt;/p&gt;
+<p>After a decent amount of head-scratching and code mining I realized that the Selenium server starts the browser on the same display where the server itself (the jar file) runs. I have found the relevant code that assembles the command that starts the Selenium server in the selenium-client gem and figured it was not meant to be run in graphic hardware-less environment since I saw no options to define which display it should run on. So as an <a href="http://github.com/balinterdi/selenium-client/commit/37094df174b5c52cb68d041f7dc940e501b3e438">easy hack I added the hardcoded &#8220;DISPLAY=:1&#8221; before it</a> and crossed my fingers.</p>
 
-&lt;p&gt;Bingo, it worked and I had a green build again! What's more surprising is that it still runs perfectly on my Macbook so it seems to run in (some) graphical environments, too. It seems a bit strange to me to have found so little information on this subject since Rails, Cucumber, Selenium and CI are all en vogue so it is possible that I missed something obvious and there is an easier way to do all this. I am very eager to hear how others set up their CI to run automated-browser features. Do you use another tool, not Selenium? Do you use a CI server with a monitor?&lt;/p&gt;
+<p>Bingo, it worked and I had a green build again! What&#8217;s more surprising is that it still runs perfectly on my Macbook so it seems to run in (some) graphical environments, too. It seems a bit strange to me to have found so little information on this subject since Rails, Cucumber, Selenium and CI are all en vogue so it is possible that I missed something obvious and there is an easier way to do all this. I am very eager to hear how others set up their CI to run automated-browser features. Do you use another tool, not Selenium? Do you use a CI server with a monitor?</p>
 
-&lt;p&gt;Anyway, I certainly hope my hackish solution will prove to be useful for some of you TDD-minded developers out there who run their CI on a simple &amp;lt;name of your favorite provider here&amp;gt; slice.&lt;/p&gt;
+<p>Anyway, I certainly hope my hackish solution will prove to be useful for some of you TDD-minded developers out there who run their CI on a simple &lt;name of your favorite provider here&gt; slice.</p>
 
-&lt;p&gt;&lt;strong&gt;UPDATE:&lt;/strong&gt; As &lt;a href=&quot;http://lackac.hu&quot;&gt;a fellow developer&lt;/a&gt; and &lt;a href=&quot;http://github.com/ph7&quot;&gt;the author of the selenium-client gem himself&lt;/a&gt; pointed out library code is not the place for enviroment specific settings. Rather, it should go into the application's code. I guess that leaves the choice of putting it into the code of the application you are building or the configuration of the CI server. This latter seemed more clean to me so I put the following line into config.ru in Integrity's directory:&lt;/p&gt;
+<p><strong>UPDATE:</strong> As <a href="http://lackac.hu">a fellow developer</a> and <a href="http://github.com/ph7">the author of the selenium-client gem himself</a> pointed out library code is not the place for enviroment specific settings. Rather, it should go into the application&#8217;s code. I guess that leaves the choice of putting it into the code of the application you are building or the configuration of the CI server. This latter seemed more clean to me so I put the following line into config.ru in Integrity&#8217;s directory:</p>
 
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='bash'&gt;env[&amp;quot;DISPLAY&amp;quot;] = &amp;quot;:1&amp;quot;&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+<div>
+  <pre><code class='bash'>env[&quot;DISPLAY&quot;] = &quot;:1&quot;</code></pre>
+</div>
 
 
-&lt;p&gt;There is still something left, though. When integrity -or, to be precise, the selenium process that was launched from integrity- wants to access display :1, it will be denied. You need to explicitly enable local connections by putting &quot;localhost&quot; in a file:&lt;/p&gt;
+<p>There is still something left, though. When integrity -or, to be precise, the selenium process that was launched from integrity- wants to access display :1, it will be denied. You need to explicitly enable local connections by putting &#8220;localhost&#8221; in a file:</p>
 
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='bash'&gt;echo 'localhost' &amp;gt;/etc/X99.cfg&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+<div>
+  <pre><code class='bash'>echo 'localhost' &gt;/etc/X99.cfg</code></pre>
+</div>
 
 
-&lt;p&gt;, and then using that file as the access records list when you launch the server:&lt;/p&gt;
+<p>, and then using that file as the access records list when you launch the server:</p>
 
-&lt;div&gt;
-  &lt;pre&gt;
-    &lt;code class='bash'&gt;xinit -- `which Xvfb` :1 -screen 0 1024x768x24 -auth /etc/X99.cfg 2&amp;gt;&amp;amp;1 &amp;gt;/dev/null &amp;amp;&lt;/code&gt;
-  &lt;/pre&gt;
-&lt;/div&gt;
+<div>
+  <pre><code class='bash'>xinit -- `which Xvfb` :1 -screen 0 1024x768x24 -auth /etc/X99.cfg 2&gt;&amp;1 &gt;/dev/null &amp;</code></pre>
+</div>
 
 
-&lt;p&gt;(Note that I launch xinit and not startx as before. startx somehow adds another -auth option which messes things up)&lt;/p&gt;
+<p>(Note that I launch xinit and not startx as before. startx somehow adds another -auth option which messes things up)</p>
 
-&lt;p&gt;There, that should do it. It works and there is no code where it does not belong.&lt;/p&gt;
-</content>
+<p>There, that should do it. It works and there is no code where it does not belong.</p>
+]]></content>
   </entry>
   
   <entry>
-    <title>A prime example of not eating your own dog food</title>
+    <title type="html"><![CDATA[A prime example of not eating your own dog food]]></title>
     <link href="http://codigoergosum.com/2009/07/14/a-prime-example-of-not-eating-your-own-dog-food.html"/>
     <updated>2009-07-14T00:00:00+02:00</updated>
     <id>http://codigoergosum.com/2009/07/14/a-prime-example-of-not-eating-your-own-dog-food</id>
-    <content type="html">&lt;p&gt;I realized how 20th century (plus boring and error-prone) it is to write one's invoices by hand. So I went looking for an invoicing application. My expectations were quite low: I wanted one which can be used from my MacBook, has some basic functions that cut down on typing (e.g a client &quot;database&quot;), has a decent design and UI, can make out invoices in different currencies and did not cost more than ~$100.&lt;/p&gt;
+    <content type="html"><![CDATA[<p>I realized how 20th century (plus boring and error-prone) it is to write one&#8217;s invoices by hand. So I went looking for an invoicing application. My expectations were quite low: I wanted one which can be used from my MacBook, has some basic functions that cut down on typing (e.g a client &#8220;database&#8221;), has a decent design and UI, can make out invoices in different currencies and did not cost more than ~$100.</p>
 
-&lt;p&gt;It seemed like I have found &lt;a href=&quot;http://www.native.hu&quot;&gt;one&lt;/a&gt;, which, though it had several minor bugs, seemed acceptable, so I purchased the Basic version. Everything went reasonably well until I had to make out my first invoice in euros. It turned out that the Basic version can only make invoices in Hungarian forints in spite of having a couple of other functionalities (e.g set the VAT rate to 0% automatically on invoices made out to EU companies) which made me think it could make it in euros, too.&lt;/p&gt;
+<p>It seemed like I have found <a href="http://www.native.hu">one</a>, which, though it had several minor bugs, seemed acceptable, so I purchased the Basic version. Everything went reasonably well until I had to make out my first invoice in euros. It turned out that the Basic version can only make invoices in Hungarian forints in spite of having a couple of other functionalities (e.g set the VAT rate to 0% automatically on invoices made out to EU companies) which made me think it could make it in euros, too.</p>
 
-&lt;p&gt;Ok, so accounting hell got me again. I sighed and asked the &lt;a href=&quot;http://www.awasoft.hu/&quot;&gt;company&lt;/a&gt; how much it would cost to have this funcionality. I was informed I had to buy the upgrade to the Business version which costs ~$120 more, roughly the double of the original price I paid! That was too much to take, so I went looking for another invoicing application. After all, it should not be an insurmountable task to write such an app, I murmured to myself.&lt;/p&gt;
+<p>Ok, so accounting hell got me again. I sighed and asked the <a href="http://www.awasoft.hu/">company</a> how much it would cost to have this funcionality. I was informed I had to buy the upgrade to the Business version which costs ~$120 more, roughly the double of the original price I paid! That was too much to take, so I went looking for another invoicing application. After all, it should not be an insurmountable task to write such an app, I murmured to myself.</p>
 
-&lt;p&gt;I did find a &lt;a href=&quot;http://lessaccounting.com&quot;&gt;couple of&lt;/a&gt; &lt;a href=&quot;http://billingsapp.com&quot;&gt;very good&lt;/a&gt; applications which even overdo what I want them to accomplish. However, the Hungarian homologue of the IRS basically shuts out any foreign competitors by regulating very heavily which conditions must be fulfilled by an invoicing application for a Hungarian company to be able to use it. Bummer.&lt;/p&gt;
+<p>I did find a <a href="http://lessaccounting.com">couple of</a> <a href="http://billingsapp.com">very good</a> applications which even overdo what I want them to accomplish. However, the Hungarian homologue of the IRS basically shuts out any foreign competitors by regulating very heavily which conditions must be fulfilled by an invoicing application for a Hungarian company to be able to use it. Bummer.</p>
 
-&lt;p&gt;&quot;There is still a glimmer of hope.&quot; - I thought. I checked the Hungarian scene still thinking it could not be that difficult to meet my expectations. Well, apparently I was wrong. The &lt;a href=&quot;http://szamlazz.hu&quot;&gt;ones&lt;/a&gt; &lt;a href=&quot;http://cipo.hu&quot;&gt;I&lt;/a&gt; &lt;a href=&quot;https://symbion.eu/&quot;&gt;found&lt;/a&gt; are either overcomplicated to use, look like home pages in the 80s or are way too expensive. Sometimes all of these. So I put off the challenge of finding an acceptable piece of software and got back of writing invoices manually.&lt;/p&gt;
+<p>&#8220;There is still a glimmer of hope.&#8221; - I thought. I checked the Hungarian scene still thinking it could not be that difficult to meet my expectations. Well, apparently I was wrong. The <a href="http://szamlazz.hu">ones</a> <a href="http://cipo.hu">I</a> <a href="https://symbion.eu/">found</a> are either overcomplicated to use, look like home pages in the 80s or are way too expensive. Sometimes all of these. So I put off the challenge of finding an acceptable piece of software and got back of writing invoices manually.</p>
 
-&lt;p&gt;Now you might wonder where &lt;a href=&quot;http://en.wikipedia.org/wiki/Eating_one%27s_own_dog_food&quot;&gt;the dog food&lt;/a&gt; is in the story. Well, today I received the invoice from the company of my purchase of the Basic version of the application. It was written manually on an invoice sheet :) That's tantamount of Steve Jobs using a PC with Windows Vista.&lt;/p&gt;
-</content>
+<p>Now you might wonder where <a href="http://en.wikipedia.org/wiki/Eating_one%27s_own_dog_food">the dog food</a> is in the story. Well, today I received the invoice from the company of my purchase of the Basic version of the application. It was written manually on an invoice sheet :) That&#8217;s tantamount of Steve Jobs using a PC with Windows Vista.</p>
+]]></content>
   </entry>
   
 </feed>

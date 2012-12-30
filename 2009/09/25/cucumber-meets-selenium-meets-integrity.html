@@ -5,8 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Codigo Ergo Sum: Cucumber meets Selenium meets Integrity</title>
+  <title>Cucumber meets Selenium meets Integrity - Codigo Ergo Sum</title>
   <meta name="author" content="Balint Erdi">
+
+  
+  <meta name="description" content="Continuous Integration (CI) is a basic building block of any project done in TDD style. In brief, having a CI server properly set up guarantees that &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -15,19 +18,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-
-  <link rel="canonical" href="http://codigoergosum.com/2009/09/25/cucumber-meets-selenium-meets-integrity.html"/>
-  <link href="/favicon.png" rel="shortcut icon" />
+  <link rel="canonical" href="http://codigoergosum.com/2009/09/25/cucumber-meets-selenium-meets-integrity.html">
+  <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="http://s3.amazonaws.com/ender-js/jeesh.min.js"></script>
+  <script src="/javascripts/ender.js"></script>
   <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="http://feeds.feedburner.com/codigoergosum" rel="alternate" title="Codigo Ergo Sum" type="application/atom+xml"/>
+  <link href="http://feeds.feedburner.com/codigoergosum" rel="alternate" title="Codigo Ergo Sum" type="application/atom+xml">
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
   
   <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-12299794-2']);
-    _gaq.push(['_setSiteSpeedSampleRate', 100]); // profile all visitors
     _gaq.push(['_trackPageview']);
 
     (function() {
@@ -38,51 +43,27 @@
   </script>
 
 
-  
-  <script type="text/javascript">
-    (function() {
-      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
-      script.src = 'https://apis.google.com/js/plusone.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
-    })();
-  </script>
-
-
-  
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
-
 </head>
 
-<body  >
-  <header><hgroup>
+<body   >
+  <header role="banner"><hgroup>
   <h1><a href="/">Codigo Ergo Sum</a></h1>
   
 </hgroup>
 
 </header>
-  <nav role=navigation><ul role=subscription data-subscription="rss">
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
   <li><a href="http://feeds.feedburner.com/codigoergosum" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
   
 </ul>
+  
 <form action="http://google.com/search" method="get">
-  <fieldset role="site-search">
+  <fieldset role="search">
     <input type="hidden" name="q" value="site:codigoergosum.com" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
+  
 <ul role=main-navigation>
   <li><a href="/">Blog</a></li>
   <li><a href="/blog/archives">Archives</a></li>
@@ -92,7 +73,7 @@
   <div id="main">
     <div id="content">
       <div>
-<article class="hentry">
+<article class="hentry" role="article">
   
   <header>
     
@@ -100,14 +81,23 @@
     
     
       <p class="meta">
+        
 
 
 
 
-<time datetime="2009-09-25 00:00:00 +0200" pubdate  updated >Sep 25<span>th</span>, 2009</time>
 
 
-</p>
+
+
+  
+
+
+<time datetime="2009-09-25T00:00:00+02:00" pubdate data-updated="true">Sep 25<span>th</span>, 2009</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
     
   </header>
 
@@ -125,37 +115,29 @@
 <p>Install java since Selenium runs in the JVM:</p>
 
 <div>
-  <pre>
-    <code class='bash'>apt-get install java-common sun-java6-jre</code>
-  </pre>
+  <pre><code class='bash'>apt-get install java-common sun-java6-jre</code></pre>
 </div>
 
 
 <p>Install firefox since that&#8217;s what Selenium runs by default and that&#8217;s a very good choice.</p>
 
 <div>
-  <pre>
-    <code class='bash'>apt-get install apt-get install firefox</code>
-  </pre>
+  <pre><code class='bash'>apt-get install apt-get install firefox</code></pre>
 </div>
 
 
 <p>Install X since that&#8217;s what the xvfb launches and Xvfb itself.</p>
 
 <div>
-  <pre>
-    <code class='bash'>apt-get install xorg xserver-xorg
-apt-get install xvfb</code>
-  </pre>
+  <pre><code class='bash'>apt-get install xorg xserver-xorg
+apt-get install xvfb</code></pre>
 </div>
 
 
 <p>Next I found a <a href="http://wiki.openqa.org/display/SRC/Selenium-RC+and+Continuous+Integration">wiki</a> that describes how to launch the Xvfb correctly. Log into the server and do:</p>
 
 <div>
-  <pre>
-    <code class='bash'>startx -- `which Xvfb` :1 -screen 0 1024x768x24 2&gt;&amp;1 &gt;/dev/null &amp;</code>
-  </pre>
+  <pre><code class='bash'>startx -- `which Xvfb` :1 -screen 0 1024x768x24 2&gt;&amp;1 &gt;/dev/null &amp;</code></pre>
 </div>
 
 
@@ -170,27 +152,21 @@ apt-get install xvfb</code>
 <p><strong>UPDATE:</strong> As <a href="http://lackac.hu">a fellow developer</a> and <a href="http://github.com/ph7">the author of the selenium-client gem himself</a> pointed out library code is not the place for enviroment specific settings. Rather, it should go into the application&#8217;s code. I guess that leaves the choice of putting it into the code of the application you are building or the configuration of the CI server. This latter seemed more clean to me so I put the following line into config.ru in Integrity&#8217;s directory:</p>
 
 <div>
-  <pre>
-    <code class='bash'>env[&quot;DISPLAY&quot;] = &quot;:1&quot;</code>
-  </pre>
+  <pre><code class='bash'>env[&quot;DISPLAY&quot;] = &quot;:1&quot;</code></pre>
 </div>
 
 
 <p>There is still something left, though. When integrity -or, to be precise, the selenium process that was launched from integrity- wants to access display :1, it will be denied. You need to explicitly enable local connections by putting &#8220;localhost&#8221; in a file:</p>
 
 <div>
-  <pre>
-    <code class='bash'>echo 'localhost' &gt;/etc/X99.cfg</code>
-  </pre>
+  <pre><code class='bash'>echo 'localhost' &gt;/etc/X99.cfg</code></pre>
 </div>
 
 
 <p>, and then using that file as the access records list when you launch the server:</p>
 
 <div>
-  <pre>
-    <code class='bash'>xinit -- `which Xvfb` :1 -screen 0 1024x768x24 -auth /etc/X99.cfg 2&gt;&amp;1 &gt;/dev/null &amp;</code>
-  </pre>
+  <pre><code class='bash'>xinit -- `which Xvfb` :1 -screen 0 1024x768x24 -auth /etc/X99.cfg 2&gt;&amp;1 &gt;/dev/null &amp;</code></pre>
 </div>
 
 
@@ -212,10 +188,14 @@ apt-get install xvfb</code>
 
 
 
-<time datetime="2009-09-25 00:00:00 +0200" pubdate  updated >Sep 25<span>th</span>, 2009</time>
 
 
 
+
+  
+
+
+<time datetime="2009-09-25T00:00:00+02:00" pubdate data-updated="true">Sep 25<span>th</span>, 2009</time>
       
 
 
@@ -226,35 +206,24 @@ apt-get install xvfb</code>
   <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2009/09/25/cucumber-meets-selenium-meets-integrity.html" data-via="baaz" data-counturl="http://codigoergosum.com/2009/09/25/cucumber-meets-selenium-meets-integrity.html" >Tweet</a>
   
   
-  <g:plusone size="medium"></g:plusone>
   
 </div>
 
     
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2009/07/14/a-prime-example-of-not-eating-your-own-dog-food.html" title="Previous Post: A prime example of not eating your own dog food">&laquo; A prime example of not eating your own dog food</a>
+      
+      
+        <a class="basic-alignment right" href="/2009/10/20/rubygems-under-the-hood-introduction.html" title="Next Post: RubyGems under the hood: Introduction">RubyGems under the hood: Introduction &raquo;</a>
+      
+    </p>
   </footer>
 </article>
 
-  <section>
-    <h1>Comments</h1>
-    <div id="disqus_thread"><div id="disqus_thread"></div>
-<script type="text/javascript">
-  var disqus_shortname = 'codigoergosum';
-  var disqus_identifier = 'http://codigoergosum.com/2009/09/25/cucumber-meets-selenium-meets-integrity.html';
-  var disqus_url = 'http://codigoergosum.com/2009/09/25/cucumber-meets-selenium-meets-integrity.html';
-  //var disqus_developer = 1;
-  (function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-  </section>
-
 </div>
 
-<aside role=sidebar>
+<aside class="sidebar">
   
     <section>
   <h1>Recent Posts</h1>
@@ -283,10 +252,11 @@ apt-get install xvfb</code>
   </ul>
 </section>
 
+
 <section>
   <h1>Latest Tweets</h1>
   <ul id="tweets">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   <script type="text/javascript">
     $.domReady(function(){
@@ -295,9 +265,10 @@ apt-get install xvfb</code>
   </script>
   <script src="/javascripts/twitter.js" type="text/javascript"> </script>
   
-    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-width="208px" data-show-count="false">Follow @baaz</a>
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-show-count="false">Follow @baaz</a>
   
 </section>
+
 
 
 
@@ -308,11 +279,46 @@ apt-get install xvfb</code>
 
     </div>
   </div>
-  <footer><p>
+  <footer role="contentinfo"><p>
   Copyright &copy; 2012 - Balint Erdi -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
 </footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'codigoergosum';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
 </body>
 </html>

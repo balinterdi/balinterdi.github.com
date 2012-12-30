@@ -5,8 +5,16 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Codigo Ergo Sum: Git rebase to fix your local commits</title>
+  <title>Git rebase to fix your local commits - Codigo Ergo Sum</title>
   <meta name="author" content="Balint Erdi">
+
+  
+  <meta name="description" content="Let&#8217;s say you have the following three commits in your local repository: 1
+2
+3
+4
+% git log -3 --oneline
+b648f1a Fix propagating errors in &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -15,19 +23,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-
-  <link rel="canonical" href="http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html"/>
-  <link href="/favicon.png" rel="shortcut icon" />
+  <link rel="canonical" href="http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html">
+  <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="http://s3.amazonaws.com/ender-js/jeesh.min.js"></script>
+  <script src="/javascripts/ender.js"></script>
   <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="http://feeds.feedburner.com/codigoergosum" rel="alternate" title="Codigo Ergo Sum" type="application/atom+xml"/>
+  <link href="http://feeds.feedburner.com/codigoergosum" rel="alternate" title="Codigo Ergo Sum" type="application/atom+xml">
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+
   
   <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-12299794-2']);
-    _gaq.push(['_setSiteSpeedSampleRate', 100]); // profile all visitors
     _gaq.push(['_trackPageview']);
 
     (function() {
@@ -38,51 +48,27 @@
   </script>
 
 
-  
-  <script type="text/javascript">
-    (function() {
-      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
-      script.src = 'https://apis.google.com/js/plusone.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
-    })();
-  </script>
-
-
-  
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
-
 </head>
 
-<body  >
-  <header><hgroup>
+<body   >
+  <header role="banner"><hgroup>
   <h1><a href="/">Codigo Ergo Sum</a></h1>
   
 </hgroup>
 
 </header>
-  <nav role=navigation><ul role=subscription data-subscription="rss">
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
   <li><a href="http://feeds.feedburner.com/codigoergosum" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
   
 </ul>
+  
 <form action="http://google.com/search" method="get">
-  <fieldset role="site-search">
+  <fieldset role="search">
     <input type="hidden" name="q" value="site:codigoergosum.com" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
+  
 <ul role=main-navigation>
   <li><a href="/">Blog</a></li>
   <li><a href="/blog/archives">Archives</a></li>
@@ -92,7 +78,7 @@
   <div id="main">
     <div id="content">
       <div>
-<article class="hentry">
+<article class="hentry" role="article">
   
   <header>
     
@@ -100,28 +86,37 @@
     
     
       <p class="meta">
+        
 
 
 
 
-<time datetime="2011-07-19 00:00:00 +0200" pubdate  updated >Jul 19<span>th</span>, 2011</time>
 
 
-</p>
+
+
+  
+
+
+<time datetime="2011-07-19T00:00:00+02:00" pubdate data-updated="true">Jul 19<span>th</span>, 2011</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
     
   </header>
 
 
 <div class="entry-content"><p>Let&#8217;s say you have the following three commits in your local repository:</p>
 
-<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
-<span class='line'>2</span>
-<span class='line'>3</span>
-<span class='line'>4</span>
-</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>% git log -3 --oneline
-</div><div class='line'>b648f1a Fix propagating errors in findOrInitialize. (28 seconds ago)
-</div><div class='line'>8789cd1 Non-destructive filtering for bumblebees. (12 hours ago)
-</div><div class='line'>1a35285 Propagate errors the node.js way. (14 hours ago)</div></code></pre></td></tr></table></div></figure></div>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>% git log -3 --oneline
+</span><span class='line'>b648f1a Fix propagating errors in findOrInitialize. (28 seconds ago)
+</span><span class='line'>8789cd1 Non-destructive filtering for bumblebees. (12 hours ago)
+</span><span class='line'>1a35285 Propagate errors the node.js way. (14 hours ago)</span></code></pre></td></tr></table></div></figure>
 
 
 <p>The last commit, b648f1a conceptually belongs to the first one, 1a35285.
@@ -133,10 +128,10 @@ there is: interactive rebase.</p>
 
 <p>The syntax of the git-rebase is the following:</p>
 
-<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
-<span class='line'>2</span>
-</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>git rebase [-i | --interactive] [options] [--onto &lt;newbase>]
-</div><div class='line'>             &lt;upstream> [&lt;branch>]</div></code></pre></td></tr></table></div></figure></div>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git rebase [-i | --interactive] [options] [--onto &lt;newbase>]
+</span><span class='line'>             &lt;upstream> [&lt;branch>]</span></code></pre></td></tr></table></div></figure>
 
 
 <p>What happens when you do git rebase is that the commits that are on the current
@@ -151,43 +146,43 @@ book</a>)</p>
 
 <p>This can be used to achieve what we want:</p>
 
-<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
-</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>% git rebase -i HEAD~3</div></code></pre></td></tr></table></div></figure></div>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>% git rebase -i HEAD~3</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Since the commits that are on the current branch but not on the commit
 three commits from here are the last three commits, here is what we get:</p>
 
-<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
-<span class='line'>2</span>
-<span class='line'>3</span>
-</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>pick 1a35285 Propagate errors the node.js way.
-</div><div class='line'>pick 8789cd1 Non-destructive filtering for bumblebees.
-</div><div class='line'>pick b648f1a Fix propagating errors in findOrInitialize.</div></code></pre></td></tr></table></div></figure></div>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pick 1a35285 Propagate errors the node.js way.
+</span><span class='line'>pick 8789cd1 Non-destructive filtering for bumblebees.
+</span><span class='line'>pick b648f1a Fix propagating errors in findOrInitialize.</span></code></pre></td></tr></table></div></figure>
 
 
 <p>We want to meld the &#8220;fix&#8221; commit into the &#8220;propagate&#8221; commit since
 that&#8217;s how it should have been in the first place. So we move b648f1a up and
 squash it into the previous commit:</p>
 
-<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
-<span class='line'>2</span>
-<span class='line'>3</span>
-</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>pick 1a35285 Propagate errors the node.js way.
-</div><div class='line'>squash b648f1a Fix propagating errors in findOrInitialize.
-</div><div class='line'>pick 8789cd1 Non-destructive filtering for scales.</div></code></pre></td></tr></table></div></figure></div>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pick 1a35285 Propagate errors the node.js way.
+</span><span class='line'>squash b648f1a Fix propagating errors in findOrInitialize.
+</span><span class='line'>pick 8789cd1 Non-destructive filtering for scales.</span></code></pre></td></tr></table></div></figure>
 
 
 <p>After a successful rebase this is how the new log looks like:</p>
 
-<div><figure role=code><div class="highlight"><table cellpadding="0" cellspacing="0"><tr><td class="gutter"><pre class="line-numbers"><span class='line'>1</span>
-<span class='line'>2</span>
-<span class='line'>3</span>
-<span class='line'>4</span>
-</pre></td><td class='code' width='100%'><pre><code class=''><div class='line'>% git log -3 --oneline
-</div><div class='line'>73eed18 Non-destructive filtering for bumblebees. (9 seconds ago)
-</div><div class='line'>1e63d17 Propagate errors the node.js way. (39 seconds ago)
-</div><div class='line'>1b24891 Minor fixes in Bumblebee buzzing. (16 hours ago)</div></code></pre></td></tr></table></div></figure></div>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>% git log -3 --oneline
+</span><span class='line'>73eed18 Non-destructive filtering for bumblebees. (9 seconds ago)
+</span><span class='line'>1e63d17 Propagate errors the node.js way. (39 seconds ago)
+</span><span class='line'>1b24891 Minor fixes in Bumblebee buzzing. (16 hours ago)</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Note that the three commits we had before have now been nicely compacted
@@ -213,10 +208,14 @@ citizens, though.</p>
 
 
 
-<time datetime="2011-07-19 00:00:00 +0200" pubdate  updated >Jul 19<span>th</span>, 2011</time>
 
 
 
+
+  
+
+
+<time datetime="2011-07-19T00:00:00+02:00" pubdate data-updated="true">Jul 19<span>th</span>, 2011</time>
       
 
 
@@ -227,35 +226,24 @@ citizens, though.</p>
   <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html" data-via="baaz" data-counturl="http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html" >Tweet</a>
   
   
-  <g:plusone size="medium"></g:plusone>
   
 </div>
 
     
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be.html" title="Previous Post: Don't Tell Michelle, Facebook privacy as it should be">&laquo; Don't Tell Michelle, Facebook privacy as it should be</a>
+      
+      
+        <a class="basic-alignment right" href="/2011/09/05/powered-by-octopress.html" title="Next Post: Powered by Octopress">Powered by Octopress &raquo;</a>
+      
+    </p>
   </footer>
 </article>
 
-  <section>
-    <h1>Comments</h1>
-    <div id="disqus_thread"><div id="disqus_thread"></div>
-<script type="text/javascript">
-  var disqus_shortname = 'codigoergosum';
-  var disqus_identifier = 'http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html';
-  var disqus_url = 'http://codigoergosum.com/2011/07/19/git-rebase-to-fix-your-local-commits.html';
-  //var disqus_developer = 1;
-  (function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-  </section>
-
 </div>
 
-<aside role=sidebar>
+<aside class="sidebar">
   
     <section>
   <h1>Recent Posts</h1>
@@ -284,10 +272,11 @@ citizens, though.</p>
   </ul>
 </section>
 
+
 <section>
   <h1>Latest Tweets</h1>
   <ul id="tweets">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   <script type="text/javascript">
     $.domReady(function(){
@@ -296,9 +285,10 @@ citizens, though.</p>
   </script>
   <script src="/javascripts/twitter.js" type="text/javascript"> </script>
   
-    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-width="208px" data-show-count="false">Follow @baaz</a>
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-show-count="false">Follow @baaz</a>
   
 </section>
+
 
 
 
@@ -309,11 +299,46 @@ citizens, though.</p>
 
     </div>
   </div>
-  <footer><p>
+  <footer role="contentinfo"><p>
   Copyright &copy; 2012 - Balint Erdi -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
 </footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'codigoergosum';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
 </body>
 </html>
