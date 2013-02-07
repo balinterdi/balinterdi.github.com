@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://codigoergosum.com/sitemap.xml 
+Sitemap: http://balinterdi.com/sitemap.xml 
