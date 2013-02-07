@@ -2,8 +2,8 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://codigoergosum.com
-title: Codigo Ergo Sum
+url: http://balinterdi.com
+title: Balint Erdi
 subtitle:
 author: Balint Erdi
 simple_search: http://google.com/search
@@ -16,7 +16,7 @@ description:
 date_format: "ordinal"
 
 # RSS / Email (optional) subscription links (change if using something like Feedburner)
-subscribe_rss: http://feeds.feedburner.com/codigoergosum
+subscribe_rss: http://feeds.feedburner.com/balinterdi
 subscribe_email:
 # RSS feeds can list your email address if you like
 email:
