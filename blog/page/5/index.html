@@ -9,7 +9,7 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="A few days ago I purchased a screencast by Dave Thomas on Ruby metaprogramming. (I do not receive any affiliation fees :)). The part I bought &hellip;">
+  <meta name="description" content="So last time I left you with the promise that I&#8217;d return with a solution so that the number of times a certain method was called is a class &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +75,132 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2008/12/15/ruby-metaprogramming-call-counter-take-2.html">Ruby Metaprogramming: Call Counter - Take 2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-12-15T00:00:00+01:00" pubdate data-updated="true">Dec 15<span>th</span>, 2008</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>So <a href="http://bucionrails.com/2008/12/06/exploring-ruby-metaprogramming-call-counter/" target="_blank">last time</a> I left you with the promise that I&#8217;d return with a solution so that the number of times a certain method was called is a class method which makes more sense than if it was an instance method. So here is the &#8220;improved version&#8221;:</p>
+
+<p><strong>call_counter.rb:</strong></p>
+
+<div>
+  <pre><code class='ruby'>module CallCounter
+        
+    def count_calls_to(method_name)
+      original_method = instance_method(method_name)
+            
+      unless class_variable_defined?(:@@call_counter):
+        class_variable_set(:@@call_counter, {})
+      end
+    
+      call_counter = class_variable_get(:@@call_counter)
+    
+      define_method(method_name) do |*args|
+        call_counter[method_name] ||= 0
+        call_counter[method_name] += 1
+        bound_original_method = original_method.bind(self)
+        bound_original_method.call(*args)
+      end
+
+      metaclass = class &lt;&lt; self; self; end
+      metaclass.instance_eval do
+
+        define_method(:calls_to) do |m|
+          call_counter[m].nil? ? 0 : call_counter[m]
+        end
+
+        define_method(:reset_counters) do
+          call_counter.each_key do |k|
+            call_counter[k] = 0
+          end
+        end
+    end
+    
+  end
+
+end</code></pre>
+</div>
+
+
+<p>What has changed is the introduction of a class variable that counts the calls on all watched methods and that the number of calls on each method is queried by calls_to(&lt;method name&gt;) instead of calls_to_&lt;method_name&gt;. A bit less magic.</p>
+
+<p><strong>call_foo.rb:</strong></p>
+
+<div>
+  <pre><code class='ruby'>require &quot;call_counter&quot;
+
+class CallFoo
+    
+  extend CallCounter
+
+  def foo; &quot;foo&quot;; end
+  def bar; &quot;bar&quot;; end
+
+  count_calls_to :foo
+  count_calls_to :bar
+
+end</code></pre>
+</div>
+
+
+<p><strong>(a snippet of) call_counter_spec.rb:</strong></p>
+
+<div>
+  <pre><code class='ruby'>require &quot;call_foo&quot;
+require &quot;spec&quot;
+    
+describe CallFoo do
+    
+  before(:each) do
+    @call_foo = CallFoo.new
+    CallFoo.reset_counters
+  end
+        
+  it &quot;should be able to count several methods' calls&quot; do
+    4.times { @call_foo.foo }
+    CallFoo.calls_to(:foo).should == 4
+    7.times { @call_foo.bar }
+    CallFoo.calls_to(:bar).should == 7
+  end
+    
+end</code></pre>
+</div>
+
+
+<p>I&#8217;m still not 100% content with this solution, the programming interface is nice now but it would be cool to get rid of the class variable somehow, possibly replacing it with closures. If you know how to achieve it, please leave a comment.</p>
+
+<p>ps. You can also get <a href="http://pastie.org/338877">the whole code in nice colored format</a> or <a href="http://pastie.org/338877.txt">the raw text version</a>.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -774,54 +900,6 @@ ruby chart_loader.rb browser_js_benchmarks.dsl
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2008/09/03/navigator-for-the-google-chrome-comicbook.html">Navigator for the Google Chrome Comicbook</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-09-03T00:00:00+02:00" pubdate data-updated="true">Sep 3<span>rd</span>, 2008</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>The first beta version (for now only for Windows) of <a href="http://googleblog.blogspot.com/2008/09/fresh-take-on-browser.html">Google&#8217;s browser is out, </a>but I don&#8217;t think Google needs the marketing power of my post so that&#8217;s not what I want to talk about. The browser is introduced by a <a href="http://www.google.com/googlebooks/chrome/">ingenious comics</a> of 39 pages. However, the navigator is too simple, in my opinion in that you cannot skip a page so if you read until say page 19 and you have to start over (e.g you closed the browser), you have to click on the &#8220;Next&#8221; link 18 times. There is no unique URL for each page, the whole navigation is done with a javascript snippet changing the image (the cartoon strip) when the user clicks &#8220;Prev&#8221; or &#8220;Next&#8221;.</p>
-
-<p>So I took a peep at the source of the page and reverse-engineered the navigation which is simply a javascript call to goPage(&#8216;next&#8217;) when the user clicks the Next link. So now I can simply write</p>
-
-<pre lang="javascript">
-javascript:for (var i=0; i < 10; i++) goPage('next');</pre>
-
-
-<p>to the location bar to skip 10 pages ahead and do the same with &#8216;prev&#8217; to rewind 10 pages.</p>
-
-<p>I know &#8220;reverse-engineering&#8221; is way too conceited a term for this but this kind of hacking tickles my brain in a very joyful way and feels a bit like outsmarting Google. And that&#8217;s not bad at all.</p>
-
-<p><strong>UPDATE:</strong> I now realize the comics&#8217;s navigation has been redesigned so my above fix became obsolete. At least I cherish the knowledge my hack addressed a real UI problem (and did that faster than Google :) ).</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/6/">&larr; Older</a>
@@ -839,6 +917,10 @@ javascript:for (var i=0; i < 10; i++) goPage('next');</pre>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/05/30/ruby-rogues-discourse-with-jeff-atwood.html">Ruby Rogues - Discourse with Jeff Atwood</a>
+      </li>
+    
+      <li class="post">
         <a href="/2012/12/29/lessons-learned-from-solving-4clojure-problems.html">Lessons learned from solving 4Clojure problems</a>
       </li>
     
@@ -852,10 +934,6 @@ javascript:for (var i=0; i < 10; i++) goPage('next');</pre>
     
       <li class="post">
         <a href="/2011/10/19/event_loop_primer.html">Event loop primer</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2011/09/28/five-wasted-years-futility-of-university-education.html">Five wasted years - on the futility of university education</a>
       </li>
     
   </ul>

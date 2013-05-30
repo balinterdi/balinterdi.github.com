@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2013-02-08T14:25:46+01:00</updated>
+  <updated>2013-05-30T22:07:46+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,30 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Ruby Rogues - Discourse with Jeff Atwood]]></title>
+    <link href="http://balinterdi.com/2013/05/30/ruby-rogues-discourse-with-jeff-atwood.html"/>
+    <updated>2013-05-30T21:23:00+02:00</updated>
+    <id>http://balinterdi.com/2013/05/30/ruby-rogues-discourse-with-jeff-atwood</id>
+    <content type="html"><![CDATA[<p><a href="http://itunes.apple.com/us/podcast/ruby-rogues/id436260381">Ruby Rogues</a> is one of the handful of podcasts I usually listen to. This week featured Jeff Atwood who talked about
+Discourse, a phenomenal forum platform. Jeff&#8217;s thoughts on several things really struck home so I wanted to jot them down.
+You might find these thought-provoking, too. The full transcription is available <a href="http://rubyrogues.com/106-rr-discourse-with-jeff-atwood/#more-1341">here</a></p>
+
+<ul>
+<li>Installing a binary app per device is a huge step backward from the web world where you don&#8217;t have to download and upgrade anything. You just go to the website and it works.</li>
+<li>Betting on Javascript is a very safe bet. The competition has been the fiercest among browser performances, that is Javascript engines on the client. The engines are guaranteed to improve.</li>
+<li>Desktop computers are -in most cases- more performant than the server the application is hosted on. So it makes sense to push computations to the clients, and spread it out among them.</li>
+<li>[Discourse] using postgres is a way to force hosting providers move out of the &#8220;server herpes&#8221; (PHP + MySQL). As Discourse becomes more popular, this will give more leverage to remove the herpes from servers.</li>
+<li>Why was it [the server side] built in Ruby/Rails? <a href="http://eviltrout.com/">Robin Ward</a> made a game about forums and Jeff contacted him to build Discourse. Robin had used Ruby and thus this decided the Ruby or Python question.</li>
+<li>Rule of 3. Kind of a philoshopical belief for Jeff. A component (e.g a datepicker) is proven to be reusable if it was successfully used in three different contexts. Having three major partners for Discourse will really be a tipping point. Etc.</li>
+<li>Since Discourse is mainly a rich, client-side app, [Ember] plays a much bigger role in its success (or failure) then Ruby. The question is how will Rubyists adapt to Ember, whether they will like it or not.</li>
+</ul>
+
+
+<p>Discourse is built on Ember, and <a href="http://discuss.emberjs.com/">Ember uses Discourse as a forum</a>. For one, I welcome our new rich-client overlords.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Lessons learned from solving 4Clojure problems]]></title>
@@ -1025,25 +1049,6 @@ apt-get install xvfb</code></pre>
 <p>(Note that I launch xinit and not startx as before. startx somehow adds another -auth option which messes things up)</p>
 
 <p>There, that should do it. It works and there is no code where it does not belong.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[A prime example of not eating your own dog food]]></title>
-    <link href="http://balinterdi.com/2009/07/14/a-prime-example-of-not-eating-your-own-dog-food.html"/>
-    <updated>2009-07-14T00:00:00+02:00</updated>
-    <id>http://balinterdi.com/2009/07/14/a-prime-example-of-not-eating-your-own-dog-food</id>
-    <content type="html"><![CDATA[<p>I realized how 20th century (plus boring and error-prone) it is to write one&#8217;s invoices by hand. So I went looking for an invoicing application. My expectations were quite low: I wanted one which can be used from my MacBook, has some basic functions that cut down on typing (e.g a client &#8220;database&#8221;), has a decent design and UI, can make out invoices in different currencies and did not cost more than ~$100.</p>
-
-<p>It seemed like I have found <a href="http://www.native.hu">one</a>, which, though it had several minor bugs, seemed acceptable, so I purchased the Basic version. Everything went reasonably well until I had to make out my first invoice in euros. It turned out that the Basic version can only make invoices in Hungarian forints in spite of having a couple of other functionalities (e.g set the VAT rate to 0% automatically on invoices made out to EU companies) which made me think it could make it in euros, too.</p>
-
-<p>Ok, so accounting hell got me again. I sighed and asked the <a href="http://www.awasoft.hu/">company</a> how much it would cost to have this funcionality. I was informed I had to buy the upgrade to the Business version which costs ~$120 more, roughly the double of the original price I paid! That was too much to take, so I went looking for another invoicing application. After all, it should not be an insurmountable task to write such an app, I murmured to myself.</p>
-
-<p>I did find a <a href="http://lessaccounting.com">couple of</a> <a href="http://billingsapp.com">very good</a> applications which even overdo what I want them to accomplish. However, the Hungarian homologue of the IRS basically shuts out any foreign competitors by regulating very heavily which conditions must be fulfilled by an invoicing application for a Hungarian company to be able to use it. Bummer.</p>
-
-<p>&#8220;There is still a glimmer of hope.&#8221; - I thought. I checked the Hungarian scene still thinking it could not be that difficult to meet my expectations. Well, apparently I was wrong. The <a href="http://szamlazz.hu">ones</a> <a href="http://cipo.hu">I</a> <a href="https://symbion.eu/">found</a> are either overcomplicated to use, look like home pages in the 80s or are way too expensive. Sometimes all of these. So I put off the challenge of finding an acceptable piece of software and got back of writing invoices manually.</p>
-
-<p>Now you might wonder where <a href="http://en.wikipedia.org/wiki/Eating_one%27s_own_dog_food">the dog food</a> is in the story. Well, today I received the invoice from the company of my purchase of the Basic version of the application. It was written manually on an invoice sheet :) That&#8217;s tantamount of Steve Jobs using a PC with Windows Vista.</p>
 ]]></content>
   </entry>
   

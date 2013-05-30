@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: thoughts | Balint Erdi]]></title>
+  <link href="http://balinterdi.com/blog/categories/thoughts/atom.xml" rel="self"/>
+  <link href="http://balinterdi.com/"/>
+  <updated>2013-05-30T22:07:46+02:00</updated>
+  <id>http://balinterdi.com/</id>
+  <author>
+    <name><![CDATA[Balint Erdi]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Ruby Rogues - Discourse with Jeff Atwood]]></title>
+    <link href="http://balinterdi.com/2013/05/30/ruby-rogues-discourse-with-jeff-atwood.html"/>
+    <updated>2013-05-30T21:23:00+02:00</updated>
+    <id>http://balinterdi.com/2013/05/30/ruby-rogues-discourse-with-jeff-atwood</id>
+    <content type="html"><![CDATA[<p><a href="http://itunes.apple.com/us/podcast/ruby-rogues/id436260381">Ruby Rogues</a> is one of the handful of podcasts I usually listen to. This week featured Jeff Atwood who talked about
+Discourse, a phenomenal forum platform. Jeff's thoughts on several things really struck home so I wanted to jot them down.
+You might find these thought-provoking, too. The full transcription is available <a href="http://rubyrogues.com/106-rr-discourse-with-jeff-atwood/#more-1341">here</a></p>
+
+<ul>
+<li>Installing a binary app per device is a huge step backward from the web world where you don't have to download and upgrade anything. You just go to the website and it works.</li>
+<li>Betting on Javascript is a very safe bet. The competition has been the fiercest among browser performances, that is Javascript engines on the client. The engines are guaranteed to improve.</li>
+<li>Desktop computers are -in most cases- more performant than the server the application is hosted on. So it makes sense to push computations to the clients, and spread it out among them.</li>
+<li>[Discourse] using postgres is a way to force hosting providers move out of the "server herpes" (PHP + MySQL). As Discourse becomes more popular, this will give more leverage to remove the herpes from servers.</li>
+<li>Why was it [the server side] built in Ruby/Rails? <a href="http://eviltrout.com/">Robin Ward</a> made a game about forums and Jeff contacted him to build Discourse. Robin had used Ruby and thus this decided the Ruby or Python question.</li>
+<li>Rule of 3. Kind of a philoshopical belief for Jeff. A component (e.g a datepicker) is proven to be reusable if it was successfully used in three different contexts. Having three major partners for Discourse will really be a tipping point. Etc.</li>
+<li>Since Discourse is mainly a rich, client-side app, [Ember] plays a much bigger role in its success (or failure) then Ruby. The question is how will Rubyists adapt to Ember, whether they will like it or not.</li>
+</ul>
+
+
+<p>Discourse is built on Ember, and <a href="http://discuss.emberjs.com/">Ember uses Discourse as a forum</a>. For one, I welcome our new rich-client overlords.</p>
+]]></content>
+  </entry>
+  
+</feed>
