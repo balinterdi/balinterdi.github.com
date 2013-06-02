@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Why I love Datamapper - Balint Erdi</title>
+  <title>Category: ruby - Balint Erdi</title>
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="I wanted to find the last user in alphabetic order of their names in a Merb project that uses Datamapper (the default ORM in Merb). So I did [*]: irb &hellip;">
+  <meta name="description" content="Category: ruby">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2009/02/12/why-i-love-datamapper.html">
+  <link rel="canonical" href="http://balinterdi.comblog/categories/ruby/index.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -74,119 +74,35 @@
   <div id="main">
     <div id="content">
       <div>
-<article class="hentry" role="article">
+<article role="article">
   
   <header>
-    
-      <h1 class="entry-title">Why I Love Datamapper</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-02-12T00:00:00+01:00" pubdate data-updated="true">Feb 12<span>th</span>, 2009</time>
-        
-      </p>
+    <h1 class="entry-title">Category: Ruby</h1>
     
   </header>
+  
+  <div id="blog-archives" class="category">
 
 
-<div class="entry-content"><p>I wanted to find the last user in alphabetic order of their names in a Merb project that uses <a href="http://datamapper.org">Datamapper</a> (the default ORM in Merb). So I did [<a href="#love-datamapper-first">*</a>]:</p>
 
-<pre lang="bash">
-irb(main):020:0> User.all(:order => [:name]).first.name
- ~ (0.032946) SELECT <column_names> FROM `users` ORDER BY `name` LIMIT 1
-=> "Admin User"
-</pre>
+  
+  <h2>2013</h2>
 
+<article>
+  
+<h1><a href="/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion.html">Install Ruby 2.0.0 with rbenv (ruby-build) on Mountain Lion</a></h1>
+<time datetime="2013-06-02T22:58:00+02:00" pubdate><span class='month'>Jun</span> <span class='day'>02</span> <span class='year'>2013</span></time>
 
-<p>Ok, so the default sorting order is ascending but I need the last one. There are two ways to do this. Write an SQL snippet and sneak in &#8220;DESC&#8221; somewhere or reverse the collection before taking the first element. Since I was not sure how to sneak in &#8220;DESC&#8221; plus I prefer writing Ruby to writing SQL hands down, I went with the second approach:</p>
-
-<pre lang="bash">
-irb(main):021:0> User.all(:order => [:name]).reverse.first.name
- ~ (1.033271) SELECT <column_names> FROM `users` ORDER BY `name` DESC LIMIT 1
-=> "XX XX"
-</pre>
+<footer>
+  <span class="categories">posted in <a class='category' href='/blog/categories/ruby/'>ruby</a></span>
+</footer>
 
 
-<p>See what happened? Instead of reverting the collection (which is extra time even if it is done very fast) Datamapper sneaked in that DESC for me! Isn&#8217;t this just brilliant? Datamapper takes the burden to write SQL off of your shoulders. You can keep writing Ruby statements you presumably love and let Datamapper take care of the SQL reaping both the comfort and the performance gain. [<a href="#love-datamapper-second">**</a>]. Also, likewise your app stays database type agnostic. Note how it is not supposed there is a RDBMS under the ORM layer. It could work with CouchDB, for example (I think there is actually work in progress for a CouchDB adapter). This is not the only reason I like Datamapper so much, so if you are still not convinced, go check out <a href="http://datamapper.org/doku.php?id=why_datamapper">some other reasons to use it</a>.</p>
-
-<hr>
-
-
-<h3>Notes</h3>
-
-
-<p id="love-datamapper-first">* I could have written this one in a simpler way:
-<pre lang="bash">
-irb(main):018:0> User.first(:order => [:name]).name
- ~ (0.032345) SELECT <column_names> FROM `users` ORDER BY `name` LIMIT 1
-=> "Admin User"
-</pre>
-
-But you -or at least I- could not do it for the last element (there is no User.last)
-
-<p id="love-datamapper-second">** I am not suggesting not to learn SQL at all. I am all for a know-thy-tools approach (especially it it means not cluttering your markup with javascript :) ). However, having the ORM do obviously good things for you is worth it most of the time.
-</p>
+</article>
 
 </div>
 
-
-  <footer>
-    <p class="meta">
-      
   
-
-<span class="byline author vcard">Posted by <span class="fn">Balint Erdi</span></span>
-
-      
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-02-12T00:00:00+01:00" pubdate data-updated="true">Feb 12<span>th</span>, 2009</time>
-      
-
-
-    </p>
-    
-      <div class="sharing">
-  
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2009/02/12/why-i-love-datamapper.html" data-via="baaz" data-counturl="http://balinterdi.com/2009/02/12/why-i-love-datamapper.html" >Tweet</a>
-  
-  
-  <div class="g-plusone" data-size="medium"></div>
-  
-  
-</div>
-
-    
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2009/02/11/deep_test-to-become-tdd-more-easily.html" title="Previous Post: deep_test to become TDD more easily">&laquo; deep_test to become TDD more easily</a>
-      
-      
-        <a class="basic-alignment right" href="/2009/03/12/easily-quote-passage-with-mail-in-a-reply.html" title="Next Post: easily quote passage with Mail in a reply">easily quote passage with Mail in a reply &raquo;</a>
-      
-    </p>
-  </footer>
 </article>
 
 </div>

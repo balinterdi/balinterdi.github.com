@@ -9,7 +9,7 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="That was too long to twitter, so here it goes. If you use Mail (OS-X) when replying to a message you can select some text in the email you want to &hellip;">
+  <meta name="description" content="At the start of 2009 my friend Jaime resumed his previous year and proposed me to do the same. It seemed a really good idea but somehow it still died &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +75,60 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/03/12/plans-for-2009-contribute-more-to-open-source-projects.html">Plans for 2009 - Contribute (More) to Open Source Projects</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-12T00:00:00+01:00" pubdate data-updated="true">Mar 12<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>At the start of 2009 my friend Jaime <a href="http://www.jaimeiniesta.com/2009/01/07/mi-resumen-del-2008">resumed his previous year</a> and proposed me to do the same. It seemed a really good idea but somehow it still died down.</p>
+
+<p>I know it&#8217;s March now but I reckon it&#8217;s still ok to do this until December :) I&#8217;ll attempt to write a mini-series of posts about not so much what I did in 2008 but rather what I would like to achieve in 2009.</p>
+
+<p>When I started to work full-time with Ruby I also realized the vast possibilities and magnetism of open source projects. I could -and still can- spend hours browsing among different projects on github, peeping into their code, reading related articles, etc.</p>
+
+<p>So when I set out for this journey one of my tasks naturally became to regularly contribute to a &#8220;serious&#8221; open source project. When I got acquainted with Merb I also got to know <a href="http://datamapper.org/doku.php">DataMapper</a>, its default ORM. I admired its elegance and coherence and the more I knew of it the more I liked it. So when the maintainer position of a dm-more gem, <a href="#dm-constraints">dm-constraints*</a> seemed to be up for grabs I took the opportunity.</p>
+
+<p>That was in December and since then I sent in a few patches and merged changes implemented by others. (which I realized could sometimes be a lot more difficult than writing code :) ). I like to do this and have learned -and probably will learn- a lot so one of my plans for 2009 is to continue with dm-constraints and maybe find other open source projects I could contribute to on a regular basis.</p>
+
+<p>So, if you happen to use DataMapper, which <a href="http://bucionrails.com/2009/02/12/why-i-love-datamapper/">I strongly encourage you to do</a>, and find a bug related to foreign-key constraints, <a href="http://datamapper.lighthouseapp.com/projects/20609-datamapper">file a ticket</a> and assign it directly to me (Balint Erdi). And/or start contributing!</p>
+
+<h3>Notes</h3>
+
+
+
+
+<p id="dm-constraints">* Dm-more is the meta package that contains everything outside the core functions of DataMapper. Dm-constraints deals with foreign key constraints. If you are familiar with ActiveRecord, it is basically the options you specify with :dependent on an association.</p>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -780,71 +834,6 @@ $ ruby conv.rb 30 EUR HUF
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/01/05/record-your-bike-trips-with-gmap-pedometer.html">Record Your Bike Trips With Gmap Pedometer</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-01-05T00:00:00+01:00" pubdate data-updated="true">Jan 5<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Though I thought I would only post about technical issues here, I now make an exception. After all, (soft) rules are for breaking occasionally, aren&#8217;t they?</p>
-
-<p>So in case you don&#8217;t know, there is a nice <a title="Gmap Pedometer" href="http://www.gmap-pedometer.com/" target="_blank">service out there to record your bike trips</a> that I have recently discovered. It is a Google Maps application where you first search your point of departure then your point of arrival and Gmap Pedometer does the rest for you. Occasionally you have to lend it a helping hand, though, in case the automatic route generation does not work well. It usually does not if you take bicycle roads that does not run paralelly with the highway since the automatic route generation selects the &#8220;car route&#8221; by default (it seemed to me). You can set up your itinerary in no time and promptly see the distance you did and how much energy you burned during the process (and ultimately also the elevation of your trip).</p>
-
-<p>I also grab the opportunity to tell you how bike tours are the perfect way of tourism for me. You can easily do 40-50kms per day in a moderate pace. In my opinion that&#8217;s a perfect middle ground between being too slow and passing by magnificent landscapes and towns in a car. What&#8217;s more, there is the thrill of riding your bike, feeling the air against your cheeks, the ability to stop anywhere and the ambiance of adventure that comes with the nomad lifestyle.</p>
-
-<p>One thing I miss is a convenient method to store your trips. According to the site itself, Gmap Pedometer is &#8220;A hack that uses Google&#8217;s mapping application to help record distances traveled and calories burned during a running or walking workout.&#8221; so one should not expect a full-fletched, shiny application but a basic user registration/login method would be handy so I could quickly access my trips. To be able to review your trips, you must store the unique url that is generated for each one in a safe place.</p>
-
-<p>To give you some example routes and also to store a pointer to some trips I would like to be able to access in the future I list the daily routes of two fairly recent bike routes:</p>
-
-<p>The Netherlands (summer 2007)</p>
-
-<p><a href="http://www.gmap-pedometer.com/?r=2438133" target="_blank">Amsterdam - Den Haag</a>
-<a href="http://www.gmap-pedometer.com/?r=2438137" target="_blank">Amsterdam - Enkhuizen</a>
-<a href="http://www.gmap-pedometer.com/?r=2438142" target="_blank">Urk - Elburg</a>
-<a href="http://www.gmap-pedometer.com/?r=2438147" target="_blank">Elburg - Appeldoorn (Beekbergen)</a>
-<a href="http://www.gmap-pedometer.com/?r=2438149" target="_blank">Beekbergen - Arnhem (Oosterbeek)</a></p>
-
-<p>Austria, going along the Danube (summer 2006)</p>
-
-<p><a href="http://www.gmap-pedometer.com/?r=2438164" target="_blank">Passau - Obernzell</a>
-<a href="http://www.gmap-pedometer.com/?r=2438172" target="_blank">Obernzell - Feldkirchen</a>
-<a href="http://www.gmap-pedometer.com/?r=2438183" target="_blank">Feldkirchen - Au an der Donau</a>
-<a href="http://www.gmap-pedometer.com/?r=2438189" target="_blank">Au an der Donau - Willersbach</a>
-<a href="http://www.gmap-pedometer.com/?r=2438194" target="_blank">Willersbach - Aggsbach</a>
-<a href="http://www.gmap-pedometer.com/?r=2438196" target="_blank">Aggsbach - Krems</a></p>
-
-<p>So what are you waiting for? Hop on your bike! :)</p>
-
-<p>ps. Walking trips can also be recorded on the site and there is automatic route generation for walkers, too.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/5/">&larr; Older</a>
@@ -862,6 +851,10 @@ $ ruby conv.rb 30 EUR HUF
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion.html">Install Ruby 2.0.0 with rbenv (ruby-build) on Mountain Lion</a>
+      </li>
+    
+      <li class="post">
         <a href="/2013/05/30/ruby-rogues-discourse-with-jeff-atwood.html">Ruby Rogues - Discourse with Jeff Atwood</a>
       </li>
     
@@ -875,10 +868,6 @@ $ ruby conv.rb 30 EUR HUF
     
       <li class="post">
         <a href="/2011/11/30/an-annotated-assortment-on-mockist-testing.html">An Annotated Assortment on Mockist Testing</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2011/10/19/event_loop_primer.html">Event loop primer</a>
       </li>
     
   </ul>

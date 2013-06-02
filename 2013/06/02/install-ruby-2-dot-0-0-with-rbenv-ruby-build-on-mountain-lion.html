@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Why I love Datamapper - Balint Erdi</title>
+  <title>Install Ruby 2.0.0 with rbenv (ruby-build) on Mountain Lion - Balint Erdi</title>
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="I wanted to find the last user in alphabetic order of their names in a Merb project that uses Datamapper (the default ORM in Merb). So I did [*]: irb &hellip;">
+  <meta name="description" content="You need to download the source, or use ruby-build to install it for you. I will subsequently suppose the latter.
+You need to configure it, compile &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2009/02/12/why-i-love-datamapper.html">
+  <link rel="canonical" href="http://balinterdi.com/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -78,7 +79,7 @@
   
   <header>
     
-      <h1 class="entry-title">Why I Love Datamapper</h1>
+      <h1 class="entry-title">Install Ruby 2.0.0 With Rbenv (Ruby-build) on Mountain Lion</h1>
     
     
       <p class="meta">
@@ -94,51 +95,28 @@
   
 
 
-<time datetime="2009-02-12T00:00:00+01:00" pubdate data-updated="true">Feb 12<span>th</span>, 2009</time>
+<time datetime="2013-06-02T22:58:00+02:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>I wanted to find the last user in alphabetic order of their names in a Merb project that uses <a href="http://datamapper.org">Datamapper</a> (the default ORM in Merb). So I did [<a href="#love-datamapper-first">*</a>]:</p>
-
-<pre lang="bash">
-irb(main):020:0> User.all(:order => [:name]).first.name
- ~ (0.032946) SELECT <column_names> FROM `users` ORDER BY `name` LIMIT 1
-=> "Admin User"
-</pre>
+<div class="entry-content"><ol>
+<li>You need to <a href="http://www.ruby-lang.org/en/news/2013/05/14/ruby-2-0-0-p195-is-released/">download the source</a>, or use <a href="https://github.com/sstephenson/ruby-build">ruby-build</a> to install it for you. I will subsequently suppose the latter.</li>
+<li>You need to configure it, compile it and copy files to the proper location:</li>
+</ol>
 
 
-<p>Ok, so the default sorting order is ascending but I need the last one. There are two ways to do this. Write an SQL snippet and sneak in &#8220;DESC&#8221; somewhere or reverse the collection before taking the first element. Since I was not sure how to sneak in &#8220;DESC&#8221; plus I prefer writing Ruby to writing SQL hands down, I went with the second approach:</p>
-
-<pre lang="bash">
-irb(main):021:0> User.all(:order => [:name]).reverse.first.name
- ~ (1.033271) SELECT <column_names> FROM `users` ORDER BY `name` DESC LIMIT 1
-=> "XX XX"
-</pre>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>RUBY_CONFIGURE_OPTS=--with-openssl-dir=`brew --prefix openssl` CONFIGURE_OPTS=--with-gcc=clang rbenv install 2.0.0-p195</span></code></pre></td></tr></table></div></figure>
 
 
-<p>See what happened? Instead of reverting the collection (which is extra time even if it is done very fast) Datamapper sneaked in that DESC for me! Isn&#8217;t this just brilliant? Datamapper takes the burden to write SQL off of your shoulders. You can keep writing Ruby statements you presumably love and let Datamapper take care of the SQL reaping both the comfort and the performance gain. [<a href="#love-datamapper-second">**</a>]. Also, likewise your app stays database type agnostic. Note how it is not supposed there is a RDBMS under the ORM layer. It could work with CouchDB, for example (I think there is actually work in progress for a CouchDB adapter). This is not the only reason I like Datamapper so much, so if you are still not convinced, go check out <a href="http://datamapper.org/doku.php?id=why_datamapper">some other reasons to use it</a>.</p>
+<p>You can see I installed openssl through homebrew. The ruby-build recipe downloads an openssl lib for you so only use that if you have it installed as I do.</p>
 
-<hr>
+<p>I got the clang compiler frontend through <a href="https://developer.apple.com">Apple&#8217;s Command Line Tools</a> so I&#8217;m not sure that&#8217;s needed if you have the whole Xcode package.</p>
 
-
-<h3>Notes</h3>
-
-
-<p id="love-datamapper-first">* I could have written this one in a simpler way:
-<pre lang="bash">
-irb(main):018:0> User.first(:order => [:name]).name
- ~ (0.032345) SELECT <column_names> FROM `users` ORDER BY `name` LIMIT 1
-=> "Admin User"
-</pre>
-
-But you -or at least I- could not do it for the last element (there is no User.last)
-
-<p id="love-datamapper-second">** I am not suggesting not to learn SQL at all. I am all for a know-thy-tools approach (especially it it means not cluttering your markup with javascript :) ). However, having the ORM do obviously good things for you is worth it most of the time.
-</p>
-
+<p>It really feels faster -maybe due to the improved GC-, rails starts >2 as fast as compared to plain 1.9.3, using <a href="https://github.com/jonleighton/spring">spring</a> in both cases.</p>
 </div>
 
 
@@ -161,15 +139,21 @@ But you -or at least I- could not do it for the last element (there is no User.l
   
 
 
-<time datetime="2009-02-12T00:00:00+01:00" pubdate data-updated="true">Feb 12<span>th</span>, 2009</time>
+<time datetime="2013-06-02T22:58:00+02:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2013</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
 
 
     </p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2009/02/12/why-i-love-datamapper.html" data-via="baaz" data-counturl="http://balinterdi.com/2009/02/12/why-i-love-datamapper.html" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion.html" data-via="baaz" data-counturl="http://balinterdi.com/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion.html" >Tweet</a>
   
   
   <div class="g-plusone" data-size="medium"></div>
@@ -180,14 +164,18 @@ But you -or at least I- could not do it for the last element (there is no User.l
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2009/02/11/deep_test-to-become-tdd-more-easily.html" title="Previous Post: deep_test to become TDD more easily">&laquo; deep_test to become TDD more easily</a>
+        <a class="basic-alignment left" href="/2013/05/30/ruby-rogues-discourse-with-jeff-atwood.html" title="Previous Post: Ruby Rogues - Discourse with Jeff Atwood">&laquo; Ruby Rogues - Discourse with Jeff Atwood</a>
       
-      
-        <a class="basic-alignment right" href="/2009/03/12/easily-quote-passage-with-mail-in-a-reply.html" title="Next Post: easily quote passage with Mail in a reply">easily quote passage with Mail in a reply &raquo;</a>
       
     </p>
   </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -251,7 +239,10 @@ But you -or at least I- could not do it for the last element (there is no User.l
       var disqus_shortname = 'codigoergosum';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://balinterdi.com/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion.html';
+        var disqus_url = 'http://balinterdi.com/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

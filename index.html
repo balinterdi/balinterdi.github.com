@@ -9,8 +9,8 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="Ruby Rogues is one of the handful of podcasts I usually listen to. This week featured Jeff Atwood who talked about
-Discourse, a phenomenal forum &hellip;">
+  <meta name="description" content="You need to download the source, or use ruby-build to install it for you. I will subsequently suppose the latter.
+You need to configure it, compile &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -76,6 +76,56 @@ Discourse, a phenomenal forum &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion.html">Install Ruby 2.0.0 With Rbenv (Ruby-build) on Mountain Lion</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-02T22:58:00+02:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ol>
+<li>You need to <a href="http://www.ruby-lang.org/en/news/2013/05/14/ruby-2-0-0-p195-is-released/">download the source</a>, or use <a href="https://github.com/sstephenson/ruby-build">ruby-build</a> to install it for you. I will subsequently suppose the latter.</li>
+<li>You need to configure it, compile it and copy files to the proper location:</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>RUBY_CONFIGURE_OPTS=--with-openssl-dir=`brew --prefix openssl` CONFIGURE_OPTS=--with-gcc=clang rbenv install 2.0.0-p195</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can see I installed openssl through homebrew. The ruby-build recipe downloads an openssl lib for you so only use that if you have it installed as I do.</p>
+
+<p>I got the clang compiler frontend through <a href="https://developer.apple.com">Apple&#8217;s Command Line Tools</a> so I&#8217;m not sure that&#8217;s needed if you have the whole Xcode package.</p>
+
+<p>It really feels faster -maybe due to the improved GC-, rails starts >2 as fast as compared to plain 1.9.3, using <a href="https://github.com/jonleighton/spring">spring</a> in both cases.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -903,68 +953,6 @@ citizens, though.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/06/03/its-a-spec-not-a-test.html">It&#8217;s a Spec, Not a Test</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-06-03T00:00:00+02:00" pubdate data-updated="true">Jun 3<span>rd</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>You must have heard the question several times on the Rails mailing list and different IRC channels: &#8220;Should I test validates_uniqueness_of&#8221;? The standard answer to that one is &#8220;No, you definitely should not. It&#8217;s Rails framework code, and it&#8217;s already thoroughly tested. If you followed this path, you should also test whether objects are properly persisted in the database.&#8221;</p>
-
-<p>I think, however, that the question is wrong and thus you can not give a correct answer. It is wrong because validates_uniqueness_of is the implementation, not the requirement. If you approach it from this angle, the question turns into whether you should test the specific implementation or whether you should verify that (business) requirements are met.</p>
-
-<p>That, in turn, comes down to tests vs. specs (short for specifications) and this is again an opportunity for specs to shine. If you write specs instead of tests (or, to put it in a more mind-warping way: if your tests are actually specs), then the above question is a no-brainer: it&#8217;s part of the specification that no two users can have the same email address, so you must have a spec for it:</p>
-
-<figure class='code'><figcaption><span>user_spec.rb </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="n">describe</span> <span class="no">User</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">it</span> <span class="s2">&quot;has a unique email address&quot;</span> <span class="k">do</span>
-</span><span class='line'>    <span class="no">Factory</span><span class="p">(</span><span class="ss">:user</span><span class="p">,</span> <span class="ss">:email</span> <span class="o">=&gt;</span> <span class="s2">&quot;jeff@topnotch.com&quot;</span><span class="p">)</span>
-</span><span class='line'>    <span class="nb">lambda</span> <span class="p">{</span> <span class="no">Factory</span><span class="p">(</span><span class="ss">:user</span><span class="p">,</span> <span class="ss">:email</span> <span class="o">=&gt;</span> <span class="s2">&quot;jeff@topnotch.com&quot;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span>
-</span><span class='line'>     <span class="n">raise_error</span><span class="p">(</span><span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:RecordInvalid</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>On the other hand, if you stick with calling your tests tests (how orthodox! ;) ) then not only you have to think (which consumes a lot of resources), but you can also come to the wrong conclusion and emit a strong business requirement from your test suite. And then you might not remember to have the implementation for it after modifying the code for whatever reason. And then bad things might happen.</p>
-
-<p>(This thought came to me when coming to work in the subway this morning. I was never quite comfortable with the name &#8220;specs&#8221; but now it&#8217;s starting to make a lot of sense to me. You are encouraged to disagree. Dissent is what makes the world progress.)</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -980,6 +968,10 @@ citizens, though.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion.html">Install Ruby 2.0.0 with rbenv (ruby-build) on Mountain Lion</a>
+      </li>
+    
+      <li class="post">
         <a href="/2013/05/30/ruby-rogues-discourse-with-jeff-atwood.html">Ruby Rogues - Discourse with Jeff Atwood</a>
       </li>
     
@@ -993,10 +985,6 @@ citizens, though.</p>
     
       <li class="post">
         <a href="/2011/11/30/an-annotated-assortment-on-mockist-testing.html">An Annotated Assortment on Mockist Testing</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2011/10/19/event_loop_primer.html">Event loop primer</a>
       </li>
     
   </ul>
