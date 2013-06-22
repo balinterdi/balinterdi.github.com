@@ -9,8 +9,8 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="You need to download the source, or use ruby-build to install it for you. I will subsequently suppose the latter.
-You need to configure it, compile &hellip;">
+  <meta name="description" content="As I was preparing for my presentation on Clojure data structures I flashed
+back to a recent programming task I had to overcome. I don&#8217;t &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -82,6 +82,122 @@ You need to configure it, compile &hellip;">
       
   <header>
     
+      <h1 class="entry-title"><a href="/2013/06/19/the-appeal-of-one-paradigm-languages.html">The Appeal of One Paradigm Languages</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-19T23:19:00+02:00" pubdate data-updated="true">Jun 19<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>As I was preparing for <a href="https://speakerdeck.com/balint/clojure-data-structures-part-one">my presentation on Clojure data structures</a> I flashed
+back to a recent programming task I had to overcome. I don&#8217;t remember exactly
+what it was but it involved grouping data by particular keys and having an array
+of values for each key. When such a task rears its head I always have to play
+around in the REPL (err, the browser console) to see the exact working of each
+function I am about to rely on.</p>
+
+<p>Which one changes the array I call it on? Which one returns the new value and
+leaves the original intact? What about taking two arrays to make a third one?
+Javascript being slightly OOish, may I possibly use the + operator to join them
+together?</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>      <span class="c1">// x = [1,2,3]; y = 3;</span>
+</span><span class='line'><span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">concat</span><span class="p">([</span><span class="mi">3</span><span class="p">]);</span>  <span class="c1">// x = [1,2]; y = [1,2,3]</span>
+</span><span class='line'><span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>    <span class="c1">// x = [1,2]; y = [1,2,3]</span>
+</span><span class='line'><span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span> <span class="nx">y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">];</span> <span class="nx">z</span> <span class="o">=</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span><span class="p">;</span> <span class="c1">// z = &quot;1,23&quot; WAT?</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I spend a considerable amount of time trying these out and since I discover no
+overarching design behind how they operate I come away none-the-wiser and so
+repeat the same process on a slighly different problem some time later. (slice
+vs. splice, anyone?)</p>
+
+<p>Before I bash on javascript some more, I find it important to state that
+it&#8217;s an enormous feat <a href="http://www.w3.org/community/webed/wiki/A_Short_History_of_JavaScript">to design and implement a language in ten days</a>,
+hat tip to Brendan Eich.</p>
+
+<p>The point I want to get across is that not having a solid design principle
+behind a language is actually a hindrance. It slows you down by having to try
+the pieces (functions, in this case) individually unless you have memorized
+them.</p>
+
+<p>On the other hand, when you work with a language that has a design philosophy
+you gain the benefit of faster development. In Clojure, in the case of
+collection types, that principle is immutability. You don&#8217;t have to read the
+docs or fiddle around in the REPL. The original never changes, you get the
+&#8220;modified&#8221; version in the returned value:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="k">def </span><span class="nv">x</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span><span class="p">])</span> <span class="p">(</span><span class="k">def </span><span class="nv">y</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">x</span> <span class="mi">3</span><span class="p">))</span> <span class="c1">; x = [1,2]; y=[1,2,3]</span>
+</span><span class='line'><span class="p">(</span><span class="k">def </span><span class="nv">x</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span><span class="p">])</span> <span class="p">(</span><span class="k">def </span><span class="nv">y</span> <span class="p">(</span><span class="nb">concat </span><span class="nv">x</span> <span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="c1">; x [1,2]; y=[1,2,3]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let&#8217;s look at another language, Ruby.</p>
+
+<p>Called on an array, <code>push</code>, <code>concat</code>, <code>shift</code>, <code>pop</code> and <code>unshift</code> all modify
+their caller. <code>Push</code>, <code>concat</code> and <code>unshift</code> return the modified array, while
+<code>shift</code> and <code>pop</code> return the removed element.  So the rule seems to be that
+methods that expand the array return the new array, methods that take away an
+element return that element. So far so good.</p>
+
+<p>What about <code>take</code> and <code>drop</code>? They both take away a number of elements, from the
+beginning or from the end, and the number of elements being passed in as a
+parameter. I&#8217;d totally expect these methods to change the original in place.
+After all, few names sound more destructive than <code>drop</code>.  We&#8217;re in for a
+surprise. Both of them leave the original intact and return the taken (or
+dropped elements). In fact, you can pass in a number to both <code>shift</code> and <code>pop</code>
+which makes them identical to <code>take</code> and <code>drop</code> with the important distinction
+of whether they mutate or not the array they are called on.</p>
+
+<p>To add to the confusion, there is <code>delete</code> which deletes all occurrences of the
+element that is given as the parameter and there is <code>compact</code> which does exactly
+the same for a special case, nil. (So <code>compact</code> takes no parameter). However,
+it turns out that <code>delete</code> is mutating, but <code>compact</code> is not, preferring to return
+the array with no nils. <code>compact!</code> comes to the rescue which does mutation and so
+<code>x.compact!</code> is the same <code>x.delete(nil)</code>.</p>
+
+<p>To give an analogy from natural languages, learning operations on collections in
+Ruby and Javascript is like learning the article for each noun in German (der,
+die or das). There are rules but they are hard to remember in the first place
+and are often violated.</p>
+
+<p>Learning the same thing in Clojure is like learning articles in English: there
+is one true way to do it.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion.html">Install Ruby 2.0.0 With Rbenv (Ruby-build) on Mountain Lion</a></h1>
     
     
@@ -115,11 +231,16 @@ You need to configure it, compile &hellip;">
 </pre></td><td class='code'><pre><code class=''><span class='line'>RUBY_CONFIGURE_OPTS=--with-openssl-dir=`brew --prefix openssl` CONFIGURE_OPTS=--with-gcc=clang rbenv install 2.0.0-p195</span></code></pre></td></tr></table></div></figure>
 
 
-<p>You can see I installed openssl through homebrew. The ruby-build recipe downloads an openssl lib for you so only use that if you have it installed as I do.</p>
+<p>You can see I installed openssl through homebrew. The ruby-build recipe
+downloads an openssl lib for you so only use that if you have it
+installed as I do.</p>
 
-<p>I got the clang compiler frontend through <a href="https://developer.apple.com">Apple&#8217;s Command Line Tools</a> so I&#8217;m not sure that&#8217;s needed if you have the whole Xcode package.</p>
+<p>I got the clang compiler frontend through <a href="https://developer.apple.com">Apple&#8217;s Command Line
+Tools</a> so I&#8217;m not sure that&#8217;s needed if you have the whole Xcode
+package.</p>
 
-<p>It really feels faster -maybe due to the improved GC-, rails starts >2 as fast as compared to plain 1.9.3, using <a href="https://github.com/jonleighton/spring">spring</a> in both cases.</p>
+<p>It really feels faster -maybe due to the improved GC-, rails starts >2
+as fast as compared to plain 1.9.3, using <a href="https://github.com/jonleighton/spring">spring</a> in both cases.</p>
 </div>
   
   
@@ -899,60 +1020,6 @@ citizens, though.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be.html">Don&#8217;t Tell Michelle, Facebook Privacy as It Should Be</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-10-10T00:00:00+02:00" pubdate data-updated="true">Oct 10<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>It&#8217;s been a quiet four months over here. My excuse is that I&#8217;ve been working. I joined a startup, <a href="http://secretsaucepartners.com">Secret Sauce Partners</a> in June and we have started to build our first product a couple of weeks later. Now I am proud (actually, quite proud) to announce that we have released a first version last week.</p>
-
-<h2>The problem we are solving</h2>
-
-<p>I&#8217;m sure you have a Facebook account. You probably have around <a href="http://www.facebook.com/press/info.php?statistics">130 &#8220;friends&#8221;</a>. Chances are you want to share lots of things but on several occasions you don&#8217;t want to tell everybody. Sure, you can create friend lists and post to them based on what you want to say. Or, you can pick individual friends for your message (good luck with that if you would like to speak to more than 3 friends). It would definitely make sense (and would hugely improve the state of the world!) if you only showed your Farmville achievements to your friends who play Farmville and nobody else. Especially not your colleagues during work hours.</p>
-
-<p>Wouldn&#8217;t it be cool if you did not have to fiddle with setting the proper audience of your posts every single time you share something? If the people whom you post to would be determined from the content and the context of your message? Better still, if friends that join later could not see your posts prior to that?</p>
-
-<h2>The solution</h2>
-
-<p>Let&#8217;s go back to Farmville-land (I know, I know, but bear with me for a few more minutes). If you only want to show your Farmville posts to selected people the only way to achieve it is to set your default privacy to that list of selected friends prior to diving in to FarmVille. Then you set it back to your default posting setting. Not quite comfortable.</p>
-
-<p>That&#8217;s where our application comes into the picture. To solve the above problem, you set up a rule that says:
-&#8220;Hide posts from Farmville posted during Work Hours from my Co-Workers&#8221;. You lay back, go feed your piggies, and water your sunflowers safe in the knowledge that your colleagues will not know about it. Suppose you don&#8217;t want your mom to know where you spend your weekends. Here is your rule: &#8220;Hide All posts from Foursquare from Family&#8221;. Feeling the urge to swear like a sailor some times and don&#8217;t want your little cousins or nieces to know about it? &#8220;Always hide posts with Swear Words from Kids&#8221;. Don&#8217;t want to spam your Twitter followers on Facebook? &#8220;Always hide posts from Twitter from Twitter followers&#8221;. Then, there are the &#8220;Show&#8221; rules*. For example, an even more sensible rule for Farmville posts could be: &#8220;Always show posts from Farmville to Players&#8221;.
-(* &#8220;Show rules&#8221; are the next feature we are going to work on.)</p>
-
-<p>You see, the possibilities are endless, so why don&#8217;t you <a href="http://donttellmichelle.com/">set up your own rules and give it a try</a>? I bet you will never want to go back to (broken) standard Facebook privacy setting.</p>
-
-<p>Ah, and if you don&#8217;t want your wife to know how much high-cholesterol food you eat, then <a href="http://blogs.suntimes.com/sweet/2010/03/dont_tell_michelle_obama_says.html">&#8220;Don&#8217;t Tell Michelle&#8221;</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -968,6 +1035,10 @@ citizens, though.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/06/19/the-appeal-of-one-paradigm-languages.html">The appeal of one paradigm languages</a>
+      </li>
+    
+      <li class="post">
         <a href="/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion.html">Install Ruby 2.0.0 with rbenv (ruby-build) on Mountain Lion</a>
       </li>
     
@@ -981,10 +1052,6 @@ citizens, though.</p>
     
       <li class="post">
         <a href="/2012/03/30/switch-to-command-line-vim-on-iterm.html">Switch to Command Line Vim on iTerm</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2011/11/30/an-annotated-assortment-on-mockist-testing.html">An Annotated Assortment on Mockist Testing</a>
       </li>
     
   </ul>

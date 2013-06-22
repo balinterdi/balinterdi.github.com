@@ -9,7 +9,7 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="Continuous Integration (CI) is a basic building block of any project done in TDD style. In brief, having a CI server properly set up guarantees that &hellip;">
+  <meta name="description" content="I am not sure about you, but one thing I keep bumping into while developing ruby applications is rubygem version conflicts. If you have ever come &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +75,57 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/10/20/rubygems-under-the-hood-introduction.html">RubyGems Under the Hood: Introduction</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-10-20T00:00:00+02:00" pubdate data-updated="true">Oct 20<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I am not sure about you, but one thing I keep bumping into while developing ruby applications is rubygem version conflicts. If you have ever come across &#8220;can&#8217;t activate activesupport (= 2.3.4, runtime) for [], already activated activesupport-2.3.3 for []&#8221; type of errors, you might be sympathetic to the cause.</p>
+
+<p>Since <a href="http://rubygems.org/">rubygems</a> was and is being written by some <a href="http://chadfowler.com">excellent</a> <a href="http://richkilmer.blogs.com/">Ruby</a> <a href="http://onestepback.org/">minds</a> I knew the fault probably lies with me and not with the tool. Being a <a href="http://manifesto.softwarecraftsmanship.org/">motivated and proud craftsman</a> I felt like I needed to know my tools and rubygems is probably the number one tool most of us Ruby developers use on a daily basis.</p>
+
+<p>I intend to write a mini-series of Rubygems posts. A post will be added to the series when I explore some murky corner of rubygems inner mechanics. Some of the time this will come from a particular problem I come across while coding while on other occasions I might just look into the source code and try to understand what a particular piece of code does.</p>
+
+<p>Now, I realized that when I read on a blog: &#8220;I will go into more detail about X in a forthcoming post&#8221;, it is the surest sign that you will never read about X again. At least not on that very blog. And I am not saying this in a mean way, I think it is very natural for our plans to change (&#8220;evolve&#8221; may sound better) even on the short term. So I am aiming low and hoping to give you more than you expected. (Notice I wrote &#8220;mini-series&#8221; which may just mean a couple of posts.)</p>
+
+<h2>Do not set your expectations high</h2>
+
+
+<p>I am absolutely not a Rubygems expert so please do not be fooled by the &#8220;under the hood&#8221; title. This will not be commensurate to <a href="http://weblog.jamisbuck.org/2006/10/2/under-the-hood-rails-routing-dsl">Jamis Buck&#8217;s series on Rails routing</a>. I do not -yet?- have a deep insight and I am not even a contributor to Rubygems.</p>
+
+<p>The forthcoming :) series is just a humble attempt to gain an understanding of a very important part of the Ruby arsenal. I hope to understand it better by explaining to you how it works and I hope you will understand it better by reading my explanation. And last, but not least, I hope we&#8217;ll both spend less time debugging those tricky issues.</p>
+
+<p>Having said that, I encourage you to participate in the series. Tell me about a particular problem you had with Rubygems. Correct me if I am wrong. Point me to an article where all this is already explained, and much better. Give feedback so this might evolve to be a discussion rather than an academic lecture. Thank you.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -680,46 +731,6 @@ missing_t fr
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/03/17/thrifty-track-your-expenses-easily.html">Thrifty - Track Your Expenses Easily</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-03-17T00:00:00+01:00" pubdate data-updated="true">Mar 17<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Thrifty is a simple application I have written (and am still writing) in Sinatra that tracks your expenses. You can quickly record each spending you make and assign tags to them so you can group your expenditures easily. You can then see how much you spend in different categories (by tags) possibly narrowed down to a given date interval.</p>
-
-<p>Anyway, a web app is all about interaction so give it a try <a href="http://thrifty.heroku.com">on the test site</a> or download it from <a href="http://github.com/balinterdi/thrifty">its github repo</a> and run it locally. You&#8217;ll also find a somewhat detailed README there.</p>
-
-<p>This is a very early release so I&#8217;d appreciate any kind of feedback, be it a bug report, a comment on bad UI or anything you might find worthwhile sharing.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -737,6 +748,10 @@ missing_t fr
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/06/19/the-appeal-of-one-paradigm-languages.html">The appeal of one paradigm languages</a>
+      </li>
+    
+      <li class="post">
         <a href="/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion.html">Install Ruby 2.0.0 with rbenv (ruby-build) on Mountain Lion</a>
       </li>
     
@@ -750,10 +765,6 @@ missing_t fr
     
       <li class="post">
         <a href="/2012/03/30/switch-to-command-line-vim-on-iterm.html">Switch to Command Line Vim on iTerm</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2011/11/30/an-annotated-assortment-on-mockist-testing.html">An Annotated Assortment on Mockist Testing</a>
       </li>
     
   </ul>
