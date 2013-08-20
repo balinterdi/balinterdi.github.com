@@ -203,6 +203,14 @@ explicitly set the background)</p>
 <aside class="sidebar">
   
     <section>
+  <h1>Contact</h1>
+  <div>
+    Do you have a project that needs help?  <a href="mailto:balint@balinterdi.com"> Write to me</a> and let's start talking.
+  </div>
+  <!-- <div>The same applies if you just have a question that needs answering.</div> -->
+</section>
+
+<section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
     
@@ -227,6 +235,35 @@ explicitly set the background)</p>
       </li>
     
   </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/balinterdi">@balinterdi</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'balinterdi',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
 </section>
 
 
