@@ -9,7 +9,12 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="It&#8217;s been a quiet four months over here. My excuse is that I&#8217;ve been working. I joined a startup, Secret Sauce Partners in June and we &hellip;">
+  <meta name="description" content="Let&#8217;s say you have the following three commits in your local repository: 1
+2
+3
+4
+% git log -3 --oneline
+b648f1a Fix propagating errors in &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +80,127 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2011/07/19/git-rebase-to-fix-your-local-commits.html">Git Rebase to Fix Your Local Commits</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-19T00:00:00+02:00" pubdate data-updated="true">Jul 19<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Let&#8217;s say you have the following three commits in your local repository:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>% git log -3 --oneline
+</span><span class='line'>b648f1a Fix propagating errors in findOrInitialize. (28 seconds ago)
+</span><span class='line'>8789cd1 Non-destructive filtering for bumblebees. (12 hours ago)
+</span><span class='line'>1a35285 Propagate errors the node.js way. (14 hours ago)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The last commit, b648f1a conceptually belongs to the first one, 1a35285.
+It only came later because say you haven&#8217;t run the tests before
+committing it and only realized later you introduced a bug. Or some
+other misdemeanor. Whatever the background is, it would be great if
+there was a way to squash the two related commits together. Turns out
+there is: interactive rebase.</p>
+
+<p>The syntax of the git-rebase is the following:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git rebase [-i | --interactive] [options] [--onto &lt;newbase>]
+</span><span class='line'>             &lt;upstream> [&lt;branch>]</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What happens when you do git rebase is that the commits that are on the current
+branch but are not in upstream are saved. The current branch is reset to
+upstream and then the saved commits are replayed on top of this.</p>
+
+<p>It&#8217;s worth to mention that you should only do this if you have not
+pushed out these changesets to a remote where others might have pulled
+from it. Rebase creates new commits and if your collaborators pull the
+new commits, chaos can ensue. (See &#8220;Perils of Rebase&#8221; in the <a href="http://progit.org/book/ch3-6.html">ProGit
+book</a>)</p>
+
+<p>This can be used to achieve what we want:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>% git rebase -i HEAD~3</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Since the commits that are on the current branch but not on the commit
+three commits from here are the last three commits, here is what we get:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pick 1a35285 Propagate errors the node.js way.
+</span><span class='line'>pick 8789cd1 Non-destructive filtering for bumblebees.
+</span><span class='line'>pick b648f1a Fix propagating errors in findOrInitialize.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We want to meld the &#8220;fix&#8221; commit into the &#8220;propagate&#8221; commit since
+that&#8217;s how it should have been in the first place. So we move b648f1a up and
+squash it into the previous commit:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pick 1a35285 Propagate errors the node.js way.
+</span><span class='line'>squash b648f1a Fix propagating errors in findOrInitialize.
+</span><span class='line'>pick 8789cd1 Non-destructive filtering for scales.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After a successful rebase this is how the new log looks like:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>% git log -3 --oneline
+</span><span class='line'>73eed18 Non-destructive filtering for bumblebees. (9 seconds ago)
+</span><span class='line'>1e63d17 Propagate errors the node.js way. (39 seconds ago)
+</span><span class='line'>1b24891 Minor fixes in Bumblebee buzzing. (16 hours ago)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that the three commits we had before have now been nicely compacted
+into two, and the propagation commit is now consistent and fixed. It can
+now be pushed.</p>
+
+<p>ps. You might wonder what we use bumblebees for in our project. Actually
+they are faux. They serve to obfuscate real names in propietary code.
+I hope I can one day write code where bumblebees will be first-class
+citizens, though.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -648,84 +774,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/10/28/rubygems-under-the-hood-hooking-into-require.html">Rubygems Under the Hood: Hooking Into Require</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-10-28T00:00:00+01:00" pubdate data-updated="true">Oct 28<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>(See <a href="http://bucionrails.com/2009/10/20/rubygems-under-the-hood-introduction/">the introduction</a> to the series.)</p>
-
-<p>When you want to pull in a Ruby library, you require it. The library you require has to be on Ruby&#8217;s load path ($LOAD_PATH) in order to succeed. So let&#8217;s see how Rubygems hooks into this process.</p>
-
-<p>The secret lies in custom_require.rb. You&#8217;ll see a nice comment near the top.</p>
-
-<blockquote>
-When you call &#8220;require &#8216;x&#8217;&#8221;, this is what happens:
-  * If the file can be loaded from the existing Ruby loadpath, it is.
-  * Otherwise, installed gems are searched for a file that matches.
-If it&#8217;s found in gem &#8216;y&#8217;, that gem is activated (added to the loadpath).
-</blockquote>
-
-
-<p>In fact, that explanation looks so straightforward to me that I doubt if I can add more words to precise it, so let&#8217;s look at the code together:</p>
-
-<div>
-  <pre><code class='ruby'>module Kernel
-  alias gem_original_require require
-  (...)
-  def require(path) # :doc:
-    gem_original_require path
-  rescue LoadError =&gt; load_error
-    if load_error.message =~ /#{Regexp.escape path}\z/ and
-       spec = Gem.searcher.find(path) then
-      Gem.activate(spec.name, &quot;= #{spec.version}&quot;)
-      gem_original_require path
-    else
-      raise load_error
-    end
-  end
-(...)
-end</code></pre>
-</div>
-
-
-<p>Aliasing a method, redefining it and calling the original version from the redefined method is a very familiar pattern if you have read Rails source code (called method chaining).</p>
-
-<p>So, just as the above description says, if the file can be loaded &#8220;without Rubygems&#8221; it is and Rubygems never comes into the picture. If not, we make sure that the load error comes from the file not found on the load path and then find the gemspec for that file and activate it.</p>
-
-<p>Activating it adds it to the load path, so we can call the original require safe in the knowledge that it will now succeed and we won&#8217;t get another load error this time around (and go into an infinite loop). Clever, heh?</p>
-
-<p>This is one of the cases when the code is so simple for a moment I think I could have written it myself. With its &lt;10 lines of code Rubygems is empowered to load a myriad of useful Ruby libraries. Isn&#8217;t this wonderful?</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -750,6 +798,10 @@ end</code></pre>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/08/23/find-and-replace-in-all-files.html">Find and Replace in all files</a>
+      </li>
+    
+      <li class="post">
         <a href="/2013/06/19/the-appeal-of-one-paradigm-languages.html">The appeal of one paradigm languages</a>
       </li>
     
@@ -763,10 +815,6 @@ end</code></pre>
     
       <li class="post">
         <a href="/2012/12/29/lessons-learned-from-solving-4clojure-problems.html">Lessons learned from solving 4Clojure problems</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2012/03/30/switch-to-command-line-vim-on-iterm.html">Switch to Command Line Vim on iTerm</a>
       </li>
     
   </ul>

@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2013-08-20T17:12:43+02:00</updated>
+  <updated>2013-08-23T22:23:50+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,40 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Find and Replace in all files]]></title>
+    <link href="http://balinterdi.com/2013/08/23/find-and-replace-in-all-files.html"/>
+    <updated>2013-08-23T22:01:00+02:00</updated>
+    <id>http://balinterdi.com/2013/08/23/find-and-replace-in-all-files</id>
+    <content type="html"><![CDATA[<p>You want to change a string with another one in some directory in your project.</p>
+
+<p>Here is a one liner to do that:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>for spec_file in $(ag -g _spec.rb spec/); do sed -i.bak 's/john/jane/g' $spec_file; done</span></code></pre></td></tr></table></div></figure>
+
+
+<p>A few caveats:</p>
+
+<ul>
+<li>The match should be case-insensitive. Unfortunately, <code>s/john/jane/gI</code> does not
+work under OSX.</li>
+<li>The -i tells sed to do an in-place replacement. Again, under OSX, however, you
+must give an extension for the backup files. A <code>git clean -f</code> can get rid of
+these in one fell swoop.</li>
+<li>You can use <code>find spec/ -name '_spec.rb'</code> instead of the ag command. <a href="http://geoff.greer.fm/2011/12/27/the-silver-searcher-better-than-ack/">But why
+would you?</a></li>
+</ul>
+
+
+<p>(If you know how to do the replacement with awk, or something similar, please
+tell me in the comments.)</p>
+
+<p>Your text editor might already have a <code>Find &amp; Replace in project</code> functionality.
+But maybe it does not. And surely, the command line version is most flexible.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[The appeal of one paradigm languages]]></title>
@@ -1012,57 +1046,6 @@ citizens, though.</p>
     <content type="html"><![CDATA[<p>I&#8217;ve just released a new version of the <a href="http://github.com/balinterdi/i15r">i15r gem</a> which alleviates the tedious task of internationalizing a Rails site by finding the &#8220;static&#8221; texts and replacing them with I18n message strings.</p>
 
 <p>The good news -and probably the reason I am writing a blog post about it- is that it can now process <a href="http://haml-lang.com/">haml</a> files, too. This must cheer up those who -like me- have come to like haml so much they now use it for their projects. So <a href="http://gemcutter.org/gems/i15r">go get it</a> and let me know how it works for you.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rubygems under the hood: hooking into require]]></title>
-    <link href="http://balinterdi.com/2009/10/28/rubygems-under-the-hood-hooking-into-require.html"/>
-    <updated>2009-10-28T00:00:00+01:00</updated>
-    <id>http://balinterdi.com/2009/10/28/rubygems-under-the-hood-hooking-into-require</id>
-    <content type="html"><![CDATA[<p>(See <a href="http://bucionrails.com/2009/10/20/rubygems-under-the-hood-introduction/">the introduction</a> to the series.)</p>
-
-<p>When you want to pull in a Ruby library, you require it. The library you require has to be on Ruby&#8217;s load path ($LOAD_PATH) in order to succeed. So let&#8217;s see how Rubygems hooks into this process.</p>
-
-<p>The secret lies in custom_require.rb. You&#8217;ll see a nice comment near the top.</p>
-
-<blockquote>
-When you call &#8220;require &#8216;x&#8217;&#8221;, this is what happens:
-  * If the file can be loaded from the existing Ruby loadpath, it is.
-  * Otherwise, installed gems are searched for a file that matches.
-If it&#8217;s found in gem &#8216;y&#8217;, that gem is activated (added to the loadpath).
-</blockquote>
-
-
-<p>In fact, that explanation looks so straightforward to me that I doubt if I can add more words to precise it, so let&#8217;s look at the code together:</p>
-
-<div>
-  <pre><code class='ruby'>module Kernel
-  alias gem_original_require require
-  (...)
-  def require(path) # :doc:
-    gem_original_require path
-  rescue LoadError =&gt; load_error
-    if load_error.message =~ /#{Regexp.escape path}\z/ and
-       spec = Gem.searcher.find(path) then
-      Gem.activate(spec.name, &quot;= #{spec.version}&quot;)
-      gem_original_require path
-    else
-      raise load_error
-    end
-  end
-(...)
-end</code></pre>
-</div>
-
-
-<p>Aliasing a method, redefining it and calling the original version from the redefined method is a very familiar pattern if you have read Rails source code (called method chaining).</p>
-
-<p>So, just as the above description says, if the file can be loaded &#8220;without Rubygems&#8221; it is and Rubygems never comes into the picture. If not, we make sure that the load error comes from the file not found on the load path and then find the gemspec for that file and activate it.</p>
-
-<p>Activating it adds it to the load path, so we can call the original require safe in the knowledge that it will now succeed and we won&#8217;t get another load error this time around (and go into an infinite loop). Clever, heh?</p>
-
-<p>This is one of the cases when the code is so simple for a moment I think I could have written it myself. With its &lt;10 lines of code Rubygems is empowered to load a myriad of useful Ruby libraries. Isn&#8217;t this wonderful?</p>
 ]]></content>
   </entry>
   

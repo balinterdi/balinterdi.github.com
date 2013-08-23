@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>RubyGems under the hood: Introduction - Balint Erdi</title>
+  <title>Find and Replace in all files - Balint Erdi</title>
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="I am not sure about you, but one thing I keep bumping into while developing ruby applications is rubygem version conflicts. If you have ever come &hellip;">
+  <meta name="description" content="You want to change a string with another one in some directory in your project. Here is a one liner to do that: 1
+for spec_file in $(ag -g _spec.rb &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2009/10/20/rubygems-under-the-hood-introduction.html">
+  <link rel="canonical" href="http://balinterdi.com/2013/08/23/find-and-replace-in-all-files.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -78,7 +79,7 @@
   
   <header>
     
-      <h1 class="entry-title">RubyGems Under the Hood: Introduction</h1>
+      <h1 class="entry-title">Find and Replace in All Files</h1>
     
     
       <p class="meta">
@@ -94,29 +95,39 @@
   
 
 
-<time datetime="2009-10-20T00:00:00+02:00" pubdate data-updated="true">Oct 20<span>th</span>, 2009</time>
+<time datetime="2013-08-23T22:01:00+02:00" pubdate data-updated="true">Aug 23<span>rd</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>I am not sure about you, but one thing I keep bumping into while developing ruby applications is rubygem version conflicts. If you have ever come across &#8220;can&#8217;t activate activesupport (= 2.3.4, runtime) for [], already activated activesupport-2.3.3 for []&#8221; type of errors, you might be sympathetic to the cause.</p>
+<div class="entry-content"><p>You want to change a string with another one in some directory in your project.</p>
 
-<p>Since <a href="http://rubygems.org/">rubygems</a> was and is being written by some <a href="http://chadfowler.com">excellent</a> <a href="http://richkilmer.blogs.com/">Ruby</a> <a href="http://onestepback.org/">minds</a> I knew the fault probably lies with me and not with the tool. Being a <a href="http://manifesto.softwarecraftsmanship.org/">motivated and proud craftsman</a> I felt like I needed to know my tools and rubygems is probably the number one tool most of us Ruby developers use on a daily basis.</p>
+<p>Here is a one liner to do that:</p>
 
-<p>I intend to write a mini-series of Rubygems posts. A post will be added to the series when I explore some murky corner of rubygems inner mechanics. Some of the time this will come from a particular problem I come across while coding while on other occasions I might just look into the source code and try to understand what a particular piece of code does.</p>
-
-<p>Now, I realized that when I read on a blog: &#8220;I will go into more detail about X in a forthcoming post&#8221;, it is the surest sign that you will never read about X again. At least not on that very blog. And I am not saying this in a mean way, I think it is very natural for our plans to change (&#8220;evolve&#8221; may sound better) even on the short term. So I am aiming low and hoping to give you more than you expected. (Notice I wrote &#8220;mini-series&#8221; which may just mean a couple of posts.)</p>
-
-<h2>Do not set your expectations high</h2>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>for spec_file in $(ag -g _spec.rb spec/); do sed -i.bak 's/john/jane/g' $spec_file; done</span></code></pre></td></tr></table></div></figure>
 
 
-<p>I am absolutely not a Rubygems expert so please do not be fooled by the &#8220;under the hood&#8221; title. This will not be commensurate to <a href="http://weblog.jamisbuck.org/2006/10/2/under-the-hood-rails-routing-dsl">Jamis Buck&#8217;s series on Rails routing</a>. I do not -yet?- have a deep insight and I am not even a contributor to Rubygems.</p>
+<p>A few caveats:</p>
 
-<p>The forthcoming :) series is just a humble attempt to gain an understanding of a very important part of the Ruby arsenal. I hope to understand it better by explaining to you how it works and I hope you will understand it better by reading my explanation. And last, but not least, I hope we&#8217;ll both spend less time debugging those tricky issues.</p>
+<ul>
+<li>The match should be case-insensitive. Unfortunately, <code>s/john/jane/gI</code> does not
+work under OSX.</li>
+<li>The -i tells sed to do an in-place replacement. Again, under OSX, however, you
+must give an extension for the backup files. A <code>git clean -f</code> can get rid of
+these in one fell swoop.</li>
+<li>You can use <code>find spec/ -name '_spec.rb'</code> instead of the ag command. <a href="http://geoff.greer.fm/2011/12/27/the-silver-searcher-better-than-ack/">But why
+would you?</a></li>
+</ul>
 
-<p>Having said that, I encourage you to participate in the series. Tell me about a particular problem you had with Rubygems. Correct me if I am wrong. Point me to an article where all this is already explained, and much better. Give feedback so this might evolve to be a discussion rather than an academic lecture. Thank you.</p>
+
+<p>(If you know how to do the replacement with awk, or something similar, please
+tell me in the comments.)</p>
+
+<p>Your text editor might already have a <code>Find &amp; Replace in project</code> functionality.
+But maybe it does not. And surely, the command line version is most flexible.</p>
 </div>
 
 
@@ -139,15 +150,21 @@
   
 
 
-<time datetime="2009-10-20T00:00:00+02:00" pubdate data-updated="true">Oct 20<span>th</span>, 2009</time>
+<time datetime="2013-08-23T22:01:00+02:00" pubdate data-updated="true">Aug 23<span>rd</span>, 2013</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/shell/'>shell</a>
+  
+</span>
 
 
     </p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2009/10/20/rubygems-under-the-hood-introduction.html" data-via="baaz" data-counturl="http://balinterdi.com/2009/10/20/rubygems-under-the-hood-introduction.html" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2013/08/23/find-and-replace-in-all-files.html" data-via="baaz" data-counturl="http://balinterdi.com/2013/08/23/find-and-replace-in-all-files.html" >Tweet</a>
   
   
   <div class="g-plusone" data-size="medium"></div>
@@ -158,14 +175,18 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2009/09/25/cucumber-meets-selenium-meets-integrity.html" title="Previous Post: Cucumber meets Selenium meets Integrity">&laquo; Cucumber meets Selenium meets Integrity</a>
+        <a class="basic-alignment left" href="/2013/06/19/the-appeal-of-one-paradigm-languages.html" title="Previous Post: The appeal of one paradigm languages">&laquo; The appeal of one paradigm languages</a>
       
-      
-        <a class="basic-alignment right" href="/2009/10/28/rubygems-under-the-hood-hooking-into-require.html" title="Next Post: Rubygems under the hood: hooking into require">Rubygems under the hood: hooking into require &raquo;</a>
       
     </p>
   </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -265,7 +286,10 @@
       var disqus_shortname = 'codigoergosum';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://balinterdi.com/2013/08/23/find-and-replace-in-all-files.html';
+        var disqus_url = 'http://balinterdi.com/2013/08/23/find-and-replace-in-all-files.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
