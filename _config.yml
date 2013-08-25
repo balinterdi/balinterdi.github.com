@@ -97,3 +97,6 @@ google_analytics_tracking_id: UA-12299794-2
 
 # Facebook Like
 facebook_like: false
+
+# Hellobar
+enable_hellobar: true
