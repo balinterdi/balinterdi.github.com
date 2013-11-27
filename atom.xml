@@ -4,7 +4,7 @@
   <title><![CDATA[alint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2013-11-22T20:57:21+01:00</updated>
+  <updated>2013-11-27T19:06:04+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,38 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Profile your Ember app with ember-renderspeed]]></title>
+    <link href="http://balinterdi.com/2013/11/27/profile-your-ember-app-with-ember-renderspeed.html"/>
+    <updated>2013-11-27T18:56:00+01:00</updated>
+    <id>http://balinterdi.com/2013/11/27/profile-your-ember-app-with-ember-renderspeed</id>
+    <content type="html"><![CDATA[<p>If your application has lots of things going on or you render a large list, you
+might see your once snappy app lose some of that swiftness. Naturally, you want
+to speed your application up and the first thing to do in these cases is to know
+where the bottlenecks are.</p>
+
+<p>One solution to this is to integrate <a href="https://github.com/eviltrout/ember-renderspeed">ember-renderspeed</a>, a very simple library
+released by the Discourse team. It shows the rendering time of your templates
+and views on your development console, in a nicely nested form. Don&#8217;t get
+frightened by the verb &#8220;integrate&#8221;. It is as easy as <a href="https://raw.github.com/eviltrout/ember-renderspeed/master/ember-renderspeed.js">downloading the js file</a> and
+adding a script tag to it.</p>
+
+<p>Once you did that, open your Javascript console in your browser, reload the page
+and observe the profile of your application. It is enabled by default on the
+Ember discussion forum, so you can take a look there. You will see something
+like the following:</p>
+
+<p><img src="http://balinterdi.com/images/ember-renderspeed-screenshot.png" alt="ember-renderspeed screenshot" /></p>
+
+<p>Under the hood, ember-renderspeed uses <a href="http://emberjs.com/api/classes/Ember.Instrumentation.html">Ember&#8217;s instrumentation facilities</a>, so
+should ember-renderspeed not work for your problem, you can always roll your own
+or use a third-party service, like <a href="http://caliper.io/">Caliper</a>.</p>
+
+<p>That said, ember-renderspeed is a very quick and easy way to profile your app
+and can be the first tool you reach for when the need arises.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Find and Replace in all files]]></title>
@@ -1035,17 +1067,6 @@ citizens, though.</p>
 <p>It felt appropriate to start the new year with a new blog and -to my surprise- the switch was a lot easier than I had thought. I hope you, the faithful readers of my blog, welcome the change and ameliorate it with your precious comments.</p>
 
 <p>Now I am blogging like a hacker, too!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[i15r 0.3.1 is out - now with haml matchers!]]></title>
-    <link href="http://balinterdi.com/2009/12/14/i15r-031-is-out-now-with-haml-matchers.html"/>
-    <updated>2009-12-14T00:00:00+01:00</updated>
-    <id>http://balinterdi.com/2009/12/14/i15r-031-is-out-now-with-haml-matchers</id>
-    <content type="html"><![CDATA[<p>I&#8217;ve just released a new version of the <a href="http://github.com/balinterdi/i15r">i15r gem</a> which alleviates the tedious task of internationalizing a Rails site by finding the &#8220;static&#8221; texts and replacing them with I18n message strings.</p>
-
-<p>The good news -and probably the reason I am writing a blog post about it- is that it can now process <a href="http://haml-lang.com/">haml</a> files, too. This must cheer up those who -like me- have come to like haml so much they now use it for their projects. So <a href="http://gemcutter.org/gems/i15r">go get it</a> and let me know how it works for you.</p>
 ]]></content>
   </entry>
   

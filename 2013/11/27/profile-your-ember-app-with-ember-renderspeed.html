@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: programming - alint Erdi</title>
+  <title>Profile your Ember app with ember-renderspeed - alint Erdi</title>
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="Category: programming">
+  <meta name="description" content="If your application has lots of things going on or you render a large list, you
+might see your once snappy app lose some of that swiftness. Naturally &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.comblog/categories/programming/index.html">
+  <link rel="canonical" href="http://balinterdi.com/2013/11/27/profile-your-ember-app-with-ember-renderspeed.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -74,36 +75,110 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: Programming</h1>
+    
+      <h1 class="entry-title">Profile Your Ember App With Ember-renderspeed</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-27T18:56:00+01:00" pubdate data-updated="true">Nov 27<span>th</span>, 2013</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content"><p>If your application has lots of things going on or you render a large list, you
+might see your once snappy app lose some of that swiftness. Naturally, you want
+to speed your application up and the first thing to do in these cases is to know
+where the bottlenecks are.</p>
 
-  
-  <h2>2012</h2>
+<p>One solution to this is to integrate <a href="https://github.com/eviltrout/ember-renderspeed">ember-renderspeed</a>, a very simple library
+released by the Discourse team. It shows the rendering time of your templates
+and views on your development console, in a nicely nested form. Don&#8217;t get
+frightened by the verb &#8220;integrate&#8221;. It is as easy as <a href="https://raw.github.com/eviltrout/ember-renderspeed/master/ember-renderspeed.js">downloading the js file</a> and
+adding a script tag to it.</p>
 
-<article>
-  
-<h1><a href="/2012/12/29/lessons-learned-from-solving-4clojure-problems.html">Lessons learned from solving 4Clojure problems</a></h1>
-<time datetime="2012-12-29T14:55:00+01:00" pubdate><span class='month'>Dec</span> <span class='day'>29</span> <span class='year'>2012</span></time>
+<p>Once you did that, open your Javascript console in your browser, reload the page
+and observe the profile of your application. It is enabled by default on the
+Ember discussion forum, so you can take a look there. You will see something
+like the following:</p>
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/clojure-/'>clojure,</a>, <a class='category' href='/blog/categories/programming/'>programming</a></span>
-</footer>
+<p><img src="/images/ember-renderspeed-screenshot.png" alt="ember-renderspeed screenshot" /></p>
 
+<p>Under the hood, ember-renderspeed uses <a href="http://emberjs.com/api/classes/Ember.Instrumentation.html">Ember&#8217;s instrumentation facilities</a>, so
+should ember-renderspeed not work for your problem, you can always roll your own
+or use a third-party service, like <a href="http://caliper.io/">Caliper</a>.</p>
 
-</article>
-
+<p>That said, ember-renderspeed is a very quick and easy way to profile your app
+and can be the first tool you reach for when the need arises.</p>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Balint Erdi</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-27T18:56:00+01:00" pubdate data-updated="true">Nov 27<span>th</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2013/11/27/profile-your-ember-app-with-ember-renderspeed.html" data-via="baaz" data-counturl="http://balinterdi.com/2013/11/27/profile-your-ember-app-with-ember-renderspeed.html" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2013/08/23/find-and-replace-in-all-files.html" title="Previous Post: Find and Replace in all files">&laquo; Find and Replace in all files</a>
+      
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -183,7 +258,10 @@
       var disqus_shortname = 'codigoergosum';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://balinterdi.com/2013/11/27/profile-your-ember-app-with-ember-renderspeed.html';
+        var disqus_url = 'http://balinterdi.com/2013/11/27/profile-your-ember-app-with-ember-renderspeed.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

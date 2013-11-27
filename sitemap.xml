@@ -279,12 +279,18 @@
         <lastmod>2013-11-22T20:46:19+01:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://balinterdi.com/2013/11/27/profile-your-ember-app-with-ember-renderspeed.html
+        </loc>
+        <lastmod>2013-11-27T19:06:03+01:00</lastmod>
+    </url>
+    <url>
         <loc>http://balinterdi.com/blog/archives/</loc>
-        <lastmod>2013-11-22T20:46:19+01:00</lastmod>
+        <lastmod>2013-11-27T19:06:03+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/</loc>
-        <lastmod>2013-11-22T20:46:19+01:00</lastmod>
+        <lastmod>2013-11-27T19:06:03+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/robots.txt</loc>
