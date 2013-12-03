@@ -173,7 +173,7 @@ Ember.js relies on promises heavily in its [routing API][routing-api] and uses
 the route transition does not begin until [the promise is resolved][pause-on-promises].
 
 Leveraging that property of Ember routing I return promises from both the
-`findAll` and `find` methods and then use then from the model hooks of
+`findAll` and `find` methods and then use them from the model hooks of
 the appropriate routes:
 
 ``` javascript
