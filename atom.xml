@@ -4,7 +4,7 @@
   <title><![CDATA[alint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2013-11-27T19:06:04+01:00</updated>
+  <updated>2013-12-03T11:48:31+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,313 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Roll your own Ember.js identity map]]></title>
+    <link href="http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map.html"/>
+    <updated>2013-12-03T11:41:00+01:00</updated>
+    <id>http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map</id>
+    <content type="html"><![CDATA[<p>If you followed along my <a href="http://emberjs.balinterdi.com">Build an Ember app screencast series</a> and maybe
+played around <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/episode-7">with the app</a> on your own, you might have
+noticed a subtle bug in the application.</p>
+
+<p>When you load the application on the <code>/artists/</code> route and then choose one of
+the artists, the artist link gets highlighted correctly:</p>
+
+<p><img src="http://balinterdi.com/images/posts/roll-your-own-store/active-highlight-works.png" alt="Correct active highlight" /></p>
+
+<p>However, when you reload the app on one of these artists routes (e.g
+<code>/artists/pearl-jam</code>), the artist link does not get the active highlight:</p>
+
+<p><img src="http://balinterdi.com/images/posts/roll-your-own-store/active-highlight-does-not-work.png" alt="Incorrect active highlight" /></p>
+
+<h3>Understanding what is wrong</h3>
+
+<p>The first step of any debugging process is to understand where the bug lies. In
+order to do that we have to understand how highlighting a link as active works
+in Ember.js.</p>
+
+<p>I wrote about this topic in detail in <a href="http://blog.safaribooksonline.com/2013/10/29/marking-links-as-active-in-ember-js-markdown/">a guest post</a> so let
+me just quickly summarize it here.</p>
+
+<p>The artist links are rendered using the <code>link-to</code> helper. When active routes
+change (that includes the moment when the app is loaded from scratch) the
+<code>isActive</code> property for each link is recomputed. If it is found to be
+active, the activeClass is added to the view&#8217;s tag and that enables it to be
+displayed differently.</p>
+
+<p>When is a link-to active? When its route name matches one of the current route
+names. This is pretty straightforward for static links but what about dynamic ones
+with context objects? In those cases, all the context objects have to match in
+order for the link to be considered active.</p>
+
+<p>Let&#8217;s see our particular case. We have the following routes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">resource</span><span class="p">(</span><span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">(</span><span class="s1">&#39;songs&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;:slug&#39;</span> <span class="p">});</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And the following template that renders each artist link:</p>
+
+<div><script src='https://gist.github.com/7708568.js'></script>
+<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/7708568&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+
+
+<p>Each link is rendered with an artist object that comes from the model hook of
+the <code>ArtistsRoute</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">artistObjects</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">A</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s1">&#39;http://localhost:9393/artists&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">artists</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">artists</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">artistObjects</span><span class="p">.</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">artistObjects</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So the artist object that serves as the context for the <code>artists.songs</code> link has
+to be the exact same object as the one returned from the model hook of the
+<code>ArtistsSongsRoute</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;http://localhost:9393/artists/&#39;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">artist</span><span class="p">.</span><span class="nx">setProperties</span><span class="p">({</span>
+</span><span class='line'>        <span class="nx">id</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">name</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">songs</span><span class="o">:</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">extractSongs</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">songs</span><span class="p">,</span> <span class="nx">artist</span><span class="p">)</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">artist</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Are they identical? Well, intuitively they are but Ember.js does not care about
+our intuition and so we should not, either. They are different objects since
+both were created by calls to <code>App.Artist.create</code> (<code>App.Artist.createRecord</code>
+calls <code>App.Artist.create</code> under the hood) which returns a new object
+every time. Bummer.</p>
+
+<h3>Replacing intuition with reality</h3>
+
+<p>Don&#8217;t be sad, it&#8217;s not bad.</p>
+
+<p>What we need is to have the same model object to be returned for the same
+identifier. In the matter at hand, given an artist slug (that serves as an
+identifier) we want to get back the same <code>App.Artist</code> object every time we use it.</p>
+
+<p>If you think about it, that&#8217;s what identity maps are for.</p>
+
+<h3>Wiring it up with promises</h3>
+
+<p>The identity map needs to be able to retrieve objects and also store them. Most
+importantly, it has to return the object from its map if it has already created
+it with the passed in id.</p>
+
+<p>I will dump the code below and then explain what it does:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IdentityMap</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">map</span><span class="o">:</span> <span class="p">{},</span>
+</span><span class='line'>  <span class="nx">findAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">identityMap</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">RSVP</span><span class="p">.</span><span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s1">&#39;http://localhost:9393/artists&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">artists</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">artistObjects</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">A</span><span class="p">();</span>
+</span><span class='line'>        <span class="nx">artists</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+</span><span class='line'>          <span class="nx">identityMap</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="nx">artist</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;slug&#39;</span><span class="p">),</span> <span class="nx">artist</span><span class="p">);</span>
+</span><span class='line'>          <span class="nx">artistObjects</span><span class="p">.</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">artist</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>        <span class="nx">resolve</span><span class="p">(</span><span class="nx">artistObjects</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">find</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">identityMap</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">RSVP</span><span class="p">.</span><span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">identityMap</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">identityMap</span><span class="p">.</span><span class="nx">_key</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">id</span><span class="p">)];</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="nx">artist</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">resolve</span><span class="p">(</span><span class="nx">artist</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;http://localhost:9393/artists/&#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+</span><span class='line'>          <span class="nx">artist</span><span class="p">.</span><span class="nx">setProperties</span><span class="p">({</span>
+</span><span class='line'>            <span class="nx">id</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">name</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">songs</span><span class="o">:</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">extractSongs</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">songs</span><span class="p">,</span> <span class="nx">artist</span><span class="p">)</span>
+</span><span class='line'>          <span class="p">});</span>
+</span><span class='line'>          <span class="nx">identityMap</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">artist</span><span class="p">);</span>
+</span><span class='line'>          <span class="nx">resolve</span><span class="p">(</span><span class="nx">artist</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you can see, I used promises for the retrieval methods of the API.</p>
+
+<p>Promises are a huge improvement over callbacks and deserve their own
+<del>article</del> book. They represent eventual values that are going to be
+either resolved (meaning success) or rejected (meaning failure) and can be
+passed around freely.</p>
+
+<p>Ember.js relies on promises heavily in its <a href="http://emberjs.com/guides/routing/asynchronous-routing/#toc_a-word-on-promises">routing API</a> and uses
+<a href="https://github.com/tildeio/rsvp.js">the rsvp promise library</a>. If a promise is returned from any <code>model</code> hook,
+the route transition does not begin until <a href="http://emberjs.com/guides/routing/asynchronous-routing/#toc_the-router-pauses-for-promises">the promise is resolved</a>.</p>
+
+<p>Leveraging that property of Ember routing I return promises from both the
+<code>findAll</code> and <code>find</code> methods and then use then from the model hooks of
+the appropriate routes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">App</span><span class="p">.</span><span class="nx">IdentityMap</span><span class="p">.</span><span class="nx">findAll</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">App</span><span class="p">.</span><span class="nx">IdentityMap</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When I call <code>App.IdentityMap.findAll</code> from the <code>ArtistsRoute</code> the rendering of
+the <code>artists</code> template is stopped until the promise is resolved. That happens
+when the AJAX call has returned with the data for all artists and I call
+<code>resolve(artistObjects)</code>.</p>
+
+<p>Next, the model hook for the <code>ArtistsSongsRoute</code> is evaluated. It returns a
+promise that has to be resolved in order for the template to be rendered.</p>
+
+<p>The artist is found in the identityMap because it has just been stored there
+during the findAll in the previous model hook resolution (see the
+<code>identityMap.store('artist', artist.get('slug'), artist);</code> line). Since it is
+the same object that was used as the context for the artist link, the bug is
+squashed.</p>
+
+<p>The link now gets correctly highlighted as active:</p>
+
+<p><img src="http://balinterdi.com/images/posts/roll-your-own-store/active-highlight-fixed.png" alt="Active highlight fixed" /></p>
+
+<p>Notice we achieved something else, too. Instead of firing two AJAX calls, one
+to fetch all artists and then one to fetch the one serialized in the URL we now
+only have one call. We eliminated the second one by returning the object from
+the identity map.</p>
+
+<p>Furthermore, I also think our code has become better organized. The models for
+our routes have now become one-liners and can quickly be read and understood at
+a casual glance instead of being buried under the minutiae of AJAX calls.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Profile your Ember app with ember-renderspeed]]></title>
@@ -1022,51 +1329,6 @@ citizens, though.</p>
 
 
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[New year, new blog]]></title>
-    <link href="http://balinterdi.com/2010/01/04/new-year-new-blog.html"/>
-    <updated>2010-01-04T00:00:00+01:00</updated>
-    <id>http://balinterdi.com/2010/01/04/new-year-new-blog</id>
-    <content type="html"><![CDATA[<p>I guess it all began with <a href="http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html">this blog post</a>. I saw that there is another way for composing a blog post than typing it into a textarea with a WYSIWYG interface (which is, by the way, never really WYSIWYG). It also seemed a lot cooler, something a &#8220;real hacker&#8221; would prefer hands down. The decision to switch my blog over to a textarea-free motor has been subconsciously made the time I read that post but the implementation needed a year to be realized. I reckon the final push was to see how easy <a href="http://lackac.hu/2009/11/19/blog-migralas.html">the migration of the blog&#8217;s content</a> is.</p>
-
-<h2>The tools</h2>
-
-<p>I decided to use <a href="http://github.com/mojombo/jekyll">Jekyll</a>, a static-site generator since it integrates nicely with Github and has all the features I need. Being a static-site generator I needed a client-side solution to handle comments. I chose <a href="http://disqus.com/">Disqus</a> because that&#8217;s the one I knew and liked but there are <a href="http://intensedebate.com/">alternatives</a>.</p>
-
-<h2>The process</h2>
-
-<h3>Content migration</h3>
-
-<p>I needed continuity and thus migrating the old posts and comments. Fortunately Jekyll includes <a href="http://wiki.github.com/mojombo/jekyll/blog-migrations">migration scripts for several blog motors</a>, among them Wordpress, so that was a piece of cake, everything worked out of the box.</p>
-
-<p>For the comments, I used <a href="http://gist.github.com/261852">a modified version of Lackac&#8217;s script</a>, that he so kindly directed my attention to (thank you, Lackac). Clearly it was more work than migrating the posts but nothing to shy away from. (If you plan to switch from Wordpress to Disqus I believe you&#8217;ll be able to use <a href="http://gist.github.com/261852">the script</a> with a few minor modifications.)</p>
-
-<h3>New design</h3>
-
-<p>For my Wordpress blog, I used a design template that looked ok but was in PHP and was a PITA to modify or to add some styling to. Since I am looking to improve my capabilities as a designer I thought designing my own blog would be a suitable task to get my hands dirty with. I am not concealing the fact that I borrowed ideas from <a href="http://www.briancasel.com/">several</a> <a href="http://tom.preston-werner.com/">blogs</a> I liked but hey, they say it&#8217;s not a shame to copy good ideas so what&#8217;s wrong with that?</p>
-
-<h3>Layout, site feed, etc. with Jekyll</h3>
-
-<p>Have I said I love open source? There is a Jekyll wiki that lists <a href="http://wiki.github.com/mojombo/jekyll/sites">Jekyll sites</a> along with a link to their sources so seeing how to set up my blog with Jekyll was quite straightforward. I guess this was still the most time-consuming part of all but I did not really have to think of anything, the steps are well-defined. (Here is the <a href="http://github.com/balinterdi/balinterdi.github.com">source of my blog</a> if you&#8217;d like to take a glimpse.)</p>
-
-<h3>Buying a Github plan to be able to use a non-github domain</h3>
-
-<p>If you&#8217;d like to host your blog under a custom domain (<a href="http://codigoergosum.com">http://codigoergosum.com</a> instead of <a href="http://balinterdi.github.com">http://balinterdi.github.com</a>) you&#8217;ll need to buy a Github plan. Starting at 7$/month for the Micro plan it&#8217;s not an insurmountable obstacle, in fact it costs less than the Wordpress hosting I am moving away from.</p>
-
-<h2>Changing the name</h2>
-
-<p>Back in the spring of 2008, returning from the <a href="http://www.euruko2008.org/">European Ruby conference</a> (and having finished <a href="http://pragprog.com/titles/tpp/the-pragmatic-programmer">The Pragmatic Programmer</a> on the train) my mind was buzzing with new ideas and I could not wait to set myself on a craftsman&#8217;s journey.</p>
-
-<p>I felt I needed a blog immediately. The hard part of course was coming up with a name. Since I felt it was more important to get something going than to idle on finding the perfect one (I guess we can call this agile, can&#8217;t we? :)), I launched <a href="http://bucionrails.com">http://bucionrails.com</a>. During the almost two years that have passed since that day I have grown somewhat uncomfortable with that name so I decided to change it. I hope you like <a href="http://en.wikipedia.org/wiki/Descartes">the new one</a> :). (I set up a feed redirection with Feedburner to notify you of the feed URL change after 15 days but you could directly subscribe to the <a href="http://feeds.feedburner.com/codigoergosum">new feed now</a>)</p>
-
-<h2>The end result</h2>
-
-<p>It felt appropriate to start the new year with a new blog and -to my surprise- the switch was a lot easier than I had thought. I hope you, the faithful readers of my blog, welcome the change and ameliorate it with your precious comments.</p>
-
-<p>Now I am blogging like a hacker, too!</p>
 ]]></content>
   </entry>
   

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ember.js | alint Erdi]]></title>
+  <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
+  <link href="http://balinterdi.com/"/>
+  <updated>2013-12-03T11:48:31+01:00</updated>
+  <id>http://balinterdi.com/</id>
+  <author>
+    <name><![CDATA[Balint Erdi]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Roll your own Ember.js identity map]]></title>
+    <link href="http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map.html"/>
+    <updated>2013-12-03T11:41:00+01:00</updated>
+    <id>http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map</id>
+    <content type="html"><![CDATA[<p>If you followed along my <a href="http://emberjs.balinterdi.com">Build an Ember app screencast series</a> and maybe
+played around <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/episode-7">with the app</a> on your own, you might have
+noticed a subtle bug in the application.</p>
+
+<p>When you load the application on the <code>/artists/</code> route and then choose one of
+the artists, the artist link gets highlighted correctly:</p>
+
+<p><img src="/images/posts/roll-your-own-store/active-highlight-works.png" alt="Correct active highlight" /></p>
+
+<p>However, when you reload the app on one of these artists routes (e.g
+<code>/artists/pearl-jam</code>), the artist link does not get the active highlight:</p>
+
+<p><img src="/images/posts/roll-your-own-store/active-highlight-does-not-work.png" alt="Incorrect active highlight" /></p>
+
+<h3>Understanding what is wrong</h3>
+
+<p>The first step of any debugging process is to understand where the bug lies. In
+order to do that we have to understand how highlighting a link as active works
+in Ember.js.</p>
+
+<p>I wrote about this topic in detail in <a href="http://blog.safaribooksonline.com/2013/10/29/marking-links-as-active-in-ember-js-markdown/">a guest post</a> so let
+me just quickly summarize it here.</p>
+
+<p>The artist links are rendered using the <code>link-to</code> helper. When active routes
+change (that includes the moment when the app is loaded from scratch) the
+<code>isActive</code> property for each link is recomputed. If it is found to be
+active, the activeClass is added to the view's tag and that enables it to be
+displayed differently.</p>
+
+<p>When is a link-to active? When its route name matches one of the current route
+names. This is pretty straightforward for static links but what about dynamic ones
+with context objects? In those cases, all the context objects have to match in
+order for the link to be considered active.</p>
+
+<p>Let's see our particular case. We have the following routes:</p>
+
+<p>``` javascript
+App.Router.map(function() {
+  this.resource('artists', function() {</p>
+
+<pre><code>this.route('songs', { path: ':slug' });
+</code></pre>
+
+<p>  });
+});
+```</p>
+
+<p>And the following template that renders each artist link:</p>
+
+<p><div><script src='https://gist.github.com/7708568.js'></script>
+<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/7708568&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+</p>
+
+<p>Each link is rendered with an artist object that comes from the model hook of
+the <code>ArtistsRoute</code>:</p>
+
+<p>``` javascript
+App.ArtistsRoute = Ember.Route.extend({
+  model: function() {</p>
+
+<pre><code>var artistObjects = Ember.A();
+Ember.$.getJSON('http://localhost:9393/artists', function(artists) {
+  artists.forEach(function(data) {
+    artistObjects.pushObject(App.Artist.createRecord(data));
+  });
+});
+return artistObjects;
+</code></pre>
+
+<p>  },
+  (...)
+});
+```</p>
+
+<p>So the artist object that serves as the context for the <code>artists.songs</code> link has
+to be the exact same object as the one returned from the model hook of the
+<code>ArtistsSongsRoute</code>:</p>
+
+<p>``` javascript
+App.ArtistsSongsRoute = Ember.Route.extend({
+  model: function(params) {</p>
+
+<pre><code>var artist = App.Artist.create();
+var url = 'http://localhost:9393/artists/' + params.slug;
+Ember.$.getJSON(url, function(data) {
+  artist.setProperties({
+    id: data.id,
+    name: data.name,
+    songs: App.Artist.extractSongs(data.songs, artist)
+  });
+});
+return artist;
+</code></pre>
+
+<p>  },
+  (...)
+});
+```</p>
+
+<p>Are they identical? Well, intuitively they are but Ember.js does not care about
+our intuition and so we should not, either. They are different objects since
+both were created by calls to <code>App.Artist.create</code> (<code>App.Artist.createRecord</code>
+calls <code>App.Artist.create</code> under the hood) which returns a new object
+every time. Bummer.</p>
+
+<h3>Replacing intuition with reality</h3>
+
+<p>Don't be sad, it's not bad.</p>
+
+<p>What we need is to have the same model object to be returned for the same
+identifier. In the matter at hand, given an artist slug (that serves as an
+identifier) we want to get back the same <code>App.Artist</code> object every time we use it.</p>
+
+<p>If you think about it, that's what identity maps are for.</p>
+
+<h3>Wiring it up with promises</h3>
+
+<p>The identity map needs to be able to retrieve objects and also store them. Most
+importantly, it has to return the object from its map if it has already created
+it with the passed in id.</p>
+
+<p>I will dump the code below and then explain what it does:</p>
+
+<p>``` javascript
+App.IdentityMap = {
+  map: {},
+  findAll: function(type) {</p>
+
+<pre><code>var identityMap = this;
+return new Ember.RSVP.Promise(function(resolve, reject) {
+  Ember.$.getJSON('http://localhost:9393/artists', function(artists) {
+    var artistObjects = Ember.A();
+    artists.forEach(function(data) {
+      var artist = App.Artist.createRecord(data);
+      identityMap.store('artist', artist.get('slug'), artist);
+      artistObjects.pushObject(artist);
+    });
+    resolve(artistObjects);
+  });
+});
+</code></pre>
+
+<p>  },</p>
+
+<p>  find: function(type, id) {</p>
+
+<pre><code>var identityMap = this;
+return new Ember.RSVP.Promise(function(resolve, reject) {
+  var artist = identityMap.map[identityMap._key(type, id)];
+  if (artist) {
+    resolve(artist);
+  } else {
+    var url = 'http://localhost:9393/artists/' + id;
+    Ember.$.getJSON(url, function(data) {
+      var artist = App.Artist.create();
+      artist.setProperties({
+        id: data.id,
+        name: data.name,
+        songs: App.Artist.extractSongs(data.songs, artist)
+      });
+      identityMap.store('artist', id, artist);
+      resolve(artist);
+    });
+  }
+});
+</code></pre>
+
+<p>  }
+  (...)
+}
+```</p>
+
+<p>As you can see, I used promises for the retrieval methods of the API.</p>
+
+<p>Promises are a huge improvement over callbacks and deserve their own
+<del>article</del> book. They represent eventual values that are going to be
+either resolved (meaning success) or rejected (meaning failure) and can be
+passed around freely.</p>
+
+<p>Ember.js relies on promises heavily in its <a href="http://emberjs.com/guides/routing/asynchronous-routing/#toc_a-word-on-promises">routing API</a> and uses
+<a href="https://github.com/tildeio/rsvp.js">the rsvp promise library</a>. If a promise is returned from any <code>model</code> hook,
+the route transition does not begin until <a href="http://emberjs.com/guides/routing/asynchronous-routing/#toc_the-router-pauses-for-promises">the promise is resolved</a>.</p>
+
+<p>Leveraging that property of Ember routing I return promises from both the
+<code>findAll</code> and <code>find</code> methods and then use then from the model hooks of
+the appropriate routes:</p>
+
+<p>``` javascript
+App.ArtistsRoute = Ember.Route.extend({
+  model: function() {</p>
+
+<pre><code>return App.IdentityMap.findAll('artist');
+</code></pre>
+
+<p>  },
+  (...)
+});</p>
+
+<p>App.ArtistsSongsRoute = Ember.Route.extend({
+  model: function(params) {</p>
+
+<pre><code>return App.IdentityMap.find('artist', params.slug);
+</code></pre>
+
+<p>  },
+  (...)
+});
+```</p>
+
+<p>When I call <code>App.IdentityMap.findAll</code> from the <code>ArtistsRoute</code> the rendering of
+the <code>artists</code> template is stopped until the promise is resolved. That happens
+when the AJAX call has returned with the data for all artists and I call
+<code>resolve(artistObjects)</code>.</p>
+
+<p>Next, the model hook for the <code>ArtistsSongsRoute</code> is evaluated. It returns a
+promise that has to be resolved in order for the template to be rendered.</p>
+
+<p>The artist is found in the identityMap because it has just been stored there
+during the findAll in the previous model hook resolution (see the
+<code>identityMap.store('artist', artist.get('slug'), artist);</code> line). Since it is
+the same object that was used as the context for the artist link, the bug is
+squashed.</p>
+
+<p>The link now gets correctly highlighted as active:</p>
+
+<p><img src="/images/posts/roll-your-own-store/active-highlight-fixed.png" alt="Active highlight fixed" /></p>
+
+<p>Notice we achieved something else, too. Instead of firing two AJAX calls, one
+to fetch all artists and then one to fetch the one serialized in the URL we now
+only have one call. We eliminated the second one by returning the object from
+the identity map.</p>
+
+<p>Furthermore, I also think our code has become better organized. The models for
+our routes have now become one-liners and can quickly be read and understood at
+a casual glance instead of being buried under the minutiae of AJAX calls.</p>
+]]></content>
+  </entry>
+  
+</feed>
