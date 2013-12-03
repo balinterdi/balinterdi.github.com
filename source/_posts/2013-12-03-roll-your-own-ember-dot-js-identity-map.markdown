@@ -100,7 +100,7 @@ both were created by calls to `App.Artist.create` (`App.Artist.createRecord`
 calls `App.Artist.create` under the hood) which returns a new object
 every time. Bummer.
 
-### Merging intuition with reality
+### Replacing intuition with reality
 
 Don't be sad, it's not bad.
 
@@ -164,7 +164,7 @@ App.IdentityMap = {
 As you can see, I used promises for the retrieval methods of the API.
 
 Promises are a huge improvement over callbacks and deserve their own
-<del>article</del> book. Promises represent eventual values that are going to be
+<del>article</del> book. They represent eventual values that are going to be
 either resolved (meaning success) or rejected (meaning failure) and can be
 passed around freely.
 
@@ -172,8 +172,9 @@ Ember.js relies on promises heavily in its [routing API][routing-api] and uses
 [the rsvp promise library][rsvp]. If a promise is returned from any `model` hook,
 the route transition does not begin until [the promise is resolved][pause-on-promises].
 
-That explains why I return promises from both the `findAll` and `find` methods.
-I expect them to be used from the model hooks of the appropriate routes:
+Leveraging that property of Ember routing I return promises from both the
+`findAll` and `find` methods and then use then from the model hooks of
+the appropriate routes:
 
 ``` javascript
 App.ArtistsRoute = Ember.Route.extend({
@@ -192,7 +193,7 @@ App.ArtistsSongsRoute = Ember.Route.extend({
 ```
 
 When I call `App.IdentityMap.findAll` from the `ArtistsRoute` the rendering of
-the `artists` template is held up until the promise is resolved. That happens
+the `artists` template is stopped until the promise is resolved. That happens
 when the AJAX call has returned with the data for all artists and I call
 `resolve(artistObjects)`.
 
