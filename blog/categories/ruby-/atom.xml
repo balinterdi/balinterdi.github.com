@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: ruby, | alint Erdi]]></title>
+  <title><![CDATA[Category: ruby, | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ruby-/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2013-12-03T11:48:31+01:00</updated>
+  <updated>2013-12-03T11:54:11+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
