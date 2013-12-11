@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2013-12-03T11:54:11+01:00</updated>
+  <updated>2013-12-11T08:57:59+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -202,7 +202,7 @@ passed around freely.</p>
 the route transition does not begin until <a href="http://emberjs.com/guides/routing/asynchronous-routing/#toc_the-router-pauses-for-promises">the promise is resolved</a>.</p>
 
 <p>Leveraging that property of Ember routing I return promises from both the
-<code>findAll</code> and <code>find</code> methods and then use then from the model hooks of
+<code>findAll</code> and <code>find</code> methods and then use them from the model hooks of
 the appropriate routes:</p>
 
 <p>``` javascript
