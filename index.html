@@ -9,8 +9,8 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="Ember.js is an outstanding client-side framework for building single-page
-applications. To make your application truly come to life, Firebase, being &hellip;">
+  <meta name="description" content="By default, Ember.js uses the hashchange event in the browser to change URLs.
+This is the most widely supported way but it feels like a hack and &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -76,6 +76,116 @@ applications. To make your application truly come to life, Firebase, being &hell
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2013/12/17/change-the-url-type-of-your-ember-app.html">Changing the URL Type of Your Ember.js App</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-17T09:32:00+01:00" pubdate data-updated="true">Dec 17<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>By default, Ember.js uses the hashchange event in the browser to change URLs.
+This is the most widely supported way but it feels like a hack and there is a
+better way, introduced in HTML5: <a href="http://diveintohtml5.info/history.html">the History API</a>.</p>
+
+<p>Bear in mind that the <a href="http://caniuse.com/history">History API has a lower browser support
+rate</a> than <a href="http://caniuse.com/hashchange">the hashchange
+event</a> does (~70% vs.  89%), so there is a tradeoff
+involved that you should decide to make or not to make.</p>
+
+<p>Ember.js makes it really easy to change the URL type. All you have to do is
+add the following lines to your client app:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">reopen</span><span class="p">({</span>
+</span><span class='line'> <span class="nx">location</span><span class="o">:</span> <span class="s1">&#39;history&#39;</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Seems too good to be true (that is just the way Ember is), but provided you did
+not assemble any routes manually and only used Ember&#8217;s tools to transition
+between routes (e.g link-to, transitionTo, etc.), that is all the client-side
+code changes you had to make.</p>
+
+<p>The server side needs to be adjusted, too, though, since the server now gets
+sent the client-side routes, too. How to do this can vary depending on the
+application server you use.</p>
+
+<p>In the case of the Rock &amp; Roll app, here is what <code>config.ru</code> looks like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">run</span> <span class="no">Proc</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
+</span><span class='line'>  <span class="c1"># Extract the requested path from the request</span>
+</span><span class='line'>  <span class="n">path</span> <span class="o">=</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Utils</span><span class="o">.</span><span class="n">unescape</span><span class="p">(</span><span class="n">env</span><span class="o">[</span><span class="s1">&#39;PATH_INFO&#39;</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">start_with?</span><span class="p">(</span><span class="s2">&quot;/artists&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="n">index_file</span> <span class="o">=</span> <span class="vi">@root</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">/index.html&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="no">File</span><span class="o">.</span><span class="n">exists?</span><span class="p">(</span><span class="n">index_file</span><span class="p">)</span>
+</span><span class='line'>    <span class="c1"># Return the index</span>
+</span><span class='line'>    <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/html&#39;</span><span class="p">},</span> <span class="o">[</span><span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">index_file</span><span class="p">)</span><span class="o">]]</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>    <span class="c1"># Pass the request to the directory app</span>
+</span><span class='line'>    <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Directory</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="vi">@root</span><span class="p">)</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I only had to add the <code>path.start_with?</code> condition to make sure the server
+serves the Ember application on that route. It is not an ideal solution because
+anytime you add a top-level route to the Ember app, you would also have to
+modify the server config but this is the bare minimum that got the job done.</p>
+
+<p>Hooray for clean URLs:
+<img src="/images/posts/change-the-url-type/rock-and-roll-history-api-urls.png" alt="History API
+URLs" /></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1213,86 +1323,6 @@ explicitly set the background)</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/11/30/an-annotated-assortment-on-mockist-testing.html">An Annotated Assortment on Mockist Testing</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-11-30T21:30:00+01:00" pubdate data-updated="true">Nov 30<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Most of us read blog posts every day. We read them, take an idea out of
-them and then, most of the time, forget about them. Some of them are stashed
-away in the back of our minds, ready to jump out if we face a related
-problem.</p>
-
-<p>A precious few of them, however, we keep thinking back to without a specific
-reason.</p>
-
-<p>I&#8217;ve bitten by the &#8220;mockist&#8221; testing bug when I read <a href="http://jamesgolick.com/2010/3/14/crazy-heretical-and-awesome-the-way-i-write-rails-apps.html">this one</a> a while ago. It expresses a contrarian opinion
-about how to test Rails applications which struck me as odd at the time.
-That&#8217;s probably the reason I read it several times.</p>
-
-<p>A few weeks ago I watched Gregory Moeck&#8217;s <a href="http://confreaks.net/videos/659-rubyconf2011-why-you-don-t-get-mock-objects">Why You Don&#8217;t Get Mock Objects</a> and I was stung by the same bug only more deeply,
-this time.</p>
-
-<p>Using that video as a starting point I then roamed Gregory&#8217;s blog for
-more and felt like I was beginning to grasp it. Now, obviously, I&#8217;m at the
-beginning of this journey and still have a lot of teeth-cutting to do.
-Nevertheless, I want to share with you the gems I&#8217;ve found so far.</p>
-
-<p>Gregory&#8217;s blog has a very good primer on the difference between stubs
-and mocks: <a href="http://gmoeck.github.com/2011/10/26/stubbing-is-not-enough">&#8220;Stubbing is Not Enough&#8221;</a>. I&#8217;d even go
-as far as to claim that it explains its subject better than Martin
-Fowler&#8217;s classic <a href="http://martinfowler.com/articles/mocksArentStubs.html">&#8220;Stubs Are Not Mocks&#8221;</a>, although that
-latter goes into more detail and is a definite must-read, too.</p>
-
-<p>James Golick has another great piece that drives home the point better
-than his first post I mentioned: <a href="http://jamesgolick.com/2010/3/10/on-mocks-and-mockist-testing.html">&#8220;On Mocks and Mockist Testing&#8221;</a>.</p>
-
-<p>Along comes Avdi Grimm with his strict sounding <a href="http://avdi.org/devblog/2011/07/05/demeter-its-not-just-a-good-idea-its-the-law/">&#8220;Demeter: It’s not just a good idea. It’s the law.&#8221;</a>
-, with a very interesting discussion in the comments. The same gentleman
-wrote <a href="http://avdi.org/devblog/2011/09/06/making-a-mockery-of-tdd/">&#8220;Making a Mockery of TDD&#8221;</a> in which he
-touches on the concept of using mocks as a design tool.</p>
-
-<p>Nick Kallen&#8217;s <a href="http://magicscalingsprinkles.wordpress.com/2010/02/08/why-i-love-everything-you-hate-about-java/">&#8220;Why I love everything you hate about Java&#8221;</a> is clearly provocative
-and definitely worth to contemplate on. It is also the only one of the bunch that
-does not use Ruby (but Scala) for the code examples.</p>
-
-<p>Finally it seems like the fountainhead in the matter is the <a href="growing">&#8220;Growing Object-Oriented Software, Guided by Tests&#8221;</a>
-book by Steve Freeman and Nat Pryce. I&#8217;ve only gotten until putting it
-on my reading list so please chime in if you did read it.</p>
-
-<p>Please, also pipe in if there are any materials in the subject you&#8217;d
-recommend. It would also be cool to see open source projects that extensively use mocks for testing, the only
-one I found so far is <a href="https://github.com/jamesgolick/friendly">friendly</a>.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1315,6 +1345,10 @@ one I found so far is <a href="https://github.com/jamesgolick/friendly">friendly
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/12/17/change-the-url-type-of-your-ember-app.html">Changing the URL type of your Ember.js app</a>
+      </li>
+    
+      <li class="post">
         <a href="/2013/12/11/build-an-ember-dot-js-app-with-firebase.html">Build an Ember.js app with Firebase</a>
       </li>
     
@@ -1328,10 +1362,6 @@ one I found so far is <a href="https://github.com/jamesgolick/friendly">friendly
     
       <li class="post">
         <a href="/2013/08/23/find-and-replace-in-all-files.html">Find and Replace in all files</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/06/19/the-appeal-of-one-paradigm-languages.html">The appeal of one paradigm languages</a>
       </li>
     
   </ul>
