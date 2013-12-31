@@ -9,7 +9,7 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="The title probably tells it all, below is the list of technical books I read in 2009. I am -unfortunately :)- not getting paid for any recommendation &hellip;">
+  <meta name="description" content="As some of you might know, I am running a few twitter channels that use my brainchild, twuckoo, to periodically send a tweet. In two of these cases &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +75,66 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2010/01/26/twuckoo-0.3.5-with-email-notification.html">Twuckoo 0.3.5 - With Email Notification</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-01-26T00:00:00+01:00" pubdate data-updated="true">Jan 26<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>As some of you might know, I am running a <a href="http://twitter.com/pragthinklearn">few</a> <a href="http://twitter.com/daily_oblique">twitter</a> <a href="http://twitter.com/wikipedia_tfa">channels</a> that use my brainchild, <a href="http://github.com/balinterdi/twuckoo">twuckoo</a>, to periodically send a tweet.</p>
+
+<p>In <a href="http://twitter.com/pragthinklearn">two</a> <a href="http://twitter.com/daily_oblique">of</a> these cases the program takes its next message from a file and takes care not to tweet the same thing twice by keeping track of the messages already sent. This means, however, that the pool of sendable messages are depleted after a while and the script simply does not send any more tweets, the channel becomes dead.</p>
+
+<p>This has happened a couple of times in the past and I only realized it with a few days of delay which is kind of awkward (if you were subscribed to one of these accounts, I apologize). So I decided to have twuckoo send a notification in this case so I can go in and refill its queue. Hence twuckoo version 0.3.5 was born which sends an email to the address set in the configuration file when it failed to send a message.</p>
+
+<p>To install it, add <a href="http://gemcutter.org">gemcutter</a> to the list of gem sources if you haven&#8217;t already:</p>
+
+<figure class='code'><figcaption><span>install.sh </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>gem <span class="nb">source</span> --add http://gemcutter.org
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And install twuckoo:</p>
+
+<figure class='code'><figcaption><span>install.sh </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>gem install twuckoo
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You might be thinking that it would be more straightforward to have the program replenish itself so that no intervention from the part of the developer is needed. And you would be right, this could be a task for the next version. I still think it is a good idea to send a notification so the (wo)man in charge knows it happened.</p>
+
+<p>So go ahead, have a look at <a href="http://github.com/balinterdi/twuckoo">the README</a>, set up your own twitter channel and don&#8217;t fret about when the queue would run dry. You&#8217;ll be notified.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -633,48 +693,6 @@ apt-get install xvfb</code></pre>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/07/10/the-hashtag-hrt-retweet-bot-gemified.html">The Hashtag (HRT) Retweet Bot Gemified</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-07-10T00:00:00+02:00" pubdate data-updated="true">Jul 10<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>A very simple twitter bot that retweeted everything that was tagged by a certain tag was put together for Scotland on Rails &#8216;09. Then, <a href="http://www.jaimeiniesta.com/">Jaime Iniesta</a> adapted it for Euruko &#8216;09. I then forked from his repository, made a few simplifications and minor improvements and DRY-d its configuration.</p>
-
-<p>Maybe most importantly I then turned it into [a gem][hashtag_retweet_home] so that configuration files (including the bot&#8217;s which has the credentials for the twitter account) do not have to be included in the repository.</p>
-
-<p>I also set up <a href="http://twitter.com/budapestrb">a twitter account for the budapest.rb</a> group where an instance of the HRT bot will post any tweets that have been tagged with #budapestrb. So, my fellow budapest.rb programmers, if you have anything to say about the budapest.rb, just make sure you include the #budapestrb tag in your tweet and watch the HRT bot repeat it.</p>
-
-<p>To launch your own hashtag retweet bot, just follow the instructions in <a href="http://github.com/balinterdi/hashtag_retweet_bot">the README</a>.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -699,6 +717,10 @@ apt-get install xvfb</code></pre>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html">At Your Service: Publicly Available API for the Rock and Roll Ember.js App</a>
+      </li>
+    
+      <li class="post">
         <a href="/2013/12/17/change-the-url-type-of-your-ember-app.html">Changing the URL type of your Ember.js app</a>
       </li>
     
@@ -712,10 +734,6 @@ apt-get install xvfb</code></pre>
     
       <li class="post">
         <a href="/2013/11/27/profile-your-ember-app-with-ember-renderspeed.html">Profile your Ember app with ember-renderspeed</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/08/23/find-and-replace-in-all-files.html">Find and Replace in all files</a>
       </li>
     
   </ul>

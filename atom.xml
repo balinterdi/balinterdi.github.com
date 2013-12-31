@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2013-12-17T10:11:16+01:00</updated>
+  <updated>2013-12-31T10:24:25+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,48 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[At Your Service: Publicly Available API for the Rock and Roll Ember.js App]]></title>
+    <link href="http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html"/>
+    <updated>2013-12-31T09:38:00+01:00</updated>
+    <id>http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app</id>
+    <content type="html"><![CDATA[<p>So far, if you wanted to code along <a href="http://emberjs.balinterdi.com">my developing an example Ember.js
+application</a>, Rock &amp; Roll, you had to run the server side
+component. That required ruby to be installed on your machine, and you had to
+<a href="https://github.com/balinterdi/rock-and-roll-api">clone the repository</a>, and start the server each time you wanted to
+make some progress with the application.</p>
+
+<p>I realized that might be cumbersome and thus I made the server publicly
+available at <a href="http://rock-and-roll-api.herokuapp.com/">http://rock-and-roll-api.herokuapp.com</a>.</p>
+
+<p>I have also updated <a href="https://github.com/balinterdi/rock-and-roll/commit/remote-api">the client-side component to connect to that remote
+api.</a>. All backend requests now go through App.Adapter.ajax which
+basically just delegates to <code>Ember.$.ajax</code> prefixing urls with the backend host:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">ajax</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;http://rock-and-roll-api.herokuapp.com&#39;</span> <span class="o">+</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you work with an earlier version of the client app, you might have to
+rewrite urls in multiple places but I figured it is still less work than running
+the server yourself.</p>
+
+<p>I hope that facilitates your working along with the Rock &amp; Roll app and makes
+your journey to Ember.js proficiency smoother. If you want to see the
+screencast series in which I develop said application, you can <a href="http://emberjs.balinterdi.com">sign up to my
+mailing list</a> and have each episode auto-delivered to your inbox.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Changing the URL type of your Ember.js app]]></title>
@@ -1520,39 +1562,6 @@ citizens, though.</p>
 <p>My recent enthusiasm comes from the fact that I had to browse through some of the source code of <a href="http://script.aculo.us/">scriptaculous</a> and I really liked what I saw. The enthusiasm <a href="http://www.codigoergosum.com/2008/10/09/javascript-method-chain.html">is not totally new</a> but looking at that source code demolished the last shreds of my Javascript skepticism, so to speak. So a year later than <a href="http://www.rubyrailways.com/learn-at-least-one-new-language-every-year/">Peter Szinek</a> I am hopping on the same train: Javascript, here I come! If you have read a good book that enhanced your Javascript foo, please tell me about it in the comments.</p>
 
 <p>And you? Have you already chosen your language for 2010?</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Twuckoo 0.3.5 - With email notification]]></title>
-    <link href="http://balinterdi.com/2010/01/26/twuckoo-0.3.5-with-email-notification.html"/>
-    <updated>2010-01-26T00:00:00+01:00</updated>
-    <id>http://balinterdi.com/2010/01/26/twuckoo-0.3.5-with-email-notification</id>
-    <content type="html"><![CDATA[<p>As some of you might know, I am running a <a href="http://twitter.com/pragthinklearn">few</a> <a href="http://twitter.com/daily_oblique">twitter</a> <a href="http://twitter.com/wikipedia_tfa">channels</a> that use my brainchild, <a href="http://github.com/balinterdi/twuckoo">twuckoo</a>, to periodically send a tweet.</p>
-
-<p>In <a href="http://twitter.com/pragthinklearn">two</a> <a href="http://twitter.com/daily_oblique">of</a> these cases the program takes its next message from a file and takes care not to tweet the same thing twice by keeping track of the messages already sent. This means, however, that the pool of sendable messages are depleted after a while and the script simply does not send any more tweets, the channel becomes dead.</p>
-
-<p>This has happened a couple of times in the past and I only realized it with a few days of delay which is kind of awkward (if you were subscribed to one of these accounts, I apologize). So I decided to have twuckoo send a notification in this case so I can go in and refill its queue. Hence twuckoo version 0.3.5 was born which sends an email to the address set in the configuration file when it failed to send a message.</p>
-
-<p>To install it, add <a href="http://gemcutter.org">gemcutter</a> to the list of gem sources if you haven&#8217;t already:</p>
-
-<figure class='code'><figcaption><span>install.sh </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>gem <span class="nb">source</span> --add http://gemcutter.org
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And install twuckoo:</p>
-
-<figure class='code'><figcaption><span>install.sh </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>gem install twuckoo
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You might be thinking that it would be more straightforward to have the program replenish itself so that no intervention from the part of the developer is needed. And you would be right, this could be a task for the next version. I still think it is a good idea to send a notification so the (wo)man in charge knows it happened.</p>
-
-<p>So go ahead, have a look at <a href="http://github.com/balinterdi/twuckoo">the README</a>, set up your own twitter channel and don&#8217;t fret about when the queue would run dry. You&#8217;ll be notified.</p>
 ]]></content>
   </entry>
   

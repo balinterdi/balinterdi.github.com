@@ -9,7 +9,7 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="I needed to install rmagick for a Rails project. I had some amount of trouble along the way but finally succeeded so I am sharing my experience in &hellip;">
+  <meta name="description" content="Git is extremely powerful. I knew that much and that I would really like to thoroughly master it because it is so cool. However, it is quite &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +75,46 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2008/12/04/a-git-guide-that-emboldens.html">A Git Guide That Emboldens</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-12-04T00:00:00+01:00" pubdate data-updated="true">Dec 4<span>th</span>, 2008</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Git is extremely powerful. I knew that much and that I would really like to thoroughly master it because it is so cool. However, it is quite sophisticated (not to mention that some commands, like checkout and revert designate totally different actions than in Subversion where I am coming from) and like with most things one learns by doing.</p>
+
+<p>One key to doing is the ability to play around with a git repository. The possibility to have an account on <a href="http://github.com">github.com</a> and to contribute to a myriad of open source projects there removed that obstacle. The other ingredient to be a master chef is a good guide in the subject. One needs some initial self-confidence to know what he is doing lest he screws up his own work. (Note: that is very hard with git but I remember the panic when I did &#8220;git checkout &lt;earlier commit&gt;&#8221; and I did not find my earlier HEAD with &#8220;git log&#8221; )</p>
+
+<p>We may be different but I have not read a really insightful guide albeit I have gone through a dozen of them. Some are too vague or concentrate on one specific task (e.g how to create a repo on github and push to it) and some present too many options and go into details that intimidate the novice. (like the official man pages). Ladies and gentlemen, I have found it. It&#8217;s the <a href="http://www.kernel.org/pub/software/scm/git/docs/user-manual.html">Git User&#8217;s Manual</a> and it strikes the perfect balance between verbosity and shallowness. It gives examples which nicely clarify the concepts. It won&#8217;t make you an expert right away, of course, but it provides you with the insight and initial courage to embark on the journey.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -713,56 +753,6 @@ javascript:for (var i=0; i < 10; i++) goPage('next');</pre>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2008/07/17/can-less-work-be-more.html">Can Less Work Be More?</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-07-17T00:00:00+02:00" pubdate data-updated="true">Jul 17<span>th</span>, 2008</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I saw the <a href="http://onrails.org/articles/2008/05/31/railsconf-2008-david-heinemeier-hanssons-keynote-video">keynote speech David Heinemeier Hansson</a> gave at this year&#8217;s Railsconf in Portland and I liked it a lot. I really like the idea of following the pattern of &#8220;Less software is more&#8221; to the work we do each day. In his speech he says developers should spend one day a week discovering a subject of interest, writing code for a pet project, contributing to an open source project, etc. Basically anything but doing the work they do on the other four days of the week. This &#8220;day-off&#8221; raises the developer&#8217;s productivity so it is a net gain for the main work he is involved with, too.</p>
-
-<p>I tend to agree. However, in this post I want to elaborate rather what &#8216;be more&#8217; means in both the &#8216;less software is more&#8217; and the &#8216;less work is more&#8217; phrases. Less software means less lines of code to achieve the same tasks. Less work means less time spent working producing code to achieve the same tasks. There are two underlying concepts here that make this possible: abstraction and productivity. More precisely: the  ideas in your (hacker) head and the tools that allow you to implement these ideas in abstract, high-level  terms and thus raise your productivity.</p>
-
-<p>When you write a program, there are basically two phases of producing code that solves a problem: first, you think about how to solve it and second, you convert the ideas into code. There is always a gap between the ideas and the code you write and that the computer comprehends. The more high-level the language is, the smaller the gap that needs to be bridged. But there is a backward effect, too. Usually when you are in the first phase you already think in terms of the second. The expressive tools the language provides have a strong effect on how you think of the problem (generally you know what language your solution will be implemented in). And that is bad because it dumbs down your thinking before you get to the point where you should consider the possibilities of the language.</p>
-
-<p>I tend to think less of the language specifics in the first phase if I know the language provides all the high-level tools and provides them neatly. &#8220;For&#8221; loops skews your thinking more than -all kinds of- iterators. If I know functions are first-class objects and metaprogramming is available I worry less about how (or whether!) my abstract solution, only existing on the plane of ideas can be converted to functioning code.</p>
-
-<p>So, back to where I started, your choice of the language counts and it counts a lot. It can help you be more productive in several ways, not just the fewer-lines-of-code-to-do-the-same-thing way but also the minimizing-the-skewing-of-your-thinking way. However, a high-level language is no guarantee to achieve that. One can churn out C-like code in Ruby, it is just easier to realize you are not using the full arsenal. And that&#8217;s where it really kicks in: if you know you can basically do anything painlessly you will dare to think big, your ideas can get off the ground. Consequently they will be abstract enough for you to be more productive.</p>
-
-<p>So armed with daringly abstract ideas and tools that make it possible to put them into code, one sets out to conquer the world. The limit to the amount of code generated is the number of hours one can spend each day programming. After about ~8 hours of work is it worth to put in some more time to produce more code? <a href="http://www.extremeprogramming.org/rules/overtime.html">Probably not</a>. Our thinking breaks down pretty fast after that. I have experienced on several occasions that I could do in 10 minutes the next morning what I could not do in 2 hours the evening before. This is not about dropping the keyboard when the clock strikes 5pm, of course. It is about <a href="http://www.extremeprogramming.org/rules/velocity.html">planning for measurable progress without too much overtime</a>.</p>
-
-<p>I think David is right when asserting that replenishing your mind so it can come up with constructive ideas is equally important. I am sure there are numerous ways to attain that. Some of them are constructive activities in themselves (David&#8217;s example was playing the banjo), some may just give you peace (e.g friends, family) and some may simply drift your thoughts away from the very problem you are working on (e.g playing soccer) and help you that way.</p>
-
-<p>So what do you think about all that? Can low-level languages still have advantages over high-level ones in certain situations? Do you think the language your are programming in can have an effect on your problem-solving thoughts? What activities switch you off in the most &#8220;productive&#8221; way? What other factors have an effect on your work? (of course your working environment is very relevant). Are <a href="http://www.boston.com/bostonglobe/ideas/naps/">naps </a>worth it? When would the official Railsconf&#8217;08 videos be online? :)</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/7/">&larr; Older</a>
@@ -787,6 +777,10 @@ javascript:for (var i=0; i < 10; i++) goPage('next');</pre>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html">At Your Service: Publicly Available API for the Rock and Roll Ember.js App</a>
+      </li>
+    
+      <li class="post">
         <a href="/2013/12/17/change-the-url-type-of-your-ember-app.html">Changing the URL type of your Ember.js app</a>
       </li>
     
@@ -800,10 +794,6 @@ javascript:for (var i=0; i < 10; i++) goPage('next');</pre>
     
       <li class="post">
         <a href="/2013/11/27/profile-your-ember-app-with-ember-renderspeed.html">Profile your Ember app with ember-renderspeed</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/08/23/find-and-replace-in-all-files.html">Find and Replace in all files</a>
       </li>
     
   </ul>

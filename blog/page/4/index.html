@@ -9,7 +9,7 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="Some of you may be aware of my grandiose plans with my twitter mini-framework named twuckoo. For my part I am constantly thinking about -hopefully &hellip;">
+  <meta name="description" content="A very simple twitter bot that retweeted everything that was tagged by a certain tag was put together for Scotland on Rails &#8216;09. Then, Jaime &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +75,48 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/07/10/the-hashtag-hrt-retweet-bot-gemified.html">The Hashtag (HRT) Retweet Bot Gemified</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-07-10T00:00:00+02:00" pubdate data-updated="true">Jul 10<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A very simple twitter bot that retweeted everything that was tagged by a certain tag was put together for Scotland on Rails &#8216;09. Then, <a href="http://www.jaimeiniesta.com/">Jaime Iniesta</a> adapted it for Euruko &#8216;09. I then forked from his repository, made a few simplifications and minor improvements and DRY-d its configuration.</p>
+
+<p>Maybe most importantly I then turned it into [a gem][hashtag_retweet_home] so that configuration files (including the bot&#8217;s which has the credentials for the twitter account) do not have to be included in the repository.</p>
+
+<p>I also set up <a href="http://twitter.com/budapestrb">a twitter account for the budapest.rb</a> group where an instance of the HRT bot will post any tweets that have been tagged with #budapestrb. So, my fellow budapest.rb programmers, if you have anything to say about the budapest.rb, just make sure you include the #budapestrb tag in your tweet and watch the HRT bot repeat it.</p>
+
+<p>To launch your own hashtag retweet bot, just follow the instructions in <a href="http://github.com/balinterdi/hashtag_retweet_bot">the README</a>.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -647,50 +689,6 @@ But you -or at least I- could not do it for the last element (there is no User.l
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/02/11/deep_test-to-become-tdd-more-easily.html">Deep_test to Become TDD More Easily</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-02-11T00:00:00+01:00" pubdate data-updated="true">Feb 11<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I am all for <acronym title="Test Driven Development">TDD</acronym>, really. I did not even waver when recently I have been working on a medium-sized Rails project and running the tests after each change took about 60-80 seconds. 60 seconds is still a lot, though, especially if you go through these cycles ~50 times a day (a wild guess). I also believe in very short test-implementation cycles to stay focused so I was starting to think about ways to keep that time down.</p>
-
-<p>Autotest, part of the <a href="http://rubyforge.org/projects/zentest/">Zentest</a> toolbox is a very good choice. It basically runs all the tests automatically after something has changed in the code and more importantly it only runs the tests it deems affected by the latest change. This helped to reduce the amount of time by reducing the number of tests that were run in each loop.</p>
-
-<p>Another I think less well-known option is <a href="http://www.somethingnimble.com/bliki/deep-test">deep_test</a> which helps to reduce testing time by increasing computational power. More precisely, it runs the tests through worker threads so you can either benefit from using deep_test if you set it up for a computer network (individual computers take from a pool of tests and then send in the results) or if you have a multi-core computer. Since many of us do nowadays, that stepped up as a viable option.</p>
-
-<p>It was quite easy to set up and the results it brought were quite remarkable. It reduced the running time of my tests by ~40% (based on a completely unscientific benchmark). One thing I experienced is that it did not really play out well with sqlite although I have not spent a lot of time trying to make it work there. I just switched to mysql and it worked seamlessly. So yeah, the next logical step was to get the better of both worlds: run only the tests that need to be run and run them on as many cores as possible. I will talk about that in a later post.</p>
-
-<p>I would very much like to hear your experiences and solutions to make TDD a breeze or just plain bearable. I cannot imagine doing real TDD if running tests takes more than a certain time limit, around maybe 90 seconds. Not only you lose a lot of time waiting for the tests to finish, more importantly you fall out of the falling test-implementation cycle, you lose focus, your mind drifts away and then the whole thing probably just does not work.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/5/">&larr; Older</a>
@@ -715,6 +713,10 @@ But you -or at least I- could not do it for the last element (there is no User.l
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html">At Your Service: Publicly Available API for the Rock and Roll Ember.js App</a>
+      </li>
+    
+      <li class="post">
         <a href="/2013/12/17/change-the-url-type-of-your-ember-app.html">Changing the URL type of your Ember.js app</a>
       </li>
     
@@ -728,10 +730,6 @@ But you -or at least I- could not do it for the last element (there is no User.l
     
       <li class="post">
         <a href="/2013/11/27/profile-your-ember-app-with-ember-renderspeed.html">Profile your Ember app with ember-renderspeed</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/08/23/find-and-replace-in-all-files.html">Find and Replace in all files</a>
       </li>
     
   </ul>

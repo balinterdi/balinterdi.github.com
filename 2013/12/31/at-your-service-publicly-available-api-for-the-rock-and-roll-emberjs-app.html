@@ -5,11 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>RubyGems under the hood: Introduction - Balint Erdi</title>
+  <title>At Your Service: Publicly Available API for the Rock and Roll Ember.js App - Balint Erdi</title>
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="I am not sure about you, but one thing I keep bumping into while developing ruby applications is rubygem version conflicts. If you have ever come &hellip;">
+  <meta name="description" content="So far, if you wanted to code along my developing an example Ember.js
+application, Rock &amp; Roll, you had to run the server side
+component. That &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2009/10/20/rubygems-under-the-hood-introduction.html">
+  <link rel="canonical" href="http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -78,7 +80,7 @@
   
   <header>
     
-      <h1 class="entry-title">RubyGems Under the Hood: Introduction</h1>
+      <h1 class="entry-title">At Your Service: Publicly Available API for the Rock and Roll Ember.js App</h1>
     
     
       <p class="meta">
@@ -94,29 +96,47 @@
   
 
 
-<time datetime="2009-10-20T00:00:00+02:00" pubdate data-updated="true">Oct 20<span>th</span>, 2009</time>
+<time datetime="2013-12-31T09:38:00+01:00" pubdate data-updated="true">Dec 31<span>st</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>I am not sure about you, but one thing I keep bumping into while developing ruby applications is rubygem version conflicts. If you have ever come across &#8220;can&#8217;t activate activesupport (= 2.3.4, runtime) for [], already activated activesupport-2.3.3 for []&#8221; type of errors, you might be sympathetic to the cause.</p>
+<div class="entry-content"><p>So far, if you wanted to code along <a href="http://emberjs.balinterdi.com">my developing an example Ember.js
+application</a>, Rock &amp; Roll, you had to run the server side
+component. That required ruby to be installed on your machine, and you had to
+<a href="https://github.com/balinterdi/rock-and-roll-api">clone the repository</a>, and start the server each time you wanted to
+make some progress with the application.</p>
 
-<p>Since <a href="http://rubygems.org/">rubygems</a> was and is being written by some <a href="http://chadfowler.com">excellent</a> <a href="http://richkilmer.blogs.com/">Ruby</a> <a href="http://onestepback.org/">minds</a> I knew the fault probably lies with me and not with the tool. Being a <a href="http://manifesto.softwarecraftsmanship.org/">motivated and proud craftsman</a> I felt like I needed to know my tools and rubygems is probably the number one tool most of us Ruby developers use on a daily basis.</p>
+<p>I realized that might be cumbersome and thus I made the server publicly
+available at <a href="http://rock-and-roll-api.herokuapp.com/">http://rock-and-roll-api.herokuapp.com</a>.</p>
 
-<p>I intend to write a mini-series of Rubygems posts. A post will be added to the series when I explore some murky corner of rubygems inner mechanics. Some of the time this will come from a particular problem I come across while coding while on other occasions I might just look into the source code and try to understand what a particular piece of code does.</p>
+<p>I have also updated <a href="https://github.com/balinterdi/rock-and-roll/commit/remote-api">the client-side component to connect to that remote
+api.</a>. All backend requests now go through App.Adapter.ajax which
+basically just delegates to <code>Ember.$.ajax</code> prefixing urls with the backend host:</p>
 
-<p>Now, I realized that when I read on a blog: &#8220;I will go into more detail about X in a forthcoming post&#8221;, it is the surest sign that you will never read about X again. At least not on that very blog. And I am not saying this in a mean way, I think it is very natural for our plans to change (&#8220;evolve&#8221; may sound better) even on the short term. So I am aiming low and hoping to give you more than you expected. (Notice I wrote &#8220;mini-series&#8221; which may just mean a couple of posts.)</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">ajax</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;http://rock-and-roll-api.herokuapp.com&#39;</span> <span class="o">+</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<h2>Do not set your expectations high</h2>
 
+<p>If you work with an earlier version of the client app, you might have to
+rewrite urls in multiple places but I figured it is still less work than running
+the server yourself.</p>
 
-<p>I am absolutely not a Rubygems expert so please do not be fooled by the &#8220;under the hood&#8221; title. This will not be commensurate to <a href="http://weblog.jamisbuck.org/2006/10/2/under-the-hood-rails-routing-dsl">Jamis Buck&#8217;s series on Rails routing</a>. I do not -yet?- have a deep insight and I am not even a contributor to Rubygems.</p>
-
-<p>The forthcoming :) series is just a humble attempt to gain an understanding of a very important part of the Ruby arsenal. I hope to understand it better by explaining to you how it works and I hope you will understand it better by reading my explanation. And last, but not least, I hope we&#8217;ll both spend less time debugging those tricky issues.</p>
-
-<p>Having said that, I encourage you to participate in the series. Tell me about a particular problem you had with Rubygems. Correct me if I am wrong. Point me to an article where all this is already explained, and much better. Give feedback so this might evolve to be a discussion rather than an academic lecture. Thank you.</p>
+<p>I hope that facilitates your working along with the Rock &amp; Roll app and makes
+your journey to Ember.js proficiency smoother. If you want to see the
+screencast series in which I develop said application, you can <a href="http://emberjs.balinterdi.com">sign up to my
+mailing list</a> and have each episode auto-delivered to your inbox.</p>
 </div>
 
 
@@ -139,15 +159,21 @@
   
 
 
-<time datetime="2009-10-20T00:00:00+02:00" pubdate data-updated="true">Oct 20<span>th</span>, 2009</time>
+<time datetime="2013-12-31T09:38:00+01:00" pubdate data-updated="true">Dec 31<span>st</span>, 2013</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/emberjs/'>emberjs</a>
+  
+</span>
 
 
     </p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2009/10/20/rubygems-under-the-hood-introduction.html" data-via="baaz" data-counturl="http://balinterdi.com/2009/10/20/rubygems-under-the-hood-introduction.html" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html" data-via="baaz" data-counturl="http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html" >Tweet</a>
   
   
   <div class="g-plusone" data-size="medium"></div>
@@ -158,14 +184,18 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2009/09/25/cucumber-meets-selenium-meets-integrity.html" title="Previous Post: Cucumber meets Selenium meets Integrity">&laquo; Cucumber meets Selenium meets Integrity</a>
+        <a class="basic-alignment left" href="/2013/12/17/change-the-url-type-of-your-ember-app.html" title="Previous Post: Changing the URL type of your Ember.js app">&laquo; Changing the URL type of your Ember.js app</a>
       
-      
-        <a class="basic-alignment right" href="/2009/10/28/rubygems-under-the-hood-hooking-into-require.html" title="Next Post: Rubygems under the hood: hooking into require">Rubygems under the hood: hooking into require &raquo;</a>
       
     </p>
   </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -245,7 +275,10 @@
       var disqus_shortname = 'codigoergosum';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html';
+        var disqus_url = 'http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
