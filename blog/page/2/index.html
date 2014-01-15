@@ -9,7 +9,8 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="Switching between applications is more of a mental context switch than just switching between the panes in the same window. Or at least that&#8217;s &hellip;">
+  <meta name="description" content="A few days ago I completed the last problem on the 4Clojure site. If you
+want to learn Clojure, solving these problems is a great way to do it. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +76,154 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2012/12/29/lessons-learned-from-solving-4clojure-problems.html">Lessons Learned From Solving 4Clojure Problems</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-29T14:55:00+01:00" pubdate data-updated="true">Dec 29<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A few days ago I completed the last problem on the <a href="http://4clojure.com">4Clojure</a> site. If you
+want to learn Clojure, solving these problems is a great way to do it. Several
+of its features -that I&#8217;ll highlight below- make it a great learning tool. Other
+features probably arise from <a href="http://clojure.org/">Clojure</a> being a
+(pragmatic) functional programming language. Coming from mostly an OO background
+these were also new to me and thus deserve their own paragraph.</p>
+
+<p>I hope that after reading through the list you&#8217;ll end up being persuaded of the
+merits and want to solve (some of) the problems yourself. If you do, please let
+me know how it went and what you learned from it.</p>
+
+<p>If you really get stuck, there is a <a href="https://groups.google.com/forum/?fromgroups#!forum/4clojure">Google group dedicated to the 4Clojure
+problems</a>. You can also leave a comment here so I can help or go directly to
+check <a href="https://gist.github.com/raw/4008944/9c0577566b9a87e8db03332bf71b6d0b1140748e/4clojure.clj">my solutions</a>. Let&#8217;s jump in.</p>
+
+<h2>Why is 4Clojure a great learning tool?</h2>
+
+<h3>Looking at others&#8217; solutions</h3>
+
+<p>After solving a problem, you can check how the users you follow solved it.
+That&#8217;s arguably the most important feature when it comes to learning since it
+is essentially a code reading exercise when the functionality of the code is
+well-known (since it solves the same problem you&#8217;ve solved) and the authors are
+probably more proficient.</p>
+
+<p>On several occasions I saw solutions that were both more concise and clearer
+than mine (especially when tackling a hard problem). Dealing with the
+inferiority complex on the very short term is dwarved by how much wisdom you
+gain from these. For what it&#8217;s worth, the users I learned most from are
+<a href="http://www.4clojure.com/user/hypirion">hypirion</a>,
+<a href="http://www.4clojure.com/user/jafingerhut">jafingerhut</a> and
+<a href="http://www.4clojure.com/user/chouser">chouser</a>.</p>
+
+<p>(If you&#8217;d like to follow me, I&#8217;m <a href="http://www.4clojure.com/user/balint">balint</a>
+there.)</p>
+
+<h3>Executable, well thought-out test cases</h3>
+
+<p>To submit your solution, you paste your code into a textbox and click a button.
+The test cases, which are visible, are then checked one by one. If all the
+lamps become green, your solution is accepted. If not, you get an error
+message and have to try again.</p>
+
+<p>This method has several advantages. First of all, it eliminates the imprecisions
+you might have had after reading the description of the problem. Second, it
+gives you a set of examples to work against. Third, they force you to think
+deeper about the problem since they are constructed to reject a partial
+solution.</p>
+
+<h3>Timeouts</h3>
+
+<p>Your solution can be functional and pass all the test cases but if it does not
+finish in a certain time, it will get rejected. I bumped into this on several
+occasions. Most of the time it was because I came up with the brute force
+solution to a hard problem and hoped I&#8217;d get away with it. In other cases it was
+because of a technical issue, like allocating too much memory.</p>
+
+<p>In the first case, it made me think again about the problem (see Hammock-Driven
+Development) and come up with a more ingenious solution. In the second case, I
+learned something about a technical aspect of the language. In both cases, I
+grew a bit wiser about optimization -which is a &#8220;real-world&#8221; coding skill- so
+I&#8217;m happy the authors of 4clojure chose to implement this constraint.</p>
+
+<h2>What does one learn about (functional) programming?</h2>
+
+<h3>Hammock-Driven Development</h3>
+
+<p>Also known as “step-away from the computer to solve hard problems”, Hammock-Driven
+Development is a term coined by Rich Hickey, the creator of Clojure, in a <a href="http://www.youtube.com/watch?v=f84n5oFoZBc">keynote
+speech</a>.</p>
+
+<p>Apparently ridiculing Test Driven Development (TDD), HDD holds that the most
+important activity to solve a hard problem is to think deeply about it without
+any distractions. Most of the time sitting in front of the computer is a
+distraction in itself since it begs to be typed on and prevents actual deep thinking
+to happen.</p>
+
+<p>This one is really hard to get used to because whenever we write code we feel like
+we&#8217;re getting closer to a solution. Thinking, on the other hand, does not
+provide any tangible output.</p>
+
+<p>However, HDD has rung ever more true with me as I progressed. When tackling hard
+problems, I tended to think about them for some time and then started to type in
+actual code. The problem was, when I felt that the solution became convoluted I
+did not go back to the proverbial hammock but carried on with the implementation.
+Most of the time it either turned out to be a dead-end or a solution I&#8217;d much
+better hide.</p>
+
+<p>Even more importantly, a cleaner solution is one that is easier for
+others to understand. Since code is mainly for others to read and occasionally
+for computers to execute, more thinking up-front results in less time spent
+developing and maintaining the code down the line.</p>
+
+<h3>The REPL is a powerful developer tool</h3>
+
+<p>The power of the REPL is one those realizations most of us coming from OO will
+come to. Since FP languages have <a href="http://www.infoq.com/presentations/Are-We-There-Yet-Rich-Hickey">very little state</a> and side-effects and
+thus a lot of idempotency, trying things at the REPL is taken to the next
+level. You launch a REPL once and then copy-paste the building blocks of your
+solution between your editor and the REPL (and there are <a href="https://github.com/jpalardy/vim-slime">better</a>
+<a href="https://github.com/kingtim/nrepl.el">solutions</a> then copy-pasting).</p>
+
+<h3>Use higher level functions</h3>
+
+<p>FP languages strive to have a small set of data structures and a high number of
+functions that operate on them. Clojure is no exception. Though it&#8217;s not hard to
+assemble the higher-level function you need yourself, in the majority of cases,
+it&#8217;s just extra work: it&#8217;s probably already defined in the core.</p>
+
+<p>This is something that I learned by reading others&#8217; solutions and learning
+about awesome functions (<a href="http://clojuredocs.org/clojure_core/clojure.core/frequencies">frequencies</a>, <a href="http://clojuredocs.org/clojure_core/clojure.core/merge-with">merge-with</a>, <a href="http://clojuredocs.org/clojure_core/clojure.core/condp">condp</a> come to mind).
+After a while I looked up the high-level function myself from <a href="http://clojure.org/cheatsheet">the
+cheatsheet</a>.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -879,56 +1028,6 @@ citizens, though.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/01/28/2010-is-the-year-of-the-javascript.html">2010 Is the Year of the Javascript</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-01-28T00:00:00+01:00" pubdate data-updated="true">Jan 28<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>If you&#8217;ve read the <a href="http://pragprog.com/titles/tpp/the-pragmatic-programmer">The Pragmatic Progammer - From Journeyman to Master</a> (and if you have not, believe me, you should) you might remember one precious advice: learn a new programming language every year. So when the year draws close to its end (around April, that is) I really start thinking about which language should be the one for me next year.</p>
-
-<p>This reflection is very pleasant; it is such a joy to immerse oneself into a new language, to slowly discover its structure, its subtleties and learn new ways of thinking, of approaching a problem (because that&#8217;s probably the biggest gain of it, even surpassing adding another language to your arsenal) that its prospect is already rewarding in itself.</p>
-
-<p>My choice in 2009 fell on <a href="http://clojure.org">Clojure</a>. I love functional programming, its elegance, its cleanness, its statelessness and after getting my feet wet with <a href="http://www.paulgraham.com/acl.html">ANSI Common LISP</a> a while ago I felt like Clojure would propel me on my way of becoming an FP guru. Guided by <a href="http://pragprog.com/titles/shcloj">a great book</a> I wrote a couple of, admittedly <a href="http://github.com/balinterdi/clojure_exercises/blob/master/lzw/compressor.clj">not too difficult</a> <a href="http://github.com/balinterdi/clojure_exercises/tree/master/sudoku/game.clj">exercises</a>  (hey, a <a href="http://github.com/balinterdi/clojure_exercises/tree/master/sudoku/game.clj">sudoku solver</a> is already something, isn&#8217;t it?) and I would certainly like to continue to do more with it in 2010.</p>
-
-<p>Now, on to 2010.</p>
-
-<p><a href="http://mir.aculo.us">Thomas Fuchs</a> is certainly right when he predicts that <a href="http://mir.aculo.us/2010/01/07/web-developments-next-decade/">Javascript will play an increasingly significant role in web development</a>. I was definitely wrong when I had thought of JS as an undebuggable, structure- and featureless, incoherent language. Of course, you can write Javascript code that is like this but I now think that -at least in the case of Javascript- this tells more about the craftsman than about the language.</p>
-
-<p>Make no mistakes, I can already do Javascript! I can miraculously make a check box appear if you click on a link, or update a database record without reloading the page when you press a button and a ton more such wizardry, really. However, I always felt like there was a whole lot more to Javascript than putting some dumb-looking functions in a file and then include it from my html (no, I don&#8217;t think inlining it makes a difference) and I felt uneasy about my javascript functions just standing there on their own without any apparent belonging to a group or some kind of cohesive force or idea that holds them together.</p>
-
-<p>My recent enthusiasm comes from the fact that I had to browse through some of the source code of <a href="http://script.aculo.us/">scriptaculous</a> and I really liked what I saw. The enthusiasm <a href="http://www.codigoergosum.com/2008/10/09/javascript-method-chain.html">is not totally new</a> but looking at that source code demolished the last shreds of my Javascript skepticism, so to speak. So a year later than <a href="http://www.rubyrailways.com/learn-at-least-one-new-language-every-year/">Peter Szinek</a> I am hopping on the same train: Javascript, here I come! If you have read a good book that enhanced your Javascript foo, please tell me about it in the comments.</p>
-
-<p>And you? Have you already chosen your language for 2010?</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -953,6 +1052,10 @@ citizens, though.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/01/10/how-real-time-updates-work-in-discourse.html">How real-time updates work in Discourse</a>
+      </li>
+    
+      <li class="post">
         <a href="/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html">At Your Service: Publicly Available API for the Rock and Roll Ember.js App</a>
       </li>
     
@@ -966,10 +1069,6 @@ citizens, though.</p>
     
       <li class="post">
         <a href="/2013/12/03/roll-your-own-ember-dot-js-identity-map.html">Roll your own Ember.js identity map</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/11/27/profile-your-ember-app-with-ember-renderspeed.html">Profile your Ember app with ember-renderspeed</a>
       </li>
     
   </ul>
@@ -1003,7 +1102,7 @@ citizens, though.</p>
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Balint Erdi -
+  Copyright &copy; 2014 - Balint Erdi -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

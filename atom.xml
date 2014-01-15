@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2013-12-31T10:24:25+01:00</updated>
+  <updated>2014-01-15T12:37:54+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,304 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[How real-time updates work in Discourse]]></title>
+    <link href="http://balinterdi.com/2014/01/10/how-real-time-updates-work-in-discourse.html"/>
+    <updated>2014-01-10T11:06:00+01:00</updated>
+    <id>http://balinterdi.com/2014/01/10/how-real-time-updates-work-in-discourse</id>
+    <content type="html"><![CDATA[<p>Given that I started engaging with web sites in the early 2000s there are still
+some things today that I constantly marvel at. One of these things is real-live
+update, the absolutely wonderful experience that I&#8217;m looking at a page and
+it displays a change due to an action of another user right in front of my eyes,
+without me hitting refresh.</p>
+
+<p><a href="http://www.discourse.org/">Discourse</a>, being a state-of-the-art forum software does this, too,
+and, provided my enthusiasm with all things that bring the web alive, I wanted to
+understand how that works. More specifically I wanted to understand how
+displaying new posts for the topic I am looking at can work its magic.</p>
+
+<p>In the following post, I want to lead you through the whole process so that you
+see exactly how the pieces fit together. In fact, that may be the thing I
+enjoy most as a developer. Being able to take apart a complex application and
+gain the comprehension of how the individual pieces function and how they are
+orchestrated to make a complex system work.</p>
+
+<h3>Tools</h3>
+
+<p>Discourse is built on <a href="http://rubyonrails.org/">Ruby on Rails</a> and <a href="http://emberjs.com">Ember.js</a>, two fantasic
+frameworks. Given my recent fascination with front-end development, and Ember.js
+in particular, I&#8217;ll focus on the front-end part here and only talk about the
+back-end mechanism as much as it is needed to see the whole picture.</p>
+
+<p><em>Consequently, some knowledge about Ember.js is assumed. You can go through the <a href="http://emberjs.com/guides/getting-ember/">Getting Started</a> guide on the official Ember.js site or -if you prefer
+showing to telling- <a href="http://emberjs.balinterdi.com">sign up to my mailing list</a> to watch a series
+of screencasts to get a basic grip on Ember.js architecture as we go through the
+building of an application.</em></p>
+
+<h3>Message bus</h3>
+
+<p>Discourse uses a ruby gem (library) called <a href="message_bus">message_bus</a> that
+enables listeners to subscribe to any channel of their liking and get notified
+about events happening on that channel.</p>
+
+<p>It also includes a <a href="https://github.com/SamSaffron/message_bus/blob/master/assets/message-bus.js">javascript lib</a> to allow connecting to the
+message bus from the client-side application. That&#8217;s what Discourse uses from
+the Ember.js app. Let&#8217;s see how.</p>
+
+<h3>Subscribing to new posts on a topic</h3>
+
+<p>When the user navigates to a topic page, the topic route gets activated and its
+hooks run. After resolving the model, the <code>setupController</code> which, as its name
+indicates, sets up the controller belonging to the model. It, among other
+things, calls the subscribe method on the controller, see below:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">Discourse</span><span class="p">.</span><span class="nx">TopicRoute</span> <span class="o">=</span> <span class="nx">Discourse</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">setupController</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">controller</span><span class="p">,</span> <span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">(...)</span>
+</span><span class='line'>    <span class="nx">controller</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">(...)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The controller for the model is Discourse.TopicController, so next we will look into
+that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">Discourse</span><span class="p">.</span><span class="nx">TopicController</span> <span class="o">=</span> <span class="nx">Discourse</span><span class="p">.</span><span class="nx">ObjectController</span><span class="p">.</span><span class="nx">extend</span><span class="p">(...,</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">subscribe</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Unsubscribe before subscribing again</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">bus</span> <span class="o">=</span> <span class="nx">Discourse</span><span class="p">.</span><span class="nx">MessageBus</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">topicController</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">bus</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s2">&quot;/topic/&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)),</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="p">(...)</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">// Add the new post into the stream</span>
+</span><span class='line'>      <span class="nx">topicController</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;postStream&#39;</span><span class="p">).</span><span class="nx">triggerNewPostInStream</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The controller subscribes to the channel <code>/topic/&lt;topic_id&gt;</code>. The client polls
+the message bus for potential new messages every 15 seconds. You can see the XHR
+calls in the console of your browser:</p>
+
+<p><img src="http://balinterdi.com/images/posts/discourse-real-updates/xhr-polls.png" alt="Polling the message bus" /></p>
+
+<p>When something is published to that channel, the callback function gets called
+back with the data related to that event. The data, in that case, is going to be
+the new post record. When the callback is fired, we call the
+triggerNewPostInStream method on the postStream with the id of the post. What
+does triggerNewPostInStream do, then? We can check that in the PostStream model.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm">  We use this class to keep on top of streaming and filtering posts within a topic.</span>
+</span><span class='line'><span class="cm">**/</span>
+</span><span class='line'><span class="nx">Discourse</span><span class="p">.</span><span class="nx">PostStream</span> <span class="o">=</span> <span class="nx">Em</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="cm">/**</span>
+</span><span class='line'><span class="cm">    Finds and adds a post to the stream by id. Typically this would happen if we receive a message</span>
+</span><span class='line'><span class="cm">    from the message bus indicating there&#39;s a new post. We&#39;ll only insert it if we currently</span>
+</span><span class='line'><span class="cm">    have no filters.</span>
+</span><span class='line'><span class="cm">  **/</span>
+</span><span class='line'>  <span class="nx">triggerNewPostInStream</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">postId</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">(...)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">loadedAllPosts</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;loadedAllPosts&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;stream&#39;</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">postId</span><span class="p">)</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;stream&#39;</span><span class="p">).</span><span class="nx">addObject</span><span class="p">(</span><span class="nx">postId</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="nx">loadedAllPosts</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">appendMore</span><span class="p">();</span> <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The docstring is quite revealing. If the post id is already in the stream, we
+don&#8217;t do anything. If it is not, we add it to the stream (an Ember array). If
+the loading of posts has finished, we are ready to append the new posts to the
+stream.</p>
+
+<p>Notice we are adding post <em>ids</em>, not actual post records so the next
+investigation step is to explore how ids get turned into records.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm">  Appends the next window of posts to the stream. Call it when scrolling downwards.</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">  @method appendMore</span>
+</span><span class='line'><span class="cm">  @returns {Ember.Deferred} a promise that&#39;s resolved when the posts have been added.</span>
+</span><span class='line'><span class="cm">**/</span>
+</span><span class='line'><span class="nx">appendMore</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Make sure we can append more posts</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">self</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;canAppendMore&#39;</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">RSVP</span><span class="p">.</span><span class="nx">resolve</span><span class="p">();</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">postIds</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nextWindow&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">Ember</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">postIds</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">RSVP</span><span class="p">.</span><span class="nx">resolve</span><span class="p">();</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">self</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;loadingBelow&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">stopLoading</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">self</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;loadingBelow&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">self</span><span class="p">.</span><span class="nx">findPostsByIds</span><span class="p">(</span><span class="nx">postIds</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">posts</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">posts</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">self</span><span class="p">.</span><span class="nx">appendPost</span><span class="p">(</span><span class="nx">p</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="nx">stopLoading</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">},</span> <span class="nx">stopLoading</span><span class="p">);</span>
+</span><span class='line'><span class="p">},</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The above <code>appendMore</code> method is responsible for retrieving the post ids that
+have to be added below the currently visible posts and turning these ids into
+actual post records.</p>
+
+<p>We are getting close now, but let me speed things up a bit by only explaining the
+process but not showing all the code which makes it so that the new post objects
+are finally pushed to the <code>posts</code> array from where they will be finally
+displayed. (If you are such a code untangler as I am, and would like to see the
+code, it is <a href="https://github.com/discourse/discourse/blob/0fd193fac314610d7a93d7b4af84a4bc1e52d03e/app/assets/javascripts/discourse/models/post_stream.js">right here</a>)</p>
+
+<p>What happens is that the new posts get displayed in windows, not one by one.
+This window is kept updated in the <code>nextWindow</code> property, from the stream we
+pushed post ids into.  It is the slice in this stream that starts at the last
+loaded post id and has a maximum length of <code>posts_per_page</code>, a configuration
+setting.  This construct also makes it possible, quite ingeniously, for this
+same code to load the next batch of posts to the page as the user scrolls down.</p>
+
+<p>The window still contains ids and to fetch the related post records an identity
+map (yes, Discourse has its <a href="http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map.html">identity map implementation</a>,
+too!) is used via the <code>findPostsByIds</code> method. Once the records are retrieved ,
+they are each passed to the <code>appendPost</code> method that just pushes them to the
+<code>posts</code> array.</p>
+
+<h3>Displaying the new post in the topic stream</h3>
+
+<p>The only thing remains to be seen for the whole picture to be clear is how the
+stream of posts is displayed in the browser. The template that renders the
+topic, along with its posts, is <a href="https://github.com/discourse/discourse/blob/0fd193fac314610d7a93d7b4af84a4bc1e52d03e/app/assets/javascripts/discourse/templates/topic.js.handlebars">the topic template</a>.</p>
+
+<p>The relevant part of the template is below:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'>  <span class="p"></span>
+</span><span class='line'>    <span class="p"></span>
+</span><span class='line'>  <span class="p"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If the post stream is not loading, we render the posts through the cloaked
+collection. I will not go into details about what
+<a href="https://github.com/eviltrout/ember-cloaking">cloaked-collection</a> does, (but I highly recommend <a href="http://eviltrout.com/2014/01/04/hiding-offscreen-ember.html">a blog
+ post on it by its author, @eviltrout</a>), the important thing in the
+current discussion is that it renders the <code>post</code> template (cloakView=&#8221;post&#8221;) for
+each post from <code>postStream.posts</code> (content=postStream.posts).</p>
+
+<p>That is where the two parts come together. Since a binding is established with
+the above handlebars line to the posts property of the postStream, every time
+new posts are added (see how in the first part of the walkthrough), the
+collection is going to be rerendered and consequently the posts appear in
+&#8220;real-time&#8221;. The magic of Ember.js bindings.</p>
+
+<h3>In parting</h3>
+
+<p>I skipped over a couple of things so that this post does not turn into a
+chapter of a novel, but I hope that my walkthrough could let you peek behind
+the curtains and see how such a miraculous feature is made possible.</p>
+
+<p>The key takeaway is that building with the right tools (namely the message bus and
+the solid foundations of Ember.js), which a lot of people have put an enormous
+amount of time into, makes such a killer feature within your reach. Not easy,
+but definitely doable.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[At Your Service: Publicly Available API for the Rock and Roll Ember.js App]]></title>
@@ -1539,29 +1837,6 @@ citizens, though.</p>
 <p>If you decide to use this, it is more convenient to <a href="http://gist.github.com/raw/305654/568290aa63ee3b0b3748b5041654f94ce45f4e5b/erase_trailing_whitespace.rb">download the raw source</a></p>
 
 <p>Hopefully I did my tiny bit to have less trailing whitespace in OS code.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[2010 is the year of the Javascript]]></title>
-    <link href="http://balinterdi.com/2010/01/28/2010-is-the-year-of-the-javascript.html"/>
-    <updated>2010-01-28T00:00:00+01:00</updated>
-    <id>http://balinterdi.com/2010/01/28/2010-is-the-year-of-the-javascript</id>
-    <content type="html"><![CDATA[<p>If you&#8217;ve read the <a href="http://pragprog.com/titles/tpp/the-pragmatic-programmer">The Pragmatic Progammer - From Journeyman to Master</a> (and if you have not, believe me, you should) you might remember one precious advice: learn a new programming language every year. So when the year draws close to its end (around April, that is) I really start thinking about which language should be the one for me next year.</p>
-
-<p>This reflection is very pleasant; it is such a joy to immerse oneself into a new language, to slowly discover its structure, its subtleties and learn new ways of thinking, of approaching a problem (because that&#8217;s probably the biggest gain of it, even surpassing adding another language to your arsenal) that its prospect is already rewarding in itself.</p>
-
-<p>My choice in 2009 fell on <a href="http://clojure.org">Clojure</a>. I love functional programming, its elegance, its cleanness, its statelessness and after getting my feet wet with <a href="http://www.paulgraham.com/acl.html">ANSI Common LISP</a> a while ago I felt like Clojure would propel me on my way of becoming an FP guru. Guided by <a href="http://pragprog.com/titles/shcloj">a great book</a> I wrote a couple of, admittedly <a href="http://github.com/balinterdi/clojure_exercises/blob/master/lzw/compressor.clj">not too difficult</a> <a href="http://github.com/balinterdi/clojure_exercises/tree/master/sudoku/game.clj">exercises</a>  (hey, a <a href="http://github.com/balinterdi/clojure_exercises/tree/master/sudoku/game.clj">sudoku solver</a> is already something, isn&#8217;t it?) and I would certainly like to continue to do more with it in 2010.</p>
-
-<p>Now, on to 2010.</p>
-
-<p><a href="http://mir.aculo.us">Thomas Fuchs</a> is certainly right when he predicts that <a href="http://mir.aculo.us/2010/01/07/web-developments-next-decade/">Javascript will play an increasingly significant role in web development</a>. I was definitely wrong when I had thought of JS as an undebuggable, structure- and featureless, incoherent language. Of course, you can write Javascript code that is like this but I now think that -at least in the case of Javascript- this tells more about the craftsman than about the language.</p>
-
-<p>Make no mistakes, I can already do Javascript! I can miraculously make a check box appear if you click on a link, or update a database record without reloading the page when you press a button and a ton more such wizardry, really. However, I always felt like there was a whole lot more to Javascript than putting some dumb-looking functions in a file and then include it from my html (no, I don&#8217;t think inlining it makes a difference) and I felt uneasy about my javascript functions just standing there on their own without any apparent belonging to a group or some kind of cohesive force or idea that holds them together.</p>
-
-<p>My recent enthusiasm comes from the fact that I had to browse through some of the source code of <a href="http://script.aculo.us/">scriptaculous</a> and I really liked what I saw. The enthusiasm <a href="http://www.codigoergosum.com/2008/10/09/javascript-method-chain.html">is not totally new</a> but looking at that source code demolished the last shreds of my Javascript skepticism, so to speak. So a year later than <a href="http://www.rubyrailways.com/learn-at-least-one-new-language-every-year/">Peter Szinek</a> I am hopping on the same train: Javascript, here I come! If you have read a good book that enhanced your Javascript foo, please tell me about it in the comments.</p>
-
-<p>And you? Have you already chosen your language for 2010?</p>
 ]]></content>
   </entry>
   
