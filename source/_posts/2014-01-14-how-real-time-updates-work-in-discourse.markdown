@@ -37,7 +37,7 @@ building of an application.*
 
 ### Message bus
 
-Discourse uses a ruby gem (library) called [message_bus](message_bus) that
+Discourse uses a ruby gem (library) called [message_bus][message-bus] that
 enables listeners to subscribe to any channel of their liking and get notified
 about events happening on that channel.
 
