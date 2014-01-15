@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-01-15T12:43:16+01:00</updated>
+  <updated>2014-01-15T12:44:09+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[How real-time updates work in Discourse]]></title>
-    <link href="http://balinterdi.com/2014/01/10/how-real-time-updates-work-in-discourse.html"/>
-    <updated>2014-01-10T11:06:00+01:00</updated>
-    <id>http://balinterdi.com/2014/01/10/how-real-time-updates-work-in-discourse</id>
+    <link href="http://balinterdi.com/2014/01/14/how-real-time-updates-work-in-discourse.html"/>
+    <updated>2014-01-14T11:06:00+01:00</updated>
+    <id>http://balinterdi.com/2014/01/14/how-real-time-updates-work-in-discourse</id>
     <content type="html"><![CDATA[<p>Given that I started engaging with web sites in the early 2000s there are still
 some things today that I constantly marvel at. One of these things is real-live
 update, the absolutely wonderful experience that I&#8217;m looking at a page and
