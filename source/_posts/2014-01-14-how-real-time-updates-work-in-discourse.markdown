@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "How real-time updates work in Discourse"
-date: 2014-01-10 11:06
+date: 2014-01-14 11:06
 comments: true
 categories: emberjs
 ---
