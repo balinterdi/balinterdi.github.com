@@ -4,7 +4,7 @@
   <title><![CDATA[Category: emberjs | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/emberjs/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-01-15T12:37:54+01:00</updated>
+  <updated>2014-01-15T12:43:16+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -219,14 +219,9 @@ topic, along with its posts, is <a href="https://github.com/discourse/discourse/
 
 <p>The relevant part of the template is below:</p>
 
-<p>``` js
-  </p>
-
-<pre><code>
-</code></pre>
-
-<p>  
-```</p>
+<p><div><script src='https://gist.github.com/8434790.js'></script>
+<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/8434790&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+</p>
 
 <p>If the post stream is not loading, we render the posts through the cloaked
 collection. I will not go into details about what
