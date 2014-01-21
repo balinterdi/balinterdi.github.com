@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-01-15T21:59:52+01:00</updated>
+  <updated>2014-01-21T20:05:26+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,258 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Promises instead of callbacks]]></title>
+    <link href="http://balinterdi.com/2014/01/21/promises-instead-of-callbacks.html"/>
+    <updated>2014-01-21T23:30:00+01:00</updated>
+    <id>http://balinterdi.com/2014/01/21/promises-instead-of-callbacks</id>
+    <content type="html"><![CDATA[<p>A few weeks ago <a href="http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map.html">I built up a very simple identity map</a> to
+get rid of a bug in highlighting active links. I introduced promises in order to
+leverage the fact that Ember.js blocks in model hooks until the model is
+resolved (or rejected).</p>
+
+<p>In this post, I am taking a step back, and converting all the ajax calls that
+fetch data from and store data to the backend to use promises. I am also going
+to extract the most basic adapter that exists, just to do away with the
+repetition in the XHR calls. Once I have these in place, I will able able to
+build nice features on top of that.</p>
+
+<h3>App.TheMostBasicAdapterThereIs</h3>
+
+<p>All calls go to the same backend and talk in json so these can be trivially
+extracted:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">ajax</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+</span><span class='line'>    <span class="nx">options</span><span class="p">.</span><span class="nx">dataType</span> <span class="o">=</span> <span class="s1">&#39;json&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;http://rock-and-roll-api.herokuapp.com&#39;</span> <span class="o">+</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With that out of the way, we can see where these were used, and replace
+<code>Ember.$.ajax</code> with <code>App.Adapter.ajax</code>. In the process we are also going to
+convert the callback-style code to use promises, a worthwhile
+transformation.</p>
+
+<h3>Don&#8217;t call me back, promise me you&#8217;ll be there</h3>
+
+<p>Here is what the code for fetching all the artists from the API looks like after
+applying the adapter change:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">artistObjects</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>    <span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;/artists&#39;</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">artists</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">artists</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="nx">artistObjects</span><span class="p">.</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">artistObjects</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Notice that the model initially is an empty array and only when the ajax call
+returns successfully does that array get filled up and the template rerendered.
+Not a big deal in itself, but if in a child route we rely on the array
+containing all the artists (e.g when looking up the identity map or using
+<a href="https://github.com/emberjs/ember.js/blob/v1.3.0/packages/ember-routing/lib/system/route.js#L997-1012">modelFor</a>), we can be bitten by the async bug. Promises to the
+rescue.</p>
+
+<p>As I mentioned in the <a href="http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map.html">identity map post</a>, if a promise is
+returned from a model hook, Ember.js will block until the promise is resolved
+(or rejected). Let&#8217;s follow in Ember.js footsteps and convert the above code to
+return a promise:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">RSVP</span><span class="p">.</span><span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;/artists&#39;</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">artists</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">artistObjects</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>        <span class="nx">artists</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="nx">artistObjects</span><span class="p">.</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>        <span class="nx">resolve</span><span class="p">(</span><span class="nx">artistObjects</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">reject</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We wrap the promise returned from the <code>App.Adaptar.ajax</code> call in another promise,
+which resolves with artist objects instead of the raw data that is returned by
+the API. In the rejection handler, we pass along any potential error responses
+by rejecting with the same error that we got.</p>
+
+<p>Next, we do the same thing in the child route. We go from here:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;/artists/&#39;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">artist</span><span class="p">.</span><span class="nx">setProperties</span><span class="p">({</span>
+</span><span class='line'>          <span class="nx">id</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+</span><span class='line'>          <span class="nx">name</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+</span><span class='line'>          <span class="nx">songs</span><span class="o">:</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">extractSongs</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">songs</span><span class="p">,</span> <span class="nx">artist</span><span class="p">)</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">artist</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To here:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">RSVP</span><span class="p">.</span><span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;/artists/&#39;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">resolve</span><span class="p">(</span><span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
+</span><span class='line'>      <span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">reject</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To get the &#8220;100% promisified&#8221; seal, we&#8217;ll transform the create calls, too. I&#8217;ll
+only show the one to create an artist since creating a song is the same.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">createArtist</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;controller&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;newName&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;/artists&#39;</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">name</span> <span class="p">},</span>
+</span><span class='line'>    <span class="nx">context</span><span class="o">:</span> <span class="k">this</span>
+</span><span class='line'>  <span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">modelFor</span><span class="p">(</span><span class="s1">&#39;artists&#39;</span><span class="p">).</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">artist</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;controller&#39;</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;newName&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">transitionTo</span><span class="p">(</span><span class="s1">&#39;artist.songs&#39;</span><span class="p">,</span> <span class="nx">artist</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Failed to save artist&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here, there is not that much of a difference, the success and error callbacks
+are replaced by fulfillment and rejection handlers.</p>
+
+<p>The source code with these changes can be got <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/promisified">here</a>.</p>
+
+<h3>Further studies &amp; posts</h3>
+
+<p>You can acquire a deeper knowledge about promises by reading Domenic Denicola&#8217;s
+<a href="http://domenic.me/2012/10/14/youre-missing-the-point-of-promises/">&#8220;You&#8217;re missing the point of promises&#8221;</a> post and using that as a
+base for further exploration. Steven Kane&#8217;s excellent <a href="https://npmjs.org/package/promise-it-wont-hurt">promise-it-wont-hurt package</a>
+makes you solve increasingly difficult challenges with promises, which is the best way to learn.</p>
+
+<p>Promisifying all backend calls sets the stage for other routing-related
+improvements. Stay tuned for more.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[How real-time updates work in Discourse]]></title>
@@ -1146,7 +1398,7 @@ You might find these thought-provoking, too. The full transcription is available
 <li>[Discourse] using postgres is a way to force hosting providers move out of the &#8220;server herpes&#8221; (PHP + MySQL). As Discourse becomes more popular, this will give more leverage to remove the herpes from servers.</li>
 <li>Why was it [the server side] built in Ruby/Rails? <a href="http://eviltrout.com/">Robin Ward</a> made a game about forums and Jeff contacted him to build Discourse. Robin had used Ruby and thus this decided the Ruby or Python question.</li>
 <li>Rule of 3. Kind of a philoshopical belief for Jeff. A component (e.g a datepicker) is proven to be reusable if it was successfully used in three different contexts. Having three major partners for Discourse will really be a tipping point. Etc.</li>
-<li>Since Discourse is mainly a rich, client-side app, [Ember] plays a much bigger role in its success (or failure) then Ruby. The question is how will Rubyists adapt to Ember, whether they will like it or not.</li>
+<li>Since Discourse is mainly a rich, client-side app, <a href="http://emberjs.com">Ember</a> plays a much bigger role in its success (or failure) then Ruby. The question is how will Rubyists adapt to Ember, whether they will like it or not.</li>
 </ul>
 
 
@@ -1745,93 +1997,6 @@ citizens, though.</p>
 <p>On the other hand, if you stick with calling your tests tests (how orthodox! ;) ) then not only you have to think (which consumes a lot of resources), but you can also come to the wrong conclusion and emit a strong business requirement from your test suite. And then you might not remember to have the implementation for it after modifying the code for whatever reason. And then bad things might happen.</p>
 
 <p>(This thought came to me when coming to work in the subway this morning. I was never quite comfortable with the name &#8220;specs&#8221; but now it&#8217;s starting to make a lot of sense to me. You are encouraged to disagree. Dissent is what makes the world progress.)</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Remove'em trailing whitespaces!]]></title>
-    <link href="http://balinterdi.com/2010/02/16/remove-trailing-whitespaces.html"/>
-    <updated>2010-02-16T00:00:00+01:00</updated>
-    <id>http://balinterdi.com/2010/02/16/remove-trailing-whitespaces</id>
-    <content type="html"><![CDATA[<p>Some of you reading this probably use TextMate. It is an excellent editor with two caveats. The first is that you can only see one file in the editing window (no screen split), the other is that there is no save hook. This latter gave me headaches since I can&#8217;t stand any trailing whitespace in source code and the easiest solution would have been to run a script to remove those when the file is saved.</p>
-
-<p>Without further ado I&#8217;ll paste my solution below. Obviously this is not a difficult task to accomplish so the goal is to share not to show off. I use Git for SCM and the following solution parses out the files that have been modified and runs the whitespace eraser script for those. If you use something else (why do you?) you should obviously change the first building block:</p>
-
-<figure class='code'><figcaption><span>parse_modified_files_from_git_status.rb </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="c1">#!/usr/bin/env ruby -wn</span>
-</span><span class='line'><span class="n">modified_file_pattern</span> <span class="o">=</span> <span class="sr">/^#\s+(?:modified|new file):\s+(.*)$/</span>
-</span><span class='line'><span class="nb">puts</span> <span class="vg">$1</span>  <span class="k">if</span> <span class="n">modified_file_pattern</span> <span class="o">=~</span> <span class="vg">$_</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>rm_trailing_whitespace.rb </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="c1">#!/usr/bin/env ruby -wn</span>
-</span><span class='line'><span class="vg">$:</span><span class="o">.</span><span class="n">unshift</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">))</span>
-</span><span class='line'>
-</span><span class='line'><span class="nb">require</span> <span class="s2">&quot;trailing_whitespace_eraser&quot;</span>
-</span><span class='line'><span class="no">TrailingWhiteSpaceEraser</span><span class="o">.</span><span class="n">rm_trailing_whitespace!</span><span class="p">(</span><span class="vg">$_</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>trailing_whitespace_eraser.rb </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="k">class</span> <span class="nc">TrailingWhiteSpaceEraser</span>
-</span><span class='line'>  <span class="no">FILE_TYPES</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="s2">&quot;feature&quot;</span><span class="p">,</span> <span class="s2">&quot;yml&quot;</span><span class="p">,</span> <span class="s2">&quot;erb&quot;</span><span class="p">,</span> <span class="s2">&quot;haml&quot;</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">rm_trailing_whitespace_from_file!</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">trimmed</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">readlines</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span>
-</span><span class='line'>      <span class="n">line</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/[\t ]+$/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>    <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">trimmed</span><span class="p">)</span> <span class="p">}</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">rm_trailing_whitespace!</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">root</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">files</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">directory?</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="p">?</span> <span class="no">Dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">root</span><span class="si">}</span><span class="s2">/**/*.{</span><span class="si">#{</span><span class="no">FILE_TYPES</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">}&quot;</span><span class="p">)</span> <span class="p">:</span> <span class="o">[</span><span class="n">root</span><span class="o">]</span>
-</span><span class='line'>    <span class="n">files</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">file</span><span class="o">|</span> <span class="n">rm_trailing_whitespace_from_file!</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">chomp</span><span class="p">)</span> <span class="p">}</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And then you run it by typing:</p>
-
-<figure class='code'><figcaption><span>rtwsp.sh </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>git status | parse_modified_files_from_git_status.rb | rm_trailing_whitespace.rb
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you decide to use this, it is more convenient to <a href="http://gist.github.com/raw/305654/568290aa63ee3b0b3748b5041654f94ce45f4e5b/erase_trailing_whitespace.rb">download the raw source</a></p>
-
-<p>Hopefully I did my tiny bit to have less trailing whitespace in OS code.</p>
 ]]></content>
   </entry>
   

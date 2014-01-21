@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-01-15T21:59:52+01:00</updated>
+  <updated>2014-01-21T20:05:26+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -14,75 +14,60 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Roll your own Ember.js identity map]]></title>
-    <link href="http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map.html"/>
-    <updated>2013-12-03T11:41:00+01:00</updated>
-    <id>http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map</id>
-    <content type="html"><![CDATA[<p>If you followed along my <a href="http://emberjs.balinterdi.com">Build an Ember app screencast series</a> and maybe
-played around <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/episode-7">with the app</a> on your own, you might have
-noticed a subtle bug in the application.</p>
+    <title type="html"><![CDATA[Promises instead of callbacks]]></title>
+    <link href="http://balinterdi.com/2014/01/21/promises-instead-of-callbacks.html"/>
+    <updated>2014-01-21T23:30:00+01:00</updated>
+    <id>http://balinterdi.com/2014/01/21/promises-instead-of-callbacks</id>
+    <content type="html"><![CDATA[<p>A few weeks ago <a href="http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map.html">I built up a very simple identity map</a> to
+get rid of a bug in highlighting active links. I introduced promises in order to
+leverage the fact that Ember.js blocks in model hooks until the model is
+resolved (or rejected).</p>
 
-<p>When you load the application on the <code>/artists/</code> route and then choose one of
-the artists, the artist link gets highlighted correctly:</p>
+<p>In this post, I am taking a step back, and converting all the ajax calls that
+fetch data from and store data to the backend to use promises. I am also going
+to extract the most basic adapter that exists, just to do away with the
+repetition in the XHR calls. Once I have these in place, I will able able to
+build nice features on top of that.</p>
 
-<p><img src="/images/posts/roll-your-own-store/active-highlight-works.png" alt="Correct active highlight" /></p>
+<h3>App.TheMostBasicAdapterThereIs</h3>
 
-<p>However, when you reload the app on one of these artists routes (e.g
-<code>/artists/pearl-jam</code>), the artist link does not get the active highlight:</p>
+<p>All calls go to the same backend and talk in json so these can be trivially
+extracted:</p>
 
-<p><img src="/images/posts/roll-your-own-store/active-highlight-does-not-work.png" alt="Incorrect active highlight" /></p>
+<p>``` js
+App.Adapter = {
+  ajax: function(path, options) {</p>
 
-<h3>Understanding what is wrong</h3>
-
-<p>The first step of any debugging process is to understand where the bug lies. In
-order to do that we have to understand how highlighting a link as active works
-in Ember.js.</p>
-
-<p>I wrote about this topic in detail in <a href="http://blog.safaribooksonline.com/2013/10/29/marking-links-as-active-in-ember-js-markdown/">a guest post</a> so let
-me just quickly summarize it here.</p>
-
-<p>The artist links are rendered using the <code>link-to</code> helper. When active routes
-change (that includes the moment when the app is loaded from scratch) the
-<code>isActive</code> property for each link is recomputed. If it is found to be
-active, the activeClass is added to the view's tag and that enables it to be
-displayed differently.</p>
-
-<p>When is a link-to active? When its route name matches one of the current route
-names. This is pretty straightforward for static links but what about dynamic ones
-with context objects? In those cases, all the context objects have to match in
-order for the link to be considered active.</p>
-
-<p>Let's see our particular case. We have the following routes:</p>
-
-<p>``` javascript
-App.Router.map(function() {
-  this.resource('artists', function() {</p>
-
-<pre><code>this.route('songs', { path: ':slug' });
+<pre><code>var options = options || {};
+options.dataType = 'json';
+return Ember.$.ajax('http://rock-and-roll-api.herokuapp.com' + path, options)
 </code></pre>
 
-<p>  });
-});
+<p>  }
+}
 ```</p>
 
-<p>And the following template that renders each artist link:</p>
+<p>With that out of the way, we can see where these were used, and replace
+<code>Ember.$.ajax</code> with <code>App.Adapter.ajax</code>. In the process we are also going to
+convert the callback-style code to use promises, a worthwhile
+transformation.</p>
 
-<p><div><script src='https://gist.github.com/7708568.js'></script>
-<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/7708568&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
-</p>
+<h3>Don't call me back, promise me you'll be there</h3>
 
-<p>Each link is rendered with an artist object that comes from the model hook of
-the <code>ArtistsRoute</code>:</p>
+<p>Here is what the code for fetching all the artists from the API looks like after
+applying the adapter change:</p>
 
-<p>``` javascript
+<p>``` js
 App.ArtistsRoute = Ember.Route.extend({
   model: function() {</p>
 
-<pre><code>var artistObjects = Ember.A();
-Ember.$.getJSON('http://localhost:9393/artists', function(artists) {
-  artists.forEach(function(data) {
-    artistObjects.pushObject(App.Artist.createRecord(data));
-  });
+<pre><code>var artistObjects = [];
+App.Adapter.ajax('/artists', {
+  success: function(artists) {
+    artists.forEach(function(data) {
+      artistObjects.pushObject(App.Artist.createRecord(data));
+    });
+  }
 });
 return artistObjects;
 </code></pre>
@@ -92,22 +77,60 @@ return artistObjects;
 });
 ```</p>
 
-<p>So the artist object that serves as the context for the <code>artists.songs</code> link has
-to be the exact same object as the one returned from the model hook of the
-<code>ArtistsSongsRoute</code>:</p>
+<p>Notice that the model initially is an empty array and only when the ajax call
+returns successfully does that array get filled up and the template rerendered.
+Not a big deal in itself, but if in a child route we rely on the array
+containing all the artists (e.g when looking up the identity map or using
+<a href="https://github.com/emberjs/ember.js/blob/v1.3.0/packages/ember-routing/lib/system/route.js#L997-1012">modelFor</a>), we can be bitten by the async bug. Promises to the
+rescue.</p>
 
-<p>``` javascript
+<p>As I mentioned in the <a href="http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map.html">identity map post</a>, if a promise is
+returned from a model hook, Ember.js will block until the promise is resolved
+(or rejected). Let's follow in Ember.js footsteps and convert the above code to
+return a promise:</p>
+
+<p>``` js
+App.ArtistsRoute = Ember.Route.extend({
+  model: function() {</p>
+
+<pre><code>return Ember.RSVP.Promise(function(resolve, reject) {
+  App.Adapter.ajax('/artists').then(function(artists) {
+    var artistObjects = [];
+    artists.forEach(function(data) {
+      artistObjects.pushObject(App.Artist.createRecord(data));
+    });
+    resolve(artistObjects);
+  }, function(error) {
+    reject(error);
+  });
+});
+</code></pre>
+
+<p>  },
+  (...)
+});
+```</p>
+
+<p>We wrap the promise returned from the <code>App.Adaptar.ajax</code> call in another promise,
+which resolves with artist objects instead of the raw data that is returned by
+the API. In the rejection handler, we pass along any potential error responses
+by rejecting with the same error that we got.</p>
+
+<p>Next, we do the same thing in the child route. We go from here:</p>
+
+<p>``` js
 App.ArtistsSongsRoute = Ember.Route.extend({
   model: function(params) {</p>
 
 <pre><code>var artist = App.Artist.create();
-var url = 'http://localhost:9393/artists/' + params.slug;
-Ember.$.getJSON(url, function(data) {
-  artist.setProperties({
-    id: data.id,
-    name: data.name,
-    songs: App.Artist.extractSongs(data.songs, artist)
-  });
+App.Adapter.ajax('/artists/' + params.slug, {
+  success: function(data) {
+    artist.setProperties({
+      id: data.id,
+      name: data.name,
+      songs: App.Artist.extractSongs(data.songs, artist)
+    });
+  }
 });
 return artist;
 </code></pre>
@@ -117,142 +140,607 @@ return artist;
 });
 ```</p>
 
-<p>Are they identical? Well, intuitively they are but Ember.js does not care about
-our intuition and so we should not, either. They are different objects since
-both were created by calls to <code>App.Artist.create</code> (<code>App.Artist.createRecord</code>
-calls <code>App.Artist.create</code> under the hood) which returns a new object
-every time. Bummer.</p>
+<p>To here:</p>
 
-<h3>Replacing intuition with reality</h3>
+<p>``` js
+App.ArtistsSongsRoute = Ember.Route.extend({
+  model: function(params) {</p>
 
-<p>Don't be sad, it's not bad.</p>
-
-<p>What we need is to have the same model object to be returned for the same
-identifier. In the matter at hand, given an artist slug (that serves as an
-identifier) we want to get back the same <code>App.Artist</code> object every time we use it.</p>
-
-<p>If you think about it, that's what identity maps are for.</p>
-
-<h3>Wiring it up with promises</h3>
-
-<p>The identity map needs to be able to retrieve objects and also store them. Most
-importantly, it has to return the object from its map if it has already created
-it with the passed in id.</p>
-
-<p>I will dump the code below and then explain what it does:</p>
-
-<p>``` javascript
-App.IdentityMap = {
-  map: {},
-  findAll: function(type) {</p>
-
-<pre><code>var identityMap = this;
-return new Ember.RSVP.Promise(function(resolve, reject) {
-  Ember.$.getJSON('http://localhost:9393/artists', function(artists) {
-    var artistObjects = Ember.A();
-    artists.forEach(function(data) {
-      var artist = App.Artist.createRecord(data);
-      identityMap.store('artist', artist.get('slug'), artist);
-      artistObjects.pushObject(artist);
-    });
-    resolve(artistObjects);
+<pre><code>return Ember.RSVP.Promise(function(resolve, reject) {
+  App.Adapter.ajax('/artists/' + params.slug).then(function(data) {
+    resolve(App.Artist.createRecord(data));
+  }, function(error) {
+    reject(error);
   });
 });
 </code></pre>
 
-<p>  },</p>
-
-<p>  find: function(type, id) {</p>
-
-<pre><code>var identityMap = this;
-return new Ember.RSVP.Promise(function(resolve, reject) {
-  var artist = identityMap.map[identityMap._key(type, id)];
-  if (artist) {
-    resolve(artist);
-  } else {
-    var url = 'http://localhost:9393/artists/' + id;
-    Ember.$.getJSON(url, function(data) {
-      var artist = App.Artist.create();
-      artist.setProperties({
-        id: data.id,
-        name: data.name,
-        songs: App.Artist.extractSongs(data.songs, artist)
-      });
-      identityMap.store('artist', id, artist);
-      resolve(artist);
-    });
-  }
+<p>  },
+  (...)
 });
+```</p>
+
+<p>To get the "100% promisified" seal, we'll transform the create calls, too. I'll
+only show the one to create an artist since creating a song is the same.</p>
+
+<p>``` js
+createArtist: function() {
+  var name = this.get('controller').get('newName');</p>
+
+<p>  App.Adapter.ajax('/artists', {</p>
+
+<pre><code>type: 'POST',
+data: { name: name },
+context: this
+</code></pre>
+
+<p>  }).then(function(data) {</p>
+
+<pre><code>  var artist = App.Artist.createRecord(data);
+  this.modelFor('artists').pushObject(artist);
+  this.get('controller').set('newName', '');
+  this.transitionTo('artist.songs', artist);
+</code></pre>
+
+<p>  }, function(reason) {</p>
+
+<pre><code>alert('Failed to save artist');
+</code></pre>
+
+<p>  });
+}
+```</p>
+
+<p>Here, there is not that much of a difference, the success and error callbacks
+are replaced by fulfillment and rejection handlers.</p>
+
+<p>The source code with these changes can be got <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/promisified">here</a>.</p>
+
+<h3>Further studies &amp; posts</h3>
+
+<p>You can acquire a deeper knowledge about promises by reading Domenic Denicola's
+<a href="http://domenic.me/2012/10/14/youre-missing-the-point-of-promises/">"You're missing the point of promises"</a> post and using that as a
+base for further exploration. Steven Kane's excellent <a href="https://npmjs.org/package/promise-it-wont-hurt">promise-it-wont-hurt package</a>
+makes you solve increasingly difficult challenges with promises, which is the best way to learn.</p>
+
+<p>Promisifying all backend calls sets the stage for other routing-related
+improvements. Stay tuned for more.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How real-time updates work in Discourse]]></title>
+    <link href="http://balinterdi.com/2014/01/14/how-real-time-updates-work-in-discourse.html"/>
+    <updated>2014-01-14T11:06:00+01:00</updated>
+    <id>http://balinterdi.com/2014/01/14/how-real-time-updates-work-in-discourse</id>
+    <content type="html"><![CDATA[<p>Given that I started engaging with web sites in the early 2000s there are still
+some things today that I constantly marvel at. One of these things is real-live
+update, the absolutely wonderful experience that I'm looking at a page and
+it displays a change due to an action of another user right in front of my eyes,
+without me hitting refresh.</p>
+
+<p><a href="http://www.discourse.org/">Discourse</a>, being a state-of-the-art forum software does this, too,
+and, provided my enthusiasm with all things that bring the web alive, I wanted to
+understand how that works. More specifically I wanted to understand how
+displaying new posts for the topic I am looking at can work its magic.</p>
+
+<p>In the following post, I want to lead you through the whole process so that you
+see exactly how the pieces fit together. In fact, that may be the thing I
+enjoy most as a developer. Being able to take apart a complex application and
+gain the comprehension of how the individual pieces function and how they are
+orchestrated to make a complex system work.</p>
+
+<h3>Tools</h3>
+
+<p>Discourse is built on <a href="http://rubyonrails.org/">Ruby on Rails</a> and <a href="http://emberjs.com">Ember.js</a>, two fantasic
+frameworks. Given my recent fascination with front-end development, and Ember.js
+in particular, I'll focus on the front-end part here and only talk about the
+back-end mechanism as much as it is needed to see the whole picture.</p>
+
+<p><em>Consequently, some knowledge about Ember.js is assumed. You can go through the <a href="http://emberjs.com/guides/getting-ember/">Getting Started</a> guide on the official Ember.js site or -if you prefer
+showing to telling- <a href="http://emberjs.balinterdi.com">sign up to my mailing list</a> to watch a series
+of screencasts to get a basic grip on Ember.js architecture as we go through the
+building of an application.</em></p>
+
+<h3>Message bus</h3>
+
+<p>Discourse uses a ruby gem (library) called <a href="https://github.com/SamSaffron/message_bus">message_bus</a> that
+enables listeners to subscribe to any channel of their liking and get notified
+about events happening on that channel.</p>
+
+<p>It also includes a <a href="https://github.com/SamSaffron/message_bus/blob/master/assets/message-bus.js">javascript lib</a> to allow connecting to the
+message bus from the client-side application. That's what Discourse uses from
+the Ember.js app. Let's see how.</p>
+
+<h3>Subscribing to new posts on a topic</h3>
+
+<p>When the user navigates to a topic page, the topic route gets activated and its
+hooks run. After resolving the model, the <code>setupController</code> which, as its name
+indicates, sets up the controller belonging to the model. It, among other
+things, calls the subscribe method on the controller, see below:</p>
+
+<p>``` js
+Discourse.TopicRoute = Discourse.Route.extend({
+  setupController: function(controller, model) {</p>
+
+<pre><code>(...)
+controller.subscribe();
+(...)
 </code></pre>
 
 <p>  }
+```</p>
+
+<p>The controller for the model is Discourse.TopicController, so next we will look into
+that:</p>
+
+<p>``` js
+Discourse.TopicController = Discourse.ObjectController.extend(..., {
+  subscribe: function() {</p>
+
+<pre><code>// Unsubscribe before subscribing again
+this.unsubscribe();
+
+var bus = Discourse.MessageBus;
+
+var topicController = this;
+bus.subscribe("/topic/" + (this.get('id')), function(data) {
+  (...)
+
+  // Add the new post into the stream
+  topicController.get('postStream').triggerNewPostInStream(data.id);
+});
+</code></pre>
+
+<p>  },
   (...)
 }
 ```</p>
 
-<p>As you can see, I used promises for the retrieval methods of the API.</p>
+<p>The controller subscribes to the channel <code>/topic/&lt;topic_id&gt;</code>. The client polls
+the message bus for potential new messages every 15 seconds. You can see the XHR
+calls in the console of your browser:</p>
 
-<p>Promises are a huge improvement over callbacks and deserve their own
-<del>article</del> book. They represent eventual values that are going to be
-either resolved (meaning success) or rejected (meaning failure) and can be
-passed around freely.</p>
+<p><img src="/images/posts/discourse-real-updates/xhr-polls.png" alt="Polling the message bus" /></p>
 
-<p>Ember.js relies on promises heavily in its <a href="http://emberjs.com/guides/routing/asynchronous-routing/#toc_a-word-on-promises">routing API</a> and uses
-<a href="https://github.com/tildeio/rsvp.js">the rsvp promise library</a>. If a promise is returned from any <code>model</code> hook,
-the route transition does not begin until <a href="http://emberjs.com/guides/routing/asynchronous-routing/#toc_the-router-pauses-for-promises">the promise is resolved</a>.</p>
+<p>When something is published to that channel, the callback function gets called
+back with the data related to that event. The data, in that case, is going to be
+the new post record. When the callback is fired, we call the
+triggerNewPostInStream method on the postStream with the id of the post. What
+does triggerNewPostInStream do, then? We can check that in the PostStream model.</p>
 
-<p>Leveraging that property of Ember routing I return promises from both the
-<code>findAll</code> and <code>find</code> methods and then use them from the model hooks of
-the appropriate routes:</p>
+<p>``` js
+/<strong>
+  We use this class to keep on top of streaming and filtering posts within a topic.
+</strong>/
+Discourse.PostStream = Em.Object.extend({
+  (...)
+  /**</p>
+
+<pre><code>Finds and adds a post to the stream by id. Typically this would happen if we receive a message
+from the message bus indicating there's a new post. We'll only insert it if we currently
+have no filters.
+</code></pre>
+
+<p>  **/
+  triggerNewPostInStream: function(postId) {</p>
+
+<pre><code>(...)
+
+var loadedAllPosts = this.get('loadedAllPosts');
+
+if (this.get('stream').indexOf(postId) === -1) {
+  this.get('stream').addObject(postId);
+  if (loadedAllPosts) { this.appendMore(); }
+}
+</code></pre>
+
+<p>  },
+}
+```</p>
+
+<p>The docstring is quite revealing. If the post id is already in the stream, we
+don't do anything. If it is not, we add it to the stream (an Ember array). If
+the loading of posts has finished, we are ready to append the new posts to the
+stream.</p>
+
+<p>Notice we are adding post <em>ids</em>, not actual post records so the next
+investigation step is to explore how ids get turned into records.</p>
+
+<p>``` js
+/**
+  Appends the next window of posts to the stream. Call it when scrolling downwards.</p>
+
+<p>  @method appendMore
+  @returns {Ember.Deferred} a promise that's resolved when the posts have been added.
+**/
+appendMore: function() {
+  var self = this;</p>
+
+<p>  // Make sure we can append more posts
+  if (!self.get('canAppendMore')) { return Ember.RSVP.resolve(); }</p>
+
+<p>  var postIds = self.get('nextWindow');
+  if (Ember.isEmpty(postIds)) { return Ember.RSVP.resolve(); }</p>
+
+<p>  self.set('loadingBelow', true);</p>
+
+<p>  var stopLoading = function() {</p>
+
+<pre><code>self.set('loadingBelow', false);
+</code></pre>
+
+<p>  };</p>
+
+<p>  return self.findPostsByIds(postIds).then(function(posts) {</p>
+
+<pre><code>posts.forEach(function(p) {
+  self.appendPost(p);
+});
+stopLoading();
+</code></pre>
+
+<p>  }, stopLoading);
+},
+<code>``
+The above</code>appendMore` method is responsible for retrieving the post ids that
+have to be added below the currently visible posts and turning these ids into
+actual post records.</p>
+
+<p>We are getting close now, but let me speed things up a bit by only explaining the
+process but not showing all the code which makes it so that the new post objects
+are finally pushed to the <code>posts</code> array from where they will be finally
+displayed. (If you are such a code untangler as I am, and would like to see the
+code, it is <a href="https://github.com/discourse/discourse/blob/0fd193fac314610d7a93d7b4af84a4bc1e52d03e/app/assets/javascripts/discourse/models/post_stream.js">right here</a>)</p>
+
+<p>What happens is that the new posts get displayed in windows, not one by one.
+This window is kept updated in the <code>nextWindow</code> property, from the stream we
+pushed post ids into.  It is the slice in this stream that starts at the last
+loaded post id and has a maximum length of <code>posts_per_page</code>, a configuration
+setting.  This construct also makes it possible, quite ingeniously, for this
+same code to load the next batch of posts to the page as the user scrolls down.</p>
+
+<p>The window still contains ids and to fetch the related post records an identity
+map (yes, Discourse has its <a href="http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map.html">identity map implementation</a>,
+too!) is used via the <code>findPostsByIds</code> method. Once the records are retrieved ,
+they are each passed to the <code>appendPost</code> method that just pushes them to the
+<code>posts</code> array.</p>
+
+<h3>Displaying the new post in the topic stream</h3>
+
+<p>The only thing remains to be seen for the whole picture to be clear is how the
+stream of posts is displayed in the browser. The template that renders the
+topic, along with its posts, is <a href="https://github.com/discourse/discourse/blob/0fd193fac314610d7a93d7b4af84a4bc1e52d03e/app/assets/javascripts/discourse/templates/topic.js.handlebars">the topic template</a>.</p>
+
+<p>The relevant part of the template is below:</p>
+
+<p><div><script src='https://gist.github.com/8434790.js'></script>
+<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/8434790&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+</p>
+
+<p>If the post stream is not loading, we render the posts through the cloaked
+collection. I will not go into details about what
+<a href="https://github.com/eviltrout/ember-cloaking">cloaked-collection</a> does, (but I highly recommend <a href="http://eviltrout.com/2014/01/04/hiding-offscreen-ember.html">a blog
+ post on it by its author, @eviltrout</a>), the important thing in the
+current discussion is that it renders the <code>post</code> template (cloakView="post") for
+each post from <code>postStream.posts</code> (content=postStream.posts).</p>
+
+<p>That is where the two parts come together. Since a binding is established with
+the above handlebars line to the posts property of the postStream, every time
+new posts are added (see how in the first part of the walkthrough), the
+collection is going to be rerendered and consequently the posts appear in
+"real-time". The magic of Ember.js bindings.</p>
+
+<h3>In parting</h3>
+
+<p>I skipped over a couple of things so that this post does not turn into a
+chapter of a novel, but I hope that my walkthrough could let you peek behind
+the curtains and see how such a miraculous feature is made possible.</p>
+
+<p>The key takeaway is that building with the right tools (namely the message bus and
+the solid foundations of Ember.js), which a lot of people have put an enormous
+amount of time into, makes such a killer feature within your reach. Not easy,
+but definitely doable.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[At Your Service: Publicly Available API for the Rock and Roll Ember.js App]]></title>
+    <link href="http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html"/>
+    <updated>2013-12-31T09:38:00+01:00</updated>
+    <id>http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app</id>
+    <content type="html"><![CDATA[<p>So far, if you wanted to code along <a href="http://emberjs.balinterdi.com">my developing an example Ember.js
+application</a>, Rock &amp; Roll, you had to run the server side
+component. That required ruby to be installed on your machine, and you had to
+<a href="https://github.com/balinterdi/rock-and-roll-api">clone the repository</a>, and start the server each time you wanted to
+make some progress with the application.</p>
+
+<p>I realized that might be cumbersome and thus I made the server publicly
+available at <a href="http://rock-and-roll-api.herokuapp.com/">http://rock-and-roll-api.herokuapp.com</a>.</p>
+
+<p>I have also updated <a href="https://github.com/balinterdi/rock-and-roll/commit/remote-api">the client-side component to connect to that remote
+api.</a>. All backend requests now go through App.Adapter.ajax which
+basically just delegates to <code>Ember.$.ajax</code> prefixing urls with the backend host:</p>
 
 <p>``` javascript
-App.ArtistsRoute = Ember.Route.extend({
+App.Adapter = {
+  ajax: function(path, options) {</p>
+
+<pre><code>return Ember.$.ajax('http://rock-and-roll-api.herokuapp.com' + path, options)
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>If you work with an earlier version of the client app, you might have to
+rewrite urls in multiple places but I figured it is still less work than running
+the server yourself.</p>
+
+<p>I hope that facilitates your working along with the Rock &amp; Roll app and makes
+your journey to Ember.js proficiency smoother. If you want to see the
+screencast series in which I develop said application, you can <a href="http://emberjs.balinterdi.com">sign up to my
+mailing list</a> and have each episode auto-delivered to your inbox.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Changing the URL type of your Ember.js app]]></title>
+    <link href="http://balinterdi.com/2013/12/17/change-the-url-type-of-your-ember-app.html"/>
+    <updated>2013-12-17T09:32:00+01:00</updated>
+    <id>http://balinterdi.com/2013/12/17/change-the-url-type-of-your-ember-app</id>
+    <content type="html"><![CDATA[<p>By default, Ember.js uses the hashchange event in the browser to change URLs.
+This is the most widely supported way but it feels like a hack and there is a
+better way, introduced in HTML5: <a href="http://diveintohtml5.info/history.html">the History API</a>.</p>
+
+<p>Bear in mind that the <a href="http://caniuse.com/history">History API has a lower browser support
+rate</a> than <a href="http://caniuse.com/hashchange">the hashchange
+event</a> does (~70% vs.  89%), so there is a tradeoff
+involved that you should decide to make or not to make.</p>
+
+<p>Ember.js makes it really easy to change the URL type. All you have to do is
+add the following lines to your client app:</p>
+
+<p><code>javascript
+App.Router.reopen({
+ location: 'history'
+});
+</code></p>
+
+<p>Seems too good to be true (that is just the way Ember is), but provided you did
+not assemble any routes manually and only used Ember's tools to transition
+between routes (e.g link-to, transitionTo, etc.), that is all the client-side
+code changes you had to make.</p>
+
+<p>The server side needs to be adjusted, too, though, since the server now gets
+sent the client-side routes, too. How to do this can vary depending on the
+application server you use.</p>
+
+<p>In the case of the Rock &amp; Roll app, here is what <code>config.ru</code> looks like:</p>
+
+<p>``` ruby
+run Proc.new { |env|
+  # Extract the requested path from the request
+  path = Rack::Utils.unescape(env['PATH_INFO'])
+  if path.start_with?("/artists")</p>
+
+<pre><code>path = '/'
+</code></pre>
+
+<p>  end
+  index_file = @root + "#{path}/index.html"</p>
+
+<p>  if File.exists?(index_file)</p>
+
+<pre><code># Return the index
+[200, {'Content-Type' =&gt; 'text/html'}, [File.read(index_file)]]
+</code></pre>
+
+<p>  else</p>
+
+<pre><code># Pass the request to the directory app
+Rack::Directory.new(@root).call(env)
+</code></pre>
+
+<p>  end
+}
+```</p>
+
+<p>I only had to add the <code>path.start_with?</code> condition to make sure the server
+serves the Ember application on that route. It is not an ideal solution because
+anytime you add a top-level route to the Ember app, you would also have to
+modify the server config but this is the bare minimum that got the job done.</p>
+
+<p>Hooray for clean URLs:
+<img src="/images/posts/change-the-url-type/rock-and-roll-history-api-urls.png" alt="History API
+URLs" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Build an Ember.js app with Firebase]]></title>
+    <link href="http://balinterdi.com/2013/12/11/build-an-ember-dot-js-app-with-firebase.html"/>
+    <updated>2013-12-11T08:42:46+01:00</updated>
+    <id>http://balinterdi.com/2013/12/11/build-an-ember-dot-js-app-with-firebase</id>
+    <content type="html"><![CDATA[<p>Ember.js is an outstanding client-side framework for building single-page
+applications. To make your application truly come to life, Firebase, being a
+real-time backend, is a natural choice as the server-side component.</p>
+
+<p>Sending data between the server and the client is a task all web applications
+have to address. However, if one uses the Firebase-Ember.js stack, this
+problem is largely abstracted away by these wonderful frameworks.</p>
+
+<p>To make them work together, the Firebase team released their official
+Ember.js bindings, <a href="https://github.com/firebase/emberFire">emberFire</a>.</p>
+
+<h3>How does it work?</h3>
+
+<p>Before we look at the making of the actual application it is important to
+understand how the emberFire library works.</p>
+
+<p>It is built on two primitives, <code>EmberFire.Object</code> and <code>EmberFire.Array</code>. These
+extend <code>Ember.ObjectProxy</code> and <code>Ember.ArrayProxy</code>, respectively. These proxy
+objects delegate any <code>get</code> and <code>setProperty</code> calls that are not defined on the
+proxy to an underlying content object.</p>
+
+<p>What this means is that we can work with Firebase references in our
+application as if they were Ember objects. In the case of a single object,
+setting a property will cause a child with that name to be written with the
+passed value. When working with an array, the usual array methods (e.g
+<code>pushObject</code>) can be used and they will do the right thing in the underlying
+Firebase reference (e.g <code>push</code> the new node).</p>
+
+<h3>Setting up the environment</h3>
+
+<p>To set up the necessary dependencies, it is easiest to download the <a href="http://emberjs.com/">latest Ember
+starter kit</a> and add the following script tags to the main
+template:</p>
+
+<p>``` html</p>
+
+<script src="https://cdn.firebase.com/v0/firebase.js"></script>
+
+
+<script src='https://cdn.firebase.com/v0/firebase-simple-login.js'></script>
+
+
+<script src="http://firebase.github.io/emberFire/emberfire-latest.js"></script>
+
+
+<p>```</p>
+
+<p>With that in place, we can start developing. For the sake of focusing on one
+single issue at a time, the code snippets in this post do not always exactly
+match those in the actual application. If you want to see them in their
+entirety, you can always <a href="https://github.com/balinterdi/ideavote-emberfire">check the source code on Github</a>.</p>
+
+<h3>The Idealist</h3>
+
+<p>The application we are going to build is an "Idealist". Users can submit ideas
+and vote on existing ones.</p>
+
+<p>When one loads the application it looks like the following:</p>
+
+<p><img src="https://raw.github.com/balinterdi/ideavote-emberfire/master/public/img/screenshots/ideavote-screenshot-3-640.png" alt="Ideavote screenshot" /></p>
+
+<p>A list of ideas is displayed along with the number of votes for that idea and a
+button to vote that idea up.</p>
+
+<p>To get the existing ideas from Firebase, we use the <code>model</code> hook of the
+appropriate route:</p>
+
+<p>``` javascript
+var dbRoot = "https://emberfire-ideavote.firebaseio.com";
+var ideasPath = dbRoot + "/ideas";</p>
+
+<p>App.IdeasRoute = Ember.Route.extend({
   model: function() {</p>
 
-<pre><code>return App.IdentityMap.findAll('artist');
+<pre><code>return EmberFire.Array.create({
+  ref: new Firebase(ideasPath)
+});
 </code></pre>
 
-<p>  },
-  (...)
-});</p>
-
-<p>App.ArtistsSongsRoute = Ember.Route.extend({
-  model: function(params) {</p>
-
-<pre><code>return App.IdentityMap.find('artist', params.slug);
-</code></pre>
-
-<p>  },
-  (...)
+<p>  }
 });
 ```</p>
 
-<p>When I call <code>App.IdentityMap.findAll</code> from the <code>ArtistsRoute</code> the rendering of
-the <code>artists</code> template is stopped until the promise is resolved. That happens
-when the AJAX call has returned with the data for all artists and I call
-<code>resolve(artistObjects)</code>.</p>
+<p>This loads the ideas in an <code>EmberFire.Array</code> and then iterates through them in the <code>ideas</code> template:</p>
 
-<p>Next, the model hook for the <code>ArtistsSongsRoute</code> is evaluated. It returns a
-promise that has to be resolved in order for the template to be rendered.</p>
+<p><div><script src='https://gist.github.com/7906523.js'></script>
+<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/7906523&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+</p>
 
-<p>The artist is found in the identityMap because it has just been stored there
-during the findAll in the previous model hook resolution (see the
-<code>identityMap.store('artist', artist.get('slug'), artist);</code> line). Since it is
-the same object that was used as the context for the artist link, the bug is
-squashed.</p>
+<p>So how does adding a new idea happen? If we take a look at the <code>ideas/new</code>
+template, we can see that clicking on the "Send my idea" button triggers the
+<code>sendIdea</code> action:</p>
 
-<p>The link now gets correctly highlighted as active:</p>
+<p><div><script src='https://gist.github.com/7906543.js'></script>
+<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/7906543&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+</p>
 
-<p><img src="/images/posts/roll-your-own-store/active-highlight-fixed.png" alt="Active highlight fixed" /></p>
+<p>The triggered <code>sendIdea</code> action is then handled on the controller:</p>
 
-<p>Notice we achieved something else, too. Instead of firing two AJAX calls, one
-to fetch all artists and then one to fetch the one serialized in the URL we now
-only have one call. We eliminated the second one by returning the object from
-the identity map.</p>
+<p>``` javascript
+App.IdeasNewController = Ember.ObjectController.extend({
+  title: '',</p>
 
-<p>Furthermore, I also think our code has become better organized. The models for
-our routes have now become one-liners and can quickly be read and understood at
-a casual glance instead of being buried under the minutiae of AJAX calls.</p>
+<p>  actions: {</p>
+
+<pre><code>sendIdea: function() {
+  var newIdeaRef = new Firebase(ideasPath).push();
+  var newIdea = EmberFire.Object.create({ ref: newIdeaRef });
+  newIdea.setProperties({
+    id: newIdeaRef.name(),
+    title: this.get('title'),
+    submittedBy: this.get('auth.currentUser.id'),
+    timestamp: new Date(),
+    voteCount: 0
+  });
+  this.set('title', '');
+}
+</code></pre>
+
+<p>  }</p>
+
+<p>});
+```</p>
+
+<p>We get a reference with a unique id by using Firebase's push operation. We
+create an <code>EmberFire.Object</code> with that reference and that enables us to do our
+magic with the help of Firebase. When we then set any property on the object,
+it is going to be persisted on our backend and synchronized to all clients.</p>
+
+<h3>Extending the EmberFire classes</h3>
+
+<p>Up until this point, we did not need to create our own model classes. The basic
+EmberFire classes were sufficient for our needs. However, if we need to define
+additional behavior for our models, we have to extend these primitives.</p>
+
+<p>Suppose, for example, that each user has a certain number of votes and we want
+to prevent further voting when she does not have any votes left, as shown on the
+next mockup:</p>
+
+<p><img src="https://raw.github.com/balinterdi/ideavote-emberfire/master/public/img/screenshots/ideavote-screenshot-2-640.png" alt="Ideavote screenshot" /></p>
+
+<p>We can define a computed property on the user that would tell whether she has
+any votes left. Computed properties in Ember are properties that depend on
+other -computed or "normal"- properties and get automatically updated when one of
+the dependent properties change.</p>
+
+<p>To do that, we need to define our User model:</p>
+
+<p><code>javascript
+App.User = EmberFire.Object.extend({
+  noVotesLeft: Ember.computed.lte('votesLeft', 0),
+});
+</code></p>
+
+<p>The above is a computed macro definition that defines <code>noVotesLeft</code> as true if
+the <code>votesLeft</code> property of the user is less than or equal to zero.</p>
+
+<p>Then, in the template that renders each idea, we disable the button if that
+computed property is true and also give it a grey hue to indicate its disabled
+state:</p>
+
+<p><div><script src='https://gist.github.com/7906552.js'></script>
+<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/7906552&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+</p>
+
+<p>Keep in mind that the context of the template is an idea and our computed
+property is defined on the user, hence the need for
+<code>auth.currentUser.noVotesLeft</code>.</p>
+
+<h3>Wait, there is more</h3>
+
+<p>Taking things a step further, I have also integrated Firebase's SimpleLogin
+authentication service and prevented the same user to vote on the same idea
+multiple times. If you wish to see how these are implemented, I encourage you to
+check out <a href="https://github.com/balinterdi/ideavote-emberfire">the source code of the project</a>.</p>
+
+<p>I hope I got you interested in learning more about how to build real-time web
+applications and gave you a basic example of how to use state-of-the-art tools
+to do so.</p>
 ]]></content>
   </entry>
   

@@ -262,7 +262,7 @@
     </url>
     <url>
         <loc>http://balinterdi.com/2013/05/30/ruby-rogues-discourse-with-jeff-atwood.html</loc>
-        <lastmod>2013-12-11T08:51:34+01:00</lastmod>
+        <lastmod>2014-01-21T19:41:50+01:00</lastmod>
     </url>
     <url>
         <loc>
@@ -282,7 +282,7 @@
         <loc>
             http://balinterdi.com/2013/11/27/profile-your-ember-app-with-ember-renderspeed.html
         </loc>
-        <lastmod>2013-12-11T08:51:34+01:00</lastmod>
+        <lastmod>2014-01-21T19:41:26+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map.html</loc>
@@ -290,29 +290,33 @@
     </url>
     <url>
         <loc>http://balinterdi.com/2013/12/11/build-an-ember-dot-js-app-with-firebase.html</loc>
-        <lastmod>2013-12-11T08:57:59+01:00</lastmod>
+        <lastmod>2014-01-21T19:41:19+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/2013/12/17/change-the-url-type-of-your-ember-app.html</loc>
-        <lastmod>2013-12-17T10:11:15+01:00</lastmod>
+        <lastmod>2014-01-21T19:40:53+01:00</lastmod>
     </url>
     <url>
         <loc>
             http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html
         </loc>
-        <lastmod>2013-12-31T10:24:24+01:00</lastmod>
+        <lastmod>2014-01-21T19:41:04+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/2014/01/14/how-real-time-updates-work-in-discourse.html</loc>
-        <lastmod>2014-01-15T21:59:51+01:00</lastmod>
+        <lastmod>2014-01-21T19:41:10+01:00</lastmod>
+    </url>
+    <url>
+        <loc>http://balinterdi.com/2014/01/21/promises-instead-of-callbacks.html</loc>
+        <lastmod>2014-01-21T20:05:25+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/blog/archives/</loc>
-        <lastmod>2014-01-15T21:59:51+01:00</lastmod>
+        <lastmod>2014-01-21T20:05:25+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/</loc>
-        <lastmod>2014-01-15T21:59:51+01:00</lastmod>
+        <lastmod>2014-01-21T20:05:25+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/robots.txt</loc>

@@ -9,7 +9,7 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="If you&#8217;ve read the The Pragmatic Progammer - From Journeyman to Master (and if you have not, believe me, you should) you might remember one &hellip;">
+  <meta name="description" content="Some of you reading this probably use TextMate. It is an excellent editor with two caveats. The first is that you can only see one file in the &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +75,120 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2010/02/16/remove-trailing-whitespaces.html">Remove&#8217;em Trailing Whitespaces!</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-02-16T00:00:00+01:00" pubdate data-updated="true">Feb 16<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Some of you reading this probably use TextMate. It is an excellent editor with two caveats. The first is that you can only see one file in the editing window (no screen split), the other is that there is no save hook. This latter gave me headaches since I can&#8217;t stand any trailing whitespace in source code and the easiest solution would have been to run a script to remove those when the file is saved.</p>
+
+<p>Without further ado I&#8217;ll paste my solution below. Obviously this is not a difficult task to accomplish so the goal is to share not to show off. I use Git for SCM and the following solution parses out the files that have been modified and runs the whitespace eraser script for those. If you use something else (why do you?) you should obviously change the first building block:</p>
+
+<figure class='code'><figcaption><span>parse_modified_files_from_git_status.rb </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="c1">#!/usr/bin/env ruby -wn</span>
+</span><span class='line'><span class="n">modified_file_pattern</span> <span class="o">=</span> <span class="sr">/^#\s+(?:modified|new file):\s+(.*)$/</span>
+</span><span class='line'><span class="nb">puts</span> <span class="vg">$1</span>  <span class="k">if</span> <span class="n">modified_file_pattern</span> <span class="o">=~</span> <span class="vg">$_</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>rm_trailing_whitespace.rb </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="c1">#!/usr/bin/env ruby -wn</span>
+</span><span class='line'><span class="vg">$:</span><span class="o">.</span><span class="n">unshift</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">require</span> <span class="s2">&quot;trailing_whitespace_eraser&quot;</span>
+</span><span class='line'><span class="no">TrailingWhiteSpaceEraser</span><span class="o">.</span><span class="n">rm_trailing_whitespace!</span><span class="p">(</span><span class="vg">$_</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>trailing_whitespace_eraser.rb </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="k">class</span> <span class="nc">TrailingWhiteSpaceEraser</span>
+</span><span class='line'>  <span class="no">FILE_TYPES</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="s2">&quot;feature&quot;</span><span class="p">,</span> <span class="s2">&quot;yml&quot;</span><span class="p">,</span> <span class="s2">&quot;erb&quot;</span><span class="p">,</span> <span class="s2">&quot;haml&quot;</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">rm_trailing_whitespace_from_file!</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">trimmed</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">readlines</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span>
+</span><span class='line'>      <span class="n">line</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/[\t ]+$/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>    <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">trimmed</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">rm_trailing_whitespace!</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">root</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">files</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">directory?</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="p">?</span> <span class="no">Dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">root</span><span class="si">}</span><span class="s2">/**/*.{</span><span class="si">#{</span><span class="no">FILE_TYPES</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">}&quot;</span><span class="p">)</span> <span class="p">:</span> <span class="o">[</span><span class="n">root</span><span class="o">]</span>
+</span><span class='line'>    <span class="n">files</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">file</span><span class="o">|</span> <span class="n">rm_trailing_whitespace_from_file!</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">chomp</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And then you run it by typing:</p>
+
+<figure class='code'><figcaption><span>rtwsp.sh </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>git status | parse_modified_files_from_git_status.rb | rm_trailing_whitespace.rb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you decide to use this, it is more convenient to <a href="http://gist.github.com/raw/305654/568290aa63ee3b0b3748b5041654f94ce45f4e5b/erase_trailing_whitespace.rb">download the raw source</a></p>
+
+<p>Hopefully I did my tiny bit to have less trailing whitespace in OS code.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -653,52 +767,6 @@ apt-get install xvfb</code></pre>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/07/14/a-prime-example-of-not-eating-your-own-dog-food.html">A Prime Example of Not Eating Your Own Dog Food</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-07-14T00:00:00+02:00" pubdate data-updated="true">Jul 14<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I realized how 20th century (plus boring and error-prone) it is to write one&#8217;s invoices by hand. So I went looking for an invoicing application. My expectations were quite low: I wanted one which can be used from my MacBook, has some basic functions that cut down on typing (e.g a client &#8220;database&#8221;), has a decent design and UI, can make out invoices in different currencies and did not cost more than ~$100.</p>
-
-<p>It seemed like I have found <a href="http://www.native.hu">one</a>, which, though it had several minor bugs, seemed acceptable, so I purchased the Basic version. Everything went reasonably well until I had to make out my first invoice in euros. It turned out that the Basic version can only make invoices in Hungarian forints in spite of having a couple of other functionalities (e.g set the VAT rate to 0% automatically on invoices made out to EU companies) which made me think it could make it in euros, too.</p>
-
-<p>Ok, so accounting hell got me again. I sighed and asked the <a href="http://www.awasoft.hu/">company</a> how much it would cost to have this funcionality. I was informed I had to buy the upgrade to the Business version which costs ~$120 more, roughly the double of the original price I paid! That was too much to take, so I went looking for another invoicing application. After all, it should not be an insurmountable task to write such an app, I murmured to myself.</p>
-
-<p>I did find a <a href="http://lessaccounting.com">couple of</a> <a href="http://billingsapp.com">very good</a> applications which even overdo what I want them to accomplish. However, the Hungarian homologue of the IRS basically shuts out any foreign competitors by regulating very heavily which conditions must be fulfilled by an invoicing application for a Hungarian company to be able to use it. Bummer.</p>
-
-<p>&#8220;There is still a glimmer of hope.&#8221; - I thought. I checked the Hungarian scene still thinking it could not be that difficult to meet my expectations. Well, apparently I was wrong. The <a href="http://szamlazz.hu">ones</a> <a href="http://cipo.hu">I</a> <a href="https://symbion.eu/">found</a> are either overcomplicated to use, look like home pages in the 80s or are way too expensive. Sometimes all of these. So I put off the challenge of finding an acceptable piece of software and got back of writing invoices manually.</p>
-
-<p>Now you might wonder where <a href="http://en.wikipedia.org/wiki/Eating_one%27s_own_dog_food">the dog food</a> is in the story. Well, today I received the invoice from the company of my purchase of the Basic version of the application. It was written manually on an invoice sheet :) That&#8217;s tantamount of Steve Jobs using a PC with Windows Vista.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -723,6 +791,10 @@ apt-get install xvfb</code></pre>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/01/21/promises-instead-of-callbacks.html">Promises instead of callbacks</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/01/14/how-real-time-updates-work-in-discourse.html">How real-time updates work in Discourse</a>
       </li>
     
@@ -736,10 +808,6 @@ apt-get install xvfb</code></pre>
     
       <li class="post">
         <a href="/2013/12/11/build-an-ember-dot-js-app-with-firebase.html">Build an Ember.js app with Firebase</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/12/03/roll-your-own-ember-dot-js-identity-map.html">Roll your own Ember.js identity map</a>
       </li>
     
   </ul>

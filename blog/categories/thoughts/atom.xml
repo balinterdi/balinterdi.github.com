@@ -4,7 +4,7 @@
   <title><![CDATA[Category: thoughts | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/thoughts/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-01-15T21:59:52+01:00</updated>
+  <updated>2014-01-21T20:05:26+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -29,7 +29,7 @@ You might find these thought-provoking, too. The full transcription is available
 <li>[Discourse] using postgres is a way to force hosting providers move out of the "server herpes" (PHP + MySQL). As Discourse becomes more popular, this will give more leverage to remove the herpes from servers.</li>
 <li>Why was it [the server side] built in Ruby/Rails? <a href="http://eviltrout.com/">Robin Ward</a> made a game about forums and Jeff contacted him to build Discourse. Robin had used Ruby and thus this decided the Ruby or Python question.</li>
 <li>Rule of 3. Kind of a philoshopical belief for Jeff. A component (e.g a datepicker) is proven to be reusable if it was successfully used in three different contexts. Having three major partners for Discourse will really be a tipping point. Etc.</li>
-<li>Since Discourse is mainly a rich, client-side app, [Ember] plays a much bigger role in its success (or failure) then Ruby. The question is how will Rubyists adapt to Ember, whether they will like it or not.</li>
+<li>Since Discourse is mainly a rich, client-side app, <a href="http://emberjs.com">Ember</a> plays a much bigger role in its success (or failure) then Ruby. The question is how will Rubyists adapt to Ember, whether they will like it or not.</li>
 </ul>
 
 
