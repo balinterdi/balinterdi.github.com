@@ -3,7 +3,7 @@ layout: post
 title: "Profile your Ember app with ember-renderspeed"
 date: 2013-11-27 18:56
 comments: true
-categories:
+categories: ember.js
 ---
 If your application has lots of things going on or you render a large list, you
 might see your once snappy app lose some of that swiftness. Naturally, you want

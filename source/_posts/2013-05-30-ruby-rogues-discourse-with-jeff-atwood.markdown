@@ -15,7 +15,7 @@ You might find these thought-provoking, too. The full transcription is available
 * [Discourse] using postgres is a way to force hosting providers move out of the "server herpes" (PHP + MySQL). As Discourse becomes more popular, this will give more leverage to remove the herpes from servers.
 * Why was it [the server side] built in Ruby/Rails? [Robin Ward][2] made a game about forums and Jeff contacted him to build Discourse. Robin had used Ruby and thus this decided the Ruby or Python question.
 * Rule of 3. Kind of a philoshopical belief for Jeff. A component (e.g a datepicker) is proven to be reusable if it was successfully used in three different contexts. Having three major partners for Discourse will really be a tipping point. Etc.
-* Since Discourse is mainly a rich, client-side app, [Ember] plays a much bigger role in its success (or failure) then Ruby. The question is how will Rubyists adapt to Ember, whether they will like it or not.
+* Since Discourse is mainly a rich, client-side app, [Ember][3] plays a much bigger role in its success (or failure) then Ruby. The question is how will Rubyists adapt to Ember, whether they will like it or not.
 
 Discourse is built on Ember, and [Ember uses Discourse as a forum][4]. For one, I welcome our new rich-client overlords.
 

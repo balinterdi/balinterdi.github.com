@@ -3,7 +3,7 @@ layout: post
 title: "Changing the URL type of your Ember.js app"
 date: 2013-12-17 09:32
 comments: true
-categories:
+categories: ember.js
 ---
 
 By default, Ember.js uses the hashchange event in the browser to change URLs.

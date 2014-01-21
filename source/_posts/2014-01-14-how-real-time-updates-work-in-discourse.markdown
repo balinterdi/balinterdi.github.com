@@ -3,7 +3,7 @@ layout: post
 title: "How real-time updates work in Discourse"
 date: 2014-01-14 11:06
 comments: true
-categories: emberjs
+categories: ember.js
 ---
 
 Given that I started engaging with web sites in the early 2000s there are still

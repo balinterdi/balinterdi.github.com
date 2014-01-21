@@ -3,7 +3,7 @@ layout: post
 title: "Build an Ember.js app with Firebase"
 date: 2013-12-11 08:42:46 +0100
 comments: true
-categories:
+categories: ember.js
 ---
 
 Ember.js is an outstanding client-side framework for building single-page

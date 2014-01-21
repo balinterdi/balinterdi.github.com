@@ -3,7 +3,7 @@ layout: post
 title: "At Your Service: Publicly Available API for the Rock and Roll Ember.js App"
 date: 2013-12-31 09:38
 comments: true
-categories: emberjs
+categories: ember.js
 ---
 
 So far, if you wanted to code along [my developing an example Ember.js
