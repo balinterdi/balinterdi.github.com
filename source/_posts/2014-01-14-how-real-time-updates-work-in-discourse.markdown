@@ -190,7 +190,13 @@ topic, along with its posts, is [the topic template][topic-template-source].
 
 The relevant part of the template is below:
 
-{% gist 8434790 %}
+{% highlight html %}
+{% raw %}
+{{#unless postStream.loadingFilter}}
+  {{cloaked-collection cloakView="post" idProperty="post_number" defaultHeight="200" content=postStream.posts slackRatio=slackRatio}}
+{{/unless}}
+{% endraw %}
+{% endhighlight %}
 
 If the post stream is not loading, we render the posts through the cloaked
 collection. I will not go into details about what

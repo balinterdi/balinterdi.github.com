@@ -81,13 +81,45 @@ App.IdeasRoute = Ember.Route.extend({
 
 This loads the ideas in an `EmberFire.Array` and then iterates through them in the `ideas` template:
 
-{% gist 7906523 %}
+{% highlight html %}
+{% raw %}
+<script type="text/x-handlebars" data-template-name="ideas">
+  {{ render "ideas/new" }}
+  <div class="idea-list">
+    <ul class="unstyled">
+      {{#each controller}}
+        {{ render "idea" this }}
+      {{/each}}
+    </ul>
+  </div>
+</script>
+{% endraw %}
+{% endhighlight %}
 
 So how does adding a new idea happen? If we take a look at the `ideas/new`
 template, we can see that clicking on the "Send my idea" button triggers the
 `sendIdea` action:
 
-{% gist 7906543 %}
+{% highlight html %}
+{% raw %}
+<script type="text/x-handlebars" data-template-name="ideas/new">
+  <div class="idea new-idea">
+    <div class="row">
+      <div class="span9">
+        {{input value=title placeholder="Your idea here" insert-newline="sendIdea"}}
+      </div>
+      <div class="span2">
+        {{#if isDisabled}}
+          <button disabled="disabled" {{bindAttr class="isDisabled:disabled"}}>Send my idea</button>
+        {{else}}
+          <button {{bindAttr class="isDisabled:disabled"}} {{action sendIdea}}>Send my idea</button>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</script>
+{% endraw %}
+{% endhighlight %}
 
 The triggered `sendIdea` action is then handled on the controller:
 
@@ -150,7 +182,28 @@ Then, in the template that renders each idea, we disable the button if that
 computed property is true and also give it a grey hue to indicate its disabled
 state:
 
-{% gist 7906552 %}
+{% highlight html %}
+{% raw %}
+<script type="text/x-handlebars" data-template-name="idea">
+  <li>
+    <div class="idea">
+      <div class="row">
+        <div class="span8">
+          <strong>{{title}}</strong>
+        </div>
+        <div class="span1">
+          {{voteCount}}
+        </div>
+          <div class="span2">
+            <button {{bind-attr class=":btn auth.currentUser.noVotesLeft:btn-disabled:btn-primary"}}
+                    {{bind-attr disabled="auth.currentUser.noVotesLeft"}}>Vote</button>
+          </div>
+      </div>
+    </div>
+  </li>
+</script>
+{% endraw %}
+{% endhighlight %}
 
 Keep in mind that the context of the template is an idea and our computed
 property is defined on the user, hence the need for

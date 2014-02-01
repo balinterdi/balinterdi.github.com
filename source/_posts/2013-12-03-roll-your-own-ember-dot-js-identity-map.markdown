@@ -52,7 +52,20 @@ App.Router.map(function() {
 
 And the following template that renders each artist link:
 
-{% gist 7708568 %}
+{% highlight html %}
+{% raw %}
+<script type="text/x-handlebars" data-template-name="artists">
+  (...)
+  {{#each model}}
+    {{#link-to "artists.songs" this class="list-group-item artist-link"}}
+      {{name}}
+      (...)
+    {{/link-to}}
+  {{/each}}
+  (...)
+</script>
+{% endraw %}
+{% endhighlight %}
 
 Each link is rendered with an artist object that comes from the model hook of
 the `ArtistsRoute`:
