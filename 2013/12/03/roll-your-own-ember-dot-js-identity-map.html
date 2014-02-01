@@ -154,8 +154,18 @@ order for the link to be considered active.</p>
 
 <p>And the following template that renders each artist link:</p>
 
-<div><script src='https://gist.github.com/7708568.js'></script>
-<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/7708568&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artists&quot;&gt;
+  (...)
+  {{#each model}}
+    {{#link-to &quot;artists.songs&quot; this class=&quot;list-group-item artist-link&quot;}}
+      {{name}}
+      (...)
+    {{/link-to}}
+  {{/each}}
+  (...)
+&lt;/script&gt;</code></pre>
+</div>
 
 
 <p>Each link is rendered with an artist object that comes from the model hook of

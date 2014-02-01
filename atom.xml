@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-01-21T20:05:26+01:00</updated>
+  <updated>2014-02-01T13:20:52+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -528,8 +528,11 @@ topic, along with its posts, is <a href="https://github.com/discourse/discourse/
 
 <p>The relevant part of the template is below:</p>
 
-<div><script src='https://gist.github.com/8434790.js'></script>
-<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/8434790&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+<div>
+  <pre><code class='html'>{{#unless postStream.loadingFilter}}
+  {{cloaked-collection cloakView=&quot;post&quot; idProperty=&quot;post_number&quot; defaultHeight=&quot;200&quot; content=postStream.posts slackRatio=slackRatio}}
+{{/unless}}</code></pre>
+</div>
 
 
 <p>If the post stream is not loading, we render the posts through the cloaked
@@ -776,16 +779,42 @@ appropriate route:</p>
 
 <p>This loads the ideas in an <code>EmberFire.Array</code> and then iterates through them in the <code>ideas</code> template:</p>
 
-<div><script src='https://gist.github.com/7906523.js'></script>
-<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/7906523&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;ideas&quot;&gt;
+  {{ render &quot;ideas/new&quot; }}
+  &lt;div class=&quot;idea-list&quot;&gt;
+    &lt;ul class=&quot;unstyled&quot;&gt;
+      {{#each controller}}
+        {{ render &quot;idea&quot; this }}
+      {{/each}}
+    &lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/script&gt;</code></pre>
+</div>
 
 
 <p>So how does adding a new idea happen? If we take a look at the <code>ideas/new</code>
 template, we can see that clicking on the &#8220;Send my idea&#8221; button triggers the
 <code>sendIdea</code> action:</p>
 
-<div><script src='https://gist.github.com/7906543.js'></script>
-<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/7906543&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;ideas/new&quot;&gt;
+  &lt;div class=&quot;idea new-idea&quot;&gt;
+    &lt;div class=&quot;row&quot;&gt;
+      &lt;div class=&quot;span9&quot;&gt;
+        {{input value=title placeholder=&quot;Your idea here&quot; insert-newline=&quot;sendIdea&quot;}}
+      &lt;/div&gt;
+      &lt;div class=&quot;span2&quot;&gt;
+        {{#if isDisabled}}
+          &lt;button disabled=&quot;disabled&quot; {{bindAttr class=&quot;isDisabled:disabled&quot;}}&gt;Send my idea&lt;/button&gt;
+        {{else}}
+          &lt;button {{bindAttr class=&quot;isDisabled:disabled&quot;}} {{action sendIdea}}&gt;Send my idea&lt;/button&gt;
+        {{/if}}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;</code></pre>
+</div>
 
 
 <p>The triggered <code>sendIdea</code> action is then handled on the controller:</p>
@@ -871,8 +900,26 @@ the <code>votesLeft</code> property of the user is less than or equal to zero.</
 computed property is true and also give it a grey hue to indicate its disabled
 state:</p>
 
-<div><script src='https://gist.github.com/7906552.js'></script>
-<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/7906552&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;idea&quot;&gt;
+  &lt;li&gt;
+    &lt;div class=&quot;idea&quot;&gt;
+      &lt;div class=&quot;row&quot;&gt;
+        &lt;div class=&quot;span8&quot;&gt;
+          &lt;strong&gt;{{title}}&lt;/strong&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;span1&quot;&gt;
+          {{voteCount}}
+        &lt;/div&gt;
+          &lt;div class=&quot;span2&quot;&gt;
+            &lt;button {{bind-attr class=&quot;:btn auth.currentUser.noVotesLeft:btn-disabled:btn-primary&quot;}}
+                    {{bind-attr disabled=&quot;auth.currentUser.noVotesLeft&quot;}}&gt;Vote&lt;/button&gt;
+          &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/script&gt;</code></pre>
+</div>
 
 
 <p>Keep in mind that the context of the template is an idea and our computed
@@ -948,8 +995,18 @@ order for the link to be considered active.</p>
 
 <p>And the following template that renders each artist link:</p>
 
-<div><script src='https://gist.github.com/7708568.js'></script>
-<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/7708568&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artists&quot;&gt;
+  (...)
+  {{#each model}}
+    {{#link-to &quot;artists.songs&quot; this class=&quot;list-group-item artist-link&quot;}}
+      {{name}}
+      (...)
+    {{/link-to}}
+  {{/each}}
+  (...)
+&lt;/script&gt;</code></pre>
+</div>
 
 
 <p>Each link is rendered with an artist object that comes from the model hook of

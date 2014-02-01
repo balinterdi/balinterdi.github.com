@@ -360,8 +360,11 @@ topic, along with its posts, is <a href="https://github.com/discourse/discourse/
 
 <p>The relevant part of the template is below:</p>
 
-<div><script src='https://gist.github.com/8434790.js'></script>
-<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/8434790&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+<div>
+  <pre><code class='html'>{{#unless postStream.loadingFilter}}
+  {{cloaked-collection cloakView=&quot;post&quot; idProperty=&quot;post_number&quot; defaultHeight=&quot;200&quot; content=postStream.posts slackRatio=slackRatio}}
+{{/unless}}</code></pre>
+</div>
 
 
 <p>If the post stream is not loading, we render the posts through the cloaked
