@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-02-01T13:20:52+01:00</updated>
+  <updated>2014-02-05T11:34:24+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,275 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Convert a view into a component]]></title>
+    <link href="http://balinterdi.com/2014/02/05/convert-a-view-into-a-component.html"/>
+    <updated>2014-02-05T09:44:00+01:00</updated>
+    <id>http://balinterdi.com/2014/02/05/convert-a-view-into-a-component</id>
+    <content type="html"><![CDATA[<h2>Intro to components in Ember</h2>
+
+<p>Components landed in <a href="http://emberjs.com/blog/2013/06/23/ember-1-0-rc6.html">Ember in 1.0.rc6</a>, in June 2013. They are reusable widgets
+that are built on top of HTML and provide a richer functionality. For the sake
+of reusability, they are isolated from their surroundings, and -as opposed to
+views- do not have access to their context. Everything a component has to know
+from the outside world has to be passed in at creation. Anything it wants to
+communicate to the outside world needs to be sent via events (or actions, in
+Ember parlance).</p>
+
+<p>Usability is meant not just between different parts of the same application but
+across Ember applications, too. Once achieved, it would imply that a component
+for a specific task needs to be written once and could be used anywhere, just
+like jQuery plugins.</p>
+
+<p>That is an ambitious goal which is to expected from an ambitious framework. We
+are not quite there, yet, and <a href="http://discuss.emberjs.com/t/some-ideas-i-had-about-composable-reusable-components/2850">the specifics are still under discussion</a>.
+Nevertheless, components are a great thing and you should start using them
+today, if you have not already.</p>
+
+<h2>"View".replace("Component")</h2>
+
+<p>Whereever you would use a component today, you would have used a view before
+components were possible. Views still have their role in an Ember app but when
+existing html functionality is enhanced to give a richer, or more complex user
+interaction and reusability is important, you should reach for components.</p>
+
+<p>In this post, I'm going to show how to swap out an existing view with a
+component. The example I'm going to use is the star rating view from the Rock &amp;
+Roll application.</p>
+
+<h2>Star rating component</h2>
+
+<p>Here is what the star rating view looks like:</p>
+
+<p>```js
+App.StarRating = Ember.View.extend({
+  classNames: ['rating-panel'],
+  templateName: 'star-rating',
+  rating: Ember.computed.alias('context.rating'),</p>
+
+<p>  fullStars: Ember.computed.alias('rating'),
+  numStars:  Ember.computed.alias('maxRating'),</p>
+
+<p>  stars: function() {</p>
+
+<pre><code>var ratings = [];
+var fullStars = this.starRange(1, this.get('fullStars'), 'full');
+var emptyStars = this.starRange(this.get('fullStars') + 1, this.get('numStars'), 'empty');
+Array.prototype.push.apply(ratings, fullStars);
+Array.prototype.push.apply(ratings, emptyStars);
+return ratings;
+</code></pre>
+
+<p>  }.property('fullStars', 'numStars'),</p>
+
+<p>  starRange: function(start, end, type) {</p>
+
+<pre><code>var starsData = [];
+for (var i = start; i &lt;= end; i++) {
+  starsData.push({ rating: i, full: type === 'full' });
+};
+return starsData;
+</code></pre>
+
+<p>  },
+  actions: {</p>
+
+<pre><code>setRating: function() {
+  var newRating = $(event.target).data('rating');
+  this.set('rating', newRating);
+  App.Adapter.ajax('/songs/' + this.get('context.id'), {
+    type: 'PUT',
+    context: this,
+    data: { rating: newRating }
+  }).then(function() {
+    console.log("Rating updated");
+  }, function() {
+    alert('Failed to set new rating');
+  });
+}
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>The most important thing about components is that they do not have access to
+their context so any code that does use it needs to be changed.</p>
+
+<p>Back when I wrote the code, I was, somewhat surprisingly, wise enough to use
+properties whose semantics reflect the inner operation of the widget, namely
+<code>fullStars</code> and <code>numStars</code>. Now we can reap the benefits of this foresight,
+because the entire <code>stars</code> and <code>starRange</code> method can remain untouched. It is
+only the definition of the <code>fullStars</code> property and the <code>setRating</code> action that
+need to change.</p>
+
+<p>Let's quickly sketch up the interface of the component. It will need the <code>item</code>
+whose rating it sets/displays, the name of the action it sends to the outer
+world when a new rating is set (<code>setAction</code>) and the maximum number of stars.</p>
+
+<p>Having established that, the code transforms to the following:</p>
+
+<p>```js
+App.StarRatingComponent = Ember.Component.extend({
+  classNames: ['rating-panel'],</p>
+
+<p>  fullStars: Ember.computed.alias('item.rating'),</p>
+
+<p>  (...)</p>
+
+<p>  actions: {</p>
+
+<pre><code>setRating: function() {
+  var newRating = parseInt($(event.target).attr('data-rating'), 10);
+  this.get('item').set('rating', newRating);
+  this.sendAction('setAction', this.get('item'));
+}
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p><code>fullStars</code> is now the rating property of the item (in our case, a song) that was passed in.</p>
+
+<p>When a star is clicked, the <code>setRating</code> action is triggered. Here, again, the
+rating is updated on the item that was passed in. After that, it sends the
+action that was passed in as <code>setAction</code> to the controller it was used from,
+passing along the item it received.  That is the aforementioned way of sending
+messages outside.</p>
+
+<p>(You might wonder what <code>sendAction</code> does. It is a shorthand form of
+<code>sendAction(this.get('foo'), ...)</code>.)</p>
+
+<h3>Rendering the component</h3>
+
+<p>The template will only have minor modifications made to it. Here is what it
+looked like in its infancy, back when it was a view:</p>
+
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
+
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;star-rating&quot;&gt;
+  {{#each view.stars}}
+    &lt;span {{bind-attr data-rating=rating}}
+      {{bind-attr class=&quot;:star-rating :glyphicon full:glyphicon-star:glyphicon-star-empty&quot;}}
+      {{action &quot;setRating&quot; target=view}}&gt;
+    &lt;/span&gt;
+  {{/each}}
+&lt;/script&gt;
+
+
+&lt;p&gt;</code></pre>
+</div>
+</p>
+
+<p>And here is the shiny, new component form:</p>
+
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
+
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;components/star-rating&quot;&gt;
+  {{#each stars}}
+    &lt;span {{bind-attr data-rating=rating}}
+      {{bind-attr class=&quot;:star-rating :glyphicon full:glyphicon-star:glyphicon-star-empty&quot;}}
+      {{action &quot;setRating&quot;}}&gt;
+    &lt;/span&gt;
+  {{/each}}
+&lt;/script&gt;
+
+
+&lt;p&gt;</code></pre>
+</div>
+</p>
+
+<p>The <code>data-template-name</code> of a component needs to start with <code>components</code> and the
+name of the component needs to have a dash in its name to prevent name
+collisions with html tags.</p>
+
+<p>The other changes relate to the essence of components, namely that they are not
+embedded in their context but work in isolation. That is why we both property
+lookups (in <code>#each stars</code>) and action handlers (<code>action "setRating"</code>) both target
+the component and thus the target does not need to be defined explicitly.</p>
+
+<p>Even more importantly, an action fired from a component's template will look for
+that action in the component but will not bubble to the controller (or route).
+That again enhances the component's isolation and thus its reusability and shows
+the care that was made when desinging it.</p>
+
+<p>(Unfortunately, if an action by that name is not found on the component, it will
+die a silent death which makes debugging more difficult).</p>
+
+<h3>Using the component</h3>
+
+<p>Now comes that part I love most. Using our polished component is just like
+calling a function in a language where state is not shared. You pass in
+everything the component needs to do its bidding and be done with it:</p>
+
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
+
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artists/songs&quot;&gt;
+  (...)
+  {{#each songs}}
+    &lt;div class=&quot;list-group-item&quot;&gt;
+      {{title}}
+      {{star-rating item=this maxRating=5 setAction=&quot;setRating&quot;}}
+    &lt;/div&gt;
+  (...)
+  {{/each}}
+&lt;/script&gt;
+
+
+&lt;p&gt;</code></pre>
+</div>
+</p>
+
+<h3>Handling the action sent from the component</h3>
+
+<p>We saw how the component will send the action passed in as <code>setAction</code> and pass
+along the item (now: song) with it. We just need to handle it the classic Ember
+way, either on the controller or the route:</p>
+
+<p>``` js
+App.ArtistsSongsRoute = Ember.Route.extend({
+  (...)
+  actions: {</p>
+
+<pre><code>setRating: function(song) {
+  App.Adapter.ajax('/songs/' + song.get('id'), {
+    type: 'PUT',
+    data: { rating: song.get('rating') }
+  }).then(function() {
+    console.log("Rating updated");
+  }, function() {
+    alert('Failed to set new rating');
+  });
+}
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Observe how the action to update a song's rating to the backend had to be moved
+to the route, instead of the view/component where it does not belong. Another
+win for components.</p>
+
+<p>Don't get confused by the two different <code>setRating</code> actions. The first is the
+one defined on the component that gets triggered via the action helper from the
+component's <strong>template</strong>, the second one is the action name that needs to be
+passed in and has to match the name of the event handler on the route.</p>
+
+<h3>Towards better reusability</h3>
+
+<p>I hope you got a taste of why components rock and what steps are taken in their
+design towards their reusability. However, it's up to writers of components to
+go all the way and make components general enough to fulfill this promise.</p>
+
+<p>That's what I'm going to strive for in a later post.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Promises instead of callbacks]]></title>
@@ -557,252 +826,6 @@ modify the server config but this is the bare minimum that got the job done.</p>
 <p>Hooray for clean URLs:
 <img src="/images/posts/change-the-url-type/rock-and-roll-history-api-urls.png" alt="History API
 URLs" /></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Build an Ember.js app with Firebase]]></title>
-    <link href="http://balinterdi.com/2013/12/11/build-an-ember-dot-js-app-with-firebase.html"/>
-    <updated>2013-12-11T08:42:46+01:00</updated>
-    <id>http://balinterdi.com/2013/12/11/build-an-ember-dot-js-app-with-firebase</id>
-    <content type="html"><![CDATA[<p>Ember.js is an outstanding client-side framework for building single-page
-applications. To make your application truly come to life, Firebase, being a
-real-time backend, is a natural choice as the server-side component.</p>
-
-<p>Sending data between the server and the client is a task all web applications
-have to address. However, if one uses the Firebase-Ember.js stack, this
-problem is largely abstracted away by these wonderful frameworks.</p>
-
-<p>To make them work together, the Firebase team released their official
-Ember.js bindings, <a href="https://github.com/firebase/emberFire">emberFire</a>.</p>
-
-<h3>How does it work?</h3>
-
-<p>Before we look at the making of the actual application it is important to
-understand how the emberFire library works.</p>
-
-<p>It is built on two primitives, <code>EmberFire.Object</code> and <code>EmberFire.Array</code>. These
-extend <code>Ember.ObjectProxy</code> and <code>Ember.ArrayProxy</code>, respectively. These proxy
-objects delegate any <code>get</code> and <code>setProperty</code> calls that are not defined on the
-proxy to an underlying content object.</p>
-
-<p>What this means is that we can work with Firebase references in our
-application as if they were Ember objects. In the case of a single object,
-setting a property will cause a child with that name to be written with the
-passed value. When working with an array, the usual array methods (e.g
-<code>pushObject</code>) can be used and they will do the right thing in the underlying
-Firebase reference (e.g <code>push</code> the new node).</p>
-
-<h3>Setting up the environment</h3>
-
-<p>To set up the necessary dependencies, it is easiest to download the <a href="http://emberjs.com/">latest Ember
-starter kit</a> and add the following script tags to the main
-template:</p>
-
-<p>``` html</p>
-
-<script src="https://cdn.firebase.com/v0/firebase.js"></script>
-
-
-<script src='https://cdn.firebase.com/v0/firebase-simple-login.js'></script>
-
-
-<script src="http://firebase.github.io/emberFire/emberfire-latest.js"></script>
-
-
-<p>```</p>
-
-<p>With that in place, we can start developing. For the sake of focusing on one
-single issue at a time, the code snippets in this post do not always exactly
-match those in the actual application. If you want to see them in their
-entirety, you can always <a href="https://github.com/balinterdi/ideavote-emberfire">check the source code on Github</a>.</p>
-
-<h3>The Idealist</h3>
-
-<p>The application we are going to build is an "Idealist". Users can submit ideas
-and vote on existing ones.</p>
-
-<p>When one loads the application it looks like the following:</p>
-
-<p><img src="https://raw.github.com/balinterdi/ideavote-emberfire/master/public/img/screenshots/ideavote-screenshot-3-640.png" alt="Ideavote screenshot" /></p>
-
-<p>A list of ideas is displayed along with the number of votes for that idea and a
-button to vote that idea up.</p>
-
-<p>To get the existing ideas from Firebase, we use the <code>model</code> hook of the
-appropriate route:</p>
-
-<p>``` javascript
-var dbRoot = "https://emberfire-ideavote.firebaseio.com";
-var ideasPath = dbRoot + "/ideas";</p>
-
-<p>App.IdeasRoute = Ember.Route.extend({
-  model: function() {</p>
-
-<pre><code>return EmberFire.Array.create({
-  ref: new Firebase(ideasPath)
-});
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<p>This loads the ideas in an <code>EmberFire.Array</code> and then iterates through them in the <code>ideas</code> template:</p>
-
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
-
-&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;ideas&quot;&gt;
-  {{ render &quot;ideas/new&quot; }}
-  &lt;div class=&quot;idea-list&quot;&gt;
-    &lt;ul class=&quot;unstyled&quot;&gt;
-      {{#each controller}}
-        {{ render &quot;idea&quot; this }}
-      {{/each}}
-    &lt;/ul&gt;
-  &lt;/div&gt;
-&lt;/script&gt;
-
-
-&lt;p&gt;</code></pre>
-</div>
-</p>
-
-<p>So how does adding a new idea happen? If we take a look at the <code>ideas/new</code>
-template, we can see that clicking on the "Send my idea" button triggers the
-<code>sendIdea</code> action:</p>
-
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
-
-&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;ideas/new&quot;&gt;
-  &lt;div class=&quot;idea new-idea&quot;&gt;
-    &lt;div class=&quot;row&quot;&gt;
-      &lt;div class=&quot;span9&quot;&gt;
-        {{input value=title placeholder=&quot;Your idea here&quot; insert-newline=&quot;sendIdea&quot;}}
-      &lt;/div&gt;
-      &lt;div class=&quot;span2&quot;&gt;
-        {{#if isDisabled}}
-          &lt;button disabled=&quot;disabled&quot; {{bindAttr class=&quot;isDisabled:disabled&quot;}}&gt;Send my idea&lt;/button&gt;
-        {{else}}
-          &lt;button {{bindAttr class=&quot;isDisabled:disabled&quot;}} {{action sendIdea}}&gt;Send my idea&lt;/button&gt;
-        {{/if}}
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/script&gt;
-
-
-&lt;p&gt;</code></pre>
-</div>
-</p>
-
-<p>The triggered <code>sendIdea</code> action is then handled on the controller:</p>
-
-<p>``` javascript
-App.IdeasNewController = Ember.ObjectController.extend({
-  title: '',</p>
-
-<p>  actions: {</p>
-
-<pre><code>sendIdea: function() {
-  var newIdeaRef = new Firebase(ideasPath).push();
-  var newIdea = EmberFire.Object.create({ ref: newIdeaRef });
-  newIdea.setProperties({
-    id: newIdeaRef.name(),
-    title: this.get('title'),
-    submittedBy: this.get('auth.currentUser.id'),
-    timestamp: new Date(),
-    voteCount: 0
-  });
-  this.set('title', '');
-}
-</code></pre>
-
-<p>  }</p>
-
-<p>});
-```</p>
-
-<p>We get a reference with a unique id by using Firebase's push operation. We
-create an <code>EmberFire.Object</code> with that reference and that enables us to do our
-magic with the help of Firebase. When we then set any property on the object,
-it is going to be persisted on our backend and synchronized to all clients.</p>
-
-<h3>Extending the EmberFire classes</h3>
-
-<p>Up until this point, we did not need to create our own model classes. The basic
-EmberFire classes were sufficient for our needs. However, if we need to define
-additional behavior for our models, we have to extend these primitives.</p>
-
-<p>Suppose, for example, that each user has a certain number of votes and we want
-to prevent further voting when she does not have any votes left, as shown on the
-next mockup:</p>
-
-<p><img src="https://raw.github.com/balinterdi/ideavote-emberfire/master/public/img/screenshots/ideavote-screenshot-2-640.png" alt="Ideavote screenshot" /></p>
-
-<p>We can define a computed property on the user that would tell whether she has
-any votes left. Computed properties in Ember are properties that depend on
-other -computed or "normal"- properties and get automatically updated when one of
-the dependent properties change.</p>
-
-<p>To do that, we need to define our User model:</p>
-
-<p><code>javascript
-App.User = EmberFire.Object.extend({
-  noVotesLeft: Ember.computed.lte('votesLeft', 0),
-});
-</code></p>
-
-<p>The above is a computed macro definition that defines <code>noVotesLeft</code> as true if
-the <code>votesLeft</code> property of the user is less than or equal to zero.</p>
-
-<p>Then, in the template that renders each idea, we disable the button if that
-computed property is true and also give it a grey hue to indicate its disabled
-state:</p>
-
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
-
-&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;idea&quot;&gt;
-  &lt;li&gt;
-    &lt;div class=&quot;idea&quot;&gt;
-      &lt;div class=&quot;row&quot;&gt;
-        &lt;div class=&quot;span8&quot;&gt;
-          &lt;strong&gt;{{title}}&lt;/strong&gt;
-        &lt;/div&gt;
-        &lt;div class=&quot;span1&quot;&gt;
-          {{voteCount}}
-        &lt;/div&gt;
-          &lt;div class=&quot;span2&quot;&gt;
-            &lt;button {{bind-attr class=&quot;:btn auth.currentUser.noVotesLeft:btn-disabled:btn-primary&quot;}}
-                    {{bind-attr disabled=&quot;auth.currentUser.noVotesLeft&quot;}}&gt;Vote&lt;/button&gt;
-          &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/li&gt;
-&lt;/script&gt;
-
-
-&lt;p&gt;</code></pre>
-</div>
-</p>
-
-<p>Keep in mind that the context of the template is an idea and our computed
-property is defined on the user, hence the need for
-<code>auth.currentUser.noVotesLeft</code>.</p>
-
-<h3>Wait, there is more</h3>
-
-<p>Taking things a step further, I have also integrated Firebase's SimpleLogin
-authentication service and prevented the same user to vote on the same idea
-multiple times. If you wish to see how these are implemented, I encourage you to
-check out <a href="https://github.com/balinterdi/ideavote-emberfire">the source code of the project</a>.</p>
-
-<p>I hope I got you interested in learning more about how to build real-time web
-applications and gave you a basic example of how to use state-of-the-art tools
-to do so.</p>
 ]]></content>
   </entry>
   

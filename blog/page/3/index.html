@@ -9,7 +9,7 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="Some of you reading this probably use TextMate. It is an excellent editor with two caveats. The first is that you can only see one file in the &hellip;">
+  <meta name="description" content="You must have heard the question several times on the Rails mailing list and different IRC channels: &#8220;Should I test validates_uniqueness_of&# &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +75,68 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2010/06/03/its-a-spec-not-a-test.html">It&#8217;s a Spec, Not a Test</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-06-03T00:00:00+02:00" pubdate data-updated="true">Jun 3<span>rd</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>You must have heard the question several times on the Rails mailing list and different IRC channels: &#8220;Should I test validates_uniqueness_of&#8221;? The standard answer to that one is &#8220;No, you definitely should not. It&#8217;s Rails framework code, and it&#8217;s already thoroughly tested. If you followed this path, you should also test whether objects are properly persisted in the database.&#8221;</p>
+
+<p>I think, however, that the question is wrong and thus you can not give a correct answer. It is wrong because validates_uniqueness_of is the implementation, not the requirement. If you approach it from this angle, the question turns into whether you should test the specific implementation or whether you should verify that (business) requirements are met.</p>
+
+<p>That, in turn, comes down to tests vs. specs (short for specifications) and this is again an opportunity for specs to shine. If you write specs instead of tests (or, to put it in a more mind-warping way: if your tests are actually specs), then the above question is a no-brainer: it&#8217;s part of the specification that no two users can have the same email address, so you must have a spec for it:</p>
+
+<figure class='code'><figcaption><span>user_spec.rb </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="n">describe</span> <span class="no">User</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">it</span> <span class="s2">&quot;has a unique email address&quot;</span> <span class="k">do</span>
+</span><span class='line'>    <span class="no">Factory</span><span class="p">(</span><span class="ss">:user</span><span class="p">,</span> <span class="ss">:email</span> <span class="o">=&gt;</span> <span class="s2">&quot;jeff@topnotch.com&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">lambda</span> <span class="p">{</span> <span class="no">Factory</span><span class="p">(</span><span class="ss">:user</span><span class="p">,</span> <span class="ss">:email</span> <span class="o">=&gt;</span> <span class="s2">&quot;jeff@topnotch.com&quot;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span>
+</span><span class='line'>     <span class="n">raise_error</span><span class="p">(</span><span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:RecordInvalid</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>On the other hand, if you stick with calling your tests tests (how orthodox! ;) ) then not only you have to think (which consumes a lot of resources), but you can also come to the wrong conclusion and emit a strong business requirement from your test suite. And then you might not remember to have the implementation for it after modifying the code for whatever reason. And then bad things might happen.</p>
+
+<p>(This thought came to me when coming to work in the subway this morning. I was never quite comfortable with the name &#8220;specs&#8221; but now it&#8217;s starting to make a lot of sense to me. You are encouraged to disagree. Dissent is what makes the world progress.)</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -661,112 +723,6 @@ end</code></pre>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/09/25/cucumber-meets-selenium-meets-integrity.html">Cucumber Meets Selenium Meets Integrity</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-09-25T00:00:00+02:00" pubdate data-updated="true">Sep 25<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="http://martinfowler.com/articles/continuousIntegration.html" title="Continuous Integration">Continuous Integration</a> (CI) is a basic building block of any project done in TDD style. In brief, having a CI server properly set up guarantees that developers can rest assured that the application passes all its tests and can thus be deployed at any moment. It does this by sending some kind of a warning if something is broken so it can be fixed immediately.</p>
-
-<p>Now I noticed that if a CI server is not in the mix right from the beginning of project, chances are it will never be, that was one of the first things I installed on a new Rails project. My server of choice is <a href="http://integrityapp.com">Integrity</a> mostly because it is so easy to set up and quite straightforward to use.</p>
-
-<p>Ok, so next we need some tests that Integrity will run at each commit and make sure the app can still be built. As a high-level acceptance test framework, I use <a href="http://cukes.info">Cucumber</a>, which plays very nicely with <a href="http://seleniumhq.org">Selenium</a> for automated in-browser testing. Since nowadays even the most basic web application will have some amount of client-side scripting code (that is, javascript) if you really want to test the features of your application you&#8217;ll need Selenium tests.</p>
-
-<p>That&#8217;s when matters get a bit more complicated when it comes to integrating these with the Integrity server. Why? Because on the server you usually don&#8217;t have the &#8220;desktop environment&#8221; which is available on the machine you do the development on. By default, you don&#8217;t run a desktop manager and have a graphic display on a server. A tool called <a href="http://linux.about.com/cs/linux101/g/xvfb.htm">xvfb</a> comes into a picture that emulate a dumb framebuffer so you can still programs that need a graphic display.</p>
-
-<p>To have some practical guidance, here&#8217;s what I did on an Ubuntu server to enable all of the above:</p>
-
-<p>Install java since Selenium runs in the JVM:</p>
-
-<div>
-  <pre><code class='bash'>apt-get install java-common sun-java6-jre</code></pre>
-</div>
-
-
-<p>Install firefox since that&#8217;s what Selenium runs by default and that&#8217;s a very good choice.</p>
-
-<div>
-  <pre><code class='bash'>apt-get install apt-get install firefox</code></pre>
-</div>
-
-
-<p>Install X since that&#8217;s what the xvfb launches and Xvfb itself.</p>
-
-<div>
-  <pre><code class='bash'>apt-get install xorg xserver-xorg
-apt-get install xvfb</code></pre>
-</div>
-
-
-<p>Next I found a <a href="http://wiki.openqa.org/display/SRC/Selenium-RC+and+Continuous+Integration">wiki</a> that describes how to launch the Xvfb correctly. Log into the server and do:</p>
-
-<div>
-  <pre><code class='bash'>startx -- `which Xvfb` :1 -screen 0 1024x768x24 2&gt;&amp;1 &gt;/dev/null &amp;</code></pre>
-</div>
-
-
-<p>So Xvfb will run on the DISPLAY :1. So far so good. But something was still not quite right. When integrity launched the test suite that included some Cucumber-Selenium tests I received an error message basically saying that no browser sessions could be started. And the solution to that, in fact, is where this post wants to get at.</p>
-
-<p>After a decent amount of head-scratching and code mining I realized that the Selenium server starts the browser on the same display where the server itself (the jar file) runs. I have found the relevant code that assembles the command that starts the Selenium server in the selenium-client gem and figured it was not meant to be run in graphic hardware-less environment since I saw no options to define which display it should run on. So as an <a href="http://github.com/balinterdi/selenium-client/commit/37094df174b5c52cb68d041f7dc940e501b3e438">easy hack I added the hardcoded &#8220;DISPLAY=:1&#8221; before it</a> and crossed my fingers.</p>
-
-<p>Bingo, it worked and I had a green build again! What&#8217;s more surprising is that it still runs perfectly on my Macbook so it seems to run in (some) graphical environments, too. It seems a bit strange to me to have found so little information on this subject since Rails, Cucumber, Selenium and CI are all en vogue so it is possible that I missed something obvious and there is an easier way to do all this. I am very eager to hear how others set up their CI to run automated-browser features. Do you use another tool, not Selenium? Do you use a CI server with a monitor?</p>
-
-<p>Anyway, I certainly hope my hackish solution will prove to be useful for some of you TDD-minded developers out there who run their CI on a simple &lt;name of your favorite provider here&gt; slice.</p>
-
-<p><strong>UPDATE:</strong> As <a href="http://lackac.hu">a fellow developer</a> and <a href="http://github.com/ph7">the author of the selenium-client gem himself</a> pointed out library code is not the place for enviroment specific settings. Rather, it should go into the application&#8217;s code. I guess that leaves the choice of putting it into the code of the application you are building or the configuration of the CI server. This latter seemed more clean to me so I put the following line into config.ru in Integrity&#8217;s directory:</p>
-
-<div>
-  <pre><code class='bash'>env[&quot;DISPLAY&quot;] = &quot;:1&quot;</code></pre>
-</div>
-
-
-<p>There is still something left, though. When integrity -or, to be precise, the selenium process that was launched from integrity- wants to access display :1, it will be denied. You need to explicitly enable local connections by putting &#8220;localhost&#8221; in a file:</p>
-
-<div>
-  <pre><code class='bash'>echo 'localhost' &gt;/etc/X99.cfg</code></pre>
-</div>
-
-
-<p>, and then using that file as the access records list when you launch the server:</p>
-
-<div>
-  <pre><code class='bash'>xinit -- `which Xvfb` :1 -screen 0 1024x768x24 -auth /etc/X99.cfg 2&gt;&amp;1 &gt;/dev/null &amp;</code></pre>
-</div>
-
-
-<p>(Note that I launch xinit and not startx as before. startx somehow adds another -auth option which messes things up)</p>
-
-<p>There, that should do it. It works and there is no code where it does not belong.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -791,6 +747,10 @@ apt-get install xvfb</code></pre>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/02/05/convert-a-view-into-a-component.html">Convert a view into a component</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/01/21/promises-instead-of-callbacks.html">Promises instead of callbacks</a>
       </li>
     
@@ -804,10 +764,6 @@ apt-get install xvfb</code></pre>
     
       <li class="post">
         <a href="/2013/12/17/change-the-url-type-of-your-ember-app.html">Changing the URL type of your Ember.js app</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/12/11/build-an-ember-dot-js-app-with-firebase.html">Build an Ember.js app with Firebase</a>
       </li>
     
   </ul>
