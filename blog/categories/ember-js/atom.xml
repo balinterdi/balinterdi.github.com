@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-02-05T11:43:48+01:00</updated>
+  <updated>2014-02-05T13:12:13+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -40,7 +40,7 @@ today, if you have not already.</p>
 
 <h2>"View".replace("Component")</h2>
 
-<p>Whereever you would use a component today, you would have used a view before
+<p>Wherever you would use a component today, you would have used a view before
 components were possible. Views still have their role in an Ember app but when
 existing html functionality is enhanced to give a richer, or more complex user
 interaction and reusability is important, you should reach for components.</p>
