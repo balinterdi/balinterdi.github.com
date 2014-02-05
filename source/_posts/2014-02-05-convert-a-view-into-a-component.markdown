@@ -28,7 +28,7 @@ today, if you have not already.
 
 ## "View".replace("Component")
 
-Whereever you would use a component today, you would have used a view before
+Wherever you would use a component today, you would have used a view before
 components were possible. Views still have their role in an Ember app but when
 existing html functionality is enhanced to give a richer, or more complex user
 interaction and reusability is important, you should reach for components.
