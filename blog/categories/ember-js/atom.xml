@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-02-05T13:12:13+01:00</updated>
+  <updated>2014-02-12T08:34:13+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,179 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Making an Ember.js component more reusable]]></title>
+    <link href="http://balinterdi.com/2014/02/12/making-an-emberjs-component-more-reusable.html"/>
+    <updated>2014-02-12T07:54:00+01:00</updated>
+    <id>http://balinterdi.com/2014/02/12/making-an-emberjs-component-more-reusable</id>
+    <content type="html"><![CDATA[<h2>Intro</h2>
+
+<p><a href="http://localhost:4000/2014/02/05/convert-a-view-into-a-component.html">We saw how to turn the star-rating view into a component</a> to
+make it more reusable, and less reliant on its context. Everything that the
+component needs to do its job had to be passed in, and that is enough for it to
+be reusable not just across screens in your application but also across
+different applications.  Or is it? Let's take a look at the component code
+again:</p>
+
+<p>``` js
+App.StarRatingComponent = Ember.Component.extend({
+  classNames: ['rating-panel'],</p>
+
+<p>  fullStars: Ember.computed.alias('item.rating'),
+  numStars:  Ember.computed.alias('maxRating'),
+  (...)
+  actions: {</p>
+
+<pre><code>setRating: function() {
+  var newRating = parseInt($(event.target).attr('data-rating'), 10);
+  this.get('item').set('rating', newRating);
+  this.sendAction('setAction', this.get('item'));
+}
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>Is something assumed about the object whose rating our component will display
+and set? I'll give you some time to think about it.</p>
+
+<h2>A glove that fits all hands</h2>
+
+<p>What we assume is that the <code>item</code> that gets passed in has a <code>rating</code> property.
+If we really want our component to be used in all Ember applications (why not
+reach for the <em>stars</em>?), then this should not be an assumption that we make.
+After all, a player in a hockey team might have a <code>score</code> property and not
+rating. We could get around that by aliasing <code>score</code> to <code>rating</code> in our
+controller:</p>
+
+<p><code>js
+App.PlayerController = Ember.ObjectController.extend({
+  rating: Ember.computed.alias('score');
+});
+</code></p>
+
+<p>However, this is inconvenient for the app developer and is only necessary
+because the star-rating component is not flexible enough. It's as if I had to
+reshape my hand to fit the glove.</p>
+
+<p>So let's make it take the property name as a parameter, too:</p>
+
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
+
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artists/songs&quot;&gt;
+  {{#each songs}}
+    &lt;div class=&quot;list-group-item&quot;&gt;
+      {{title}}
+      {{star-rating item=this ratingProperty=&quot;rating&quot; maxRating=5 setAction=&quot;setRating&quot;}}
+    &lt;/div&gt;
+  (...)
+  {{/each}}
+&lt;/script&gt;
+
+
+&lt;p&gt;</code></pre>
+</div>
+</p>
+
+<p>That was easy, now comes the harder part, the component code. Previously, the
+fullStars property of the component was just an alias for <code>item.rating</code>. We
+can't do that anymore, since the name of the rating property is only known when
+the component is used in a template, and can thus differ in each case.</p>
+
+<p>Did Ember let us down this time? Before, it had kept the fullStars property of
+our component in sync with the item's rating. We just sat back and took sips of
+our mojito. Now, when the going gets tough, we are on our own.</p>
+
+<p>Well, not really. We are doing some advanced stuff so it's no surprise that we
+have to use advanced tools that are not needed in the majority of cases. Ember
+has nice lower-level functions to support us.</p>
+
+<p>We have to set up the property synchronization ourselves but it sounds scarier
+than it is. We just have to watch when the item's rating (score, points,
+etc.) property changes and set the fullStars property to that value:</p>
+
+<p>```js
+App.StarRatingComponent = Ember.Component.extend({
+  classNames: ['rating-panel'],</p>
+
+<p>  numStars:  Ember.computed.alias('maxRating'),
+  fullStars: null,</p>
+
+<p>  didInsertElement: function() {</p>
+
+<pre><code>var property = this.get('ratingProperty');
+this.set('fullStars', this.get('item').get(property));
+Ember.addObserver(this.get('item'), property, this, this.ratingPropertyDidChange);
+</code></pre>
+
+<p>  },</p>
+
+<p>  willDestroyElement: function() {</p>
+
+<pre><code>var property = this.get('ratingProperty');
+Ember.removeObserver(this.get('item'), property, this.ratingPropertyDidChange);
+</code></pre>
+
+<p>  },</p>
+
+<p>  ratingPropertyDidChange: function(item, ratingProperty) {</p>
+
+<pre><code>this.set('fullStars', item.get(ratingProperty));
+</code></pre>
+
+<p>  },
+  (...)
+}
+```</p>
+
+<p>There are several things that might be new to you, dear reader, so let me go
+through each of them.</p>
+
+<p>The most important thing is the call to <a href="http://emberjs.com/api/classes/Ember.Observable.html#method_addObserver">'Ember.addObserver(object, property,
+context, function)'</a>. Whenever <code>property</code> of <code>object</code> changes, it
+calls <code>function</code> with <code>context</code> as its <code>this</code>. (Providing a <code>context</code> is
+optional).</p>
+
+<p>The observer function (<code>ratingPropertyDidChange</code>) gets the object that was
+changed as its first parameter and the property name that was changed. In this
+case, it does not have to do anything else but set the <code>fullStars</code> property of
+the component to the new value of the item's rating property.</p>
+
+<p>The observer is set up in the <code>didInsertElement</code> function. It is a handy
+lifecycle-event for Ember views (and thus components) which gets called after
+the view has been inserted into the DOM. This time, we don't need it to be in
+the DOM already but it serves as a convenient way to add the observer.</p>
+
+<p>Lastly, since the observer was added manually, it has to be torn down manually,
+too, when it is no longer needed. We do this in <code>willDestroyElement</code>, another
+view lifecycle event which gets called before the element gets removed from the
+DOM. Also, the code comments mention the following about <code>willDestroyElement</code>:</p>
+
+<pre><code>If you write a `willDestroyElement()` handler, you can assume that your
+`didInsertElement()` handler was called earlier for the same element.
+</code></pre>
+
+<p>This makes <code>didInsertElement</code> - <code>willDestroyElement</code> a perfect pair for manually
+setting up and tearing down event handlers (or observers) even if no DOM
+manipulation has to be carried out.</p>
+
+<p>I've made a jsbin to show how the star-rating component can now be used with
+a <code>score</code> property while the component code stays identical:</p>
+
+<p><a class="jsbin-embed" href="http://emberjs.jsbin.com/sokov/4/embed?html,js,output">Reusable Star Rating component</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
+
+<h3>Conclusion</h3>
+
+<p>We now have a star-rating component that is general enough to be used in all
+contexts. Go ahead and use it in your Ember app and let me know if I missed
+something.</p>
+
+<p>Actually, there are a couple of featurettes -unrelated to its flexibility, as
+far as I see- we can add which I might come back to.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Convert a view into a component]]></title>
@@ -753,79 +926,6 @@ the server yourself.</p>
 your journey to Ember.js proficiency smoother. If you want to see the
 screencast series in which I develop said application, you can <a href="http://emberjs.balinterdi.com">sign up to my
 mailing list</a> and have each episode auto-delivered to your inbox.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Changing the URL type of your Ember.js app]]></title>
-    <link href="http://balinterdi.com/2013/12/17/change-the-url-type-of-your-ember-app.html"/>
-    <updated>2013-12-17T09:32:00+01:00</updated>
-    <id>http://balinterdi.com/2013/12/17/change-the-url-type-of-your-ember-app</id>
-    <content type="html"><![CDATA[<p>By default, Ember.js uses the hashchange event in the browser to change URLs.
-This is the most widely supported way but it feels like a hack and there is a
-better way, introduced in HTML5: <a href="http://diveintohtml5.info/history.html">the History API</a>.</p>
-
-<p>Bear in mind that the <a href="http://caniuse.com/history">History API has a lower browser support
-rate</a> than <a href="http://caniuse.com/hashchange">the hashchange
-event</a> does (~70% vs.  89%), so there is a tradeoff
-involved that you should decide to make or not to make.</p>
-
-<p>Ember.js makes it really easy to change the URL type. All you have to do is
-add the following lines to your client app:</p>
-
-<p><code>javascript
-App.Router.reopen({
- location: 'history'
-});
-</code></p>
-
-<p>Seems too good to be true (that is just the way Ember is), but provided you did
-not assemble any routes manually and only used Ember's tools to transition
-between routes (e.g link-to, transitionTo, etc.), that is all the client-side
-code changes you had to make.</p>
-
-<p>The server side needs to be adjusted, too, though, since the server now gets
-sent the client-side routes, too. How to do this can vary depending on the
-application server you use.</p>
-
-<p>In the case of the Rock &amp; Roll app, here is what <code>config.ru</code> looks like:</p>
-
-<p>``` ruby
-run Proc.new { |env|
-  # Extract the requested path from the request
-  path = Rack::Utils.unescape(env['PATH_INFO'])
-  if path.start_with?("/artists")</p>
-
-<pre><code>path = '/'
-</code></pre>
-
-<p>  end
-  index_file = @root + "#{path}/index.html"</p>
-
-<p>  if File.exists?(index_file)</p>
-
-<pre><code># Return the index
-[200, {'Content-Type' =&gt; 'text/html'}, [File.read(index_file)]]
-</code></pre>
-
-<p>  else</p>
-
-<pre><code># Pass the request to the directory app
-Rack::Directory.new(@root).call(env)
-</code></pre>
-
-<p>  end
-}
-```</p>
-
-<p>I only had to add the <code>path.start_with?</code> condition to make sure the server
-serves the Ember application on that route. It is not an ideal solution because
-anytime you add a top-level route to the Ember app, you would also have to
-modify the server config but this is the bare minimum that got the job done.</p>
-
-<p>Hooray for clean URLs:
-<img src="/images/posts/change-the-url-type/rock-and-roll-history-api-urls.png" alt="History API
-URLs" /></p>
 ]]></content>
   </entry>
   
