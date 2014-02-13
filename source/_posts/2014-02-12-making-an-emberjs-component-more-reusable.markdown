@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Making a component more reusable"
+title: "Making an Ember.js component more reusable"
 date: 2014-02-12 07:54
 comments: true
 categories: ember.js
@@ -155,5 +155,5 @@ something.
 Actually, there are a couple of featurettes -unrelated to its flexibility, as
 far as I see- we can add which I might come back to.
 
-[view-to-component]: http://localhost:4000/2014/02/05/convert-a-view-into-a-component.html
+[view-to-component]: /2014/02/05/convert-a-view-into-a-component.html
 [add-observer]: http://emberjs.com/api/classes/Ember.Observable.html#method_addObserver
