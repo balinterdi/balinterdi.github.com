@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-02-12T08:34:13+01:00</updated>
+  <updated>2014-02-13T09:15:55+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -20,7 +20,7 @@
     <id>http://balinterdi.com/2014/02/12/making-an-emberjs-component-more-reusable</id>
     <content type="html"><![CDATA[<h2>Intro</h2>
 
-<p><a href="http://localhost:4000/2014/02/05/convert-a-view-into-a-component.html">We saw how to turn the star-rating view into a component</a> to
+<p><a href="http://balinterdi.com/2014/02/05/convert-a-view-into-a-component.html">We saw how to turn the star-rating view into a component</a> to
 make it more reusable, and less reliant on its context. Everything that the
 component needs to do its job had to be passed in, and that is enough for it to
 be reusable not just across screens in your application but also across
