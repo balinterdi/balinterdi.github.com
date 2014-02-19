@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>John Doe is dull: the importance of choosing good user names in tests - Balint Erdi</title>
+  <title>Balint Erdi</title>
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="We, developers, have to come up with user names all the time. In this glorious, pioneer era of TDD, more than ever we have to not only enter them &hellip;">
+  <meta name="description" content="I returned two weeks ago from the fantastic Euruko 2008 conference in Prague dazzled by the outstanding presentations and the power of Ruby. It is &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2009/07/12/john-doe-is-dull-the-importance-of-choosing-good-user-names-in-tests.html">
+  <link rel="canonical" href="http://balinterdi.com/blog/page/8/index.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -74,12 +74,15 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div>
-<article class="hentry" role="article">
+      <div class="blog-index">
   
+  
+  
+    <article>
+      
   <header>
     
-      <h1 class="entry-title">John Doe Is Dull: The Importance of Choosing Good User Names in Tests</h1>
+      <h1 class="entry-title"><a href="/2008/04/09/quick-adaptor-my-role-model.html">Quick Adaptor - My Role Model</a></h1>
     
     
       <p class="meta">
@@ -95,80 +98,158 @@
   
 
 
-<time datetime="2009-07-12T00:00:00+02:00" pubdate data-updated="true">Jul 12<span>th</span>, 2009</time>
+<time datetime="2008-04-09T00:00:00+02:00" pubdate data-updated="true">Apr 9<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>We, developers, have to come up with user names all the time. In this glorious, pioneer era of TDD, more than ever we have to not only enter them into text fields but write them in test files that are part of the code and thus are clearly visible and permanent.</p>
+  <div class="entry-content"><p>I returned two weeks ago from the fantastic <a href="http://www.euruko2008.org/">Euruko 2008 conference</a> in Prague dazzled by the outstanding presentations and the power of Ruby. It is hard to pick a favorite but I especially liked David Black&#8217;s &#8220;Per-Object Behavior in Ruby&#8221; (slides hopefully coming up) mainly because I am a sucker for metaprogramming and the true object-orientedness of Ruby in all its glory.</p>
 
-<p>So it is important to give good names, but what is a good name like? I am not thinking about the semantics of the name (whether it has accented letters, or if it has two or three parts, etc.) but look at them from a very personal point of view: whether it makes you, the programmer, satisfied with your choice of names or bored with repeating the same old names you used in other projects and even in those projects, you had copied them from somewhere.</p>
+<p>One fundamental concept was the singleton class which I think I&#8217;ve finally understood from this session. His example was the OpenStruct class whose instances learn to respond to all messages sent to them (this is Smalltalk/Ruby parlance, we could also say they learn to handle method calls) instead of throwing a NoMethodError. So I thought a great way to gain an insight of how this works is to actually code that up myself. Here is what I got:</p>
 
-<p>So when writing your first test where a user is needed, stop for a moment and imagine a world which you like and which is amusing in the context of your application&#8217;s domain (like <a href="http://www.youtube.com/watch?v=F2kAnTZBnTg">philosophers playing soccer</a>, Luddites attending a technology conference, etc.). Pick some names and let the feeling that you have created something instead of just using old, boring names fill you with contentment. Whenever you need an other name, take one from your world. If you need further data (e.g date of birth) about your test users you can even do a little bit of research.</p>
+<pre lang="ruby">
+require 'test/unit'
+class QuickAdaptor
+  def method_missing(method_id, *args)
+    method_name = method_id.to_s
+    if method_name =~ /=$/
+      attr = method_name.to_s.chop
+      self.class.class_eval do
+        define_method method_id do |x|
+          instance_variable_set("@#{attr}", x)
+        end
+        method_name.chop!
+        define_method method_name.to_sym do
+          instance_variable_get "@#{attr}"
+        end
+      end
+      instance_variable_set("@#{attr}", args[0])
+    end
+  end
 
-<p>Though investing energy in this may reduce the time you spend writing code, compared to all the hours you put into a project, it is negligible. Nurturing this &#8220;subculture&#8221; in your tests can be very entertaining so you have a good time developing and are less prone to boredom. I think it pays off. We, Ruby programmers all know how important it is to be happy while programming and the effect it has on our productivity.</p>
+end
 
-<p>And besides, do you know of anyone who is called John Doe?</p>
+class QuickSingletonAdaptor
+  # does the same as QuickAdaptor
+  # but only defines methods for singleton
+  # class of object, so it is not the class
+  # that "learns", but the singleton class
+  def method_missing(method_id, *args)
+    method_name = method_id.to_s
+    if method_name =~ /=$/
+      attr = method_name.to_s.chop
+      singleton_class = class << self ; self; end
+      singleton_class.instance_eval do
+        define_method method_id do |x|
+          instance_variable_set("@#{attr}", x)
+        end
+        method_name.chop!
+        define_method method_name.to_sym do
+          instance_variable_get "@#{attr}"
+        end
+      end
+      instance_variable_set("@#{attr}", args[0])
+    end
+  end
+
+end
+
+if __FILE__ == $0
+  class ModuleTester < Test::Unit::TestCase
+
+    def test_quick_adaptor_creates_methods
+      qa = QuickAdaptor.new
+      qa.age = 18
+      assert_equal(18, qa.age)
+      qa.age = 24
+      assert_equal(24, qa.age)
+      assert_equal(nil, qa.name)
+      qa.name = 'joe'
+      assert_equal('joe', qa.name)
+      assert(!qa.respond_to(:nam))
+    end
+
+    def test_quick_adaptor_creates_instance_methods
+      qa1 = QuickAdaptor.new
+      qa1.age = 18
+      qa2 = QuickAdaptor.new
+      assert(qa2.respond_to?(:age=))
+      assert(qa2.respond_to?(:age))
+      assert_equal(nil, qa2.age)
+    end
+
+    def test_quick_singleton_adaptor_creates_singleton_methods
+      qa1 = QuickSingletonAdaptor.new
+      qa1.age = 18
+      qa2 = QuickSingletonAdaptor.new
+      # qa2 at this point should not know anything!
+      assert(!qa2.respond_to?(:age=))
+      assert(!qa2.respond_to?(:age))
+    end
+
+  end
+end
+
+</pre>
+
+
+<p>As a test enthusiastic I embedded the tests in the same file which also has the advantage of giving a documentation of what the code achieves.</p>
+
+<p>You can see that the real difference between the QuickAdaptor and QuickSingletonAdaptor classes lies in the following lines:</p>
+
+<pre lang="ruby">
+class QuickAdaptor
+  ...
+  self.class.class_eval do
+    define_method method_id do |x|
+      ...
+    end
+  end
+end
+</pre>
+
+
+<pre lang="ruby">
+class QuickSingletonAdaptor
+  ...
+  singleton_class = class << self ; self; end
+  singleton_class.instance_eval do
+    define_method method_id do |x|
+      ...
+    end
+  end
+end
+</pre>
+
+
+<p>You can see from the tests that the QuickAdaptor shares the knowledge it gained with its peers (other QuickAdaptor instances), whereas QuickSingletonAdaptor is an egoist, it keeps it to itself! That&#8217;s why I agree with David Black that the best way to call the class that only one instance can access is singleton class because this has more expressive power than other terms (e.g metaclass, eigenclass, etc.)</p>
+
+<p>My goal is to act like the QuickAdaptor, to suck in all ruby knowledge and learn as fast as QuickAdaptor does while having fun at the same time!</p>
+
+<p>ps. I have also taken a look at how Matz&#8217;s <a href="http://www.ruby-doc.org/stdlib/libdoc/ostruct/rdoc/index.html">OpenStruct class</a> accomplishes the same (well, much more :) ). It uses a table of fields where each new &#8220;member method&#8221; is defined. Nice.</p>
 </div>
-
-
-  <footer>
-    <p class="meta">
-      
   
-
-<span class="byline author vcard">Posted by <span class="fn">Balint Erdi</span></span>
-
-      
-
-
-
-
-
-
-
-
   
 
 
-<time datetime="2009-07-12T00:00:00+02:00" pubdate data-updated="true">Jul 12<span>th</span>, 2009</time>
-      
-
-
-    </p>
+    </article>
+  
+  <div class="pagination">
     
-      <div class="sharing">
-  
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2009/07/12/john-doe-is-dull-the-importance-of-choosing-good-user-names-in-tests.html" data-via="baaz" data-counturl="http://balinterdi.com/2009/07/12/john-doe-is-dull-the-importance-of-choosing-good-user-names-in-tests.html" >Tweet</a>
-  
-  
-  <div class="g-plusone" data-size="medium"></div>
-  
-  
-</div>
-
+    <a href="/blog/archives">Blog Archives</a>
     
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2009/07/10/the-hashtag-hrt-retweet-bot-gemified.html" title="Previous Post: The hashtag (HRT) retweet bot gemified">&laquo; The hashtag (HRT) retweet bot gemified</a>
-      
-      
-        <a class="basic-alignment right" href="/2009/07/14/a-prime-example-of-not-eating-your-own-dog-food.html" title="Next Post: A prime example of not eating your own dog food">A prime example of not eating your own dog food &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
+    <a class="next" href="/blog/page/7/">Newer &rarr;</a>
+    
+  </div>
 </div>
-
 <aside class="sidebar">
   
     <section>
   <h1>Contact</h1>
   <div>
-    Do you have a project that needs help?  <a href="mailto:balint@balinterdi.com"> Write to me</a> and let's start talking.
+    Do you have a project that needs help?  <a href="mailto:balint@balinterdi.com"> Write to me</a> and let&#8217;s start talking.
   </div>
 </section>
 
@@ -177,7 +258,7 @@
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/2014/02/18/readers-letters-making-an-ember-dot-js-component-even-better.html">Readers' Letters: Making an Ember.js component even better</a>
+        <a href="/2014/02/18/readers-letters-making-an-ember-dot-js-component-even-better.html">Readers&#8217; Letters: Making an Ember.js component even better</a>
       </li>
     
       <li class="post">
@@ -223,7 +304,6 @@
 
   
 </aside>
-
 
     </div>
   </div>

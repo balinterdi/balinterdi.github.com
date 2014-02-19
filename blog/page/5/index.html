@@ -9,7 +9,7 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="Thrifty is a simple application I have written (and am still writing) in Sinatra that tracks your expenses. You can quickly record each spending you &hellip;">
+  <meta name="description" content="A recurring problem in an internationalized Rails project is to see which translations are missing. You could go through all the pages looking for &# &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -76,6 +76,67 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/03/25/finding-missing-i18n-translations-with-missing_t.html">Finding Missing I18n Translations With Missing_t</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-25T00:00:00+01:00" pubdate data-updated="true">Mar 25<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A recurring problem in an internationalized Rails project is to see which translations are missing. You could go through all the pages looking for &#8220;translation missing: en, user, new&#8221; texts. That, however is very tedious and error prone. There may be some texts you don&#8217;t even see that are missing translation. (like a title of an image).</p>
+
+<p>A better solution is to write a program that finds these. So that&#8217;s what I did. I gave it a very imaginative name: <a href="http://github.com/balinterdi/missing_t/tree/master">missing_t</a>. It&#8217;s darn simple. You first have to install the gem:</p>
+
+<pre lang="bash">
+gem install balinterdi-missing_t  
+</pre>
+
+
+<p>and then from the root of your Rails app you type:</p>
+
+<pre lang="bash">
+missing_t
+</pre>
+
+
+<p>You will see all the I18n strings that do not have translations along with the file they were found in. If you want to restrict your search for a specific language, you provide its language code as the first parameter, like so:</p>
+
+<pre lang="bash">
+missing_t fr
+</pre>
+
+
+<p>For a bit more detailed description, <a href="http://github.com/balinterdi/missing_t/tree/master">see the README</a>.</p>
+
+<p>Go ahead, give it a try, your app has the right to speak all those beautiful languages out there!</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -680,58 +741,6 @@ mysql> select * from cars;
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/01/17/google-groups-tracker-using-yahoo-pipes.html">Google Groups Tracker Using Yahoo Pipes</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-01-17T00:00:00+01:00" pubdate data-updated="true">Jan 17<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I -and I suppose most of my developer mates- am subscribed to many Google Groups. When there is a topic I am interested in or a problem I posted or replied to it would be cool to get notified of changes to it. Instead of checking it five times a day to see if someone has commented on it which also slices up the big, continuous chunks of time we programmers need. Also, some groups are littered by spam topics so it would be nice to filter out all the things you are not particularly fascinated about and be left with the things you are.</p>
-
-<p>Unfortunately, Google Groups does not offer us the possibility of following certain topics (e.g by sending you an email whenever someone added his comment, a la Lighthouse). But there is a solution although I&#8217;ll admit the one I am describing below is not a particularly cunning or elegant one. If you felt the same pain and found a remedy, I am curious to know what it is, so please leave a comment.</p>
-
-<p>So, as we all know, the Internet is just a <a href="http://en.wikipedia.org/wiki/Series_of_tubes">series of tubes</a>, so the idea to use Yahoo Pipes to cobble together something came quite naturally. Ladies and gentlement, I created the <a href="http://pipes.yahoo.com/balinterdi/google_groups_issue_tracker">Googe Groups issue tracker</a>. It is capable of tracking two Google groups. You can pass three strings for each one and it generates an RSS of the items whose title have any of the strings you provide.</p>
-
-<p>I know it has many shortcomings (to say the least). What if you want to track issues for 3 groups or more? More than 3 issues per group? My puny tracker can&#8217;t do that right now since its &#8220;legoed&#8221; together from <a href="http://pipes.yahoo.com/pipes/">Yahoo Pipes</a> building blocks and so it&#8217;s not programmable. You can, however, clone my pipe, expand it to handle more groups or more expressions, enter the groups you want to track and subscribe to the resulting RSS with your reader of choice.</p>
-
-<p>It may still feel clumsy, since you have to regularly update your strings based on the issues you are interested in. I know a more general solution would be to hack together something that is more manageable and expandable which I might do soon. But it still feels so good from time to time to leave the serious, hard-thinking adult world and build Lego castles. So go ahead, don&#8217;t be shy, build your own castle and let me know about it! :)</p>
-
-<p><strong>UPDATE:</strong> Thanks to Bob, I realized Google has the very option I missed and constructed the pipe for :) However, there can still be some valid scenarios where it can be of service. As per <a href="http://jaimeiniesta.com">Jaime&#8217;s</a> comment I realized I did not really explain how to run the pipe, so let me do it through an example that is not too contrived:</p>
-
-<p>Let&#8217;s suppose you are a <a href="http://datamapper.org">DataMapper</a> expert and you want to help those newbies/impatient people who put &#8216;help&#8217; in the title of their post. In that case, you would input http://groups.google.com/group/datamapper in the &#8220;Group1 URL&#8221; box and &#8220;help&#8221; in the &#8220;Group1 - Title 1&#8221; field. At the pipe output you&#8217;d only see those posts which have help in their title, then.</p>
-
-<p>If you want to also see announcements and the convention would be to have [DM] in the title of those posts, you would then enter &#8220;[DM]&#8221; in the &#8220;Group1 - Title 2&#8221; field.</p>
-
-<p>To construct a filter which only lists ruby-quiz related posts on <a href="http://groups.google.com/group/ruby-talk-google">http://groups.google.com/group/ruby-talk-google</a> is left as an exercise to the reader :).</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/6/">&larr; Older</a>
@@ -756,6 +765,10 @@ mysql> select * from cars;
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/02/18/readers-letters-making-an-ember-dot-js-component-even-better.html">Readers&#8217; Letters: Making an Ember.js component even better</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/02/12/making-an-emberjs-component-more-reusable.html">Making an Ember.js component more reusable</a>
       </li>
     
@@ -769,10 +782,6 @@ mysql> select * from cars;
     
       <li class="post">
         <a href="/2014/01/14/how-real-time-updates-work-in-discourse.html">How real-time updates work in Discourse</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html">At Your Service: Publicly Available API for the Rock and Roll Ember.js App</a>
       </li>
     
   </ul>
