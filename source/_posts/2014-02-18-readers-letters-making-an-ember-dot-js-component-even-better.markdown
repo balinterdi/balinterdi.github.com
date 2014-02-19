@@ -189,8 +189,7 @@ and we do not need the additional fetching (and parsing) of the property.
 
 ### Give credit where credit is due
 
-This week's post was made possible by David, Ricardo and Tom. Their insights
-made the star-rating component impeccable for which they deserve a huge "thank
+This week's post was made possible by [David][david-twitter], [Ricardo][ricardo-twitter] and [Tom][tom-twitter].  Their insights made the star-rating component impeccable for which they deserve a huge "thank
 you!" from me.
 
 [david-twitter]: https://twitter.com/darkbaby123
