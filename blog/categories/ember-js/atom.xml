@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-02-25T22:11:12+01:00</updated>
+  <updated>2014-02-26T11:06:35+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[A common resource route pattern in Ember.js]]></title>
-    <link href="http://balinterdi.com/2014/02/24/a-common-resource-route-pattern-in-ember-dot-js.html"/>
-    <updated>2014-02-24T22:09:00+01:00</updated>
-    <id>http://balinterdi.com/2014/02/24/a-common-resource-route-pattern-in-ember-dot-js</id>
+    <link href="http://balinterdi.com/2014/02/26/a-common-resource-route-pattern-in-ember-dot-js.html"/>
+    <updated>2014-02-26T00:01:00+01:00</updated>
+    <id>http://balinterdi.com/2014/02/26/a-common-resource-route-pattern-in-ember-dot-js</id>
     <content type="html"><![CDATA[<h2>Intro</h2>
 
 <p>A very common pattern in web applications, be them server- or client side, is
@@ -203,24 +203,23 @@ songs no longer need to have the <code>songs</code> prefix since it is the model
 <p>This also holds true of the template. To give an example, rendering the
 stars for each song can becomes more concise:</p>
 
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
+<p>{% highlight html %}
+{% raw %}</p>
 
-&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/songs&quot;&gt;
+<script type="text/x-handlebars" data-template-name="artist/songs">
   (...)
   {{#each}}
-    &lt;div class=&quot;list-group-item&quot;&gt;
+    <div class="list-group-item">
       {{title}}
-      {{star-rating item=this rating=rating maxRating=5 setAction=&quot;setRating&quot;}}
-    &lt;/div&gt;
+      {{star-rating item=this rating=rating maxRating=5 setAction="setRating"}}
+    </div>
   {{else}}
   (...)
-&lt;/script&gt;
+</script>
 
 
-&lt;p&gt;</code></pre>
-</div>
-</p>
+<p>{% endraw %}
+{% endhighlight %}</p>
 
 <p>The #each helper, without parameters, loops through the items in the model of the
 template, in our case, the songs, which is exactly what we want.</p>
@@ -287,23 +286,22 @@ reshape my hand to fit the glove.</p>
 
 <p>So let's make it take the property name as a parameter, too:</p>
 
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
+<p>{% highlight html %}
+{% raw %}</p>
 
-&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artists/songs&quot;&gt;
+<script type="text/x-handlebars" data-template-name="artists/songs">
   {{#each songs}}
-    &lt;div class=&quot;list-group-item&quot;&gt;
+    <div class="list-group-item">
       {{title}}
-      {{star-rating item=this ratingProperty=&quot;rating&quot; maxRating=5 setAction=&quot;setRating&quot;}}
-    &lt;/div&gt;
+      {{star-rating item=this ratingProperty="rating" maxRating=5 setAction="setRating"}}
+    </div>
   (...)
   {{/each}}
-&lt;/script&gt;
+</script>
 
 
-&lt;p&gt;</code></pre>
-</div>
-</p>
+<p>{% endraw %}
+{% endhighlight %}</p>
 
 <p>That was easy, now comes the harder part, the component code. Previously, the
 fullStars property of the component was just an alias for <code>item.rating</code>. We
@@ -548,41 +546,39 @@ messages outside.</p>
 <p>The template will only have minor modifications made to it. Here is what it
 looked like in its infancy, back when it was a view:</p>
 
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
+<p>{% highlight html %}
+{% raw %}</p>
 
-&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;star-rating&quot;&gt;
+<script type="text/x-handlebars" data-template-name="star-rating">
   {{#each view.stars}}
-    &lt;span {{bind-attr data-rating=rating}}
-      {{bind-attr class=&quot;:star-rating :glyphicon full:glyphicon-star:glyphicon-star-empty&quot;}}
-      {{action &quot;setRating&quot; target=view}}&gt;
-    &lt;/span&gt;
+    <span {{bind-attr data-rating=rating}}
+      {{bind-attr class=":star-rating :glyphicon full:glyphicon-star:glyphicon-star-empty"}}
+      {{action "setRating" target=view}}>
+    </span>
   {{/each}}
-&lt;/script&gt;
+</script>
 
 
-&lt;p&gt;</code></pre>
-</div>
-</p>
+<p>{% endraw %}
+{% endhighlight %}</p>
 
 <p>And here is the shiny, new component form:</p>
 
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
+<p>{% highlight html %}
+{% raw %}</p>
 
-&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;components/star-rating&quot;&gt;
+<script type="text/x-handlebars" data-template-name="components/star-rating">
   {{#each stars}}
-    &lt;span {{bind-attr data-rating=rating}}
-      {{bind-attr class=&quot;:star-rating :glyphicon full:glyphicon-star:glyphicon-star-empty&quot;}}
-      {{action &quot;setRating&quot;}}&gt;
-    &lt;/span&gt;
+    <span {{bind-attr data-rating=rating}}
+      {{bind-attr class=":star-rating :glyphicon full:glyphicon-star:glyphicon-star-empty"}}
+      {{action "setRating"}}>
+    </span>
   {{/each}}
-&lt;/script&gt;
+</script>
 
 
-&lt;p&gt;</code></pre>
-</div>
-</p>
+<p>{% endraw %}
+{% endhighlight %}</p>
 
 <p>The <code>data-template-name</code> of a component needs to start with <code>components</code> and the
 name of the component needs to have a dash in its name to prevent name
@@ -607,24 +603,23 @@ die a silent death which makes debugging more difficult).</p>
 calling a function in a language where state is not shared. You pass in
 everything the component needs to do its bidding and be done with it:</p>
 
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
+<p>{% highlight html %}
+{% raw %}</p>
 
-&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artists/songs&quot;&gt;
+<script type="text/x-handlebars" data-template-name="artists/songs">
   (...)
   {{#each songs}}
-    &lt;div class=&quot;list-group-item&quot;&gt;
+    <div class="list-group-item">
       {{title}}
-      {{star-rating item=this maxRating=5 setAction=&quot;setRating&quot;}}
-    &lt;/div&gt;
+      {{star-rating item=this maxRating=5 setAction="setRating"}}
+    </div>
   (...)
   {{/each}}
-&lt;/script&gt;
+</script>
 
 
-&lt;p&gt;</code></pre>
-</div>
-</p>
+<p>{% endraw %}
+{% endhighlight %}</p>
 
 <h3>Handling the action sent from the component</h3>
 
@@ -1073,12 +1068,13 @@ topic, along with its posts, is <a href="https://github.com/discourse/discourse/
 
 <p>The relevant part of the template is below:</p>
 
-<p><div>
-  <pre><code class='html'>{{#unless postStream.loadingFilter}}
-  {{cloaked-collection cloakView=&quot;post&quot; idProperty=&quot;post_number&quot; defaultHeight=&quot;200&quot; content=postStream.posts slackRatio=slackRatio}}
-{{/unless}}</code></pre>
-</div>
-</p>
+<p>{% highlight html %}
+{% raw %}
+{{#unless postStream.loadingFilter}}
+  {{cloaked-collection cloakView="post" idProperty="post_number" defaultHeight="200" content=postStream.posts slackRatio=slackRatio}}
+{{/unless}}
+{% endraw %}
+{% endhighlight %}</p>
 
 <p>If the post stream is not loading, we render the posts through the cloaked
 collection. I will not go into details about what
