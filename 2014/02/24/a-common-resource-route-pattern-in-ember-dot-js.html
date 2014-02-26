@@ -1,0 +1,523 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>A common resource route pattern in Ember.js - Balint Erdi</title>
+  <meta name="author" content="Balint Erdi">
+
+  
+  <meta name="description" content="Intro A very common pattern in web applications, be them server- or client side, is
+resource URLs. We might have a list of users that we want to show &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://balinterdi.com/2014/02/24/a-common-resource-route-pattern-in-ember-dot-js.html">
+  <link href="/favicon.ico" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/balinterdi" rel="alternate" title="Balint Erdi" type="application/atom+xml">
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<script src="//load.sumome.com/" data-sumo-site-id="2f7f42a353353cbb47533e4a22a64e9c3ec9211f92d2320ff1130ad6c622ee03" async></script>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-12299794-2']);
+    _gaq.push(['_setSiteSpeedSampleRate', 100]); // profile all visitors
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Balint Erdi</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/balinterdi" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:balinterdi.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul role=main-navigation>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">A Common Resource Route Pattern in Ember.js</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-24T22:09:00+01:00" pubdate data-updated="true">Feb 24<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Intro</h2>
+
+<p>A very common pattern in web applications, be them server- or client side, is
+resource URLs. We might have a list of users that we want to show at <code>/users</code> and
+then different pages related to the user which is encoded in the URL. These
+might be e.g <code>/users/dave-hopkins/activity</code> and <code>/users/dave-hopkins/followers</code>.</p>
+
+<p>The pattern is a top-level URL to list all the resource instances, and then
+separate pages to display pieces of information regarding specific resource
+instances.</p>
+
+<h2>Artists and songs</h2>
+
+<p>That&#8217;s exactly what I did for the <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/episode-7">the Rock &amp; Roll application</a>,
+where the routes were defined as such:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">resource</span><span class="p">(</span><span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">(</span><span class="s1">&#39;songs&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;:slug&#39;</span> <span class="p">});</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The simplest thing that works. However, the above is not ideal especially when
+more pages (or views, if you will) are added below the <code>artists</code> resource route.
+That&#8217;s because the singular artist instance is encoded in the <code>songs</code> route, by
+having its identifier (in this case, slug) in the path of that route.</p>
+
+<p>Imagine we need to add additional info about each band. Just blindly extending
+the above URL scheme, this would become:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">resource</span><span class="p">(</span><span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">(</span><span class="s1">&#39;songs&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;:slug/songs&#39;</span> <span class="p">});</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">(</span><span class="s1">&#39;info&#39;</span><span class="p">,</span>  <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;:slug/info&#39;</span> <span class="p">});</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The cracks start to show. The artist for both the <code>artists.songs</code> and the
+<code>artists.info</code> routes would have to be fetched in both routes, with identical
+code. Nested routes -and how it lends itself to a nested UI- is truly
+a masterpiece, a shining emerarld on Ember&#8217;s crown. It would be a pity not to
+take advantage of it.</p>
+
+<h2>DRY up those routes</h2>
+
+<p>So we established that the problem is having the artist &#8220;encoded&#8221; in all routes
+below the top-level <code>artists</code> resource. The solution is consequently pretty
+straightforward -this always seems to be the case in retrospective-, let&#8217;s
+extract the path segment that represents the artist:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">resource</span><span class="p">(</span><span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">resource</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;:slug&#39;</span> <span class="p">},</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">(</span><span class="s1">&#39;songs&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With the introduction of the <code>artist</code> resource, the duplication is gone, but we
+are not done yet. First, we have to define the route and set up its model hook.
+Second, since the &#8220;routing table&#8221; has changed, we&#8217;ll have to adjust route names
+and code that uses them. Since the naming conventions in Ember have the route
+names as their basis, we&#8217;ll probably have to change code in several places.</p>
+
+<h2>Route changes</h2>
+
+<p>Resource routes reset the routing namespace, so the route that corresponds to
+the <code>artist</code> route name in the table is App.ArtistRoute:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">RSVP</span><span class="p">.</span><span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;/artists/&#39;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">resolve</span><span class="p">(</span><span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
+</span><span class='line'>      <span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">reject</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That is exactly what we had for <code>App.ArtistsSongsRoute</code> in the previous version,
+which makes sense. The artist is now fetched one route level higher.</p>
+
+<p>For simple, non-resource routes, the name of the route is the name of the
+resource route above (if it exists) plus the name of the route itself. In this
+case, the route name is <code>artist.songs</code> which gets resolved as
+<code>App.ArtistSongsRoute</code>):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">modelFor</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;songs&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">setupController</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">controller</span><span class="p">,</span> <span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">(</span><span class="nx">controller</span><span class="p">,</span> <span class="nx">model</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">controller</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">modelFor</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">));</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The first interesting thing is <code>modelFor</code>. It gets the model for another,
+already resolved route. In Ember route models are resolved stepping down
+from the top-level application route. That means that at this point we can be
+certain that the <code>artist</code> route already has its model, the artist instance
+resolved.</p>
+
+<p>The model of this route is simply the songs belonging to that artist.</p>
+
+<p>The other interesting bit is <code>setupController</code>. We have already <a href="http://balinterdi.com/2014/01/14/how-real-time-updates-work-in-discourse.html">come across this
+hook before</a>; it is the place to do additional
+setup -above fetching the model and deciding which template to render- for the
+controller. Since we&#8217;ll want to display artist-related data in the template, we
+store it in an <code>artist</code> property and we make sure to call <code>_super</code>, the
+implementation of this hook in <code>Ember.Route</code>, that sets the controller&#8217;s model
+property to the model argument in this method.</p>
+
+<h2>Templates &amp; controllers</h2>
+
+<p>The mechanical part of the routing update is to replace all occurrences of
+the <code>artists.songs</code> route name to <code>artist.songs</code>.</p>
+
+<p>What deserves more attention is that the controller for <code>artist.songs</code> now has
+the songs of the artist as its model, not the artist itself. That means that we
+should adjust the controller type it extends:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">artist</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">newSongPlaceholder</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s1">&#39;New &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;artist.name&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; song&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;artist.name&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">songCreationStarted</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">canCreateSong</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>All changes are made necessary by the model change. Properties of the artist now
+need to be prefixed by <code>artist</code> (e.g <code>name</code> => <code>artist.name</code>) while properties of the
+songs no longer need to have the <code>songs</code> prefix since it is the model (e.g
+<code>songs.length</code> => <code>length</code>).</p>
+
+<p>This also holds true of the template. To give an example, rendering the
+stars for each song can becomes more concise:</p>
+
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/songs&quot;&gt;
+  (...)
+  {{#each}}
+    &lt;div class=&quot;list-group-item&quot;&gt;
+      {{title}}
+      {{star-rating item=this rating=rating maxRating=5 setAction=&quot;setRating&quot;}}
+    &lt;/div&gt;
+  {{else}}
+  (...)
+&lt;/script&gt;</code></pre>
+</div>
+
+
+<p>The #each helper, without parameters, loops through the items in the model of the
+template, in our case, the songs, which is exactly what we want.</p>
+
+<p>That wraps up our route sanitizaion. In the next post, we will take advantage of
+the benefit that the <code>songs</code> route now has the artist&#8217;s songs as its model.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Balint Erdi</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-24T22:09:00+01:00" pubdate data-updated="true">Feb 24<span>th</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ember-js/'>ember.js</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2014/02/24/a-common-resource-route-pattern-in-ember-dot-js.html" data-via="baaz" data-counturl="http://balinterdi.com/2014/02/24/a-common-resource-route-pattern-in-ember-dot-js.html" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2014/02/18/readers-letters-making-an-ember-dot-js-component-even-better.html" title="Previous Post: Readers' Letters: Making an Ember.js component even better">&laquo; Readers' Letters: Making an Ember.js component even better</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Contact</h1>
+  <div>
+    Do you have a project that needs help?  <a href="mailto:balint@balinterdi.com"> Write to me</a> and let's start talking.
+  </div>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2014/02/24/a-common-resource-route-pattern-in-ember-dot-js.html">A common resource route pattern in Ember.js</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/02/18/readers-letters-making-an-ember-dot-js-component-even-better.html">Readers' Letters: Making an Ember.js component even better</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/02/12/making-an-emberjs-component-more-reusable.html">Making an Ember.js component more reusable</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/02/05/convert-a-view-into-a-component.html">Convert a view into a component</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/01/21/promises-instead-of-callbacks.html">Promises instead of callbacks</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-show-count="false">Follow @baaz</a>
+  
+</section>
+
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/117539684268982718923?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Balint Erdi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'codigoergosum';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://balinterdi.com/2014/02/24/a-common-resource-route-pattern-in-ember-dot-js.html';
+        var disqus_url = 'http://balinterdi.com/2014/02/24/a-common-resource-route-pattern-in-ember-dot-js.html';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+<script src="//s3.amazonaws.com/scripts.hellobar.com/fc110d5cbe7d6afab1766e88f2220453d7a4c947.js" type="text/javascript"></script>
+
+
+
+</body>
+</html>

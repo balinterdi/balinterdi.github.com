@@ -9,8 +9,8 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="You want to change a string with another one in some directory in your project. Here is a one liner to do that: 1
-for spec_file in $(ag -g _spec.rb &hellip;">
+  <meta name="description" content="If your application has lots of things going on or you render a large list, you
+might see your once snappy app lose some of that swiftness. Naturally &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,65 @@ for spec_file in $(ag -g _spec.rb &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2013/11/27/profile-your-ember-app-with-ember-renderspeed.html">Profile Your Ember App With Ember-renderspeed</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-27T18:56:00+01:00" pubdate data-updated="true">Nov 27<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>If your application has lots of things going on or you render a large list, you
+might see your once snappy app lose some of that swiftness. Naturally, you want
+to speed your application up and the first thing to do in these cases is to know
+where the bottlenecks are.</p>
+
+<p>One solution to this is to integrate <a href="https://github.com/eviltrout/ember-renderspeed">ember-renderspeed</a>, a very simple library
+released by the Discourse team. It shows the rendering time of your templates
+and views on your development console, in a nicely nested form. Don&#8217;t get
+frightened by the verb &#8220;integrate&#8221;. It is as easy as <a href="https://raw.github.com/eviltrout/ember-renderspeed/master/ember-renderspeed.js">downloading the js file</a> and
+adding a script tag to it.</p>
+
+<p>Once you did that, open your Javascript console in your browser, reload the page
+and observe the profile of your application. It is enabled by default on the
+Ember discussion forum, so you can take a look there. You will see something
+like the following:</p>
+
+<p><img src="/images/ember-renderspeed-screenshot.png" alt="ember-renderspeed screenshot" /></p>
+
+<p>Under the hood, ember-renderspeed uses <a href="http://emberjs.com/api/classes/Ember.Instrumentation.html">Ember&#8217;s instrumentation facilities</a>, so
+should ember-renderspeed not work for your problem, you can always roll your own
+or use a third-party service, like <a href="http://caliper.io/">Caliper</a>.</p>
+
+<p>That said, ember-renderspeed is a very quick and easy way to profile your app
+and can be the first tool you reach for when the need arises.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -705,13 +764,7 @@ from <a href="http://pragprog.com/book/tbcoffee/coffeescript">Trevor Burnham&#82
 of those aha moments.</p>
 
 <div><script src='https://gist.github.com/1297011.js'></script>
-<noscript><pre><code>countdown = 10
-h = setInterval -&gt;
- countdown--
-, 100
-do (-&gt;) until countdown is 0
-clearInterval h
-console.log 'Surprise!'</code></pre></noscript></div>
+<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/1297011&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
 
 
 <p>(If you don&#8217;t read Coffeescript code, you can go to the <a href="http://jashkenas.github.com/coffee-script/">Coffeescript web site</a>
@@ -727,13 +780,7 @@ countdown never gets decremented and thus an endless loop ensues.</p>
 following (and wonder if there is one closer to the original):</p>
 
 <div><script src='https://gist.github.com/1297018.js'></script>
-<noscript><pre><code>countdown = 10
-h = setInterval -&gt;
-  countdown--
-  if countdown is 0
-    console.log 'Surprise'
-    clearInterval h
-, 100</code></pre></noscript></div>
+<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/1297018&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
 
 
 <p>And that&#8217;s it. I hope this simple example pushes you up on that pesky learning curve.</p>
@@ -908,59 +955,6 @@ which other fields they hold true in (or in which fields they don&#8217;t).</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/09/05/powered-by-octopress.html">Powered by Octopress</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-09-05T21:22:00+02:00" pubdate data-updated="true">Sep 5<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="http://octopress.org/">Octopress</a> is a blogging engine on top of Jekyll. It got my attention
-since it provides themes and a layout that looks great on mobile
-devices, too.</p>
-
-<p>I had been playing with the idea to do my own simplistic theming long enough
-to realize that I would never do it. The other feature I like is its plugin system:
-some I&#8217;ll use right away (e.g Github style codeblock) but I also like
-the idea that I can write a plugin for any specific need that might
-arise later.</p>
-
-<p>I had had my blog on Jekyll so migration was not really hard. I hit a
-few minor roadblocks on the way but <a href="http://octopress.org/docs/">documentation</a> is great and the author,
-Brandon Mathis was really helpful on the <a href="https://convore.com/octopress/">support forum</a> so
-I could eventually sort them out.</p>
-
-<p>If you like to <a href="http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html">blog like a hacker</a>, want to own your
-content and don&#8217;t want to be bothered with styling, I encourage you to
-join <a href="https://github.com/imathis/octopress/wiki/Octopress-Sites">the squid team</a>.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -985,6 +979,10 @@ join <a href="https://github.com/imathis/octopress/wiki/Octopress-Sites">the squ
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/02/24/a-common-resource-route-pattern-in-ember-dot-js.html">A common resource route pattern in Ember.js</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/02/18/readers-letters-making-an-ember-dot-js-component-even-better.html">Readers&#8217; Letters: Making an Ember.js component even better</a>
       </li>
     
@@ -998,10 +996,6 @@ join <a href="https://github.com/imathis/octopress/wiki/Octopress-Sites">the squ
     
       <li class="post">
         <a href="/2014/01/21/promises-instead-of-callbacks.html">Promises instead of callbacks</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/01/14/how-real-time-updates-work-in-discourse.html">How real-time updates work in Discourse</a>
       </li>
     
   </ul>
