@@ -9,8 +9,9 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="If your application has lots of things going on or you render a large list, you
-might see your once snappy app lose some of that swiftness. Naturally &hellip;">
+  <meta name="description" content="If you followed along my Build an Ember app screencast series and maybe
+played around with the app on your own, you might have
+noticed a subtle bug &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +78,350 @@ might see your once snappy app lose some of that swiftness. Naturally &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2013/12/03/roll-your-own-ember-dot-js-identity-map.html">Roll Your Own Ember.js Identity Map</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-03T11:41:00+01:00" pubdate data-updated="true">Dec 3<span>rd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>If you followed along my <a href="http://emberjs.balinterdi.com">Build an Ember app screencast series</a> and maybe
+played around <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/episode-7">with the app</a> on your own, you might have
+noticed a subtle bug in the application.</p>
+
+<p>When you load the application on the <code>/artists/</code> route and then choose one of
+the artists, the artist link gets highlighted correctly:</p>
+
+<p><img src="/images/posts/roll-your-own-store/active-highlight-works.png" alt="Correct active highlight" /></p>
+
+<p>However, when you reload the app on one of these artists routes (e.g
+<code>/artists/pearl-jam</code>), the artist link does not get the active highlight:</p>
+
+<p><img src="/images/posts/roll-your-own-store/active-highlight-does-not-work.png" alt="Incorrect active highlight" /></p>
+
+<h3>Understanding what is wrong</h3>
+
+<p>The first step of any debugging process is to understand where the bug lies. In
+order to do that we have to understand how highlighting a link as active works
+in Ember.js.</p>
+
+<p>I wrote about this topic in detail in <a href="http://blog.safaribooksonline.com/2013/10/29/marking-links-as-active-in-ember-js-markdown/">a guest post</a> so let
+me just quickly summarize it here.</p>
+
+<p>The artist links are rendered using the <code>link-to</code> helper. When active routes
+change (that includes the moment when the app is loaded from scratch) the
+<code>isActive</code> property for each link is recomputed. If it is found to be
+active, the activeClass is added to the view&#8217;s tag and that enables it to be
+displayed differently.</p>
+
+<p>When is a link-to active? When its route name matches one of the current route
+names. This is pretty straightforward for static links but what about dynamic ones
+with context objects? In those cases, all the context objects have to match in
+order for the link to be considered active.</p>
+
+<p>Let&#8217;s see our particular case. We have the following routes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">resource</span><span class="p">(</span><span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">(</span><span class="s1">&#39;songs&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;:slug&#39;</span> <span class="p">});</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And the following template that renders each artist link:</p>
+
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artists&quot;&gt;
+  (...)
+  {{#each model}}
+    {{#link-to &quot;artists.songs&quot; this class=&quot;list-group-item artist-link&quot;}}
+      {{name}}
+      (...)
+    {{/link-to}}
+  {{/each}}
+  (...)
+&lt;/script&gt;</code></pre>
+</div>
+
+
+<p>Each link is rendered with an artist object that comes from the model hook of
+the <code>ArtistsRoute</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">artistObjects</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">A</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s1">&#39;http://localhost:9393/artists&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">artists</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">artists</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">artistObjects</span><span class="p">.</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">artistObjects</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So the artist object that serves as the context for the <code>artists.songs</code> link has
+to be the exact same object as the one returned from the model hook of the
+<code>ArtistsSongsRoute</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;http://localhost:9393/artists/&#39;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">artist</span><span class="p">.</span><span class="nx">setProperties</span><span class="p">({</span>
+</span><span class='line'>        <span class="nx">id</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">name</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">songs</span><span class="o">:</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">extractSongs</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">songs</span><span class="p">,</span> <span class="nx">artist</span><span class="p">)</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">artist</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Are they identical? Well, intuitively they are but Ember.js does not care about
+our intuition and so we should not, either. They are different objects since
+both were created by calls to <code>App.Artist.create</code> (<code>App.Artist.createRecord</code>
+calls <code>App.Artist.create</code> under the hood) which returns a new object
+every time. Bummer.</p>
+
+<h3>Replacing intuition with reality</h3>
+
+<p>Don&#8217;t be sad, it&#8217;s not bad.</p>
+
+<p>What we need is to have the same model object to be returned for the same
+identifier. In the matter at hand, given an artist slug (that serves as an
+identifier) we want to get back the same <code>App.Artist</code> object every time we use it.</p>
+
+<p>If you think about it, that&#8217;s what identity maps are for.</p>
+
+<h3>Wiring it up with promises</h3>
+
+<p>The identity map needs to be able to retrieve objects and also store them. Most
+importantly, it has to return the object from its map if it has already created
+it with the passed in id.</p>
+
+<p>I will dump the code below and then explain what it does:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IdentityMap</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">map</span><span class="o">:</span> <span class="p">{},</span>
+</span><span class='line'>  <span class="nx">findAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">identityMap</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">RSVP</span><span class="p">.</span><span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s1">&#39;http://localhost:9393/artists&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">artists</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">artistObjects</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">A</span><span class="p">();</span>
+</span><span class='line'>        <span class="nx">artists</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+</span><span class='line'>          <span class="nx">identityMap</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="nx">artist</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;slug&#39;</span><span class="p">),</span> <span class="nx">artist</span><span class="p">);</span>
+</span><span class='line'>          <span class="nx">artistObjects</span><span class="p">.</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">artist</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>        <span class="nx">resolve</span><span class="p">(</span><span class="nx">artistObjects</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">find</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">identityMap</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">RSVP</span><span class="p">.</span><span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">identityMap</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">identityMap</span><span class="p">.</span><span class="nx">_key</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">id</span><span class="p">)];</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="nx">artist</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">resolve</span><span class="p">(</span><span class="nx">artist</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;http://localhost:9393/artists/&#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+</span><span class='line'>          <span class="nx">artist</span><span class="p">.</span><span class="nx">setProperties</span><span class="p">({</span>
+</span><span class='line'>            <span class="nx">id</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">name</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">songs</span><span class="o">:</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">extractSongs</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">songs</span><span class="p">,</span> <span class="nx">artist</span><span class="p">)</span>
+</span><span class='line'>          <span class="p">});</span>
+</span><span class='line'>          <span class="nx">identityMap</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">artist</span><span class="p">);</span>
+</span><span class='line'>          <span class="nx">resolve</span><span class="p">(</span><span class="nx">artist</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you can see, I used promises for the retrieval methods of the API.</p>
+
+<p>Promises are a huge improvement over callbacks and deserve their own
+<del>article</del> book. They represent eventual values that are going to be
+either resolved (meaning success) or rejected (meaning failure) and can be
+passed around freely.</p>
+
+<p>Ember.js relies on promises heavily in its <a href="http://emberjs.com/guides/routing/asynchronous-routing/#toc_a-word-on-promises">routing API</a> and uses
+<a href="https://github.com/tildeio/rsvp.js">the rsvp promise library</a>. If a promise is returned from any <code>model</code> hook,
+the route transition does not begin until <a href="http://emberjs.com/guides/routing/asynchronous-routing/#toc_the-router-pauses-for-promises">the promise is resolved</a>.</p>
+
+<p>Leveraging that property of Ember routing I return promises from both the
+<code>findAll</code> and <code>find</code> methods and then use them from the model hooks of
+the appropriate routes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">App</span><span class="p">.</span><span class="nx">IdentityMap</span><span class="p">.</span><span class="nx">findAll</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">App</span><span class="p">.</span><span class="nx">IdentityMap</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When I call <code>App.IdentityMap.findAll</code> from the <code>ArtistsRoute</code> the rendering of
+the <code>artists</code> template is stopped until the promise is resolved. That happens
+when the AJAX call has returned with the data for all artists and I call
+<code>resolve(artistObjects)</code>.</p>
+
+<p>Next, the model hook for the <code>ArtistsSongsRoute</code> is evaluated. It returns a
+promise that has to be resolved in order for the template to be rendered.</p>
+
+<p>The artist is found in the identityMap because it has just been stored there
+during the findAll in the previous model hook resolution (see the
+<code>identityMap.store('artist', artist.get('slug'), artist);</code> line). Since it is
+the same object that was used as the context for the artist link, the bug is
+squashed.</p>
+
+<p>The link now gets correctly highlighted as active:</p>
+
+<p><img src="/images/posts/roll-your-own-store/active-highlight-fixed.png" alt="Active highlight fixed" /></p>
+
+<p>Notice we achieved something else, too. Instead of firing two AJAX calls, one
+to fetch all artists and then one to fetch the one serialized in the URL we now
+only have one call. We eliminated the second one by returning the object from
+the identity map.</p>
+
+<p>Furthermore, I also think our code has become better organized. The models for
+our routes have now become one-liners and can quickly be read and understood at
+a casual glance instead of being buried under the minutiae of AJAX calls.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -793,168 +1138,6 @@ following (and wonder if there is one closer to the original):</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/09/28/five-wasted-years-futility-of-university-education.html">Five Wasted Years - on the Futility of University Education</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-09-28T00:00:00+02:00" pubdate data-updated="true">Sep 28<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I graduated from the Technical University of Budapest to earn a M.Sc. in
-Software Engineering. Albeit it is supposed to be an asset on my CV I&#8217;ll
-argue below that the long years of university education was just not worth it.</p>
-
-<p>When trying to summarize what advantage university education
-brought me there is precious little I can think of. Five years is a lot of
-time to spend without actually getting something out of it for one&#8217;s
-professional career.</p>
-
-<p>Obviously I&#8217;ve formed my opinion based on my university experience which
-might not (and probably <em>is</em> not) be applicable to all higher education.
-Philosophy, economics and law all require different formation
-and practice might be harder (or outright dangerous) to attain in some
-areas (think medicine).</p>
-
-<p>Also, there is a great variance between countries although even the famously high-standard
-US education system seems to yield not actual but rather
-looks-good-on-my-CV benefits, say some <a href="http://techcrunch.com/2011/04/10/peter-thiel-were-in-a-bubble-and-its-not-the-internet-its-higher-education/" title="Peter Thiel: Education Bubble">smart</a> <a href="http://www.economist.com/node/18750658" title="Stephen Wolfram">guys</a>.</p>
-
-<h2>Learn to learn?</h2>
-
-<p>Tech is changing extremely rapidly. Today&#8217;s hotness could be a thing of
-the past in a few years. Consequently universities should not try to keep up with the
-pace and teach students state-of-the-art stuff. Higher education needs to transcend
-short-term utility and provide a base one can build on for the rest of
-his career. So we were told or made to believe.</p>
-
-<p>What is probably considered the essence of higher education is &#8220;learn to
-learn&#8221;. It is the idea that universities need to teach future-engineers
-how to quickly adapt to new fields and techniques (programming
-languages, databases, architectures, etc.).</p>
-
-<p>This is appealing but universities don&#8217;t do that. I had to sit through
-long hours of material not even vaguely related to software engineering.
-The practical stuff (e.g programming languages) was taught with stone age style methods
-(programming on paper).  The other subjects, those that were supposed to provide us the broad
-vision, I suppose, were way too much in volume and failed to achieve that goal.</p>
-
-<h2>Make to learn</h2>
-
-<p>In my current job I&#8217;m lucky to work with some guys who dropped out of
-college and started to work. They might not
-know about <a href="http://en.wikipedia.org/wiki/Prim's_algorithm" title="Prim's algorithm">Prim&#8217;s algorithm</a> or the <a href="http://en.wikipedia.org/wiki/Intermediate_value_theorem" title="Intermediate value theorem">intermediate value theorem</a>,
-but I think the result of the time they spent making things greatly surpass the time I
-spent learning the above.</p>
-
-<p>Programming (or, in its more CV-friendly, hire-me name: software
-engineering) is a task that could be the modern equivalent of wood carving.
-You can learn all that you want about the craft, the only thing that
-really matters is doing it, a lot. Only, programming is way better.
-There is virtually no waste (unless you publish what you make :) ) and
-the tools are more accessible and cheaper.</p>
-
-<p>Take it from someone who, unlike most kiddos at the university, started
-programming late: it feels awkward and weird at first. And then the
-second and third time, too. Slowly, though, you start to feel like it&#8217;s actually
-fun and sometimes more than that. You&#8217;re building something which you&#8217;ll
-look at ashamedly a few months later but at least your program does something extraordinary,
-like sorting a list of numbers. That&#8217;s science!</p>
-
-<p><a href="http://en.wikipedia.org/wiki/B-tree" title="B-tree">Math data constructs</a>, probability theory and cryptography notwithstanding,
-have you got this feeling of coolness (dare I say, awe) out of university lectures?</p>
-
-<h2>Total waste, really?</h2>
-
-<p>In fairness, and as a measure to counter my arrogance, I had to consider arguments
-on the pro-education side, too. Here is what I came up with:</p>
-
-<h3>Math</h3>
-
-<p>When faced with a programming challenge I
-can recall on some occasions an algorithm used to resolve a similar problem.
-That&#8217;s not to say you can&#8217;t google up a solution if you have a vague
-idea what to look for. Nevertheless if you can mentally page through the solutions
-for a given problem from your university classes, their time and space
-needs and their constraints then you surely save a lot of time.
-I forgot all the relevant facts about any algorithm and have to look it
-up every single time, but it could be me.</p>
-
-<h3>Deciding on one&#8217;s vocation</h3>
-
-<p>Most kids don&#8217;t know what to do with their life when they are 18. Real
-life still seems distant and most want a few more years of canteen,
-beers and idling. Whether it is beneficial for them or society
-(taxpayers) as a whole to be allowed to do that is another matter.
-Nevertheless, I&#8217;m convinced that a high number of students can have a
-clearer picture about whether they want to do &#8220;computer science&#8221; for the
-rest of their lives after a couple of years.</p>
-
-<h3>Outstanding teachers</h3>
-
-<p>Even though I reckon you can learn everything you need to know on your
-own (from the Internet), having a good teacher can squeeze your
-learning curve. Although I believe this is more attainable with a small
-group (and even more in a one-to-one, mentoring relationship) it&#8217;s
-definitely possible for an outstanding teacher to speed up absorbing
-knowledge with a bigger group, too. Unfortunately, with one notable
-exception, my teachers were not of this type, but
-that&#8217;s a weak argument against college education in general.</p>
-
-<p>Even if all these pro-education arguments are valid, however, a couple
-of years is surely enough to derive all the advantages they bring.
-Then, you still have 3 years to go and carve wood.</p>
-
-<h2>On navigation</h2>
-
-<p>Let me finally share a quote I&#8217;ve just found in Walden by H.D. Thoreau and that
-summarizes my intent with this post in one swell sentence:</p>
-
-<blockquote><p>To my astonishment I was informed on leaving college that I had studied<br/>navigation! &#8211; why, if I had taken one turn down the harbor I should<br/>have known more about it.</p><footer><strong>Henry David Thoreau</strong> <cite>Walden</cite></footer></blockquote>
-
-
-<h2>Please defend the status quo (or indulge in bashing it)</h2>
-
-<p>As I stated in the introduction, my opinion is just a drop in the ocean,
-a tiny slice in a big cake, a lone voice in the NY Stock Exchange (you
-get my point).</p>
-
-<p>If you <a href="http://www.codigoergosum.com/2011/09/28/five-wasted-years-futility-of-university-education.html" title="Comments">share your opinion</a>, there will be two voices already and we&#8217;ll
-have more information to decide about whether we should advise our children to go
-to college, for example. Then three. We may even reach four voices.</p>
-
-<p>Joking aside, if you went to college to learn computer science in Hungary
-or in another country, I&#8217;m interested to <a href="http://www.codigoergosum.com/2011/09/28/five-wasted-years-futility-of-university-education.html" title="Comments">hear your opinion</a>. If you
-studied something else, don&#8217;t be discouraged, please <a href="http://www.codigoergosum.com/2011/09/28/five-wasted-years-futility-of-university-education.html" title="Comments">share also</a>. My
-points are mostly valid for computer science but I&#8217;m curious to hear
-which other fields they hold true in (or in which fields they don&#8217;t).</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -979,6 +1162,10 @@ which other fields they hold true in (or in which fields they don&#8217;t).</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria.html">Sorting arrays in Ember.js by various criteria</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/02/26/a-common-resource-route-pattern-in-ember-dot-js.html">A common resource route pattern in Ember.js</a>
       </li>
     
@@ -992,10 +1179,6 @@ which other fields they hold true in (or in which fields they don&#8217;t).</p>
     
       <li class="post">
         <a href="/2014/02/05/convert-a-view-into-a-component.html">Convert a view into a component</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/01/21/promises-instead-of-callbacks.html">Promises instead of callbacks</a>
       </li>
     
   </ul>
