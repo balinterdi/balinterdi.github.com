@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-03-05T08:03:24+01:00</updated>
+  <updated>2014-03-19T22:12:41+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,252 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Ember.js getters and setters]]></title>
+    <link href="http://balinterdi.com/2014/03/19/ember-dot-js-getters-and-setters.html"/>
+    <updated>2014-03-19T20:53:00+01:00</updated>
+    <id>http://balinterdi.com/2014/03/19/ember-dot-js-getters-and-setters</id>
+    <content type="html"><![CDATA[<p>To make all the magic fairy-dust sprinkling efficient, like auto-updating
+templates and computed properties, Ember uses getters and setters instead of
+accessing properties directly the javascript (and dare I say, the Angular) way. At
+its most simplest form, it is <code>object.get(property)</code> and <code>object.set(property)</code>.</p>
+
+<p>Howevers, it would not be Ember if we were not provided methods on top of these
+primitives to make our hard lives as web developers simpler. In the following
+post, I am going to show (some of) these methods through an example, so let's
+go.</p>
+
+<h2>Badges, badges, I want more badges</h2>
+
+<p>I am certainly favor of having badges in every application. Discourse is
+actively discoursing <a href="https://meta.discourse.org/t/initial-discourse-badge-design-spec">their badge system</a> so I quickly
+sketched out something to get ahead of them.</p>
+
+<p>Let me just paste the code here and then use it to explain what the getter and
+setter methods are good for.</p>
+
+<p>You can quickly scroll through the below templates. They are mostly there so
+that you get the whole picture. The stuff relevant to this discussion is found
+in the javascript code.</p>
+
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
+
+&lt;script type=&quot;text/x-handlebars&quot;&gt;
+  &lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;panel panel-primary&quot;&gt;
+      &lt;div class=&quot;panel-heading&quot;&gt;
+        &lt;h3 class=&quot;panel-title&quot;&gt;Your badges, sir/ma'am.&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;panel-body&quot;&gt;
+        {{outlet}}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/script&gt;
+
+
+&lt;p&gt;</code></pre>
+</div>
+</p>
+
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
+
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;index&quot;&gt;
+  &lt;ul class=&quot;list-group&quot;&gt;
+    {{#each badge in arrangedContent}}
+      &lt;li {{bind-attr class=&quot;:list-group-item badge.unlocked::locked&quot;}}&gt;
+        {{badge.name}}
+        &lt;span class=&quot;badge&quot;&gt;{{badge.score}}&lt;/span&gt;
+      &lt;/li&gt;
+    {{/each}}
+    &lt;li class=&quot;list-group-item&quot;&gt;
+      &lt;em&gt;Total:&lt;/em&gt;
+      &lt;span class=&quot;pull-right&quot;&gt;{{totalScore}}&lt;/span&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;div id=&quot;new-badge&quot; class=&quot;row&quot;&gt;
+    &lt;span class=&quot;col-xs-6&quot;&gt;
+      {{input class=&quot;input&quot; type=&quot;text&quot; placeholder=&quot;Badge name&quot; value=name}}
+    &lt;/span&gt;
+    &lt;span class=&quot;col-xs-4&quot;&gt;
+      {{input class=&quot;small-input&quot; type=&quot;text&quot; placeholder=&quot;Score&quot; value=score action=&quot;addBadge&quot;}}
+    &lt;/span&gt;
+    &lt;span class=&quot;col-xs-2&quot;&gt;
+      &lt;button class=&quot;btn btn-primary btn-sm pull-right&quot; type=&quot;button&quot;
+          {{action &quot;addBadge&quot;}}&gt;
+          Add
+      &lt;/button&gt;
+    &lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div id=&quot;unlock-all&quot; class=&quot;row&quot;&gt;
+    &lt;div class=&quot;col-xs-12&quot;&gt;
+      &lt;button class=&quot;btn btn-danger btn-md&quot; type=&quot;button&quot;
+        {{action &quot;unlockAll&quot;}}&gt;
+        Unlock all
+      &lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;
+
+
+&lt;p&gt;</code></pre>
+</div>
+</p>
+
+<p>First, the badge class is defined and some badges created so that we have something to work with:</p>
+
+<p>```js
+App = Ember.Application.create();</p>
+
+<p>App.Badge = Ember.Object.extend({
+  name: '',
+  score: 0,
+  unlocked: false
+});</p>
+
+<p>var rook = App.Badge.create({
+  name: "R00k",
+  score: 1,
+  unlocked: true
+});</p>
+
+<p>var talkative = App.Badge.create({
+  name: "Talkative",
+  score: 10
+});</p>
+
+<p>var hemingway = App.Badge.create({
+  name: "Hemingway",
+  score: 1000
+});</p>
+
+<p>App.Router.map(function() {
+});</p>
+
+<p>App.IndexRoute = Ember.Route.extend({
+  model: function() {</p>
+
+<pre><code>return [rook, talkative, hemingway];
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<h3>getProperties and setProperties</h3>
+
+<p>The first couple of methods come handy when working with a single object but
+multiple properties.</p>
+
+<p>``` js
+App.IndexController = Ember.ArrayController.extend({
+  sortProperties: ['score'],
+  sortAscending: true,</p>
+
+<p>  (...)</p>
+
+<p>  actions: {</p>
+
+<pre><code>addBadge: function() {
+  var newBadgeProperties = this.getProperties(['name', 'score']);
+  newBadgeProperties.score = parseInt(newBadgeProperties.score, 10);
+
+  var newBadge = App.Badge.create(newBadgeProperties);
+  this.get('model').pushObject(newBadge);
+  this.setProperties({ name: '', score: '' });
+},
+
+(...)
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>On line 9, we want to create a new object with the values provided in the input
+boxes (addBadge is the action that gets triggered when the Add button is
+clicked, check the template). <code>getProperties</code> will create a javascript object
+creating key-value pairs for the passed properties. So the above might e.g yield
+<code>{ name: "Silent Bob", score: "2" }</code>. That gets directly passed in to create a
+new badge object.</p>
+
+<p>On line 14, we use the mutating pair of <code>getProperties</code> to reset the input
+fields. Pretty straightforward.</p>
+
+<h3>getEach and setEach</h3>
+
+<p>Ember has us covered when we are working with an array and want to get (or set)
+the same property of each item.</p>
+
+<p>``` js
+App.IndexController = Ember.ArrayController.extend({
+  sortProperties: ['score'],
+  sortAscending: true,</p>
+
+<p>  totalScore: function() {</p>
+
+<pre><code>var sum = function(s1, s2) { return s1 + s2; };
+return this.get('model').getEach('score').reduce(sum);
+</code></pre>
+
+<p>  }.property('model.@each.score'),</p>
+
+<p>  actions: {</p>
+
+<pre><code>(...)
+
+unlockAll: function() {
+  this.get('model').setEach('unlocked', true);
+}
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>When the "Unlock all" button launches the <code>unlockAll</code> action, it calls <code>setEach</code>
+on the badges (line 14), making all of them unlocked (you can verify this in the
+demo by seeing the color of the badge names turn darker - their css class has
+been updated). Another advange of <code>setEach</code> is that it guards against calling
+<code>set</code> on null or undefined values.</p>
+
+<p>You might know the reader counterpart, <code>getEach</code> as <code>mapBy</code>. It goes through the
+array and makes another array by getting the passed property on each item. So in
+the above example (line 7), we first collect the score for each badge and then
+sum them up by way of reduction. (A shiny example of a non-distributed
+map-reduce :) ).</p>
+
+<h3>A macro can make nice code nicer</h3>
+
+<p>I <a href="http://balinterdi.com/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria.html">have used a reduce computed macro</a> before to set up sorting.
+I have gotten the hang of it and realized I could use another couple of them
+to make the above code simpler (and more performant):</p>
+
+<p>``` js
+App.IndexController = Ember.ArrayController.extend({
+  sortProperties: ['score'],
+  sortAscending: true,</p>
+
+<p>  scores: Ember.computed.mapBy('model', 'score'),
+  totalScore: Ember.computed.sum('scores'),</p>
+
+<p>  (...)
+});
+```</p>
+
+<p>The problem is that the subject under discussion, <code>getEach</code> is gone now, so
+pretend you did not see this.</p>
+
+<p>Finally, here is the jsbin, should you decide to play around with it:</p>
+
+<p><a class="jsbin-embed" href="http://emberjs.jsbin.com/qivah/4/embed?html,js,output">Getter and Setters</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
+
+<p>I hope some of that sticks and you'll write less "bare" gets and sets.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Sorting arrays in Ember.js by various criteria]]></title>
@@ -815,201 +1061,6 @@ design towards their reusability. However, it's up to writers of components to
 go all the way and make components general enough to fulfill this promise.</p>
 
 <p>That's what I'm going to strive for in a later post.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Promises instead of callbacks]]></title>
-    <link href="http://balinterdi.com/2014/01/21/promises-instead-of-callbacks.html"/>
-    <updated>2014-01-21T23:30:00+01:00</updated>
-    <id>http://balinterdi.com/2014/01/21/promises-instead-of-callbacks</id>
-    <content type="html"><![CDATA[<p>A few weeks ago <a href="http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map.html">I built up a very simple identity map</a> to
-get rid of a bug in highlighting active links. I introduced promises in order to
-leverage the fact that Ember.js blocks in model hooks until the model is
-resolved (or rejected).</p>
-
-<p>In this post, I am taking a step back, and converting all the ajax calls that
-fetch data from and store data to the backend to use promises. I am also going
-to extract the most basic adapter that exists, just to do away with the
-repetition in the XHR calls. Once I have these in place, I will able able to
-build nice features on top of that.</p>
-
-<h3>App.TheMostBasicAdapterThereIs</h3>
-
-<p>All calls go to the same backend and talk in json so these can be trivially
-extracted:</p>
-
-<p>``` js
-App.Adapter = {
-  ajax: function(path, options) {</p>
-
-<pre><code>var options = options || {};
-options.dataType = 'json';
-return Ember.$.ajax('http://rock-and-roll-api.herokuapp.com' + path, options)
-</code></pre>
-
-<p>  }
-}
-```</p>
-
-<p>With that out of the way, we can see where these were used, and replace
-<code>Ember.$.ajax</code> with <code>App.Adapter.ajax</code>. In the process we are also going to
-convert the callback-style code to use promises, a worthwhile
-transformation.</p>
-
-<h3>Don't call me back, promise me you'll be there</h3>
-
-<p>Here is what the code for fetching all the artists from the API looks like after
-applying the adapter change:</p>
-
-<p>``` js
-App.ArtistsRoute = Ember.Route.extend({
-  model: function() {</p>
-
-<pre><code>var artistObjects = [];
-App.Adapter.ajax('/artists', {
-  success: function(artists) {
-    artists.forEach(function(data) {
-      artistObjects.pushObject(App.Artist.createRecord(data));
-    });
-  }
-});
-return artistObjects;
-</code></pre>
-
-<p>  },
-  (...)
-});
-```</p>
-
-<p>Notice that the model initially is an empty array and only when the ajax call
-returns successfully does that array get filled up and the template rerendered.
-Not a big deal in itself, but if in a child route we rely on the array
-containing all the artists (e.g when looking up the identity map or using
-<a href="https://github.com/emberjs/ember.js/blob/v1.3.0/packages/ember-routing/lib/system/route.js#L997-1012">modelFor</a>), we can be bitten by the async bug. Promises to the
-rescue.</p>
-
-<p>As I mentioned in the <a href="http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map.html">identity map post</a>, if a promise is
-returned from a model hook, Ember.js will block until the promise is resolved
-(or rejected). Let's follow in Ember.js footsteps and convert the above code to
-return a promise:</p>
-
-<p>``` js
-App.ArtistsRoute = Ember.Route.extend({
-  model: function() {</p>
-
-<pre><code>return Ember.RSVP.Promise(function(resolve, reject) {
-  App.Adapter.ajax('/artists').then(function(artists) {
-    var artistObjects = [];
-    artists.forEach(function(data) {
-      artistObjects.pushObject(App.Artist.createRecord(data));
-    });
-    resolve(artistObjects);
-  }, function(error) {
-    reject(error);
-  });
-});
-</code></pre>
-
-<p>  },
-  (...)
-});
-```</p>
-
-<p>We wrap the promise returned from the <code>App.Adaptar.ajax</code> call in another promise,
-which resolves with artist objects instead of the raw data that is returned by
-the API. In the rejection handler, we pass along any potential error responses
-by rejecting with the same error that we got.</p>
-
-<p>Next, we do the same thing in the child route. We go from here:</p>
-
-<p>``` js
-App.ArtistsSongsRoute = Ember.Route.extend({
-  model: function(params) {</p>
-
-<pre><code>var artist = App.Artist.create();
-App.Adapter.ajax('/artists/' + params.slug, {
-  success: function(data) {
-    artist.setProperties({
-      id: data.id,
-      name: data.name,
-      songs: App.Artist.extractSongs(data.songs, artist)
-    });
-  }
-});
-return artist;
-</code></pre>
-
-<p>  },
-  (...)
-});
-```</p>
-
-<p>To here:</p>
-
-<p>``` js
-App.ArtistsSongsRoute = Ember.Route.extend({
-  model: function(params) {</p>
-
-<pre><code>return Ember.RSVP.Promise(function(resolve, reject) {
-  App.Adapter.ajax('/artists/' + params.slug).then(function(data) {
-    resolve(App.Artist.createRecord(data));
-  }, function(error) {
-    reject(error);
-  });
-});
-</code></pre>
-
-<p>  },
-  (...)
-});
-```</p>
-
-<p>To get the "100% promisified" seal, we'll transform the create calls, too. I'll
-only show the one to create an artist since creating a song is the same.</p>
-
-<p>``` js
-createArtist: function() {
-  var name = this.get('controller').get('newName');</p>
-
-<p>  App.Adapter.ajax('/artists', {</p>
-
-<pre><code>type: 'POST',
-data: { name: name },
-context: this
-</code></pre>
-
-<p>  }).then(function(data) {</p>
-
-<pre><code>  var artist = App.Artist.createRecord(data);
-  this.modelFor('artists').pushObject(artist);
-  this.get('controller').set('newName', '');
-  this.transitionTo('artist.songs', artist);
-</code></pre>
-
-<p>  }, function(reason) {</p>
-
-<pre><code>alert('Failed to save artist');
-</code></pre>
-
-<p>  });
-}
-```</p>
-
-<p>Here, there is not that much of a difference, the success and error callbacks
-are replaced by fulfillment and rejection handlers.</p>
-
-<p>The source code with these changes can be got <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/promisified">here</a>.</p>
-
-<h3>Further studies &amp; posts</h3>
-
-<p>You can acquire a deeper knowledge about promises by reading Domenic Denicola's
-<a href="http://domenic.me/2012/10/14/youre-missing-the-point-of-promises/">"You're missing the point of promises"</a> post and using that as a
-base for further exploration. Steven Kane's excellent <a href="https://npmjs.org/package/promise-it-wont-hurt">promise-it-wont-hurt package</a>
-makes you solve increasingly difficult challenges with promises, which is the best way to learn.</p>
-
-<p>Promisifying all backend calls sets the stage for other routing-related
-improvements. Stay tuned for more.</p>
 ]]></content>
   </entry>
   
