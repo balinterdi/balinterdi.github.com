@@ -18,7 +18,7 @@ go.
 
 ## Badges, badges, I want more badges
 
-I am certainly favor of having badges in every application. Discourse is
+I am certainly in favor of having badges in every application. Discourse is
 actively discoursing [their badge system][discourse-badges] so I quickly
 sketched out something to get ahead of them.
 
