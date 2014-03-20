@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-03-19T22:12:41+01:00</updated>
+  <updated>2014-03-20T13:33:22+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -30,7 +30,7 @@ go.</p>
 
 <h2>Badges, badges, I want more badges</h2>
 
-<p>I am certainly favor of having badges in every application. Discourse is
+<p>I am certainly in favor of having badges in every application. Discourse is
 actively discoursing <a href="https://meta.discourse.org/t/initial-discourse-badge-design-spec">their badge system</a> so I quickly
 sketched out something to get ahead of them.</p>
 
