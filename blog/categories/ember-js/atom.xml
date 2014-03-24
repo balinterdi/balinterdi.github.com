@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-03-20T13:33:22+01:00</updated>
+  <updated>2014-03-24T11:28:41+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -322,7 +322,7 @@ App.ArtistSongsController = Ember.ArrayController.extend({
 
 <p>The API is so explicit it does not need any explanation. In order for the songs
 to appear in the specified order, we now need to iterate through <code>sortedSongs</code>
-so the <code></code> in the template becomes <code></code>.</p>
+so the <code>#each</code> in the template becomes <code>#each sortedSongs</code>.</p>
 
 <p>Let's take a look at how it has changed the order of the songs:</p>
 
