@@ -64,7 +64,7 @@ App.ArtistSongsController = Ember.ArrayController.extend({
 
 The API is so explicit it does not need any explanation. In order for the songs
 to appear in the specified order, we now need to iterate through `sortedSongs`
-so the `{{#each}}` in the template becomes `{{#each sortedSongs}}`.
+so the `#each` in the template becomes `#each sortedSongs`.
 
 Let's take a look at how it has changed the order of the songs:
 
