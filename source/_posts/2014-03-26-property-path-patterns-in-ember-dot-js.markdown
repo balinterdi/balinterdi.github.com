@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Property path patterns in Ember.js"
+title: "Observable path patterns in Ember"
 date: 2014-03-26 00:00
 comments: true
 categories: ember.js
