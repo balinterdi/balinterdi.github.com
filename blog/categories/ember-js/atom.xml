@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-04-04T21:51:54+02:00</updated>
+  <updated>2014-05-01T09:09:33+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,178 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Dependency injection in Ember.js - First steps]]></title>
+    <link href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html"/>
+    <updated>2014-05-01T08:38:00+02:00</updated>
+    <id>http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js</id>
+    <content type="html"><![CDATA[<p>Dependency injection (DI) is a less-known, yet powerful feature of the framework
+we know and love called Ember.js. It works through the container and is
+comprised of two parts: <em>registration</em> and <em>injection</em>.</p>
+
+<p>The framework itself uses it so that the objects instantiated through the
+container have the dependencies correctly initialized on them (for the
+theoretical programmers out there, the Ember DI system is thus probably
+considered a construction-time DI). The API methods are exposed to application
+developers for them to register and inject their own objects.</p>
+
+<p>In this first blog post, I'll introduce the main concepts. In a couple of
+further blog posts I intend to dig deeper, give examples of what it can be used
+for and show a few gotchas.</p>
+
+<h3>Step 1 - Registration</h3>
+
+<p>To be able to inject an entity onto others it first has to be registered on the
+container. Think of the container as the birthplace of objects in Ember. It
+knows how to instantiate objects and look up factories by their name.</p>
+
+<p>Throughout the post, I'll use the example of a store. If you have worked with
+ember-data, the store is the principal piece. It creates model objects and
+finds them by their type, id or other criteria so you probably want it to be
+accessible from routes and controllers alike.</p>
+
+<p>If you have not come through such a store, don't despair. It is but a handy example to
+illustrate dependency injection and how it works for a singleton object.</p>
+
+<p>Let's assume we have a reference to the store "class" in a variable called
+<code>store</code>. To register said store, we write the following:</p>
+
+<p>```js
+Ember.Application.initializer({
+  name: "store",</p>
+
+<p>  initialize: function(container, application) {</p>
+
+<pre><code>container.register('store:main', store, { singleton: true });
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>The container now knows the store by the name <code>store:main</code>. That is the name it
+has to be referred by subsequently. The <code>singleton: true</code> option
+instructs the container not to instantiate a new object each time but use a
+singleton instead.</p>
+
+<h3>Step 2 - Injection</h3>
+
+<p>Once the object/factory is registered, it can be used on other objects in the
+application. As mentioned above, a store is best used from controllers and
+routes. So let's inject them there:</p>
+
+<p>```js
+Ember.Application.initializer({
+  name: "injectStore",
+  before: "store",</p>
+
+<p>  initialize: function(container, application) {</p>
+
+<pre><code>application.inject('controller', 'store', 'store:main');
+application.inject('route', 'store', 'store:main');
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>The main method, <code>application.inject</code> takes as its first argument the object(s)
+where we want the injection to happen, then the injected name and then the name
+of what should be injected. The "what should be injected" has to be the same
+name we had registered the object previously with.</p>
+
+<p>The first parameter, <code>controller</code> and <code>route</code> define what is called a type
+injection. This means the injected name will be available on all instances of
+the type, all controllers and routes in this case. The injected name is <code>store</code>
+and it refers to a single instance of the store class since that's how we
+defined it at registration time.</p>
+
+<p>We could also just define a simple injection. In a somewhat hypotethical
+example, let's assume we only need the store on the artists route.  We write the
+following to achieve that:</p>
+
+<p>```js
+Ember.Application.initializer({
+  name: "injectStore",
+  before: "store",</p>
+
+<p>  initialize: function(container, application) {</p>
+
+<pre><code>application.inject('route:artists', 'store', 'store:main');
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<h3>Step 3 - Putting the two pieces together</h3>
+
+<p>Let's say we want to create an artist object in a route and that creating
+objects happens through the store (as it does in ember-data, e.g). The following
+snippets set up the injection:</p>
+
+<p>```js
+Ember.Application.initializer({
+  name: "store",</p>
+
+<p>  initialize: function(container, application) {</p>
+
+<pre><code>container.register('store:main', App.Store, { singleton: true });
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>Ember.Application.initializer({
+  name: "injectStore",
+  before: "store",</p>
+
+<p>  initialize: function(container, application) {</p>
+
+<pre><code>application.inject('route', 'store', 'store:main');
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>This makes the singleton instance of the store available on all routes of the
+application so we could, for example, write this:</p>
+
+<p>```js
+App.IndexRoute = Ember.Route.extend({
+  model: function() {</p>
+
+<pre><code>return this.store.createRecord('artist');
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>I also <a href="http://emberjs.jsbin.com/tufoy/2/edit?html,js,output">created a jsbin</a> to show this in action, although admittedly there is
+little action at this point.</p>
+
+<h3>Why DI?</h3>
+
+<p>This is all fine and dandy, but what problems does dependency injection solve?
+First and foremost, it decouples the pieces of your application. Dependencies
+are not hardcoded but injected at construction time. This makes your components
+easier to use together since pieces can be swapped in and out as needed.</p>
+
+<p>It is also the de facto way of adding the objects that are not provided by
+Ember.js to your application. The store is an example of such an object but you
+can also add analytics integration, a pool of workers and other fancy things
+easily.</p>
+
+<p>An added benefit is improved unit testing since you can inject mocks as
+cooperators and verify calls made on those.</p>
+
+<p>We are going to look at other aspects of DI in Ember.js in more detail in a next
+post. Stay tuned and prepare your mojitos.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Observable path patterns in Ember]]></title>
@@ -295,69 +467,71 @@ setter methods are good for.</p>
 that you get the whole picture. The stuff relevant to this discussion is found
 in the javascript code.</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars">
-  <div class="container">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">Your badges, sir/ma'am.</h3>
-      </div>
-      <div class="panel-body">
+&lt;script type=&quot;text/x-handlebars&quot;&gt;
+  &lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;panel panel-primary&quot;&gt;
+      &lt;div class=&quot;panel-heading&quot;&gt;
+        &lt;h3 class=&quot;panel-title&quot;&gt;Your badges, sir/ma'am.&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;panel-body&quot;&gt;
         {{outlet}}
-      </div>
-    </div>
-  </div>
- </script>
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars" data-template-name="index">
-  <ul class="list-group">
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;index&quot;&gt;
+  &lt;ul class=&quot;list-group&quot;&gt;
     {{#each badge in arrangedContent}}
-      <li {{bind-attr class=":list-group-item badge.unlocked::locked"}}>
+      &lt;li {{bind-attr class=&quot;:list-group-item badge.unlocked::locked&quot;}}&gt;
         {{badge.name}}
-        <span class="badge">{{badge.score}}</span>
-      </li>
+        &lt;span class=&quot;badge&quot;&gt;{{badge.score}}&lt;/span&gt;
+      &lt;/li&gt;
     {{/each}}
-    <li class="list-group-item">
-      <em>Total:</em>
-      <span class="pull-right">{{totalScore}}</span>
-    </li>
-  </ul>
-  <div id="new-badge" class="row">
-    <span class="col-xs-6">
-      {{input class="input" type="text" placeholder="Badge name" value=name}}
-    </span>
-    <span class="col-xs-4">
-      {{input class="small-input" type="text" placeholder="Score" value=score action="addBadge"}}
-    </span>
-    <span class="col-xs-2">
-      <button class="btn btn-primary btn-sm pull-right" type="button"
-          {{action "addBadge"}}>
+    &lt;li class=&quot;list-group-item&quot;&gt;
+      &lt;em&gt;Total:&lt;/em&gt;
+      &lt;span class=&quot;pull-right&quot;&gt;{{totalScore}}&lt;/span&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;div id=&quot;new-badge&quot; class=&quot;row&quot;&gt;
+    &lt;span class=&quot;col-xs-6&quot;&gt;
+      {{input class=&quot;input&quot; type=&quot;text&quot; placeholder=&quot;Badge name&quot; value=name}}
+    &lt;/span&gt;
+    &lt;span class=&quot;col-xs-4&quot;&gt;
+      {{input class=&quot;small-input&quot; type=&quot;text&quot; placeholder=&quot;Score&quot; value=score action=&quot;addBadge&quot;}}
+    &lt;/span&gt;
+    &lt;span class=&quot;col-xs-2&quot;&gt;
+      &lt;button class=&quot;btn btn-primary btn-sm pull-right&quot; type=&quot;button&quot;
+          {{action &quot;addBadge&quot;}}&gt;
           Add
-      </button>
-    </span>
-  </div>
-  <div id="unlock-all" class="row">
-    <div class="col-xs-12">
-      <button class="btn btn-danger btn-md" type="button"
-        {{action "unlockAll"}}>
+      &lt;/button&gt;
+    &lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div id=&quot;unlock-all&quot; class=&quot;row&quot;&gt;
+    &lt;div class=&quot;col-xs-12&quot;&gt;
+      &lt;button class=&quot;btn btn-danger btn-md&quot; type=&quot;button&quot;
+        {{action &quot;unlockAll&quot;}}&gt;
         Unlock all
-      </button>
-    </div>
-  </div>
-</script>
+      &lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
 <p>First, the badge class is defined and some badges created so that we have something to work with:</p>
 
@@ -604,22 +778,23 @@ it possible for the criteria to be easily modified via user action.</p>
 <p>To give you an example, I'll make a button set the rating to happen only by title,
 in ascending alphabetical order:</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars" data-template-name="artist/songs">
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/songs&quot;&gt;
   {{#if canCreateSong}}
-    <div class="list-group-item">
+    &lt;div class=&quot;list-group-item&quot;&gt;
       (...)
-      <button class="btn btn-link pull-right" {{action "sortBy" "title:asc"}}>Sort by title</button>
-    </div>
+      &lt;button class=&quot;btn btn-link pull-right&quot; {{action &quot;sortBy&quot; &quot;title:asc&quot;}}&gt;Sort by title&lt;/button&gt;
+    &lt;/div&gt;
   {{/if}}
   (...)
-</script>
+&lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
 <p>The <code>sortBy</code> action handler sets the passed string as the value
 for the <code>sortProperties</code> which will rearrange the list:</p>
@@ -846,201 +1021,30 @@ songs no longer need to have the <code>songs</code> prefix since it is the model
 <p>This also holds true of the template. To give an example, rendering the
 stars for each song can becomes more concise:</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars" data-template-name="artist/songs">
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/songs&quot;&gt;
   (...)
   {{#each}}
-    <div class="list-group-item">
+    &lt;div class=&quot;list-group-item&quot;&gt;
       {{title}}
-      {{star-rating item=this rating=rating maxRating=5 setAction="setRating"}}
-    </div>
+      {{star-rating item=this rating=rating maxRating=5 setAction=&quot;setRating&quot;}}
+    &lt;/div&gt;
   {{else}}
   (...)
-</script>
+&lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
 <p>The #each helper, without parameters, loops through the items in the model of the
 template, in our case, the songs, which is exactly what we want.</p>
 
 <p>That wraps up our route sanitizaion. In the next post, we will take advantage of
 the benefit that the <code>songs</code> route now has the artist's songs as its model.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Making an Ember.js component more reusable]]></title>
-    <link href="http://balinterdi.com/2014/02/12/making-an-emberjs-component-more-reusable.html"/>
-    <updated>2014-02-12T07:54:00+01:00</updated>
-    <id>http://balinterdi.com/2014/02/12/making-an-emberjs-component-more-reusable</id>
-    <content type="html"><![CDATA[<h2>Intro</h2>
-
-<p><a href="/2014/02/05/convert-a-view-into-a-component.html">We saw how to turn the star-rating view into a component</a> to
-make it more reusable, and less reliant on its context. Everything that the
-component needs to do its job had to be passed in, and that is enough for it to
-be reusable not just across screens in your application but also across
-different applications.  Or is it? Let's take a look at the component code
-again:</p>
-
-<p>``` js
-App.StarRatingComponent = Ember.Component.extend({
-  classNames: ['rating-panel'],</p>
-
-<p>  fullStars: Ember.computed.alias('item.rating'),
-  numStars:  Ember.computed.alias('maxRating'),
-  (...)
-  actions: {</p>
-
-<pre><code>setRating: function() {
-  var newRating = parseInt($(event.target).attr('data-rating'), 10);
-  this.get('item').set('rating', newRating);
-  this.sendAction('setAction', this.get('item'));
-}
-</code></pre>
-
-<p>  }
-```</p>
-
-<p>Is something assumed about the object whose rating our component will display
-and set? I'll give you some time to think about it.</p>
-
-<h2>A glove that fits all hands</h2>
-
-<p>What we assume is that the <code>item</code> that gets passed in has a <code>rating</code> property.
-If we really want our component to be used in all Ember applications (why not
-reach for the <em>stars</em>?), then this should not be an assumption that we make.
-After all, a player in a hockey team might have a <code>score</code> property and not
-rating. We could get around that by aliasing <code>score</code> to <code>rating</code> in our
-controller:</p>
-
-<p><code>js
-App.PlayerController = Ember.ObjectController.extend({
-  rating: Ember.computed.alias('score');
-});
-</code></p>
-
-<p>However, this is inconvenient for the app developer and is only necessary
-because the star-rating component is not flexible enough. It's as if I had to
-reshape my hand to fit the glove.</p>
-
-<p>So let's make it take the property name as a parameter, too:</p>
-
-<p>{% highlight html %}
-{% raw %}</p>
-
-<script type="text/x-handlebars" data-template-name="artists/songs">
-  {{#each songs}}
-    <div class="list-group-item">
-      {{title}}
-      {{star-rating item=this ratingProperty="rating" maxRating=5 setAction="setRating"}}
-    </div>
-  (...)
-  {{/each}}
-</script>
-
-
-<p>{% endraw %}
-{% endhighlight %}</p>
-
-<p>That was easy, now comes the harder part, the component code. Previously, the
-fullStars property of the component was just an alias for <code>item.rating</code>. We
-can't do that anymore, since the name of the rating property is only known when
-the component is used in a template, and can thus differ in each case.</p>
-
-<p>Did Ember let us down this time? Before, it had kept the fullStars property of
-our component in sync with the item's rating. We just sat back and took sips of
-our mojito. Now, when the going gets tough, we are on our own.</p>
-
-<p>Well, not really. We are doing some advanced stuff so it's no surprise that we
-have to use advanced tools that are not needed in the majority of cases. Ember
-has nice lower-level functions to support us.</p>
-
-<p>We have to set up the property synchronization ourselves but it sounds scarier
-than it is. We just have to watch when the item's rating (score, points,
-etc.) property changes and set the fullStars property to that value:</p>
-
-<p>```js
-App.StarRatingComponent = Ember.Component.extend({
-  classNames: ['rating-panel'],</p>
-
-<p>  numStars:  Ember.computed.alias('maxRating'),
-  fullStars: null,</p>
-
-<p>  didInsertElement: function() {</p>
-
-<pre><code>var property = this.get('ratingProperty');
-this.set('fullStars', this.get('item').get(property));
-Ember.addObserver(this.get('item'), property, this, this.ratingPropertyDidChange);
-</code></pre>
-
-<p>  },</p>
-
-<p>  willDestroyElement: function() {</p>
-
-<pre><code>var property = this.get('ratingProperty');
-Ember.removeObserver(this.get('item'), property, this.ratingPropertyDidChange);
-</code></pre>
-
-<p>  },</p>
-
-<p>  ratingPropertyDidChange: function(item, ratingProperty) {</p>
-
-<pre><code>this.set('fullStars', item.get(ratingProperty));
-</code></pre>
-
-<p>  },
-  (...)
-}
-```</p>
-
-<p>There are several things that might be new to you, dear reader, so let me go
-through each of them.</p>
-
-<p>The most important thing is the call to <a href="http://emberjs.com/api/classes/Ember.Observable.html#method_addObserver">'Ember.addObserver(object, property,
-context, function)'</a>. Whenever <code>property</code> of <code>object</code> changes, it
-calls <code>function</code> with <code>context</code> as its <code>this</code>. (Providing a <code>context</code> is
-optional).</p>
-
-<p>The observer function (<code>ratingPropertyDidChange</code>) gets the object that was
-changed as its first parameter and the property name that was changed. In this
-case, it does not have to do anything else but set the <code>fullStars</code> property of
-the component to the new value of the item's rating property.</p>
-
-<p>The observer is set up in the <code>didInsertElement</code> function. It is a handy
-lifecycle-event for Ember views (and thus components) which gets called after
-the view has been inserted into the DOM. This time, we don't need it to be in
-the DOM already but it serves as a convenient way to add the observer.</p>
-
-<p>Lastly, since the observer was added manually, it has to be torn down manually,
-too, when it is no longer needed. We do this in <code>willDestroyElement</code>, another
-view lifecycle event which gets called before the element gets removed from the
-DOM. Also, the code comments mention the following about <code>willDestroyElement</code>:</p>
-
-<pre><code>If you write a `willDestroyElement()` handler, you can assume that your
-`didInsertElement()` handler was called earlier for the same element.
-</code></pre>
-
-<p>This makes <code>didInsertElement</code> - <code>willDestroyElement</code> a perfect pair for manually
-setting up and tearing down event handlers (or observers) even if no DOM
-manipulation has to be carried out.</p>
-
-<p>I've made a jsbin to show how the star-rating component can now be used with
-a <code>score</code> property while the component code stays identical:</p>
-
-<p><a class="jsbin-embed" href="http://emberjs.jsbin.com/sokov/4/embed?html,js,output">Reusable Star Rating component</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
-
-<h3>Conclusion</h3>
-
-<p>We now have a star-rating component that is general enough to be used in all
-contexts. Go ahead and use it in your Ember app and let me know if I missed
-something.</p>
-
-<p>Actually, there are a couple of featurettes -unrelated to its flexibility, as
-far as I see- we can add which I might come back to.</p>
 ]]></content>
   </entry>
   

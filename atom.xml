@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-04-04T21:51:35+02:00</updated>
+  <updated>2014-05-01T09:09:33+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,205 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Dependency injection in Ember.js - First steps]]></title>
+    <link href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html"/>
+    <updated>2014-05-01T08:38:00+02:00</updated>
+    <id>http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js</id>
+    <content type="html"><![CDATA[<p>Dependency injection (DI) is a less-known, yet powerful feature of the framework
+we know and love called Ember.js. It works through the container and is
+comprised of two parts: <em>registration</em> and <em>injection</em>.</p>
+
+<p>The framework itself uses it so that the objects instantiated through the
+container have the dependencies correctly initialized on them (for the
+theoretical programmers out there, the Ember DI system is thus probably
+considered a construction-time DI). The API methods are exposed to application
+developers for them to register and inject their own objects.</p>
+
+<p>In this first blog post, I&#8217;ll introduce the main concepts. In a couple of
+further blog posts I intend to dig deeper, give examples of what it can be used
+for and show a few gotchas.</p>
+
+<h3>Step 1 - Registration</h3>
+
+<p>To be able to inject an entity onto others it first has to be registered on the
+container. Think of the container as the birthplace of objects in Ember. It
+knows how to instantiate objects and look up factories by their name.</p>
+
+<p>Throughout the post, I&#8217;ll use the example of a store. If you have worked with
+ember-data, the store is the principal piece. It creates model objects and
+finds them by their type, id or other criteria so you probably want it to be
+accessible from routes and controllers alike.</p>
+
+<p>If you have not come through such a store, don&#8217;t despair. It is but a handy example to
+illustrate dependency injection and how it works for a singleton object.</p>
+
+<p>Let&#8217;s assume we have a reference to the store &#8220;class&#8221; in a variable called
+<code>store</code>. To register said store, we write the following:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">initializer</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">application</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;store:main&#39;</span><span class="p">,</span> <span class="nx">store</span><span class="p">,</span> <span class="p">{</span> <span class="nx">singleton</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The container now knows the store by the name <code>store:main</code>. That is the name it
+has to be referred by subsequently. The <code>singleton: true</code> option
+instructs the container not to instantiate a new object each time but use a
+singleton instead.</p>
+
+<h3>Step 2 - Injection</h3>
+
+<p>Once the object/factory is registered, it can be used on other objects in the
+application. As mentioned above, a store is best used from controllers and
+routes. So let&#8217;s inject them there:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">initializer</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;injectStore&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">before</span><span class="o">:</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">application</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">application</span><span class="p">.</span><span class="nx">inject</span><span class="p">(</span><span class="s1">&#39;controller&#39;</span><span class="p">,</span> <span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="s1">&#39;store:main&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">application</span><span class="p">.</span><span class="nx">inject</span><span class="p">(</span><span class="s1">&#39;route&#39;</span><span class="p">,</span> <span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="s1">&#39;store:main&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The main method, <code>application.inject</code> takes as its first argument the object(s)
+where we want the injection to happen, then the injected name and then the name
+of what should be injected. The &#8220;what should be injected&#8221; has to be the same
+name we had registered the object previously with.</p>
+
+<p>The first parameter, <code>controller</code> and <code>route</code> define what is called a type
+injection. This means the injected name will be available on all instances of
+the type, all controllers and routes in this case. The injected name is <code>store</code>
+and it refers to a single instance of the store class since that&#8217;s how we
+defined it at registration time.</p>
+
+<p>We could also just define a simple injection. In a somewhat hypotethical
+example, let&#8217;s assume we only need the store on the artists route.  We write the
+following to achieve that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">initializer</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;injectStore&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">before</span><span class="o">:</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">application</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">application</span><span class="p">.</span><span class="nx">inject</span><span class="p">(</span><span class="s1">&#39;route:artists&#39;</span><span class="p">,</span> <span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="s1">&#39;store:main&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Step 3 - Putting the two pieces together</h3>
+
+<p>Let&#8217;s say we want to create an artist object in a route and that creating
+objects happens through the store (as it does in ember-data, e.g). The following
+snippets set up the injection:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">initializer</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">application</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;store:main&#39;</span><span class="p">,</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Store</span><span class="p">,</span> <span class="p">{</span> <span class="nx">singleton</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">initializer</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;injectStore&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">before</span><span class="o">:</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">application</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">application</span><span class="p">.</span><span class="nx">inject</span><span class="p">(</span><span class="s1">&#39;route&#39;</span><span class="p">,</span> <span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="s1">&#39;store:main&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This makes the singleton instance of the store available on all routes of the
+application so we could, for example, write this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I also <a href="http://emberjs.jsbin.com/tufoy/2/edit?html,js,output">created a jsbin</a> to show this in action, although admittedly there is
+little action at this point.</p>
+
+<h3>Why DI?</h3>
+
+<p>This is all fine and dandy, but what problems does dependency injection solve?
+First and foremost, it decouples the pieces of your application. Dependencies
+are not hardcoded but injected at construction time. This makes your components
+easier to use together since pieces can be swapped in and out as needed.</p>
+
+<p>It is also the de facto way of adding the objects that are not provided by
+Ember.js to your application. The store is an example of such an object but you
+can also add analytics integration, a pool of workers and other fancy things
+easily.</p>
+
+<p>An added benefit is improved unit testing since you can inject mocks as
+cooperators and verify calls made on those.</p>
+
+<p>We are going to look at other aspects of DI in Ember.js in more detail in a next
+post. Stay tuned and prepare your mojitos.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Observable path patterns in Ember]]></title>
@@ -3354,55 +3553,6 @@ it&#8217;s just extra work: it&#8217;s probably already defined in the core.</p>
 about awesome functions (<a href="http://clojuredocs.org/clojure_core/clojure.core/frequencies">frequencies</a>, <a href="http://clojuredocs.org/clojure_core/clojure.core/merge-with">merge-with</a>, <a href="http://clojuredocs.org/clojure_core/clojure.core/condp">condp</a> come to mind).
 After a while I looked up the high-level function myself from <a href="http://clojure.org/cheatsheet">the
 cheatsheet</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Switch to Command Line Vim on iTerm]]></title>
-    <link href="http://balinterdi.com/2012/03/30/switch-to-command-line-vim-on-iterm.html"/>
-    <updated>2012-03-30T12:04:00+02:00</updated>
-    <id>http://balinterdi.com/2012/03/30/switch-to-command-line-vim-on-iterm</id>
-    <content type="html"><![CDATA[<p>Switching between applications is more of a mental context switch than just switching between the panes in the same window. Or at least that&#8217;s what I told myself when I decided I switch from using macvim to the simple command line version. It also brings me pretty close to using tmux which I would primarily use to send commands between panes. Most of the posts about using tmux only briefly touch on switching to command line vim so I thought I&#8217;d fill in the gap somewhat.</p>
-
-<p>I use iTerm2 on a MacBook Pro and run 10.6.8 (Snow Leopard), although I think it should run
-fine under Lion, too.</p>
-
-<p>First, you&#8217;ll have to install a fairly recent vim. Homebrew has a policy of not having packages which the operating system already provides, but fortunately there is a <a href="https://github.com/Homebrew/homebrew-dupes">homebrew-dupes</a> repository that has vim:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew install --HEAD https://raw.github.com/Homebrew/homebrew-dupes/master/vim.rb</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This will configure, make and install vim.</p>
-
-<p>Next, I looked for a theme that looks good on both a light and a dark background and has iTerm support (a colorscheme for the terminal emulator). I&#8217;ve found <a href="http://ethanschoonover.com/solarized">Ethan Schoonover&#8217;s solarized theme</a> really cool. Just follow the steps in the <a href="https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized">README of the repository</a> to download both the vim and the iTerm colorscheme.</p>
-
-<p>To install the iTerm colorscheme, go to Preferences -> Profiles to select your
-profile and then click the Colors tab. There is a &#8220;Load Presets&#8221; dropdown from
-which you have to choose Import and find the solarized itermcolors file.</p>
-
-<p>To use the vim colorscheme you have to add the colors file to somewhere where
-vim finds it. There are many ways to do this, so check out the <a href="https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized">README</a> to
-find the method that suits you.</p>
-
-<p>Once, done you have to set the colorscheme in your vimrc:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>colorscheme solarized</span></code></pre></td></tr></table></div></figure>
-
-
-<p>(vim finds out the appropriate background automatically, so you don&#8217;t have to
-explicitly set the background)</p>
-
-<p>I was all set up and most things worked just like in the GUI version. One thing that bugged me was that my cursor keys stopped working. I don&#8217;t use them for moving and text input but I do for cycling in the command history or flipping between file matches for Command-T. It took me a while to find out that iTerm sends a wrong escape sequence for the arrow keys. I could fix that by selecting another set of key presets for the terminal&#8217;s profile. In iTerm, go to Preferences -> Profiles and select your profile. Select Keys, then Load Preset and select xTerm with Numeric Keypad.</p>
-
-<p>There is one more trick I find handy. If you set</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>set clipboard=unnamed</span></code></pre></td></tr></table></div></figure>
-
-
-<p>in your config, then anything you copy from vim by the usual vim commands (y, d, x, etc.) will be available on your system clipboard and thus pastable.</p>
 ]]></content>
   </entry>
   

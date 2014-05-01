@@ -9,8 +9,9 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="By default, Ember.js uses the hashchange event in the browser to change URLs.
-This is the most widely supported way but it feels like a hack and &hellip;">
+  <meta name="description" content="So far, if you wanted to code along my developing an example Ember.js
+application, Rock &amp; Roll, you had to run the server side
+component. That &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +78,75 @@ This is the most widely supported way but it feels like a hack and &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html">At Your Service: Publicly Available API for the Rock and Roll Ember.js App</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-31T09:38:00+01:00" pubdate data-updated="true">Dec 31<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>So far, if you wanted to code along <a href="http://emberjs.balinterdi.com">my developing an example Ember.js
+application</a>, Rock &amp; Roll, you had to run the server side
+component. That required ruby to be installed on your machine, and you had to
+<a href="https://github.com/balinterdi/rock-and-roll-api">clone the repository</a>, and start the server each time you wanted to
+make some progress with the application.</p>
+
+<p>I realized that might be cumbersome and thus I made the server publicly
+available at <a href="http://rock-and-roll-api.herokuapp.com/">http://rock-and-roll-api.herokuapp.com</a>.</p>
+
+<p>I have also updated <a href="https://github.com/balinterdi/rock-and-roll/commit/remote-api">the client-side component to connect to that remote
+api.</a>. All backend requests now go through App.Adapter.ajax which
+basically just delegates to <code>Ember.$.ajax</code> prefixing urls with the backend host:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">ajax</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;http://rock-and-roll-api.herokuapp.com&#39;</span> <span class="o">+</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you work with an earlier version of the client app, you might have to
+rewrite urls in multiple places but I figured it is still less work than running
+the server yourself.</p>
+
+<p>I hope that facilitates your working along with the Rock &amp; Roll app and makes
+your journey to Ember.js proficiency smoother. If you want to see the
+screencast series in which I develop said application, you can <a href="http://emberjs.balinterdi.com">sign up to my
+mailing list</a> and have each episode auto-delivered to your inbox.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1302,82 +1372,6 @@ cheatsheet</a>.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2012/03/30/switch-to-command-line-vim-on-iterm.html">Switch to Command Line Vim on iTerm</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-03-30T12:04:00+02:00" pubdate data-updated="true">Mar 30<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Switching between applications is more of a mental context switch than just switching between the panes in the same window. Or at least that&#8217;s what I told myself when I decided I switch from using macvim to the simple command line version. It also brings me pretty close to using tmux which I would primarily use to send commands between panes. Most of the posts about using tmux only briefly touch on switching to command line vim so I thought I&#8217;d fill in the gap somewhat.</p>
-
-<p>I use iTerm2 on a MacBook Pro and run 10.6.8 (Snow Leopard), although I think it should run
-fine under Lion, too.</p>
-
-<p>First, you&#8217;ll have to install a fairly recent vim. Homebrew has a policy of not having packages which the operating system already provides, but fortunately there is a <a href="https://github.com/Homebrew/homebrew-dupes">homebrew-dupes</a> repository that has vim:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew install --HEAD https://raw.github.com/Homebrew/homebrew-dupes/master/vim.rb</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This will configure, make and install vim.</p>
-
-<p>Next, I looked for a theme that looks good on both a light and a dark background and has iTerm support (a colorscheme for the terminal emulator). I&#8217;ve found <a href="http://ethanschoonover.com/solarized">Ethan Schoonover&#8217;s solarized theme</a> really cool. Just follow the steps in the <a href="https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized">README of the repository</a> to download both the vim and the iTerm colorscheme.</p>
-
-<p>To install the iTerm colorscheme, go to Preferences -> Profiles to select your
-profile and then click the Colors tab. There is a &#8220;Load Presets&#8221; dropdown from
-which you have to choose Import and find the solarized itermcolors file.</p>
-
-<p>To use the vim colorscheme you have to add the colors file to somewhere where
-vim finds it. There are many ways to do this, so check out the <a href="https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized">README</a> to
-find the method that suits you.</p>
-
-<p>Once, done you have to set the colorscheme in your vimrc:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>colorscheme solarized</span></code></pre></td></tr></table></div></figure>
-
-
-<p>(vim finds out the appropriate background automatically, so you don&#8217;t have to
-explicitly set the background)</p>
-
-<p>I was all set up and most things worked just like in the GUI version. One thing that bugged me was that my cursor keys stopped working. I don&#8217;t use them for moving and text input but I do for cycling in the command history or flipping between file matches for Command-T. It took me a while to find out that iTerm sends a wrong escape sequence for the arrow keys. I could fix that by selecting another set of key presets for the terminal&#8217;s profile. In iTerm, go to Preferences -> Profiles and select your profile. Select Keys, then Load Preset and select xTerm with Numeric Keypad.</p>
-
-<p>There is one more trick I find handy. If you set</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>set clipboard=unnamed</span></code></pre></td></tr></table></div></figure>
-
-
-<p>in your config, then anything you copy from vim by the usual vim commands (y, d, x, etc.) will be available on your system clipboard and thus pastable.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1402,6 +1396,10 @@ explicitly set the background)</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/05/01/dependency-injection-in-ember-dot-js.html">Dependency injection in Ember.js - First steps</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/03/26/property-path-patterns-in-ember-dot-js.html">Observable path patterns in Ember</a>
       </li>
     
@@ -1415,10 +1413,6 @@ explicitly set the background)</p>
     
       <li class="post">
         <a href="/2014/02/26/a-common-resource-route-pattern-in-ember-dot-js.html">A common resource route pattern in Ember.js</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/02/18/readers-letters-making-an-ember-dot-js-component-even-better.html">Readers&#8217; Letters: Making an Ember.js component even better</a>
       </li>
     
   </ul>
