@@ -35,14 +35,14 @@ If you have not come through such a store, don't despair. It is but a handy exam
 illustrate dependency injection and how it works for a singleton object.
 
 Let's assume we have a reference to the store "class" in a variable called
-`store`. To register said store, we write the following:
+`Store`. To register said store, we write the following:
 
 ```js
 Ember.Application.initializer({
   name: "store",
 
   initialize: function(container, application) {
-    container.register('store:main', store, { singleton: true });
+    container.register('store:main', Store, { singleton: true });
   }
 });
 ```
