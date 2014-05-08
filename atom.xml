@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-05-01T09:09:33+02:00</updated>
+  <updated>2014-05-08T14:09:41+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -47,7 +47,7 @@ accessible from routes and controllers alike.</p>
 illustrate dependency injection and how it works for a singleton object.</p>
 
 <p>Let&#8217;s assume we have a reference to the store &#8220;class&#8221; in a variable called
-<code>store</code>. To register said store, we write the following:</p>
+<code>Store</code>. To register said store, we write the following:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -60,7 +60,7 @@ illustrate dependency injection and how it works for a singleton object.</p>
 </span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span>
 </span><span class='line'>
 </span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">application</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;store:main&#39;</span><span class="p">,</span> <span class="nx">store</span><span class="p">,</span> <span class="p">{</span> <span class="nx">singleton</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;store:main&#39;</span><span class="p">,</span> <span class="nx">Store</span><span class="p">,</span> <span class="p">{</span> <span class="nx">singleton</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
 </span><span class='line'>  <span class="p">}</span>
 </span><span class='line'><span class="p">});</span>
 </span></code></pre></td></tr></table></div></figure>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-05-01T09:09:33+02:00</updated>
+  <updated>2014-05-08T14:09:41+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -47,7 +47,7 @@ accessible from routes and controllers alike.</p>
 illustrate dependency injection and how it works for a singleton object.</p>
 
 <p>Let's assume we have a reference to the store "class" in a variable called
-<code>store</code>. To register said store, we write the following:</p>
+<code>Store</code>. To register said store, we write the following:</p>
 
 <p>```js
 Ember.Application.initializer({
@@ -55,7 +55,7 @@ Ember.Application.initializer({
 
 <p>  initialize: function(container, application) {</p>
 
-<pre><code>container.register('store:main', store, { singleton: true });
+<pre><code>container.register('store:main', Store, { singleton: true });
 </code></pre>
 
 <p>  }
