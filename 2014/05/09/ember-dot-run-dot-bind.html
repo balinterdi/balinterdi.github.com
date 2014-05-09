@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>plans for 2009 - contribute (more) to open source projects - Balint Erdi</title>
+  <title>Ember.run.bind - Balint Erdi</title>
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="At the start of 2009 my friend Jaime resumed his previous year and proposed me to do the same. It seemed a really good idea but somehow it still died &hellip;">
+  <meta name="description" content="Ember has several great features that are not widely known, like its Dependency Injection system I wrote about last week. It has also really handy &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2009/03/12/plans-for-2009-contribute-more-to-open-source-projects.html">
+  <link rel="canonical" href="http://balinterdi.com/2014/05/09/ember-dot-run-dot-bind.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -79,7 +79,7 @@
   
   <header>
     
-      <h1 class="entry-title">Plans for 2009 - Contribute (More) to Open Source Projects</h1>
+      <h1 class="entry-title">Ember.run.bind</h1>
     
     
       <p class="meta">
@@ -95,32 +95,62 @@
   
 
 
-<time datetime="2009-03-12T00:00:00+01:00" pubdate data-updated="true">Mar 12<span>th</span>, 2009</time>
+<time datetime="2014-05-09T23:25:00+02:00" pubdate data-updated="true">May 9<span>th</span>, 2014</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>At the start of 2009 my friend Jaime <a href="http://www.jaimeiniesta.com/2009/01/07/mi-resumen-del-2008">resumed his previous year</a> and proposed me to do the same. It seemed a really good idea but somehow it still died down.</p>
+<div class="entry-content"><p>Ember has several great features that are not widely known, like <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html">its Dependency Injection system</a> I wrote about last week.</p>
 
-<p>I know it&#8217;s March now but I reckon it&#8217;s still ok to do this until December :) I&#8217;ll attempt to write a mini-series of posts about not so much what I did in 2008 but rather what I would like to achieve in 2009.</p>
+<p>It has also really handy API methods in hiding. One usually stumbles on them
+while looking for something in the superbly commented source code.</p>
 
-<p>When I started to work full-time with Ruby I also realized the vast possibilities and magnetism of open source projects. I could -and still can- spend hours browsing among different projects on github, peeping into their code, reading related articles, etc.</p>
+<p>I hereby introduce such a handy method and hope to make that into a recurring
+thing. Who knows? Eventually this might also grow into a series.</p>
 
-<p>So when I set out for this journey one of my tasks naturally became to regularly contribute to a &#8220;serious&#8221; open source project. When I got acquainted with Merb I also got to know <a href="http://datamapper.org/doku.php">DataMapper</a>, its default ORM. I admired its elegance and coherence and the more I knew of it the more I liked it. So when the maintainer position of a dm-more gem, <a href="#dm-constraints">dm-constraints*</a> seemed to be up for grabs I took the opportunity.</p>
+<p>If it does, I would have to find a catchy name for it. &#8220;Ember Chispas&#8221; came to
+mind and rings nice but unfortunately <a href="https://www.youtube.com/user/edisonstew">Jeffrey Biles</a> already has a monopoly on it via his
+&#8220;Ember Sparks&#8221; series. (<em>Chispa</em> is Spanish for spark.) We&#8217;ll have to talk, Jeffrey :)</p>
 
-<p>That was in December and since then I sent in a few patches and merged changes implemented by others. (which I realized could sometimes be a lot more difficult than writing code :) ). I like to do this and have learned -and probably will learn- a lot so one of my plans for 2009 is to continue with dm-constraints and maybe find other open source projects I could contribute to on a regular basis.</p>
+<p>Anyway, let&#8217;s see the first thingie.</p>
 
-<p>So, if you happen to use DataMapper, which <a href="http://bucionrails.com/2009/02/12/why-i-love-datamapper/">I strongly encourage you to do</a>, and find a bug related to foreign-key constraints, <a href="http://datamapper.lighthouseapp.com/projects/20609-datamapper">file a ticket</a> and assign it directly to me (Balint Erdi). And/or start contributing!</p>
+<h2>&#8230; and in the runloop bind them</h2>
 
-<h3>Notes</h3>
+<p>The run loop in Ember deserves its own blog post series, and I am probably not
+the one who will write it. (<a href="http://emberjs.com/guides/understanding-ember/run-loop/">The official guide on the subject</a> is a good place
+to start, <a href="http://alexmatchneer.com/blog/2013/01/12/everything-you-never-wanted-to-know-about-the-ember-run-loop/">Alex Matchneer&#8217;s &#8220;Everything You Never Wanted to Know About the Ember Run Loop&#8221;</a> is more elaborate).</p>
+
+<p>For the sake of this chispa, it suffices to state that any async callback from a 3rd
+party javascript library needs to be wrapped into an Ember.run.</p>
+
+<p>Blatantly stealing <a href="https://github.com/emberjs/ember.js/blob/24dcb0c566284a7aa926e701d33f40717264b9b1/packages_es6/ember-metal/lib/run_loop.js#L153">the example from the source code</a>, here is how this is done:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'><span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;resize&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>  <span class="nx">Ember</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>    <span class="nx">that</span><span class="p">.</span><span class="nx">handleResize</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
+<p>See that beautiful <code>var that=this;</code>? It can be got ridden of via <code>Ember.run.bind</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;resize&#39;</span><span class="p">,</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">run</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleResize</span><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p id="dm-constraints">* Dm-more is the meta package that contains everything outside the core functions of DataMapper. Dm-constraints deals with foreign key constraints. If you are familiar with ActiveRecord, it is basically the options you specify with :dependent on an association.</p>
-
+<p>Less code to write and all the mustaches are gone (not that there is anything
+wrong with &#123;&#123;mustaches&#125;&#125;, of course).</p>
 </div>
 
 
@@ -143,15 +173,21 @@
   
 
 
-<time datetime="2009-03-12T00:00:00+01:00" pubdate data-updated="true">Mar 12<span>th</span>, 2009</time>
+<time datetime="2014-05-09T23:25:00+02:00" pubdate data-updated="true">May 9<span>th</span>, 2014</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ember-js/'>ember.js</a>
+  
+</span>
 
 
     </p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2009/03/12/plans-for-2009-contribute-more-to-open-source-projects.html" data-via="baaz" data-counturl="http://balinterdi.com/2009/03/12/plans-for-2009-contribute-more-to-open-source-projects.html" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2014/05/09/ember-dot-run-dot-bind.html" data-via="baaz" data-counturl="http://balinterdi.com/2014/05/09/ember-dot-run-dot-bind.html" >Tweet</a>
   
   
   <div class="g-plusone" data-size="medium"></div>
@@ -162,14 +198,18 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2009/03/12/easily-quote-passage-with-mail-in-a-reply.html" title="Previous Post: easily quote passage with Mail in a reply">&laquo; easily quote passage with Mail in a reply</a>
+        <a class="basic-alignment left" href="/2014/05/01/dependency-injection-in-ember-dot-js.html" title="Previous Post: Dependency injection in Ember.js - First steps">&laquo; Dependency injection in Ember.js - First steps</a>
       
-      
-        <a class="basic-alignment right" href="/2009/03/17/thrifty-track-your-expenses-easily.html" title="Next Post: Thrifty - track your expenses easily">Thrifty - track your expenses easily &raquo;</a>
       
     </p>
   </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -249,7 +289,10 @@
       var disqus_shortname = 'codigoergosum';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://balinterdi.com/2014/05/09/ember-dot-run-dot-bind.html';
+        var disqus_url = 'http://balinterdi.com/2014/05/09/ember-dot-run-dot-bind.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

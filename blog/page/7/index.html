@@ -9,7 +9,7 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="Git is extremely powerful. I knew that much and that I would really like to thoroughly master it because it is so cool. However, it is quite &hellip;">
+  <meta name="description" content="A few days ago I purchased a screencast by Dave Thomas on Ruby metaprogramming. (I do not receive any affiliation fees :)). The part I bought &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -76,6 +76,115 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2008/12/06/exploring-ruby-metaprogramming-call-counter.html">Exploring Ruby Metaprogramming: Call Counter</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-12-06T00:00:00+01:00" pubdate data-updated="true">Dec 6<span>th</span>, 2008</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A few days ago I purchased a <a href="http://www.pragprog.com/screencasts/v-dtrubyom/the-ruby-object-model-and-metaprogramming">screencast by Dave Thomas on Ruby metaprogramming</a>. (I do not receive any affiliation fees :)). The part I bought presents a problem and describes nine different ways of solving it in ascending order of beauty and code clarity.</p>
+
+<p>I was stunned by its beauty so I came up with another -though similar- problem and put together a simple solution for it. I present it for the Rubyists to silently smile in the knowledge of its elegance and power and for non-Ruby programmers to be -hopefully :)- amazed by it.</p>
+
+<p>The task is to count the calls to a certain method of all instances of a class.</p>
+
+<p>call_counter.rb:</p>
+
+<div>
+  <pre><code class='ruby'>module CallCounter
+  def count_calls_to(method_name)
+    original_method = instance_method(method_name)
+    
+    call_counter = 0
+    define_method(method_name) do |*args|
+        call_counter += 1
+        bound_original_method = original_method.bind(self)
+        bound_original_method.call(*args)
+    end
+
+    define_method &quot;calls_to_#{method_name}&quot; do
+        call_counter
+    end     
+  end
+end</code></pre>
+</div>
+
+
+<p>call_foo.rb:</p>
+
+<div>
+  <pre><code class='ruby'>require &quot;call_counter&quot;
+
+class CallFoo
+    
+    extend CallCounter
+
+    def foo; end
+    count_calls_to :foo
+
+end</code></pre>
+</div>
+
+
+<p>After calling &#8220;count_calls_to :foo&#8221; in the CallFoo class definition, calls to the &#8220;foo&#8221; method of CallFoo instances will be counted. A &#8220;calls_to_foo&#8221; method is available to get this count.</p>
+
+<p>I first created an UnboundMethod with &#8220;instance_method&#8221; and then used the bind method to attach it to an instance of ClassFoo. All this is to prevent aliasing method names, not because it is necessarily evil but because I agree with Dave Thomas about &#8220;bind&#8221; being a nicer solution. The define_method acts as a closure and saves its context so there is no need to use an instance variable for call_counter.</p>
+
+<p>You can use the counter like this:</p>
+
+<div>
+  <pre><code class='ruby'>irb(main):003:0&gt; cf = CallFoo.new
+=&gt; #&lt;CallFoo:0x608100&gt;
+irb(main):004:0&gt; cf.calls_to_foo
+=&gt; 0
+irb(main):005:0&gt; 4.times { cf.foo }
+=&gt; 4
+irb(main):006:0&gt; cf.calls_to_foo
+=&gt; 4</code></pre>
+</div>
+
+
+<p>Once again, what I love about Ruby is that in ~ 20 lines we have laid the base of a benchmarking tool (adding the possibility of measuring time spent in the method would not be hard). Also, the original class is not sullied by the call counting code intrinsic details. That functionality is stashed in a module, eager to be reused again.</p>
+
+<p>You may note there is something not quite nice about this. The method calls are counted per class, which makes sense since we usually want to know how many times the method in question was called in all instances, not per instance. However, the calls_to_foo is called on the instance which is confusing. It should be called on the class object, like this:</p>
+
+<div>
+  <pre><code class='ruby'>4.times { cf.foo }
+  CallFoo.calls_to_foo
+  =&gt; 4</code></pre>
+</div>
+
+
+<p>I may get back to this later.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -714,46 +823,6 @@ javascript:for (var i=0; i < 10; i++) goPage('next');</pre>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2008/08/29/now-thats-what-i-call-web20-ubiquity.html">Now That&#8217;s What I Call Web2.0: Ubiquity</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-08-29T00:00:00+02:00" pubdate data-updated="true">Aug 29<span>th</span>, 2008</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I&#8217;ve stumbled upon a great Firefox plugin, Ubiquity. It basically accesses several web services (GoogleMaps, Gmail, Flickr, etc.) via its own panel and with its own commands so that common online tasks (e.g looking up something on Wikipedia you have just found on a page) become amazingly simple. I was really stunned by how much this plugin is capable of doing after watching the <a href="http://vimeo.com/1561578?pg=embed&amp;sec=1561578" target="_blank">briefing video</a> and going through the <a href="https://wiki.mozilla.org/Labs/Ubiquity/Ubiquity_0.1_User_Tutorial" target="_blank">tutorial</a>. And that does not stop there: power users can add their own commands to extend the already vast capabilities of the plugin. It&#8217;s been a long time I&#8217;ve been so excited about a &#8220;web 2.0&#8221; tool.</p>
-
-<p><a href="http://www.azarask.in/blog/" target="_blank">Here</a> is the blog post about Ubiquity on Aza Raskin&#8217;s blog who is the main developer of the plugin.</p>
-
-<p><em>Note</em>: If you use a Mac, you&#8217;ll need <a href="http://growl.info/about.php" target="_blank">Growl</a> for Ubiquity to display its command panel.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/8/">&larr; Older</a>
@@ -778,6 +847,10 @@ javascript:for (var i=0; i < 10; i++) goPage('next');</pre>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/05/09/ember-dot-run-dot-bind.html">Ember.run.bind</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/05/01/dependency-injection-in-ember-dot-js.html">Dependency injection in Ember.js - First steps</a>
       </li>
     
@@ -791,10 +864,6 @@ javascript:for (var i=0; i < 10; i++) goPage('next');</pre>
     
       <li class="post">
         <a href="/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria.html">Sorting arrays in Ember.js by various criteria</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/02/26/a-common-resource-route-pattern-in-ember-dot-js.html">A common resource route pattern in Ember.js</a>
       </li>
     
   </ul>

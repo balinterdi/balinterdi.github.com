@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-05-08T14:09:41+02:00</updated>
+  <updated>2014-05-10T00:12:02+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,59 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Ember.run.bind]]></title>
+    <link href="http://balinterdi.com/2014/05/09/ember-dot-run-dot-bind.html"/>
+    <updated>2014-05-09T23:25:00+02:00</updated>
+    <id>http://balinterdi.com/2014/05/09/ember-dot-run-dot-bind</id>
+    <content type="html"><![CDATA[<p>Ember has several great features that are not widely known, like <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html">its Dependency Injection system</a> I wrote about last week.</p>
+
+<p>It has also really handy API methods in hiding. One usually stumbles on them
+while looking for something in the superbly commented source code.</p>
+
+<p>I hereby introduce such a handy method and hope to make that into a recurring
+thing. Who knows? Eventually this might also grow into a series.</p>
+
+<p>If it does, I would have to find a catchy name for it. "Ember Chispas" came to
+mind and rings nice but unfortunately <a href="https://www.youtube.com/user/edisonstew">Jeffrey Biles</a> already has a monopoly on it via his
+"Ember Sparks" series. (<em>Chispa</em> is Spanish for spark.) We'll have to talk, Jeffrey :)</p>
+
+<p>Anyway, let's see the first thingie.</p>
+
+<h2>... and in the runloop bind them</h2>
+
+<p>The run loop in Ember deserves its own blog post series, and I am probably not
+the one who will write it. (<a href="http://emberjs.com/guides/understanding-ember/run-loop/">The official guide on the subject</a> is a good place
+to start, <a href="http://alexmatchneer.com/blog/2013/01/12/everything-you-never-wanted-to-know-about-the-ember-run-loop/">Alex Matchneer's "Everything You Never Wanted to Know About the Ember Run Loop"</a> is more elaborate).</p>
+
+<p>For the sake of this chispa, it suffices to state that any async callback from a 3rd
+party javascript library needs to be wrapped into an Ember.run.</p>
+
+<p>Blatantly stealing <a href="https://github.com/emberjs/ember.js/blob/24dcb0c566284a7aa926e701d33f40717264b9b1/packages_es6/ember-metal/lib/run_loop.js#L153">the example from the source code</a>, here is how this is done:</p>
+
+<p>```javascript
+var that = this;
+jQuery(window).on('resize', function(){
+  Ember.run(function(){</p>
+
+<pre><code>that.handleResize();
+</code></pre>
+
+<p>  });
+});
+```</p>
+
+<p>See that beautiful <code>var that=this;</code>? It can be got ridden of via <code>Ember.run.bind</code>:</p>
+
+<p><code>javascript
+jQuery(window).on('resize', Ember.run.bind(this, this.handleResize));
+</code></p>
+
+<p>Less code to write and all the mustaches are gone (not that there is anything
+wrong with &#123;&#123;mustaches&#125;&#125;, of course).</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Dependency injection in Ember.js - First steps]]></title>
@@ -828,223 +881,6 @@ several actions that set (or modify) the ordering criteria, without having to
 write a single line of code to implement the sorting itself.</p>
 
 <p>You gotta love this.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[A common resource route pattern in Ember.js]]></title>
-    <link href="http://balinterdi.com/2014/02/26/a-common-resource-route-pattern-in-ember-dot-js.html"/>
-    <updated>2014-02-26T00:01:00+01:00</updated>
-    <id>http://balinterdi.com/2014/02/26/a-common-resource-route-pattern-in-ember-dot-js</id>
-    <content type="html"><![CDATA[<h2>Intro</h2>
-
-<p>A very common pattern in web applications, be them server- or client side, is
-resource URLs. We might have a list of users that we want to show at <code>/users</code> and
-then different pages related to the user which is encoded in the URL. These
-might be e.g <code>/users/dave-hopkins/activity</code> and <code>/users/dave-hopkins/followers</code>.</p>
-
-<p>The pattern is a top-level URL to list all the resource instances, and then
-separate pages to display pieces of information regarding specific resource
-instances.</p>
-
-<h2>Artists and songs</h2>
-
-<p>That's exactly what I did for the <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/episode-7">the Rock &amp; Roll application</a>,
-where the routes were defined as such:</p>
-
-<p>``` js
-App.Router.map(function() {
-  this.resource('artists', function() {</p>
-
-<pre><code>this.route('songs', { path: ':slug' });
-</code></pre>
-
-<p>  });
-});
-```</p>
-
-<p>The simplest thing that works. However, the above is not ideal especially when
-more pages (or views, if you will) are added below the <code>artists</code> resource route.
-That's because the singular artist instance is encoded in the <code>songs</code> route, by
-having its identifier (in this case, slug) in the path of that route.</p>
-
-<p>Imagine we need to add additional info about each band. Just blindly extending
-the above URL scheme, this would become:</p>
-
-<p>``` js
-App.Router.map(function() {
-  this.resource('artists', function() {</p>
-
-<pre><code>this.route('songs', { path: ':slug/songs' });
-this.route('info',  { path: ':slug/info' });
-</code></pre>
-
-<p>  });
-});
-```</p>
-
-<p>The cracks start to show. The artist for both the <code>artists.songs</code> and the
-<code>artists.info</code> routes would have to be fetched in both routes, with identical
-code. Nested routes -and how it lends itself to a nested UI- is truly
-a masterpiece, a shining emerarld on Ember's crown. It would be a pity not to
-take advantage of it.</p>
-
-<h2>DRY up those routes</h2>
-
-<p>So we established that the problem is having the artist "encoded" in all routes
-below the top-level <code>artists</code> resource. The solution is consequently pretty
-straightforward -this always seems to be the case in retrospective-, let's
-extract the path segment that represents the artist:</p>
-
-<p>``` js
-App.Router.map(function() {
-  this.resource('artists', function() {</p>
-
-<pre><code>this.resource('artist', { path: ':slug' }, function() {
-  this.route('songs');
-});
-</code></pre>
-
-<p>  });
-});
-```</p>
-
-<p>With the introduction of the <code>artist</code> resource, the duplication is gone, but we
-are not done yet. First, we have to define the route and set up its model hook.
-Second, since the "routing table" has changed, we'll have to adjust route names
-and code that uses them. Since the naming conventions in Ember have the route
-names as their basis, we'll probably have to change code in several places.</p>
-
-<h2>Route changes</h2>
-
-<p>Resource routes reset the routing namespace, so the route that corresponds to
-the <code>artist</code> route name in the table is App.ArtistRoute:</p>
-
-<p>``` js
-App.ArtistRoute = Ember.Route.extend({
-  model: function(params) {</p>
-
-<pre><code>return Ember.RSVP.Promise(function(resolve, reject) {
-  App.Adapter.ajax('/artists/' + params.slug).then(function(data) {
-    resolve(App.Artist.createRecord(data));
-  }, function(error) {
-    reject(error);
-  });
-});
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<p>That is exactly what we had for <code>App.ArtistsSongsRoute</code> in the previous version,
-which makes sense. The artist is now fetched one route level higher.</p>
-
-<p>For simple, non-resource routes, the name of the route is the name of the
-resource route above (if it exists) plus the name of the route itself. In this
-case, the route name is <code>artist.songs</code> which gets resolved as
-<code>App.ArtistSongsRoute</code>):</p>
-
-<p>``` js
-App.ArtistSongsRoute = Ember.Route.extend({
-  model: function(params) {</p>
-
-<pre><code>return this.modelFor('artist').get('songs');
-</code></pre>
-
-<p>  },</p>
-
-<p>  setupController: function(controller, model) {</p>
-
-<pre><code>this._super(controller, model);
-controller.set('artist', this.modelFor('artist'));
-</code></pre>
-
-<p>  },
-  (...)
-});
-```</p>
-
-<p>The first interesting thing is <code>modelFor</code>. It gets the model for another,
-already resolved route. In Ember route models are resolved stepping down
-from the top-level application route. That means that at this point we can be
-certain that the <code>artist</code> route already has its model, the artist instance
-resolved.</p>
-
-<p>The model of this route is simply the songs belonging to that artist.</p>
-
-<p>The other interesting bit is <code>setupController</code>. We have already <a href="http://balinterdi.com/2014/01/14/how-real-time-updates-work-in-discourse.html">come across this
-hook before</a>; it is the place to do additional
-setup -above fetching the model and deciding which template to render- for the
-controller. Since we'll want to display artist-related data in the template, we
-store it in an <code>artist</code> property and we make sure to call <code>_super</code>, the
-implementation of this hook in <code>Ember.Route</code>, that sets the controller's model
-property to the model argument in this method.</p>
-
-<h2>Templates &amp; controllers</h2>
-
-<p>The mechanical part of the routing update is to replace all occurrences of
-the <code>artists.songs</code> route name to <code>artist.songs</code>.</p>
-
-<p>What deserves more attention is that the controller for <code>artist.songs</code> now has
-the songs of the artist as its model, not the artist itself. That means that we
-should adjust the controller type it extends:</p>
-
-<p>```js
-App.ArtistSongsController = Ember.ArrayController.extend({
-  artist: null,</p>
-
-<p>  newSongPlaceholder: function() {</p>
-
-<pre><code>return 'New ' + this.get('artist.name') + ' song';
-</code></pre>
-
-<p>  }.property('artist.name'),</p>
-
-<p>  songCreationStarted: false,
-  canCreateSong: function() {</p>
-
-<pre><code>return this.get('songCreationStarted') || this.get('length');
-</code></pre>
-
-<p>  }.property('songCreationStarted', 'length'),</p>
-
-<p>  (...)
-});
-```</p>
-
-<p>All changes are made necessary by the model change. Properties of the artist now
-need to be prefixed by <code>artist</code> (e.g <code>name</code> => <code>artist.name</code>) while properties of the
-songs no longer need to have the <code>songs</code> prefix since it is the model (e.g
-<code>songs.length</code> => <code>length</code>).</p>
-
-<p>This also holds true of the template. To give an example, rendering the
-stars for each song can becomes more concise:</p>
-
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
-
-&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/songs&quot;&gt;
-  (...)
-  {{#each}}
-    &lt;div class=&quot;list-group-item&quot;&gt;
-      {{title}}
-      {{star-rating item=this rating=rating maxRating=5 setAction=&quot;setRating&quot;}}
-    &lt;/div&gt;
-  {{else}}
-  (...)
-&lt;/script&gt;
-
-
-&lt;p&gt;</code></pre>
-</div>
-</p>
-
-<p>The #each helper, without parameters, loops through the items in the model of the
-template, in our case, the songs, which is exactly what we want.</p>
-
-<p>That wraps up our route sanitizaion. In the next post, we will take advantage of
-the benefit that the <code>songs</code> route now has the artist's songs as its model.</p>
 ]]></content>
   </entry>
   

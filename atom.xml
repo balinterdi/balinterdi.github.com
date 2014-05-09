@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-05-08T14:09:41+02:00</updated>
+  <updated>2014-05-10T00:12:02+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,63 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Ember.run.bind]]></title>
+    <link href="http://balinterdi.com/2014/05/09/ember-dot-run-dot-bind.html"/>
+    <updated>2014-05-09T23:25:00+02:00</updated>
+    <id>http://balinterdi.com/2014/05/09/ember-dot-run-dot-bind</id>
+    <content type="html"><![CDATA[<p>Ember has several great features that are not widely known, like <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html">its Dependency Injection system</a> I wrote about last week.</p>
+
+<p>It has also really handy API methods in hiding. One usually stumbles on them
+while looking for something in the superbly commented source code.</p>
+
+<p>I hereby introduce such a handy method and hope to make that into a recurring
+thing. Who knows? Eventually this might also grow into a series.</p>
+
+<p>If it does, I would have to find a catchy name for it. &#8220;Ember Chispas&#8221; came to
+mind and rings nice but unfortunately <a href="https://www.youtube.com/user/edisonstew">Jeffrey Biles</a> already has a monopoly on it via his
+&#8220;Ember Sparks&#8221; series. (<em>Chispa</em> is Spanish for spark.) We&#8217;ll have to talk, Jeffrey :)</p>
+
+<p>Anyway, let&#8217;s see the first thingie.</p>
+
+<h2>&#8230; and in the runloop bind them</h2>
+
+<p>The run loop in Ember deserves its own blog post series, and I am probably not
+the one who will write it. (<a href="http://emberjs.com/guides/understanding-ember/run-loop/">The official guide on the subject</a> is a good place
+to start, <a href="http://alexmatchneer.com/blog/2013/01/12/everything-you-never-wanted-to-know-about-the-ember-run-loop/">Alex Matchneer&#8217;s &#8220;Everything You Never Wanted to Know About the Ember Run Loop&#8221;</a> is more elaborate).</p>
+
+<p>For the sake of this chispa, it suffices to state that any async callback from a 3rd
+party javascript library needs to be wrapped into an Ember.run.</p>
+
+<p>Blatantly stealing <a href="https://github.com/emberjs/ember.js/blob/24dcb0c566284a7aa926e701d33f40717264b9b1/packages_es6/ember-metal/lib/run_loop.js#L153">the example from the source code</a>, here is how this is done:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'><span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;resize&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>  <span class="nx">Ember</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>    <span class="nx">that</span><span class="p">.</span><span class="nx">handleResize</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>See that beautiful <code>var that=this;</code>? It can be got ridden of via <code>Ember.run.bind</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;resize&#39;</span><span class="p">,</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">run</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleResize</span><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Less code to write and all the mustaches are gone (not that there is anything
+wrong with &#123;&#123;mustaches&#125;&#125;, of course).</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Dependency injection in Ember.js - First steps]]></title>
@@ -3432,127 +3489,6 @@ You might find these thought-provoking, too. The full transcription is available
 
 
 <p>Discourse is built on Ember, and <a href="http://discuss.emberjs.com/">Ember uses Discourse as a forum</a>. For one, I welcome our new rich-client overlords.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Lessons learned from solving 4Clojure problems]]></title>
-    <link href="http://balinterdi.com/2012/12/29/lessons-learned-from-solving-4clojure-problems.html"/>
-    <updated>2012-12-29T14:55:00+01:00</updated>
-    <id>http://balinterdi.com/2012/12/29/lessons-learned-from-solving-4clojure-problems</id>
-    <content type="html"><![CDATA[<p>A few days ago I completed the last problem on the <a href="http://4clojure.com">4Clojure</a> site. If you
-want to learn Clojure, solving these problems is a great way to do it. Several
-of its features -that I&#8217;ll highlight below- make it a great learning tool. Other
-features probably arise from <a href="http://clojure.org/">Clojure</a> being a
-(pragmatic) functional programming language. Coming from mostly an OO background
-these were also new to me and thus deserve their own paragraph.</p>
-
-<p>I hope that after reading through the list you&#8217;ll end up being persuaded of the
-merits and want to solve (some of) the problems yourself. If you do, please let
-me know how it went and what you learned from it.</p>
-
-<p>If you really get stuck, there is a <a href="https://groups.google.com/forum/?fromgroups#!forum/4clojure">Google group dedicated to the 4Clojure
-problems</a>. You can also leave a comment here so I can help or go directly to
-check <a href="https://gist.github.com/raw/4008944/9c0577566b9a87e8db03332bf71b6d0b1140748e/4clojure.clj">my solutions</a>. Let&#8217;s jump in.</p>
-
-<h2>Why is 4Clojure a great learning tool?</h2>
-
-<h3>Looking at others&#8217; solutions</h3>
-
-<p>After solving a problem, you can check how the users you follow solved it.
-That&#8217;s arguably the most important feature when it comes to learning since it
-is essentially a code reading exercise when the functionality of the code is
-well-known (since it solves the same problem you&#8217;ve solved) and the authors are
-probably more proficient.</p>
-
-<p>On several occasions I saw solutions that were both more concise and clearer
-than mine (especially when tackling a hard problem). Dealing with the
-inferiority complex on the very short term is dwarved by how much wisdom you
-gain from these. For what it&#8217;s worth, the users I learned most from are
-<a href="http://www.4clojure.com/user/hypirion">hypirion</a>,
-<a href="http://www.4clojure.com/user/jafingerhut">jafingerhut</a> and
-<a href="http://www.4clojure.com/user/chouser">chouser</a>.</p>
-
-<p>(If you&#8217;d like to follow me, I&#8217;m <a href="http://www.4clojure.com/user/balint">balint</a>
-there.)</p>
-
-<h3>Executable, well thought-out test cases</h3>
-
-<p>To submit your solution, you paste your code into a textbox and click a button.
-The test cases, which are visible, are then checked one by one. If all the
-lamps become green, your solution is accepted. If not, you get an error
-message and have to try again.</p>
-
-<p>This method has several advantages. First of all, it eliminates the imprecisions
-you might have had after reading the description of the problem. Second, it
-gives you a set of examples to work against. Third, they force you to think
-deeper about the problem since they are constructed to reject a partial
-solution.</p>
-
-<h3>Timeouts</h3>
-
-<p>Your solution can be functional and pass all the test cases but if it does not
-finish in a certain time, it will get rejected. I bumped into this on several
-occasions. Most of the time it was because I came up with the brute force
-solution to a hard problem and hoped I&#8217;d get away with it. In other cases it was
-because of a technical issue, like allocating too much memory.</p>
-
-<p>In the first case, it made me think again about the problem (see Hammock-Driven
-Development) and come up with a more ingenious solution. In the second case, I
-learned something about a technical aspect of the language. In both cases, I
-grew a bit wiser about optimization -which is a &#8220;real-world&#8221; coding skill- so
-I&#8217;m happy the authors of 4clojure chose to implement this constraint.</p>
-
-<h2>What does one learn about (functional) programming?</h2>
-
-<h3>Hammock-Driven Development</h3>
-
-<p>Also known as “step-away from the computer to solve hard problems”, Hammock-Driven
-Development is a term coined by Rich Hickey, the creator of Clojure, in a <a href="http://www.youtube.com/watch?v=f84n5oFoZBc">keynote
-speech</a>.</p>
-
-<p>Apparently ridiculing Test Driven Development (TDD), HDD holds that the most
-important activity to solve a hard problem is to think deeply about it without
-any distractions. Most of the time sitting in front of the computer is a
-distraction in itself since it begs to be typed on and prevents actual deep thinking
-to happen.</p>
-
-<p>This one is really hard to get used to because whenever we write code we feel like
-we&#8217;re getting closer to a solution. Thinking, on the other hand, does not
-provide any tangible output.</p>
-
-<p>However, HDD has rung ever more true with me as I progressed. When tackling hard
-problems, I tended to think about them for some time and then started to type in
-actual code. The problem was, when I felt that the solution became convoluted I
-did not go back to the proverbial hammock but carried on with the implementation.
-Most of the time it either turned out to be a dead-end or a solution I&#8217;d much
-better hide.</p>
-
-<p>Even more importantly, a cleaner solution is one that is easier for
-others to understand. Since code is mainly for others to read and occasionally
-for computers to execute, more thinking up-front results in less time spent
-developing and maintaining the code down the line.</p>
-
-<h3>The REPL is a powerful developer tool</h3>
-
-<p>The power of the REPL is one those realizations most of us coming from OO will
-come to. Since FP languages have <a href="http://www.infoq.com/presentations/Are-We-There-Yet-Rich-Hickey">very little state</a> and side-effects and
-thus a lot of idempotency, trying things at the REPL is taken to the next
-level. You launch a REPL once and then copy-paste the building blocks of your
-solution between your editor and the REPL (and there are <a href="https://github.com/jpalardy/vim-slime">better</a>
-<a href="https://github.com/kingtim/nrepl.el">solutions</a> then copy-pasting).</p>
-
-<h3>Use higher level functions</h3>
-
-<p>FP languages strive to have a small set of data structures and a high number of
-functions that operate on them. Clojure is no exception. Though it&#8217;s not hard to
-assemble the higher-level function you need yourself, in the majority of cases,
-it&#8217;s just extra work: it&#8217;s probably already defined in the core.</p>
-
-<p>This is something that I learned by reading others&#8217; solutions and learning
-about awesome functions (<a href="http://clojuredocs.org/clojure_core/clojure.core/frequencies">frequencies</a>, <a href="http://clojuredocs.org/clojure_core/clojure.core/merge-with">merge-with</a>, <a href="http://clojuredocs.org/clojure_core/clojure.core/condp">condp</a> come to mind).
-After a while I looked up the high-level function myself from <a href="http://clojure.org/cheatsheet">the
-cheatsheet</a>.</p>
 ]]></content>
   </entry>
   
