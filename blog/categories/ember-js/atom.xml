@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-05-10T09:42:51+02:00</updated>
+  <updated>2014-05-11T16:29:07+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -520,69 +520,71 @@ setter methods are good for.</p>
 that you get the whole picture. The stuff relevant to this discussion is found
 in the javascript code.</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars">
-  <div class="container">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">Your badges, sir/ma'am.</h3>
-      </div>
-      <div class="panel-body">
+&lt;script type=&quot;text/x-handlebars&quot;&gt;
+  &lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;panel panel-primary&quot;&gt;
+      &lt;div class=&quot;panel-heading&quot;&gt;
+        &lt;h3 class=&quot;panel-title&quot;&gt;Your badges, sir/ma'am.&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;panel-body&quot;&gt;
         {{outlet}}
-      </div>
-    </div>
-  </div>
- </script>
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars" data-template-name="index">
-  <ul class="list-group">
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;index&quot;&gt;
+  &lt;ul class=&quot;list-group&quot;&gt;
     {{#each badge in arrangedContent}}
-      <li {{bind-attr class=":list-group-item badge.unlocked::locked"}}>
+      &lt;li {{bind-attr class=&quot;:list-group-item badge.unlocked::locked&quot;}}&gt;
         {{badge.name}}
-        <span class="badge">{{badge.score}}</span>
-      </li>
+        &lt;span class=&quot;badge&quot;&gt;{{badge.score}}&lt;/span&gt;
+      &lt;/li&gt;
     {{/each}}
-    <li class="list-group-item">
-      <em>Total:</em>
-      <span class="pull-right">{{totalScore}}</span>
-    </li>
-  </ul>
-  <div id="new-badge" class="row">
-    <span class="col-xs-6">
-      {{input class="input" type="text" placeholder="Badge name" value=name}}
-    </span>
-    <span class="col-xs-4">
-      {{input class="small-input" type="text" placeholder="Score" value=score action="addBadge"}}
-    </span>
-    <span class="col-xs-2">
-      <button class="btn btn-primary btn-sm pull-right" type="button"
-          {{action "addBadge"}}>
+    &lt;li class=&quot;list-group-item&quot;&gt;
+      &lt;em&gt;Total:&lt;/em&gt;
+      &lt;span class=&quot;pull-right&quot;&gt;{{totalScore}}&lt;/span&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;div id=&quot;new-badge&quot; class=&quot;row&quot;&gt;
+    &lt;span class=&quot;col-xs-6&quot;&gt;
+      {{input class=&quot;input&quot; type=&quot;text&quot; placeholder=&quot;Badge name&quot; value=name}}
+    &lt;/span&gt;
+    &lt;span class=&quot;col-xs-4&quot;&gt;
+      {{input class=&quot;small-input&quot; type=&quot;text&quot; placeholder=&quot;Score&quot; value=score action=&quot;addBadge&quot;}}
+    &lt;/span&gt;
+    &lt;span class=&quot;col-xs-2&quot;&gt;
+      &lt;button class=&quot;btn btn-primary btn-sm pull-right&quot; type=&quot;button&quot;
+          {{action &quot;addBadge&quot;}}&gt;
           Add
-      </button>
-    </span>
-  </div>
-  <div id="unlock-all" class="row">
-    <div class="col-xs-12">
-      <button class="btn btn-danger btn-md" type="button"
-        {{action "unlockAll"}}>
+      &lt;/button&gt;
+    &lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div id=&quot;unlock-all&quot; class=&quot;row&quot;&gt;
+    &lt;div class=&quot;col-xs-12&quot;&gt;
+      &lt;button class=&quot;btn btn-danger btn-md&quot; type=&quot;button&quot;
+        {{action &quot;unlockAll&quot;}}&gt;
         Unlock all
-      </button>
-    </div>
-  </div>
-</script>
+      &lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
 <p>First, the badge class is defined and some badges created so that we have something to work with:</p>
 
@@ -829,22 +831,23 @@ it possible for the criteria to be easily modified via user action.</p>
 <p>To give you an example, I'll make a button set the rating to happen only by title,
 in ascending alphabetical order:</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars" data-template-name="artist/songs">
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/songs&quot;&gt;
   {{#if canCreateSong}}
-    <div class="list-group-item">
+    &lt;div class=&quot;list-group-item&quot;&gt;
       (...)
-      <button class="btn btn-link pull-right" {{action "sortBy" "title:asc"}}>Sort by title</button>
-    </div>
+      &lt;button class=&quot;btn btn-link pull-right&quot; {{action &quot;sortBy&quot; &quot;title:asc&quot;}}&gt;Sort by title&lt;/button&gt;
+    &lt;/div&gt;
   {{/if}}
   (...)
-</script>
+&lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
 <p>The <code>sortBy</code> action handler sets the passed string as the value
 for the <code>sortProperties</code> which will rearrange the list:</p>
