@@ -13,7 +13,7 @@ component. That required ruby to be installed on your machine, and you had to
 make some progress with the application.
 
 I realized that might be cumbersome and thus I made the server publicly
-available at [http://rock-and-roll-api.herokuapp.com][api-root].
+available at http://rock-and-roll-with-emberjs-api.herokuapp.com .
 
 I have also updated [the client-side component to connect to that remote
 api.][client-commit]. All backend requests now go through App.Adapter.ajax which
@@ -22,7 +22,7 @@ basically just delegates to `Ember.$.ajax` prefixing urls with the backend host:
 ``` javascript
 App.Adapter = {
   ajax: function(path, options) {
-    return Ember.$.ajax('http://rock-and-roll-api.herokuapp.com' + path, options)
+    return Ember.$.ajax('http://rock-and-roll-with-emberjs-api.herokuapp.com' + path, options)
   }
 }
 ```
@@ -38,5 +38,5 @@ mailing list][mailing-list] and have each episode auto-delivered to your inbox.
 
 [mailing-list]: http://emberjs.balinterdi.com
 [api-repo]: https://github.com/balinterdi/rock-and-roll-api
-[api-root]: http://rock-and-roll-api.herokuapp.com/
+[api-root]: http://rock-and-roll-with-emberjs-api.herokuapp.com
 [client-commit]: https://github.com/balinterdi/rock-and-roll/commit/remote-api
