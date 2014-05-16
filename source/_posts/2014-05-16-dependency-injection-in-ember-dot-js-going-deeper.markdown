@@ -19,7 +19,7 @@ I'll also share a couple of tricks to prevent using the abominable
 `this.__container__` and finish by showing how these pieces fit together in the
 main method of the container, `container.lookup`.
 
-# How does Ember do it?
+### How does Ember do it?
 
 When an Ember app is created, the first thing it does is creating a container it
 uses internally:
