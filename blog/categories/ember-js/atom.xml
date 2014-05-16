@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-05-11T22:21:55+02:00</updated>
+  <updated>2014-05-16T15:37:47+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,251 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Dependency injection in Ember.js - Going deeper]]></title>
+    <link href="http://balinterdi.com/2014/05/16/dependency-injection-in-ember-dot-js-going-deeper.html"/>
+    <updated>2014-05-16T11:55:00+02:00</updated>
+    <id>http://balinterdi.com/2014/05/16/dependency-injection-in-ember-dot-js-going-deeper</id>
+    <content type="html"><![CDATA[<p>In a previous post <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html">I introduced the basic elements of Dependency Injection in
+Ember</a> and showed how to set up a dependency on the objects it is needed on.
+I also mentioned the framework itself uses this same mechanism to establish its
+dependencies.</p>
+
+<p>In this post, I'll expand on this latter. I'll point at where these dependencies are
+set up which gives me the possibility to introduce the options of the
+basic parts, <code>register</code> and <code>inject</code>.</p>
+
+<p>I'll also share a couple of tricks to prevent using the abominable
+<code>this.__container__</code> and finish by showing how these pieces fit together in the
+main method of the container, <code>container.lookup</code>.</p>
+
+<h1>How does Ember do it?</h1>
+
+<p>When an Ember app is created, the first thing it does is creating a container it
+uses internally:</p>
+
+<p>```js
+var Application = Namespace.extend(DeferredMixin, {
+  (...)
+  init: function() {</p>
+
+<pre><code>if (!this.$) { this.$ = jQuery; }
+this.__container__ = this.buildContainer();
+(...)
+</code></pre>
+
+<p>  },
+  (...)
+  buildContainer: function() {</p>
+
+<pre><code>var container = this.__container__ = Application.buildContainer(this);
+
+return container;
+</code></pre>
+
+<p>  },
+}
+```
+(<a href="https://github.com/emberjs/ember.js/blob/v1.6.0-beta.4/packages_es6/ember-application/lib/system/application.js#L263">link to soure code</a>)</p>
+
+<p>(Note: Here is where <code>App.__container__</code> gets set and thus you, as an application
+developer has access to the underlying container. Notice the double underscores,
+though. It tells you that you should not ever use that in "real" apps. There are
+officially supported ways, public API methods to achieve whatever you strive to
+achieve the forbidden way. It is sometimes enough <a href="https://twitter.com/mixonic/status/461595081607503872">to ask on Twitter.</a>)</p>
+
+<p>Let's see how the container is built up (as usual, I cut out the parts that are
+not relevant to the current subject):</p>
+
+<p>```js
+  buildContainer: function(namespace) {</p>
+
+<pre><code>var container = new Container();
+
+(...)
+container.optionsForType('component', { singleton: false });
+container.optionsForType('view', { singleton: false });
+container.optionsForType('template', { instantiate: false });
+container.optionsForType('helper', { instantiate: false });
+
+container.register('application:main', namespace, { instantiate: false });
+
+container.register('controller:basic', Controller, { instantiate: false });
+container.register('controller:object', ObjectController, { instantiate: false });
+container.register('controller:array', ArrayController, { instantiate: false });
+container.register('route:basic', Route, { instantiate: false });
+
+container.register('router:main',  Router);
+container.injection('router:main', 'namespace', 'application:main');
+
+(...)
+
+container.injection('controller', 'target', 'router:main');
+container.injection('controller', 'namespace', 'application:main');
+
+container.injection('route', 'router', 'router:main');
+
+(...)
+
+return container;
+</code></pre>
+
+<p>  }
+```
+(<a href="https://github.com/emberjs/ember.js/blob/v1.6.0-beta.4/packages_es6/ember-application/lib/system/application.js#L826">link to source code</a>)</p>
+
+<p>The faithful reader knows from the <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html">first part in the DI series</a> that the
+above makes it so that e.g <code>this.namespace</code> points to the application in all controllers
+or that <code>this.router</code> refers to the router in all routes.</p>
+
+<p>Let's now turn out attention to the first definition block to learn new things.</p>
+
+<h3>optionsForType</h3>
+
+<p><code>optionsForType</code> is a comfortable way to define options that should be used when
+looking up any instance of a particular type from the container.</p>
+
+<p>It can be seen above that components and views are defined as non-singletons
+which mean that any time a component or view is looked up on the container, a
+new instance is created and returned.</p>
+
+<p>I got me some code to prove it:</p>
+
+<p>```js
+App = Ember.Application.create();</p>
+
+<p>var Artist = Ember.Object.extend();</p>
+
+<p>Ember.Application.initializer({
+  name: "setup",
+  initialize: function(container, application) {</p>
+
+<pre><code>container.optionsForType('model', { singleton: false });
+container.register('model:artist', Artist);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>App.IndexRoute = Ember.Route.extend({
+  model: function() {</p>
+
+<pre><code>var artist1 = this.container.lookup('model:artist');
+var artist2 = this.container.lookup('model:artist');
+return [artist1, artist2];
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>App.IndexController = Ember.ArrayController.extend({
+  equal: function() {</p>
+
+<pre><code>return this.get('firstObject') === this.get('lastObject');
+</code></pre>
+
+<p>  }.property('model.{firstObject, lastObject}')
+});
+```</p>
+
+<p>If you then write a template for the index route that just displays the <code>equal</code>
+property you'll see that its value is false, thus a new object is in fact
+instantiated each time.</p>
+
+<p>Here is <a href="http://emberjs.jsbin.com/zefuk/2/edit">a link to the jsbin</a> if you would like to see it.</p>
+
+<p>If you replace <code>{ singleton: false }</code> with <code>{ singleton: true }</code> the equal
+property is going to be true, the model object is going to be a true singleton.</p>
+
+<h4>Singletons are the default</h4>
+
+<p>As Ember core team meber <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html#comment-1386980817">Stefan Penner points out</a>, the <code>{ singleton: true
+}</code> option is the default, so there is no need to explicitly state it.</p>
+
+<p>As a consequence, <code>container.register('store:main', Store, { singleton: true })</code>
+is exactly the same as <code>application.register('store', Store)</code>.</p>
+
+<h4>Objects that come from the container can access it</h4>
+
+<p>I learned this from <a href="http://madhatted.com/">Matthew Beale</a>, a prolific Ember contributor and presenter.
+It's well worth your time <a href="https://www.youtube.com/watch?v=6FlWyOoo6hQ">to watch his presentation</a> on "Containers and
+Dependency Injection" he gave at an Ember NYC meetup.</p>
+
+<p>Amongst other useful stuff, he also reveals that all objects that come from the
+container have access to it via a <code>container</code> property on them.</p>
+
+<p>That allowed me to write <code>this.container.lookup</code> in the route above since routes
+are created by the container, too.</p>
+
+<p>This also does away with the need to use the private <code>__container__</code> in most
+cases.</p>
+
+<h3>To instantiate or not to instantiate</h3>
+
+<p>Above, in the code for <code>buildContainer</code> you can see another option,
+<code>instantiate</code>, which is false for templates and helpers. To save you from
+scrolling all the way up, here are the relevant lines:</p>
+
+<p><code>js
+  container.optionsForType('template', { instantiate: false });
+  container.optionsForType('helper', { instantiate: false });
+</code></p>
+
+<p>This option permits the registration of entities (yeah, stuff) that do not need
+to be instantiated (or cannot be). Templates and helpers fit the bill since
+they are functions and thus cannot be instantiated.</p>
+
+<h3>container.lookup</h3>
+
+<p>The lookup method in the container is a great summary for all the things discussed here.</p>
+
+<p>``` js
+function lookup(container, fullName, options) {
+  options = options || {};</p>
+
+<p>  if (container.cache.has(fullName) &amp;&amp; options.singleton !== false) { // 1</p>
+
+<pre><code>return container.cache.get(fullName);
+</code></pre>
+
+<p>  }</p>
+
+<p>  var value = instantiate(container, fullName); // 2</p>
+
+<p>  if (value === undefined) { return; }</p>
+
+<p>  if (isSingleton(container, fullName) &amp;&amp; options.singleton !== false) {</p>
+
+<pre><code>container.cache.set(fullName, value); // 3
+</code></pre>
+
+<p>  }</p>
+
+<p>  return value; // 4
+}
+```</p>
+
+<p>First, if a singleton is needed and the object has already been looked up, we
+just return the object saved in the cache. (see 1 above)</p>
+
+<p>Next, we instantiate an object for the fullName (e.g 'controller:artists' or
+'route:index'). The instantiate method takes care of just returning the value if
+the <code>instantiate</code> option is set to false. (see 2 above)</p>
+
+<p>If the instantiation was successful (the factory was found) and a singletion was
+demanded, we set this value in the cache so that we can return it the next time
+it is looked up. (see 3 above)</p>
+
+<p>Finally, we return what was looked up. (see 4 above)</p>
+
+<p><code>container.lookup</code> just calls the above function after verifying the fullName
+has the right syntax, that is it has a type and a name part joined together by
+a <code>:</code>.</p>
+
+<p>And that's where everything comes together.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Ember.run.bind]]></title>
@@ -735,152 +980,6 @@ pretend you did not see this.</p>
 <p><a class="jsbin-embed" href="http://emberjs.jsbin.com/qivah/4/embed?html,js,output">Getter and Setters</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
 
 <p>I hope some of that sticks and you'll write less "bare" gets and sets.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Sorting arrays in Ember.js by various criteria]]></title>
-    <link href="http://balinterdi.com/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria.html"/>
-    <updated>2014-03-05T08:02:00+01:00</updated>
-    <id>http://balinterdi.com/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria</id>
-    <content type="html"><![CDATA[<p>I concluded <a href="http://balinterdi.com/2014/02/26/a-common-resource-route-pattern-in-ember-dot-js.html">the previous post on route refactoring</a> by saying
-that the fact that the <code>artists.songs</code> route now has the songs as its model will
-pay dividends in the future.</p>
-
-<p>I will show one thing that becomes really easy this way and also one
-less-known Ember feature that builds on top of that.</p>
-
-<h2>Showing list items in a certain order</h2>
-
-<p>Even with our superb routing, songs for an artist appear in random order,
-differently at each load of the application. This is confusing and it is now
-easy to remedy.</p>
-
-<p>The controller backing the <code>artist.songs</code> template is now an ArrayController so
-establishing a sort order is a piece of cake:</p>
-
-<p><code>js
-App.ArtistSongsController = Ember.ArrayController.extend({
-  (...)
-  sortAscending: false,
-  sortProperties: ['rating', 'title'],
-  (...)
-});
-</code></p>
-
-<p>What I say with these sorting-related definitions is that I want songs to be
-shown in descending order of first their ratings and then -should the rating be
-the same- by title. That's all there is to it, those tunes are now aptly sorted:</p>
-
-<p><img src="http://f.cl.ly/items/1v3C3Q241g1w3k1X2c04/Screen%20Shot%202014-03-03%20at%2019.39.01.png" alt="Ascending ordering" /></p>
-
-<h2>Sorting by multiple properties, in different directions</h2>
-
-<p>There is a slight deficiency in the above sorting API. It cannot sort multiple
-properties if the sorting is to be done ascending for some properties and
-descending for others. The <code>sortAscending</code> flag is "global" for the
-whole <code>sortProperties</code> array.</p>
-
-<p>Taking the above example, it is a perfectly valid request to have songs first
-ordered in descending order of their rating and then in ascending order of their
-title. But how can we do that?</p>
-
-<h2>Reduce computed macros</h2>
-
-<p>The <code>Ember.computed.sort</code> macro in the <a href="https://github.com/emberjs/ember.js/blob/v1.4.0/packages/ember-runtime/lib/computed/reduce_computed_macros.js"><code>reduce_computed_macros</code> package</a> provides
-a clean way to do exactly that:</p>
-
-<p><code>js
-App.ArtistSongsController = Ember.ArrayController.extend({
-  (...)
-  sortProperties: ['rating:desc', 'title:asc'],
-  sortedSongs: Ember.computed.sort('model', 'sortProperties'),
-  (...)
-});
-</code></p>
-
-<p>The API is so explicit it does not need any explanation. In order for the songs
-to appear in the specified order, we now need to iterate through <code>sortedSongs</code>
-so the <code>#each</code> in the template becomes <code>#each sortedSongs</code>.</p>
-
-<p>Let's take a look at how it has changed the order of the songs:</p>
-
-<p><img src="http://f.cl.ly/items/1D1R183h0h103O0p421O/Screen%20Shot%202014-03-03%20at%2019.58.24.png" alt="Perfect ordering" /></p>
-
-<p>Perfect, I would say that is the ordering that makes most sense.</p>
-
-<h2>Wait, it gets better still</h2>
-
-<p>When first playing with <code>Ember.computed.sort</code>, my initial try was to set up
-<code>sortedSongs</code> like that:</p>
-
-<p><code>js
-  sortedSongs: Ember.computed.sort('model', ['rating:desc', 'title:asc']),
-</code></p>
-
-<p>That, however, throws an error. Taking a look at the code and the tests, I
-realized that the second argument needs to be a property on the same object the
-sorting is defined on. This seems "over-engineered" at first but in fact opens
-up further possibilities.</p>
-
-<p>Under the hood, <code>Ember.computed.sort</code> sets up an observer not only to the array
-being sorted but also to the sort properties. That way, when the sorting
-criteria changes, the list is reordered and rerendered automatically. This makes
-it possible for the criteria to be easily modified via user action.</p>
-
-<p>To give you an example, I'll make a button set the rating to happen only by title,
-in ascending alphabetical order:</p>
-
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
-
-&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/songs&quot;&gt;
-  {{#if canCreateSong}}
-    &lt;div class=&quot;list-group-item&quot;&gt;
-      (...)
-      &lt;button class=&quot;btn btn-link pull-right&quot; {{action &quot;sortBy&quot; &quot;title:asc&quot;}}&gt;Sort by title&lt;/button&gt;
-    &lt;/div&gt;
-  {{/if}}
-  (...)
-&lt;/script&gt;
-
-
-&lt;p&gt;</code></pre>
-</div>
-</p>
-
-<p>The <code>sortBy</code> action handler sets the passed string as the value
-for the <code>sortProperties</code> which will rearrange the list:</p>
-
-<p>``` js
-App.ArtistSongsController = Ember.ArrayController.extend({
-  (...)
-  sortProperties: ['rating:desc', 'title:asc'],
-  sortedSongs: Ember.computed.sort('model', 'sortProperties'),</p>
-
-<p>  actions: {</p>
-
-<pre><code>sortBy: function(sortProperties) {
-  this.set('sortProperties', [sortProperties]);
-},
-(...)
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<p>Indeed when the link is clicked, the songs become ordered by title only:</p>
-
-<p><img src="http://f.cl.ly/items/1H0v0w3C0u0Q2A2j451Z/Screen%20Shot%202014-03-03%20at%2021.12.00.png" alt="Ordering by only title" /></p>
-
-<h2>Declarative sorting</h2>
-
-<p>Let me finish by pointing out that this arrangment makes it possible to have
-several actions that set (or modify) the ordering criteria, without having to
-write a single line of code to implement the sorting itself.</p>
-
-<p>You gotta love this.</p>
 ]]></content>
   </entry>
   

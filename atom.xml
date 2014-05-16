@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-05-11T22:21:55+02:00</updated>
+  <updated>2014-05-16T15:37:47+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,317 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Dependency injection in Ember.js - Going deeper]]></title>
+    <link href="http://balinterdi.com/2014/05/16/dependency-injection-in-ember-dot-js-going-deeper.html"/>
+    <updated>2014-05-16T11:55:00+02:00</updated>
+    <id>http://balinterdi.com/2014/05/16/dependency-injection-in-ember-dot-js-going-deeper</id>
+    <content type="html"><![CDATA[<p>In a previous post <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html">I introduced the basic elements of Dependency Injection in
+Ember</a> and showed how to set up a dependency on the objects it is needed on.
+I also mentioned the framework itself uses this same mechanism to establish its
+dependencies.</p>
+
+<p>In this post, I&#8217;ll expand on this latter. I&#8217;ll point at where these dependencies are
+set up which gives me the possibility to introduce the options of the
+basic parts, <code>register</code> and <code>inject</code>.</p>
+
+<p>I&#8217;ll also share a couple of tricks to prevent using the abominable
+<code>this.__container__</code> and finish by showing how these pieces fit together in the
+main method of the container, <code>container.lookup</code>.</p>
+
+<h1>How does Ember do it?</h1>
+
+<p>When an Ember app is created, the first thing it does is creating a container it
+uses internally:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">Application</span> <span class="o">=</span> <span class="nx">Namespace</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">DeferredMixin</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">$</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">__container__</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">buildContainer</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">(...)</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">buildContainer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">container</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__container__</span> <span class="o">=</span> <span class="nx">Application</span><span class="p">.</span><span class="nx">buildContainer</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">container</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>(<a href="https://github.com/emberjs/ember.js/blob/v1.6.0-beta.4/packages_es6/ember-application/lib/system/application.js#L263">link to soure code</a>)</p>
+
+<p>(Note: Here is where <code>App.__container__</code> gets set and thus you, as an application
+developer has access to the underlying container. Notice the double underscores,
+though. It tells you that you should not ever use that in &#8220;real&#8221; apps. There are
+officially supported ways, public API methods to achieve whatever you strive to
+achieve the forbidden way. It is sometimes enough <a href="https://twitter.com/mixonic/status/461595081607503872">to ask on Twitter.</a>)</p>
+
+<p>Let&#8217;s see how the container is built up (as usual, I cut out the parts that are
+not relevant to the current subject):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'>  <span class="nx">buildContainer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">namespace</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Container</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">(...)</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">optionsForType</span><span class="p">(</span><span class="s1">&#39;component&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">singleton</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">optionsForType</span><span class="p">(</span><span class="s1">&#39;view&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">singleton</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">optionsForType</span><span class="p">(</span><span class="s1">&#39;template&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">optionsForType</span><span class="p">(</span><span class="s1">&#39;helper&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;application:main&#39;</span><span class="p">,</span> <span class="nx">namespace</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;controller:basic&#39;</span><span class="p">,</span> <span class="nx">Controller</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;controller:object&#39;</span><span class="p">,</span> <span class="nx">ObjectController</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;controller:array&#39;</span><span class="p">,</span> <span class="nx">ArrayController</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;route:basic&#39;</span><span class="p">,</span> <span class="nx">Route</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;router:main&#39;</span><span class="p">,</span>  <span class="nx">Router</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">injection</span><span class="p">(</span><span class="s1">&#39;router:main&#39;</span><span class="p">,</span> <span class="s1">&#39;namespace&#39;</span><span class="p">,</span> <span class="s1">&#39;application:main&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">(...)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">injection</span><span class="p">(</span><span class="s1">&#39;controller&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;router:main&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">injection</span><span class="p">(</span><span class="s1">&#39;controller&#39;</span><span class="p">,</span> <span class="s1">&#39;namespace&#39;</span><span class="p">,</span> <span class="s1">&#39;application:main&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">injection</span><span class="p">(</span><span class="s1">&#39;route&#39;</span><span class="p">,</span> <span class="s1">&#39;router&#39;</span><span class="p">,</span> <span class="s1">&#39;router:main&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">(...)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">container</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>(<a href="https://github.com/emberjs/ember.js/blob/v1.6.0-beta.4/packages_es6/ember-application/lib/system/application.js#L826">link to source code</a>)</p>
+
+<p>The faithful reader knows from the <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html">first part in the DI series</a> that the
+above makes it so that e.g <code>this.namespace</code> points to the application in all controllers
+or that <code>this.router</code> refers to the router in all routes.</p>
+
+<p>Let&#8217;s now turn out attention to the first definition block to learn new things.</p>
+
+<h3>optionsForType</h3>
+
+<p><code>optionsForType</code> is a comfortable way to define options that should be used when
+looking up any instance of a particular type from the container.</p>
+
+<p>It can be seen above that components and views are defined as non-singletons
+which mean that any time a component or view is looked up on the container, a
+new instance is created and returned.</p>
+
+<p>I got me some code to prove it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">Artist</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">initializer</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;setup&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">application</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">optionsForType</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">singleton</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;model:artist&#39;</span><span class="p">,</span> <span class="nx">Artist</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">artist1</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">container</span><span class="p">.</span><span class="nx">lookup</span><span class="p">(</span><span class="s1">&#39;model:artist&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">artist2</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">container</span><span class="p">.</span><span class="nx">lookup</span><span class="p">(</span><span class="s1">&#39;model:artist&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="nx">artist1</span><span class="p">,</span> <span class="nx">artist2</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">equal</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstObject&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;lastObject&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;model.{firstObject, lastObject}&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you then write a template for the index route that just displays the <code>equal</code>
+property you&#8217;ll see that its value is false, thus a new object is in fact
+instantiated each time.</p>
+
+<p>Here is <a href="http://emberjs.jsbin.com/zefuk/2/edit">a link to the jsbin</a> if you would like to see it.</p>
+
+<p>If you replace <code>{ singleton: false }</code> with <code>{ singleton: true }</code> the equal
+property is going to be true, the model object is going to be a true singleton.</p>
+
+<h4>Singletons are the default</h4>
+
+<p>As Ember core team meber <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html#comment-1386980817">Stefan Penner points out</a>, the <code>{ singleton: true
+}</code> option is the default, so there is no need to explicitly state it.</p>
+
+<p>As a consequence, <code>container.register('store:main', Store, { singleton: true })</code>
+is exactly the same as <code>application.register('store', Store)</code>.</p>
+
+<h4>Objects that come from the container can access it</h4>
+
+<p>I learned this from <a href="http://madhatted.com/">Matthew Beale</a>, a prolific Ember contributor and presenter.
+It&#8217;s well worth your time <a href="https://www.youtube.com/watch?v=6FlWyOoo6hQ">to watch his presentation</a> on &#8220;Containers and
+Dependency Injection&#8221; he gave at an Ember NYC meetup.</p>
+
+<p>Amongst other useful stuff, he also reveals that all objects that come from the
+container have access to it via a <code>container</code> property on them.</p>
+
+<p>That allowed me to write <code>this.container.lookup</code> in the route above since routes
+are created by the container, too.</p>
+
+<p>This also does away with the need to use the private <code>__container__</code> in most
+cases.</p>
+
+<h3>To instantiate or not to instantiate</h3>
+
+<p>Above, in the code for <code>buildContainer</code> you can see another option,
+<code>instantiate</code>, which is false for templates and helpers. To save you from
+scrolling all the way up, here are the relevant lines:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'>  <span class="nx">container</span><span class="p">.</span><span class="nx">optionsForType</span><span class="p">(</span><span class="s1">&#39;template&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+</span><span class='line'>  <span class="nx">container</span><span class="p">.</span><span class="nx">optionsForType</span><span class="p">(</span><span class="s1">&#39;helper&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This option permits the registration of entities (yeah, stuff) that do not need
+to be instantiated (or cannot be). Templates and helpers fit the bill since
+they are functions and thus cannot be instantiated.</p>
+
+<h3>container.lookup</h3>
+
+<p>The lookup method in the container is a great summary for all the things discussed here.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">lookup</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">fullName</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">container</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">fullName</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">singleton</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 1</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">container</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">fullName</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">instantiate</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">fullName</span><span class="p">);</span> <span class="c1">// 2</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">value</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">isSingleton</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">fullName</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">singleton</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">fullName</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span> <span class="c1">// 3</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">value</span><span class="p">;</span> <span class="c1">// 4</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>First, if a singleton is needed and the object has already been looked up, we
+just return the object saved in the cache. (see 1 above)</p>
+
+<p>Next, we instantiate an object for the fullName (e.g &#8216;controller:artists&#8217; or
+&#8216;route:index&#8217;). The instantiate method takes care of just returning the value if
+the <code>instantiate</code> option is set to false. (see 2 above)</p>
+
+<p>If the instantiation was successful (the factory was found) and a singletion was
+demanded, we set this value in the cache so that we can return it the next time
+it is looked up. (see 3 above)</p>
+
+<p>Finally, we return what was looked up. (see 4 above)</p>
+
+<p><code>container.lookup</code> just calls the above function after verifying the fullName
+has the right syntax, that is it has a type and a name part joined together by
+a <code>:</code>.</p>
+
+<p>And that&#8217;s where everything comes together.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Ember.run.bind]]></title>
@@ -3465,30 +3776,6 @@ package.</p>
 
 <p>It really feels faster -maybe due to the improved GC-, rails starts >2
 as fast as compared to plain 1.9.3, using <a href="https://github.com/jonleighton/spring">spring</a> in both cases.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Ruby Rogues - Discourse with Jeff Atwood]]></title>
-    <link href="http://balinterdi.com/2013/05/30/ruby-rogues-discourse-with-jeff-atwood.html"/>
-    <updated>2013-05-30T21:23:00+02:00</updated>
-    <id>http://balinterdi.com/2013/05/30/ruby-rogues-discourse-with-jeff-atwood</id>
-    <content type="html"><![CDATA[<p><a href="http://itunes.apple.com/us/podcast/ruby-rogues/id436260381">Ruby Rogues</a> is one of the handful of podcasts I usually listen to. This week featured Jeff Atwood who talked about
-Discourse, a phenomenal forum platform. Jeff&#8217;s thoughts on several things really struck home so I wanted to jot them down.
-You might find these thought-provoking, too. The full transcription is available <a href="http://rubyrogues.com/106-rr-discourse-with-jeff-atwood/#more-1341">here</a></p>
-
-<ul>
-<li>Installing a binary app per device is a huge step backward from the web world where you don&#8217;t have to download and upgrade anything. You just go to the website and it works.</li>
-<li>Betting on Javascript is a very safe bet. The competition has been the fiercest among browser performances, that is Javascript engines on the client. The engines are guaranteed to improve.</li>
-<li>Desktop computers are -in most cases- more performant than the server the application is hosted on. So it makes sense to push computations to the clients, and spread it out among them.</li>
-<li>[Discourse] using postgres is a way to force hosting providers move out of the &#8220;server herpes&#8221; (PHP + MySQL). As Discourse becomes more popular, this will give more leverage to remove the herpes from servers.</li>
-<li>Why was it [the server side] built in Ruby/Rails? <a href="http://eviltrout.com/">Robin Ward</a> made a game about forums and Jeff contacted him to build Discourse. Robin had used Ruby and thus this decided the Ruby or Python question.</li>
-<li>Rule of 3. Kind of a philoshopical belief for Jeff. A component (e.g a datepicker) is proven to be reusable if it was successfully used in three different contexts. Having three major partners for Discourse will really be a tipping point. Etc.</li>
-<li>Since Discourse is mainly a rich, client-side app, <a href="http://emberjs.com">Ember</a> plays a much bigger role in its success (or failure) then Ruby. The question is how will Rubyists adapt to Ember, whether they will like it or not.</li>
-</ul>
-
-
-<p>Discourse is built on Ember, and <a href="http://discuss.emberjs.com/">Ember uses Discourse as a forum</a>. For one, I welcome our new rich-client overlords.</p>
 ]]></content>
   </entry>
   
