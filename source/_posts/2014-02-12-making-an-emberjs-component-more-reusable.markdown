@@ -6,6 +6,10 @@ comments: true
 categories: ember.js
 ---
 
+*This is Part 2 of a mini-series on components. Here is the first post in the series:*
+
+*[Convert a view into a component](/2014/02/05/convert-a-view-into-a-component.html)*
+
 ## Intro
 
 [We saw how to turn the star-rating view into a component][view-to-component] to
@@ -154,6 +158,12 @@ something.
 
 Actually, there are a couple of featurettes -unrelated to its flexibility, as
 far as I see- we can add which I might come back to.
+
+- - - -
+
+*This was Part 2 of a mini-series on components. Here is the third post in the series:*
+
+*[Readers' Letters: Making an Ember.js Component Even Better](/2014/02/18/readers-letters-making-an-ember-dot-js-component-even-better.html)*
 
 [view-to-component]: /2014/02/05/convert-a-view-into-a-component.html
 [add-observer]: http://emberjs.com/api/classes/Ember.Observable.html#method_addObserver

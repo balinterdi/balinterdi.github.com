@@ -241,5 +241,12 @@ go all the way and make components general enough to fulfill this promise.
 
 That's what I'm going to strive for in a later post.
 
+- - - - -
+*This was Part 1 of a mini-series on components. Here are the subsequent posts in the series:*
+
+*Part 2: [Making an Ember.js Component More Reusable](/2014/02/12/making-an-emberjs-component-more-reusable.html)*
+
+*Part 3: [Readers' Letters: Making an Ember.js Component Even Better](/2014/02/18/readers-letters-making-an-ember-dot-js-component-even-better.html)*
+
 [rc6]: http://emberjs.com/blog/2013/06/23/ember-1-0-rc6.html
 [reusable-components]: http://discuss.emberjs.com/t/some-ideas-i-had-about-composable-reusable-components/2850

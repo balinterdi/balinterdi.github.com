@@ -6,6 +6,14 @@ comments: true
 categories:
 ---
 
+*This is Part 3 of a mini-series on components. Here are the preceding posts:*
+
+*Part 1: [Convert a view into a component](/2014/02/05/convert-a-view-into-a-component.html)*
+
+*Part 2: [Making an Ember.js Component More Reusable](/2014/02/12/making-an-emberjs-component-more-reusable.html)*
+
+- - - -
+
 [Last time][making-component-more-reusable] I showed a way to make the
 star-rating component more reusable. The solution employed a useful, low-level
 method, `Ember.addObserver` and its destructive sibling, `Ember.removeObserver`.
