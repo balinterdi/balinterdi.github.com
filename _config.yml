@@ -65,6 +65,7 @@ github_skip_forks: true
 
 # Twitter
 twitter_user: baaz
+tweet_button_size: large
 twitter_tweet_count: 0
 twitter_show_replies: false
 twitter_follow_button: true
@@ -73,7 +74,7 @@ twitter_tweet_button: true
 
 # Google +1
 google_plus_one: true
-google_plus_one_size: medium
+google_plus_one_size: large
 
 # Google Plus Profile
 # Hidden: No visible button, just add author information to search results
