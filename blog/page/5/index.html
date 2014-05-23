@@ -9,7 +9,7 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="I realized how 20th century (plus boring and error-prone) it is to write one&#8217;s invoices by hand. So I went looking for an invoicing application &hellip;">
+  <meta name="description" content="Continuous Integration (CI) is a basic building block of any project done in TDD style. In brief, having a CI server properly set up guarantees that &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -76,6 +76,112 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/09/25/cucumber-meets-selenium-meets-integrity.html">Cucumber Meets Selenium Meets Integrity</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-09-25T00:00:00+02:00" pubdate data-updated="true">Sep 25<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="http://martinfowler.com/articles/continuousIntegration.html" title="Continuous Integration">Continuous Integration</a> (CI) is a basic building block of any project done in TDD style. In brief, having a CI server properly set up guarantees that developers can rest assured that the application passes all its tests and can thus be deployed at any moment. It does this by sending some kind of a warning if something is broken so it can be fixed immediately.</p>
+
+<p>Now I noticed that if a CI server is not in the mix right from the beginning of project, chances are it will never be, that was one of the first things I installed on a new Rails project. My server of choice is <a href="http://integrityapp.com">Integrity</a> mostly because it is so easy to set up and quite straightforward to use.</p>
+
+<p>Ok, so next we need some tests that Integrity will run at each commit and make sure the app can still be built. As a high-level acceptance test framework, I use <a href="http://cukes.info">Cucumber</a>, which plays very nicely with <a href="http://seleniumhq.org">Selenium</a> for automated in-browser testing. Since nowadays even the most basic web application will have some amount of client-side scripting code (that is, javascript) if you really want to test the features of your application you&#8217;ll need Selenium tests.</p>
+
+<p>That&#8217;s when matters get a bit more complicated when it comes to integrating these with the Integrity server. Why? Because on the server you usually don&#8217;t have the &#8220;desktop environment&#8221; which is available on the machine you do the development on. By default, you don&#8217;t run a desktop manager and have a graphic display on a server. A tool called <a href="http://linux.about.com/cs/linux101/g/xvfb.htm">xvfb</a> comes into a picture that emulate a dumb framebuffer so you can still programs that need a graphic display.</p>
+
+<p>To have some practical guidance, here&#8217;s what I did on an Ubuntu server to enable all of the above:</p>
+
+<p>Install java since Selenium runs in the JVM:</p>
+
+<div>
+  <pre><code class='bash'>apt-get install java-common sun-java6-jre</code></pre>
+</div>
+
+
+<p>Install firefox since that&#8217;s what Selenium runs by default and that&#8217;s a very good choice.</p>
+
+<div>
+  <pre><code class='bash'>apt-get install apt-get install firefox</code></pre>
+</div>
+
+
+<p>Install X since that&#8217;s what the xvfb launches and Xvfb itself.</p>
+
+<div>
+  <pre><code class='bash'>apt-get install xorg xserver-xorg
+apt-get install xvfb</code></pre>
+</div>
+
+
+<p>Next I found a <a href="http://wiki.openqa.org/display/SRC/Selenium-RC+and+Continuous+Integration">wiki</a> that describes how to launch the Xvfb correctly. Log into the server and do:</p>
+
+<div>
+  <pre><code class='bash'>startx -- `which Xvfb` :1 -screen 0 1024x768x24 2&gt;&amp;1 &gt;/dev/null &amp;</code></pre>
+</div>
+
+
+<p>So Xvfb will run on the DISPLAY :1. So far so good. But something was still not quite right. When integrity launched the test suite that included some Cucumber-Selenium tests I received an error message basically saying that no browser sessions could be started. And the solution to that, in fact, is where this post wants to get at.</p>
+
+<p>After a decent amount of head-scratching and code mining I realized that the Selenium server starts the browser on the same display where the server itself (the jar file) runs. I have found the relevant code that assembles the command that starts the Selenium server in the selenium-client gem and figured it was not meant to be run in graphic hardware-less environment since I saw no options to define which display it should run on. So as an <a href="http://github.com/balinterdi/selenium-client/commit/37094df174b5c52cb68d041f7dc940e501b3e438">easy hack I added the hardcoded &#8220;DISPLAY=:1&#8221; before it</a> and crossed my fingers.</p>
+
+<p>Bingo, it worked and I had a green build again! What&#8217;s more surprising is that it still runs perfectly on my Macbook so it seems to run in (some) graphical environments, too. It seems a bit strange to me to have found so little information on this subject since Rails, Cucumber, Selenium and CI are all en vogue so it is possible that I missed something obvious and there is an easier way to do all this. I am very eager to hear how others set up their CI to run automated-browser features. Do you use another tool, not Selenium? Do you use a CI server with a monitor?</p>
+
+<p>Anyway, I certainly hope my hackish solution will prove to be useful for some of you TDD-minded developers out there who run their CI on a simple &lt;name of your favorite provider here&gt; slice.</p>
+
+<p><strong>UPDATE:</strong> As <a href="http://lackac.hu">a fellow developer</a> and <a href="http://github.com/ph7">the author of the selenium-client gem himself</a> pointed out library code is not the place for enviroment specific settings. Rather, it should go into the application&#8217;s code. I guess that leaves the choice of putting it into the code of the application you are building or the configuration of the CI server. This latter seemed more clean to me so I put the following line into config.ru in Integrity&#8217;s directory:</p>
+
+<div>
+  <pre><code class='bash'>env[&quot;DISPLAY&quot;] = &quot;:1&quot;</code></pre>
+</div>
+
+
+<p>There is still something left, though. When integrity -or, to be precise, the selenium process that was launched from integrity- wants to access display :1, it will be denied. You need to explicitly enable local connections by putting &#8220;localhost&#8221; in a file:</p>
+
+<div>
+  <pre><code class='bash'>echo 'localhost' &gt;/etc/X99.cfg</code></pre>
+</div>
+
+
+<p>, and then using that file as the access records list when you launch the server:</p>
+
+<div>
+  <pre><code class='bash'>xinit -- `which Xvfb` :1 -screen 0 1024x768x24 -auth /etc/X99.cfg 2&gt;&amp;1 &gt;/dev/null &amp;</code></pre>
+</div>
+
+
+<p>(Note that I launch xinit and not startx as before. startx somehow adds another -auth option which messes things up)</p>
+
+<p>There, that should do it. It works and there is no code where it does not belong.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -615,60 +721,6 @@ missing_t fr
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/03/12/plans-for-2009-contribute-more-to-open-source-projects.html">Plans for 2009 - Contribute (More) to Open Source Projects</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-03-12T00:00:00+01:00" pubdate data-updated="true">Mar 12<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>At the start of 2009 my friend Jaime <a href="http://www.jaimeiniesta.com/2009/01/07/mi-resumen-del-2008">resumed his previous year</a> and proposed me to do the same. It seemed a really good idea but somehow it still died down.</p>
-
-<p>I know it&#8217;s March now but I reckon it&#8217;s still ok to do this until December :) I&#8217;ll attempt to write a mini-series of posts about not so much what I did in 2008 but rather what I would like to achieve in 2009.</p>
-
-<p>When I started to work full-time with Ruby I also realized the vast possibilities and magnetism of open source projects. I could -and still can- spend hours browsing among different projects on github, peeping into their code, reading related articles, etc.</p>
-
-<p>So when I set out for this journey one of my tasks naturally became to regularly contribute to a &#8220;serious&#8221; open source project. When I got acquainted with Merb I also got to know <a href="http://datamapper.org/doku.php">DataMapper</a>, its default ORM. I admired its elegance and coherence and the more I knew of it the more I liked it. So when the maintainer position of a dm-more gem, <a href="#dm-constraints">dm-constraints*</a> seemed to be up for grabs I took the opportunity.</p>
-
-<p>That was in December and since then I sent in a few patches and merged changes implemented by others. (which I realized could sometimes be a lot more difficult than writing code :) ). I like to do this and have learned -and probably will learn- a lot so one of my plans for 2009 is to continue with dm-constraints and maybe find other open source projects I could contribute to on a regular basis.</p>
-
-<p>So, if you happen to use DataMapper, which <a href="http://bucionrails.com/2009/02/12/why-i-love-datamapper/">I strongly encourage you to do</a>, and find a bug related to foreign-key constraints, <a href="http://datamapper.lighthouseapp.com/projects/20609-datamapper">file a ticket</a> and assign it directly to me (Balint Erdi). And/or start contributing!</p>
-
-<h3>Notes</h3>
-
-
-
-
-<p id="dm-constraints">* Dm-more is the meta package that contains everything outside the core functions of DataMapper. Dm-constraints deals with foreign key constraints. If you are familiar with ActiveRecord, it is basically the options you specify with :dependent on an association.</p>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/6/">&larr; Older</a>
@@ -693,6 +745,10 @@ missing_t fr
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/05/22/make-your-own-computed-property-macro-in-emberjs.html">Make your own computed property macro in Ember.js</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/05/16/dependency-injection-in-ember-dot-js-going-deeper.html">Dependency injection in Ember.js - Going deeper</a>
       </li>
     
@@ -706,10 +762,6 @@ missing_t fr
     
       <li class="post">
         <a href="/2014/03/26/property-path-patterns-in-ember-dot-js.html">Observable path patterns in Ember</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/03/19/ember-dot-js-getters-and-setters.html">Ember.js getters and setters</a>
       </li>
     
   </ul>

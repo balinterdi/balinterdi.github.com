@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-05-16T22:49:39+02:00</updated>
+  <updated>2014-05-22T21:53:34+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,116 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Make your own computed property macro in Ember.js]]></title>
+    <link href="http://balinterdi.com/2014/05/22/make-your-own-computed-property-macro-in-emberjs.html"/>
+    <updated>2014-05-22T21:51:00+02:00</updated>
+    <id>http://balinterdi.com/2014/05/22/make-your-own-computed-property-macro-in-emberjs</id>
+    <content type="html"><![CDATA[<p>The most common way to define computed properties (CPs) in Ember.js apps is to
+call the <code>property</code> function extension, passing in the &#8220;dependent keys&#8221;,
+the path patterns that should trigger the recomputation of the property&#8217;s value.</p>
+
+<p>The entry-level, classical example is <code>fullName</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Person</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">fullName</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstName&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;lastName&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;firstName&#39;</span><span class="p">,</span> <span class="s1">&#39;lastName&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>person.get('fullName')</code> will change if and only if either firstName or lastName
+has changed. Its value gets cached between changes.</p>
+
+<p>This simple, yet extremely powerful, construct is a fundemental piece of what
+makes Ember apps a joy to work with and capable of scaling out to build complex
+apps.</p>
+
+<p>Let&#8217;s now define a slightly more difficult computed property:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">latestPosts</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;sortedPosts&#39;</span><span class="p">).</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+</span><span class='line'><span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;sortedPosts.[]&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Assuming that <code>this.get('sortedPosts')</code> contains the sorted posts <code>latestPosts</code>
+is going to contain the first ten of these.</p>
+
+<p>This is a very common pattern. We only want to show the 10 most recent posts,
+the three top scorers on a Hall of Fame board or the 10 latest notifications of
+a user. The above CP definition gets the job done. I see two ways it can be improved,
+though.</p>
+
+<p>First, it is prone to errors that are hard to debug. If you misspell
+<code>sortedPosts</code> in the property(&#8230;) call, you can spend a considerable amount of
+time trying to find out why your property does not update correctly.</p>
+
+<p>Second, if it is used in several places of the application, it is a good idea
+to extract the common pattern and reuse it to cut down on development time and
+make the code more robust.</p>
+
+<h3>Eliminating the duplication</h3>
+
+<p>We need a repeatable way to create such computed properties that also eliminates
+the risk of misspelling the property name:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">sliced</span><span class="p">(</span><span class="nx">dependentKey</span><span class="p">,</span> <span class="nx">firstIndex</span><span class="p">,</span> <span class="nx">lastIndex</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">dependentKey</span><span class="p">).</span><span class="nx">slice</span><span class="p">(</span><span class="nx">firstIndex</span><span class="p">,</span> <span class="nx">lastIndex</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="nx">dependentKey</span> <span class="o">+</span> <span class="s2">&quot;.[]&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is exactly what we had before for <code>latestPosts</code>. Note the <code>.[]</code> in the
+property path composition tucked after <code>dependentKey</code>. It guarantees that if any
+of the elements in the array designated by <code>dependentKey</code> changes (elements are
+added or removed), the property defined by <code>sliced</code> is going to be updated.</p>
+
+<p>Then, whereever the need to slice up a certain array arises, we can use this
+method to create it thusly:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">DaysController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">workDays</span><span class="o">:</span> <span class="nx">sliced</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+</span><span class='line'>  <span class="nx">weekend</span><span class="o">:</span> <span class="nx">sliced</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As usual, I put together an example to demonstrate how it works in practice:</p>
+
+<p><a class="jsbin-embed" href="http://emberjs.jsbin.com/zemow/2/embed?js,output">Sliced property generator</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
+
+<h3>A couple of useful resources</h3>
+
+<p>A handful of computed property macros are <a href="https://github.com/emberjs/ember.js/blob/master/packages/ember-metal/lib/computed.js">built into Ember</a>, while
+the <a href="https://github.com/jamesarosen/ember-cpm">ember-cpm library</a> defines some more, so check these first if you
+recurringly find yourself in need of a certain logic in computed properties.</p>
+
+<p>If you still haven&#8217;t found what you&#8217;re looking for, this post hopefully sets you
+on your way to define your own ones.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Dependency injection in Ember.js - Going deeper]]></title>
@@ -3774,34 +3884,6 @@ and are often violated.</p>
 
 <p>Learning the same thing in Clojure is like learning articles in English: there
 is one true way to do it.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Install Ruby 2.0.0 with rbenv (ruby-build) on Mountain Lion]]></title>
-    <link href="http://balinterdi.com/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion.html"/>
-    <updated>2013-06-02T22:58:00+02:00</updated>
-    <id>http://balinterdi.com/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion</id>
-    <content type="html"><![CDATA[<ol>
-<li>You need to <a href="http://www.ruby-lang.org/en/news/2013/05/14/ruby-2-0-0-p195-is-released/">download the source</a>, or use <a href="https://github.com/sstephenson/ruby-build">ruby-build</a> to install it for you. I will subsequently suppose the latter.</li>
-<li>You need to configure it, compile it and copy files to the proper location:</li>
-</ol>
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>RUBY_CONFIGURE_OPTS=--with-openssl-dir=`brew --prefix openssl` CONFIGURE_OPTS=--with-gcc=clang rbenv install 2.0.0-p195</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You can see I installed openssl through homebrew. The ruby-build recipe
-downloads an openssl lib for you so only use that if you have it
-installed as I do.</p>
-
-<p>I got the clang compiler frontend through <a href="https://developer.apple.com">Apple&#8217;s Command Line
-Tools</a> so I&#8217;m not sure that&#8217;s needed if you have the whole Xcode
-package.</p>
-
-<p>It really feels faster -maybe due to the improved GC-, rails starts >2
-as fast as compared to plain 1.9.3, using <a href="https://github.com/jonleighton/spring">spring</a> in both cases.</p>
 ]]></content>
   </entry>
   

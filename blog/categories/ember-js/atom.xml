@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-05-16T22:49:39+02:00</updated>
+  <updated>2014-05-22T21:53:34+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,105 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Make your own computed property macro in Ember.js]]></title>
+    <link href="http://balinterdi.com/2014/05/22/make-your-own-computed-property-macro-in-emberjs.html"/>
+    <updated>2014-05-22T21:51:00+02:00</updated>
+    <id>http://balinterdi.com/2014/05/22/make-your-own-computed-property-macro-in-emberjs</id>
+    <content type="html"><![CDATA[<p>The most common way to define computed properties (CPs) in Ember.js apps is to
+call the <code>property</code> function extension, passing in the "dependent keys",
+the path patterns that should trigger the recomputation of the property's value.</p>
+
+<p>The entry-level, classical example is <code>fullName</code>:</p>
+
+<p>```js
+App.Person = Ember.Object.extend({
+  fullName: function() {</p>
+
+<pre><code>return this.get('firstName') + ' ' + this.get('lastName');
+</code></pre>
+
+<p>  }.property('firstName', 'lastName')
+});
+```</p>
+
+<p><code>person.get('fullName')</code> will change if and only if either firstName or lastName
+has changed. Its value gets cached between changes.</p>
+
+<p>This simple, yet extremely powerful, construct is a fundemental piece of what
+makes Ember apps a joy to work with and capable of scaling out to build complex
+apps.</p>
+
+<p>Let's now define a slightly more difficult computed property:</p>
+
+<p><code>js
+latestPosts: function() {
+  return this.get('sortedPosts').slice(0, 10);
+}.property('sortedPosts.[]')
+</code></p>
+
+<p>Assuming that <code>this.get('sortedPosts')</code> contains the sorted posts <code>latestPosts</code>
+is going to contain the first ten of these.</p>
+
+<p>This is a very common pattern. We only want to show the 10 most recent posts,
+the three top scorers on a Hall of Fame board or the 10 latest notifications of
+a user. The above CP definition gets the job done. I see two ways it can be improved,
+though.</p>
+
+<p>First, it is prone to errors that are hard to debug. If you misspell
+<code>sortedPosts</code> in the property(...) call, you can spend a considerable amount of
+time trying to find out why your property does not update correctly.</p>
+
+<p>Second, if it is used in several places of the application, it is a good idea
+to extract the common pattern and reuse it to cut down on development time and
+make the code more robust.</p>
+
+<h3>Eliminating the duplication</h3>
+
+<p>We need a repeatable way to create such computed properties that also eliminates
+the risk of misspelling the property name:</p>
+
+<p>``` js
+function sliced(dependentKey, firstIndex, lastIndex) {
+  return function() {</p>
+
+<pre><code>return this.get(dependentKey).slice(firstIndex, lastIndex);
+</code></pre>
+
+<p>  }.property(dependentKey + ".[]");
+}
+```</p>
+
+<p>This is exactly what we had before for <code>latestPosts</code>. Note the <code>.[]</code> in the
+property path composition tucked after <code>dependentKey</code>. It guarantees that if any
+of the elements in the array designated by <code>dependentKey</code> changes (elements are
+added or removed), the property defined by <code>sliced</code> is going to be updated.</p>
+
+<p>Then, whereever the need to slice up a certain array arises, we can use this
+method to create it thusly:</p>
+
+<p><code>js
+App.DaysController = Ember.ArrayController.extend({
+  workDays: sliced('model', 0, 5),
+  weekend: sliced('model', 5)
+})
+</code></p>
+
+<p>As usual, I put together an example to demonstrate how it works in practice:</p>
+
+<p><a class="jsbin-embed" href="http://emberjs.jsbin.com/zemow/2/embed?js,output">Sliced property generator</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
+
+<h3>A couple of useful resources</h3>
+
+<p>A handful of computed property macros are <a href="https://github.com/emberjs/ember.js/blob/master/packages/ember-metal/lib/computed.js">built into Ember</a>, while
+the <a href="https://github.com/jamesarosen/ember-cpm">ember-cpm library</a> defines some more, so check these first if you
+recurringly find yourself in need of a certain logic in computed properties.</p>
+
+<p>If you still haven't found what you're looking for, this post hopefully sets you
+on your way to define your own ones.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Dependency injection in Ember.js - Going deeper]]></title>
@@ -734,252 +833,6 @@ post to explain property path patterns.</p>
 <p>(The code presented here can be found as <a href="https://gist.github.com/balinterdi/9772966">a gist on Github</a>)</p>
 
 <p>ps. Yes, <a href="https://www.youtube.com/watch?v=RtBbinpK5XI">that Maggie Raindance.</a>)</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Ember.js getters and setters]]></title>
-    <link href="http://balinterdi.com/2014/03/19/ember-dot-js-getters-and-setters.html"/>
-    <updated>2014-03-19T20:53:00+01:00</updated>
-    <id>http://balinterdi.com/2014/03/19/ember-dot-js-getters-and-setters</id>
-    <content type="html"><![CDATA[<p>To make all the magic fairy-dust sprinkling efficient, like auto-updating
-templates and computed properties, Ember uses getters and setters instead of
-accessing properties directly the javascript (and dare I say, the Angular) way. At
-its most simplest form, it is <code>object.get(property)</code> and <code>object.set(property)</code>.</p>
-
-<p>Howevers, it would not be Ember if we were not provided methods on top of these
-primitives to make our hard lives as web developers simpler. In the following
-post, I am going to show (some of) these methods through an example, so let's
-go.</p>
-
-<h2>Badges, badges, I want more badges</h2>
-
-<p>I am certainly in favor of having badges in every application. Discourse is
-actively discoursing <a href="https://meta.discourse.org/t/initial-discourse-badge-design-spec">their badge system</a> so I quickly
-sketched out something to get ahead of them.</p>
-
-<p>Let me just paste the code here and then use it to explain what the getter and
-setter methods are good for.</p>
-
-<p>You can quickly scroll through the below templates. They are mostly there so
-that you get the whole picture. The stuff relevant to this discussion is found
-in the javascript code.</p>
-
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
-
-&lt;script type=&quot;text/x-handlebars&quot;&gt;
-  &lt;div class=&quot;container&quot;&gt;
-    &lt;div class=&quot;panel panel-primary&quot;&gt;
-      &lt;div class=&quot;panel-heading&quot;&gt;
-        &lt;h3 class=&quot;panel-title&quot;&gt;Your badges, sir/ma'am.&lt;/h3&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;panel-body&quot;&gt;
-        {{outlet}}
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
- &lt;/script&gt;
-
-
-&lt;p&gt;</code></pre>
-</div>
-</p>
-
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
-
-&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;index&quot;&gt;
-  &lt;ul class=&quot;list-group&quot;&gt;
-    {{#each badge in arrangedContent}}
-      &lt;li {{bind-attr class=&quot;:list-group-item badge.unlocked::locked&quot;}}&gt;
-        {{badge.name}}
-        &lt;span class=&quot;badge&quot;&gt;{{badge.score}}&lt;/span&gt;
-      &lt;/li&gt;
-    {{/each}}
-    &lt;li class=&quot;list-group-item&quot;&gt;
-      &lt;em&gt;Total:&lt;/em&gt;
-      &lt;span class=&quot;pull-right&quot;&gt;{{totalScore}}&lt;/span&gt;
-    &lt;/li&gt;
-  &lt;/ul&gt;
-  &lt;div id=&quot;new-badge&quot; class=&quot;row&quot;&gt;
-    &lt;span class=&quot;col-xs-6&quot;&gt;
-      {{input class=&quot;input&quot; type=&quot;text&quot; placeholder=&quot;Badge name&quot; value=name}}
-    &lt;/span&gt;
-    &lt;span class=&quot;col-xs-4&quot;&gt;
-      {{input class=&quot;small-input&quot; type=&quot;text&quot; placeholder=&quot;Score&quot; value=score action=&quot;addBadge&quot;}}
-    &lt;/span&gt;
-    &lt;span class=&quot;col-xs-2&quot;&gt;
-      &lt;button class=&quot;btn btn-primary btn-sm pull-right&quot; type=&quot;button&quot;
-          {{action &quot;addBadge&quot;}}&gt;
-          Add
-      &lt;/button&gt;
-    &lt;/span&gt;
-  &lt;/div&gt;
-  &lt;div id=&quot;unlock-all&quot; class=&quot;row&quot;&gt;
-    &lt;div class=&quot;col-xs-12&quot;&gt;
-      &lt;button class=&quot;btn btn-danger btn-md&quot; type=&quot;button&quot;
-        {{action &quot;unlockAll&quot;}}&gt;
-        Unlock all
-      &lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/script&gt;
-
-
-&lt;p&gt;</code></pre>
-</div>
-</p>
-
-<p>First, the badge class is defined and some badges created so that we have something to work with:</p>
-
-<p>```js
-App = Ember.Application.create();</p>
-
-<p>App.Badge = Ember.Object.extend({
-  name: '',
-  score: 0,
-  unlocked: false
-});</p>
-
-<p>var rook = App.Badge.create({
-  name: "R00k",
-  score: 1,
-  unlocked: true
-});</p>
-
-<p>var talkative = App.Badge.create({
-  name: "Talkative",
-  score: 10
-});</p>
-
-<p>var hemingway = App.Badge.create({
-  name: "Hemingway",
-  score: 1000
-});</p>
-
-<p>App.Router.map(function() {
-});</p>
-
-<p>App.IndexRoute = Ember.Route.extend({
-  model: function() {</p>
-
-<pre><code>return [rook, talkative, hemingway];
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<h3>getProperties and setProperties</h3>
-
-<p>The first couple of methods come handy when working with a single object but
-multiple properties.</p>
-
-<p>``` js
-App.IndexController = Ember.ArrayController.extend({
-  sortProperties: ['score'],
-  sortAscending: true,</p>
-
-<p>  (...)</p>
-
-<p>  actions: {</p>
-
-<pre><code>addBadge: function() {
-  var newBadgeProperties = this.getProperties(['name', 'score']);
-  newBadgeProperties.score = parseInt(newBadgeProperties.score, 10);
-
-  var newBadge = App.Badge.create(newBadgeProperties);
-  this.get('model').pushObject(newBadge);
-  this.setProperties({ name: '', score: '' });
-},
-
-(...)
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<p>On line 9, we want to create a new object with the values provided in the input
-boxes (addBadge is the action that gets triggered when the Add button is
-clicked, check the template). <code>getProperties</code> will create a javascript object
-creating key-value pairs for the passed properties. So the above might e.g yield
-<code>{ name: "Silent Bob", score: "2" }</code>. That gets directly passed in to create a
-new badge object.</p>
-
-<p>On line 14, we use the mutating pair of <code>getProperties</code> to reset the input
-fields. Pretty straightforward.</p>
-
-<h3>getEach and setEach</h3>
-
-<p>Ember has us covered when we are working with an array and want to get (or set)
-the same property of each item.</p>
-
-<p>``` js
-App.IndexController = Ember.ArrayController.extend({
-  sortProperties: ['score'],
-  sortAscending: true,</p>
-
-<p>  totalScore: function() {</p>
-
-<pre><code>var sum = function(s1, s2) { return s1 + s2; };
-return this.get('model').getEach('score').reduce(sum);
-</code></pre>
-
-<p>  }.property('model.@each.score'),</p>
-
-<p>  actions: {</p>
-
-<pre><code>(...)
-
-unlockAll: function() {
-  this.get('model').setEach('unlocked', true);
-}
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<p>When the "Unlock all" button launches the <code>unlockAll</code> action, it calls <code>setEach</code>
-on the badges (line 14), making all of them unlocked (you can verify this in the
-demo by seeing the color of the badge names turn darker - their css class has
-been updated). Another advange of <code>setEach</code> is that it guards against calling
-<code>set</code> on null or undefined values.</p>
-
-<p>You might know the reader counterpart, <code>getEach</code> as <code>mapBy</code>. It goes through the
-array and makes another array by getting the passed property on each item. So in
-the above example (line 7), we first collect the score for each badge and then
-sum them up by way of reduction. (A shiny example of a non-distributed
-map-reduce :) ).</p>
-
-<h3>A macro can make nice code nicer</h3>
-
-<p>I <a href="http://balinterdi.com/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria.html">have used a reduce computed macro</a> before to set up sorting.
-I have gotten the hang of it and realized I could use another couple of them
-to make the above code simpler (and more performant):</p>
-
-<p>``` js
-App.IndexController = Ember.ArrayController.extend({
-  sortProperties: ['score'],
-  sortAscending: true,</p>
-
-<p>  scores: Ember.computed.mapBy('model', 'score'),
-  totalScore: Ember.computed.sum('scores'),</p>
-
-<p>  (...)
-});
-```</p>
-
-<p>The problem is that the subject under discussion, <code>getEach</code> is gone now, so
-pretend you did not see this.</p>
-
-<p>Finally, here is the jsbin, should you decide to play around with it:</p>
-
-<p><a class="jsbin-embed" href="http://emberjs.jsbin.com/qivah/4/embed?html,js,output">Getter and Setters</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
-
-<p>I hope some of that sticks and you'll write less "bare" gets and sets.</p>
 ]]></content>
   </entry>
   
