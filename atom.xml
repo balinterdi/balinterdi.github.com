@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-05-22T21:53:34+02:00</updated>
+  <updated>2014-05-28T11:08:12+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,89 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Setting the document title in Ember apps]]></title>
+    <link href="http://balinterdi.com/2014/05/28/setting-the-document-title-in-ember-apps.html"/>
+    <updated>2014-05-28T07:27:00+02:00</updated>
+    <id>http://balinterdi.com/2014/05/28/setting-the-document-title-in-ember-apps</id>
+    <content type="html"><![CDATA[<p>The document title serves as a quick and concise way to identify web pages. It
+gets displayed in search results and bookmarks and allows the user to see at a
+glance what content she has open in each tab.</p>
+
+<p>Therefore it is important to have descriptive document titles in our web
+applications, whether they get rendered on the backend or set in the client app.</p>
+
+<p>In the following short post, I&#8217;ll focus on showing how to do that with Ember.</p>
+
+<h3>Setting the title property</h3>
+
+<p>The way to set the document title from the browser is to just assign a
+value to the <code>title</code> property of the document:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nb">document</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="s2">&quot;1 mind-blowing way to set the title for your html document&quot;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Or, from jQuery:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nb">document</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span><span class="s2">&quot;1 mind-blowing way to set the title for your html document&quot;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Having context-aware titles</h3>
+
+<p>For our document titles to be really useful, it would be great to have some
+kind of information from the page&#8217;s content be reflected in them.</p>
+
+<p>To use <a href="https://github.com/balinterdi/rock-and-rol://github.com/balinterdi/rock-and-roll">my favorite example app, Rock &amp; Roll</a>, I expect the page that
+displays songs from a certain artist to have a segment that is common across all
+pages in the app and another segment that uniquely identifies that page. For
+songs of Led Zeppelin, this could be <code>Led Zeppelin songs - Rock &amp; Roll with
+Ember.js</code>.</p>
+
+<p>I choose to put the unique part first so it can be clearly seen in a tab even if
+its width is limited.</p>
+
+<h3>Finding the best place for setting the title</h3>
+
+<p>When considering where to implement setting the title, we have to keep in mind
+that the code has to run at each route transition so that the title for the new
+page is correctly set. Also, the context of the page (in the above example, the
+artist Led Zeppelin) already has to be known.</p>
+
+<p>Considering these constraints, the title could be set either in the
+<code>afterModel</code> or in the <code>setupController</code> hook. The controller instance is not
+needed for setting the title so I&#8217;ll go with the <code>afterModel</code> hook.</p>
+
+<p>For the <code>artists</code> route, we content ourselves with setting a static title and we
+can thus focus on the <code>artist.songs</code> route:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">afterModel</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">artistName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">modelFor</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="nx">artistName</span> <span class="o">+</span> <span class="s1">&#39; songs - Rock &amp; Roll&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we now navigate to the songs page for any artist, we can see the name of the
+artist reflected in the tab title:</p>
+
+<p><img src="http://balinterdi.com/images/posts/set-document-title-in-ember/see-artist-in-tab-title.png" alt="Artist name in tab title" /></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Make your own computed property macro in Ember.js]]></title>
@@ -3795,95 +3878,6 @@ tell me in the comments.)</p>
 
 <p>Your text editor might already have a <code>Find &amp; Replace in project</code> functionality.
 But maybe it does not. And surely, the command line version is most flexible.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[The appeal of one paradigm languages]]></title>
-    <link href="http://balinterdi.com/2013/06/19/the-appeal-of-one-paradigm-languages.html"/>
-    <updated>2013-06-19T23:19:00+02:00</updated>
-    <id>http://balinterdi.com/2013/06/19/the-appeal-of-one-paradigm-languages</id>
-    <content type="html"><![CDATA[<p>As I was preparing for <a href="https://speakerdeck.com/balint/clojure-data-structures-part-one">my presentation on Clojure data structures</a> I flashed
-back to a recent programming task I had to overcome. I don&#8217;t remember exactly
-what it was but it involved grouping data by particular keys and having an array
-of values for each key. When such a task rears its head I always have to play
-around in the REPL (err, the browser console) to see the exact working of each
-function I am about to rely on.</p>
-
-<p>Which one changes the array I call it on? Which one returns the new value and
-leaves the original intact? What about taking two arrays to make a third one?
-Javascript being slightly OOish, may I possibly use the + operator to join them
-together?</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>      <span class="c1">// x = [1,2,3]; y = 3;</span>
-</span><span class='line'><span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">concat</span><span class="p">([</span><span class="mi">3</span><span class="p">]);</span>  <span class="c1">// x = [1,2]; y = [1,2,3]</span>
-</span><span class='line'><span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>    <span class="c1">// x = [1,2]; y = [1,2,3]</span>
-</span><span class='line'><span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span> <span class="nx">y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">];</span> <span class="nx">z</span> <span class="o">=</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span><span class="p">;</span> <span class="c1">// z = &quot;1,23&quot; WAT?</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>I spend a considerable amount of time trying these out and since I discover no
-overarching design behind how they operate I come away none-the-wiser and so
-repeat the same process on a slighly different problem some time later. (slice
-vs. splice, anyone?)</p>
-
-<p>Before I bash on javascript some more, I find it important to state that
-it&#8217;s an enormous feat <a href="http://www.w3.org/community/webed/wiki/A_Short_History_of_JavaScript">to design and implement a language in ten days</a>,
-hat tip to Brendan Eich.</p>
-
-<p>The point I want to get across is that not having a solid design principle
-behind a language is actually a hindrance. It slows you down by having to try
-the pieces (functions, in this case) individually unless you have memorized
-them.</p>
-
-<p>On the other hand, when you work with a language that has a design philosophy
-you gain the benefit of faster development. In Clojure, in the case of
-collection types, that principle is immutability. You don&#8217;t have to read the
-docs or fiddle around in the REPL. The original never changes, you get the
-&#8220;modified&#8221; version in the returned value:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="k">def </span><span class="nv">x</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span><span class="p">])</span> <span class="p">(</span><span class="k">def </span><span class="nv">y</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">x</span> <span class="mi">3</span><span class="p">))</span> <span class="c1">; x = [1,2]; y=[1,2,3]</span>
-</span><span class='line'><span class="p">(</span><span class="k">def </span><span class="nv">x</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span><span class="p">])</span> <span class="p">(</span><span class="k">def </span><span class="nv">y</span> <span class="p">(</span><span class="nb">concat </span><span class="nv">x</span> <span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="c1">; x [1,2]; y=[1,2,3]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Let&#8217;s look at another language, Ruby.</p>
-
-<p>Called on an array, <code>push</code>, <code>concat</code>, <code>shift</code>, <code>pop</code> and <code>unshift</code> all modify
-their caller. <code>Push</code>, <code>concat</code> and <code>unshift</code> return the modified array, while
-<code>shift</code> and <code>pop</code> return the removed element.  So the rule seems to be that
-methods that expand the array return the new array, methods that take away an
-element return that element. So far so good.</p>
-
-<p>What about <code>take</code> and <code>drop</code>? They both take away a number of elements, from the
-beginning or from the end, and the number of elements being passed in as a
-parameter. I&#8217;d totally expect these methods to change the original in place.
-After all, few names sound more destructive than <code>drop</code>.  We&#8217;re in for a
-surprise. Both of them leave the original intact and return the taken (or
-dropped elements). In fact, you can pass in a number to both <code>shift</code> and <code>pop</code>
-which makes them identical to <code>take</code> and <code>drop</code> with the important distinction
-of whether they mutate or not the array they are called on.</p>
-
-<p>To add to the confusion, there is <code>delete</code> which deletes all occurrences of the
-element that is given as the parameter and there is <code>compact</code> which does exactly
-the same for a special case, nil. (So <code>compact</code> takes no parameter). However,
-it turns out that <code>delete</code> is mutating, but <code>compact</code> is not, preferring to return
-the array with no nils. <code>compact!</code> comes to the rescue which does mutation and so
-<code>x.compact!</code> is the same <code>x.delete(nil)</code>.</p>
-
-<p>To give an analogy from natural languages, learning operations on collections in
-Ruby and Javascript is like learning the article for each noun in German (der,
-die or das). There are rules but they are hard to remember in the first place
-and are often violated.</p>
-
-<p>Learning the same thing in Clojure is like learning articles in English: there
-is one true way to do it.</p>
 ]]></content>
   </entry>
   

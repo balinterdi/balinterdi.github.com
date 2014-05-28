@@ -9,8 +9,7 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="Intro to components in Ember Components landed in Ember in 1.0.rc6, in June 2013. They are reusable widgets
-that are built on top of HTML and provide &hellip;">
+  <meta name="description" content="This is Part 2 of a mini-series on components. Here is the first post in the series: Convert a view into a component Intro We saw how to turn the &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +76,237 @@ that are built on top of HTML and provide &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2014/02/12/making-an-emberjs-component-more-reusable.html">Making an Ember.js Component More Reusable</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-12T07:54:00+01:00" pubdate data-updated="true">Feb 12<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><em>This is Part 2 of a mini-series on components. Here is the first post in the series:</em></p>
+
+<p><em><a href="/2014/02/05/convert-a-view-into-a-component.html">Convert a view into a component</a></em></p>
+
+<h2>Intro</h2>
+
+<p><a href="/2014/02/05/convert-a-view-into-a-component.html">We saw how to turn the star-rating view into a component</a> to
+make it more reusable, and less reliant on its context. Everything that the
+component needs to do its job had to be passed in, and that is enough for it to
+be reusable not just across screens in your application but also across
+different applications.  Or is it? Let&#8217;s take a look at the component code
+again:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">StarRatingComponent</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">classNames</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;rating-panel&#39;</span><span class="p">],</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">fullStars</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;item.rating&#39;</span><span class="p">),</span>
+</span><span class='line'>  <span class="nx">numStars</span><span class="o">:</span>  <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;maxRating&#39;</span><span class="p">),</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">setRating</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">newRating</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;data-rating&#39;</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="nx">newRating</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">sendAction</span><span class="p">(</span><span class="s1">&#39;setAction&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Is something assumed about the object whose rating our component will display
+and set? I&#8217;ll give you some time to think about it.</p>
+
+<h2>A glove that fits all hands</h2>
+
+<p>What we assume is that the <code>item</code> that gets passed in has a <code>rating</code> property.
+If we really want our component to be used in all Ember applications (why not
+reach for the <em>stars</em>?), then this should not be an assumption that we make.
+After all, a player in a hockey team might have a <code>score</code> property and not
+rating. We could get around that by aliasing <code>score</code> to <code>rating</code> in our
+controller:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">PlayerController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ObjectController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">rating</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;score&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>However, this is inconvenient for the app developer and is only necessary
+because the star-rating component is not flexible enough. It&#8217;s as if I had to
+reshape my hand to fit the glove.</p>
+
+<p>So let&#8217;s make it take the property name as a parameter, too:</p>
+
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artists/songs&quot;&gt;
+  {{#each songs}}
+    &lt;div class=&quot;list-group-item&quot;&gt;
+      {{title}}
+      {{star-rating item=this ratingProperty=&quot;rating&quot; maxRating=5 setAction=&quot;setRating&quot;}}
+    &lt;/div&gt;
+  (...)
+  {{/each}}
+&lt;/script&gt;</code></pre>
+</div>
+
+
+<p>That was easy, now comes the harder part, the component code. Previously, the
+fullStars property of the component was just an alias for <code>item.rating</code>. We
+can&#8217;t do that anymore, since the name of the rating property is only known when
+the component is used in a template, and can thus differ in each case.</p>
+
+<p>Did Ember let us down this time? Before, it had kept the fullStars property of
+our component in sync with the item&#8217;s rating. We just sat back and took sips of
+our mojito. Now, when the going gets tough, we are on our own.</p>
+
+<p>Well, not really. We are doing some advanced stuff so it&#8217;s no surprise that we
+have to use advanced tools that are not needed in the majority of cases. Ember
+has nice lower-level functions to support us.</p>
+
+<p>We have to set up the property synchronization ourselves but it sounds scarier
+than it is. We just have to watch when the item&#8217;s rating (score, points,
+etc.) property changes and set the fullStars property to that value:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">StarRatingComponent</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">classNames</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;rating-panel&#39;</span><span class="p">],</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">numStars</span><span class="o">:</span>  <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;maxRating&#39;</span><span class="p">),</span>
+</span><span class='line'>  <span class="nx">fullStars</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">didInsertElement</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;ratingProperty&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;fullStars&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="nx">property</span><span class="p">));</span>
+</span><span class='line'>    <span class="nx">Ember</span><span class="p">.</span><span class="nx">addObserver</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">),</span> <span class="nx">property</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">ratingPropertyDidChange</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">willDestroyElement</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;ratingProperty&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">Ember</span><span class="p">.</span><span class="nx">removeObserver</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">),</span> <span class="nx">property</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">ratingPropertyDidChange</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">ratingPropertyDidChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">ratingProperty</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;fullStars&#39;</span><span class="p">,</span> <span class="nx">item</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ratingProperty</span><span class="p">));</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There are several things that might be new to you, dear reader, so let me go
+through each of them.</p>
+
+<p>The most important thing is the call to <a href="http://emberjs.com/api/classes/Ember.Observable.html#method_addObserver">&#8216;Ember.addObserver(object, property,
+context, function)&#8217;</a>. Whenever <code>property</code> of <code>object</code> changes, it
+calls <code>function</code> with <code>context</code> as its <code>this</code>. (Providing a <code>context</code> is
+optional).</p>
+
+<p>The observer function (<code>ratingPropertyDidChange</code>) gets the object that was
+changed as its first parameter and the property name that was changed. In this
+case, it does not have to do anything else but set the <code>fullStars</code> property of
+the component to the new value of the item&#8217;s rating property.</p>
+
+<p>The observer is set up in the <code>didInsertElement</code> function. It is a handy
+lifecycle-event for Ember views (and thus components) which gets called after
+the view has been inserted into the DOM. This time, we don&#8217;t need it to be in
+the DOM already but it serves as a convenient way to add the observer.</p>
+
+<p>Lastly, since the observer was added manually, it has to be torn down manually,
+too, when it is no longer needed. We do this in <code>willDestroyElement</code>, another
+view lifecycle event which gets called before the element gets removed from the
+DOM. Also, the code comments mention the following about <code>willDestroyElement</code>:</p>
+
+<pre><code>If you write a `willDestroyElement()` handler, you can assume that your
+`didInsertElement()` handler was called earlier for the same element.
+</code></pre>
+
+<p>This makes <code>didInsertElement</code> - <code>willDestroyElement</code> a perfect pair for manually
+setting up and tearing down event handlers (or observers) even if no DOM
+manipulation has to be carried out.</p>
+
+<p>I&#8217;ve made a jsbin to show how the star-rating component can now be used with
+a <code>score</code> property while the component code stays identical:</p>
+
+<p><a class="jsbin-embed" href="http://emberjs.jsbin.com/sokov/4/embed?html,js,output">Reusable Star Rating component</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
+
+<h3>Conclusion</h3>
+
+<p>We now have a star-rating component that is general enough to be used in all
+contexts. Go ahead and use it in your Ember app and let me know if I missed
+something.</p>
+
+<p>Actually, there are a couple of featurettes -unrelated to its flexibility, as
+far as I see- we can add which I might come back to.</p>
+
+<hr />
+
+<p><em>This was Part 2 of a mini-series on components. Here is the third post in the series:</em></p>
+
+<p><em><a href="/2014/02/18/readers-letters-making-an-ember-dot-js-component-even-better.html">Readers&#8217; Letters: Making an Ember.js Component Even Better</a></em></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1947,122 +2177,6 @@ But maybe it does not. And surely, the command line version is most flexible.</p
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2013/06/19/the-appeal-of-one-paradigm-languages.html">The Appeal of One Paradigm Languages</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-19T23:19:00+02:00" pubdate data-updated="true">Jun 19<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>As I was preparing for <a href="https://speakerdeck.com/balint/clojure-data-structures-part-one">my presentation on Clojure data structures</a> I flashed
-back to a recent programming task I had to overcome. I don&#8217;t remember exactly
-what it was but it involved grouping data by particular keys and having an array
-of values for each key. When such a task rears its head I always have to play
-around in the REPL (err, the browser console) to see the exact working of each
-function I am about to rely on.</p>
-
-<p>Which one changes the array I call it on? Which one returns the new value and
-leaves the original intact? What about taking two arrays to make a third one?
-Javascript being slightly OOish, may I possibly use the + operator to join them
-together?</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>      <span class="c1">// x = [1,2,3]; y = 3;</span>
-</span><span class='line'><span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">concat</span><span class="p">([</span><span class="mi">3</span><span class="p">]);</span>  <span class="c1">// x = [1,2]; y = [1,2,3]</span>
-</span><span class='line'><span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>    <span class="c1">// x = [1,2]; y = [1,2,3]</span>
-</span><span class='line'><span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span> <span class="nx">y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">];</span> <span class="nx">z</span> <span class="o">=</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span><span class="p">;</span> <span class="c1">// z = &quot;1,23&quot; WAT?</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>I spend a considerable amount of time trying these out and since I discover no
-overarching design behind how they operate I come away none-the-wiser and so
-repeat the same process on a slighly different problem some time later. (slice
-vs. splice, anyone?)</p>
-
-<p>Before I bash on javascript some more, I find it important to state that
-it&#8217;s an enormous feat <a href="http://www.w3.org/community/webed/wiki/A_Short_History_of_JavaScript">to design and implement a language in ten days</a>,
-hat tip to Brendan Eich.</p>
-
-<p>The point I want to get across is that not having a solid design principle
-behind a language is actually a hindrance. It slows you down by having to try
-the pieces (functions, in this case) individually unless you have memorized
-them.</p>
-
-<p>On the other hand, when you work with a language that has a design philosophy
-you gain the benefit of faster development. In Clojure, in the case of
-collection types, that principle is immutability. You don&#8217;t have to read the
-docs or fiddle around in the REPL. The original never changes, you get the
-&#8220;modified&#8221; version in the returned value:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="k">def </span><span class="nv">x</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span><span class="p">])</span> <span class="p">(</span><span class="k">def </span><span class="nv">y</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">x</span> <span class="mi">3</span><span class="p">))</span> <span class="c1">; x = [1,2]; y=[1,2,3]</span>
-</span><span class='line'><span class="p">(</span><span class="k">def </span><span class="nv">x</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span><span class="p">])</span> <span class="p">(</span><span class="k">def </span><span class="nv">y</span> <span class="p">(</span><span class="nb">concat </span><span class="nv">x</span> <span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="c1">; x [1,2]; y=[1,2,3]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Let&#8217;s look at another language, Ruby.</p>
-
-<p>Called on an array, <code>push</code>, <code>concat</code>, <code>shift</code>, <code>pop</code> and <code>unshift</code> all modify
-their caller. <code>Push</code>, <code>concat</code> and <code>unshift</code> return the modified array, while
-<code>shift</code> and <code>pop</code> return the removed element.  So the rule seems to be that
-methods that expand the array return the new array, methods that take away an
-element return that element. So far so good.</p>
-
-<p>What about <code>take</code> and <code>drop</code>? They both take away a number of elements, from the
-beginning or from the end, and the number of elements being passed in as a
-parameter. I&#8217;d totally expect these methods to change the original in place.
-After all, few names sound more destructive than <code>drop</code>.  We&#8217;re in for a
-surprise. Both of them leave the original intact and return the taken (or
-dropped elements). In fact, you can pass in a number to both <code>shift</code> and <code>pop</code>
-which makes them identical to <code>take</code> and <code>drop</code> with the important distinction
-of whether they mutate or not the array they are called on.</p>
-
-<p>To add to the confusion, there is <code>delete</code> which deletes all occurrences of the
-element that is given as the parameter and there is <code>compact</code> which does exactly
-the same for a special case, nil. (So <code>compact</code> takes no parameter). However,
-it turns out that <code>delete</code> is mutating, but <code>compact</code> is not, preferring to return
-the array with no nils. <code>compact!</code> comes to the rescue which does mutation and so
-<code>x.compact!</code> is the same <code>x.delete(nil)</code>.</p>
-
-<p>To give an analogy from natural languages, learning operations on collections in
-Ruby and Javascript is like learning the article for each noun in German (der,
-die or das). There are rules but they are hard to remember in the first place
-and are often violated.</p>
-
-<p>Learning the same thing in Clojure is like learning articles in English: there
-is one true way to do it.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -2087,6 +2201,10 @@ is one true way to do it.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/05/28/setting-the-document-title-in-ember-apps.html">Setting the document title in Ember apps</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/05/22/make-your-own-computed-property-macro-in-emberjs.html">Make your own computed property macro in Ember.js</a>
       </li>
     
@@ -2100,10 +2218,6 @@ is one true way to do it.</p>
     
       <li class="post">
         <a href="/2014/05/01/dependency-injection-in-ember-dot-js.html">Dependency injection in Ember.js - First steps</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/03/26/property-path-patterns-in-ember-dot-js.html">Observable path patterns in Ember</a>
       </li>
     
   </ul>
