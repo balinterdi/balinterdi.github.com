@@ -27,7 +27,7 @@ document.title = "1 mind-blowing way to set the title for your html document";
 Or, from jQuery:
 
 ```js
-document.attr('title',"1 mind-blowing way to set the title for your html document");
+$(document).attr('title',"1 mind-blowing way to set the title for your html document");
 ```
 
 ### Having context-aware titles
