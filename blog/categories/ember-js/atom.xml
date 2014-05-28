@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-05-28T11:08:12+02:00</updated>
+  <updated>2014-05-28T18:23:23+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -39,7 +39,7 @@ document.title = "1 mind-blowing way to set the title for your html document";
 <p>Or, from jQuery:</p>
 
 <p><code>js
-document.attr('title',"1 mind-blowing way to set the title for your html document");
+$(document).attr('title',"1 mind-blowing way to set the title for your html document");
 </code></p>
 
 <h3>Having context-aware titles</h3>
