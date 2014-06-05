@@ -5,12 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Setting the document title in Ember apps - Balint Erdi</title>
+  <title>Replacing items in browser history in Ember.js - Balint Erdi</title>
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="The document title serves as a quick and concise way to identify web pages. It
-gets displayed in search results and bookmarks and allows the user to &hellip;">
+  <meta name="description" content="One of the outstanding features of Ember.js is that all things related to URLs,
+including going back and forth in browser history, just work. This is &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +19,7 @@ gets displayed in search results and bookmarks and allows the user to &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2014/05/28/setting-the-document-title-in-ember-apps.html">
+  <link rel="canonical" href="http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -80,7 +80,7 @@ gets displayed in search results and bookmarks and allows the user to &hellip;">
   
   <header>
     
-      <h1 class="entry-title">Setting the Document Title in Ember Apps</h1>
+      <h1 class="entry-title">Replacing Items in Browser History in Ember.js</h1>
     
     
       <p class="meta">
@@ -96,88 +96,72 @@ gets displayed in search results and bookmarks and allows the user to &hellip;">
   
 
 
-<time datetime="2014-05-28T07:27:00+02:00" pubdate data-updated="true">May 28<span>th</span>, 2014</time>
+<time datetime="2014-06-04T07:49:00+02:00" pubdate data-updated="true">Jun 4<span>th</span>, 2014</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>The document title serves as a quick and concise way to identify web pages. It
-gets displayed in search results and bookmarks and allows the user to see at a
-glance what content she has open in each tab.</p>
+<div class="entry-content"><p>One of the outstanding features of Ember.js is that all things related to URLs,
+including going back and forth in browser history, just work. This is something
+people got used to with &#8220;classical&#8221;, server-side applications and that several
+other client-side frameworks lack.</p>
 
-<p>Therefore it is important to have descriptive document titles in our web
-applications, whether they get rendered on the backend or set in the client app.</p>
+<p>In this post, I am going to focus on a browser history feature, replacing
+entries in it as users navigate between routes instead of adding to it.</p>
 
-<p>In the following short post, I&#8217;ll focus on showing how to do that with Ember.</p>
+<h3>Navigating between routes in Ember</h3>
 
-<h3>Setting the title property</h3>
+<p>If either the <code>link-to</code> template helper or the route&#8217;s <code>transitionTo</code> method is
+used to move between routes (and thus URLs), a new entry is going to be added to
+the browser&#8217;s history. That is fine most of the time but sometimes the desired
+behavior might be replacing the current entry.</p>
 
-<p>The way to set the document title from the browser is to just assign a
-value to the <code>title</code> property of the document:</p>
+<p>Taking the example from the guide, if one is paging through the comments made on
+a photo where each one has its own route, we probably do not want these comment
+URLs to clutter the history. Similarly, we don&#8217;t want the user to land on these
+URLs when she hits the Back button in the browser.</p>
+
+<h3>Using the link-to helper</h3>
+
+<p>All that needs to be done is adding the <code>replace=true</code> option to the <code>link-to</code> helper.</p>
+
+<p>So if the link that takes you to the next comment is written like this:</p>
+
+<div>
+  <pre><code class='html'>{{link-to 'Next comment' 'photo.comment' nextComment}}</code></pre>
+</div>
+
+
+<p>It should now become:</p>
+
+<div>
+  <pre><code class='html'>{{link-to 'Next comment' 'photo.comment' nextComment replace=true}}</code></pre>
+</div>
+
+
+<h3>Transitioning from inside routes</h3>
+
+<p>The canonical way to go from one route to another is <code>route.transitionTo</code>. If
+flipping between comments of a photo was implemented as an action in the route,
+the action handler would have the following line:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nb">document</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="s2">&quot;1 mind-blowing way to set the title for your html document&quot;</span><span class="p">;</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">transitionTo</span><span class="p">(</span><span class="s1">&#39;photo.comment&#39;</span><span class="p">,</span> <span class="nx">nextComment</span><span class="p">);</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Or, from jQuery:</p>
+<p>To make that replace the current history entry, this becomes:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span><span class="s2">&quot;1 mind-blowing way to set the title for your html document&quot;</span><span class="p">);</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">replaceWith</span><span class="p">(</span><span class="s1">&#39;photo.comment&#39;</span><span class="p">,</span> <span class="nx">nextComment</span><span class="p">);</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h3>Having context-aware titles</h3>
+<p><code>replaceWith</code> takes the exact same parameters as <code>transitionTo</code>.</p>
 
-<p>For our document titles to be really useful, it would be great to have some
-kind of information from the page&#8217;s content be reflected in them.</p>
-
-<p>To use <a href="https://github.com/balinterdi/rock-and-rol://github.com/balinterdi/rock-and-roll">my favorite example app, Rock &amp; Roll</a>, I expect the page that
-displays songs from a certain artist to have a segment that is common across all
-pages in the app and another segment that uniquely identifies that page. For
-songs of Led Zeppelin, this could be <code>Led Zeppelin songs - Rock &amp; Roll with
-Ember.js</code>.</p>
-
-<p>I choose to put the unique part first so it can be clearly seen in a tab even if
-its width is limited.</p>
-
-<h3>Finding the best place for setting the title</h3>
-
-<p>When considering where to implement setting the title, we have to keep in mind
-that the code has to run at each route transition so that the title for the new
-page is correctly set. Also, the context of the page (in the above example, the
-artist Led Zeppelin) already has to be known.</p>
-
-<p>Considering these constraints, the title could be set either in the
-<code>afterModel</code> or in the <code>setupController</code> hook. The controller instance is not
-needed for setting the title so I&#8217;ll go with the <code>afterModel</code> hook.</p>
-
-<p>For the <code>artists</code> route, we content ourselves with setting a static title and we
-can thus focus on the <code>artist.songs</code> route:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>  <span class="nx">afterModel</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">artistName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">modelFor</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
-</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="nx">artistName</span> <span class="o">+</span> <span class="s1">&#39; songs - Rock &amp; Roll&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If we now navigate to the songs page for any artist, we can see the name of the
-artist reflected in the tab title:</p>
-
-<p><img src="/images/posts/set-document-title-in-ember/see-artist-in-tab-title.png" alt="Artist name in tab title" /></p>
+<p>Curtain falls.</p>
 </div>
 
 
@@ -201,7 +185,7 @@ artist reflected in the tab title:</p>
   
 
 
-<time datetime="2014-05-28T07:27:00+02:00" pubdate data-updated="true">May 28<span>th</span>, 2014</time>
+<time datetime="2014-06-04T07:49:00+02:00" pubdate data-updated="true">Jun 4<span>th</span>, 2014</time>
       
 
 <span class="categories">
@@ -216,8 +200,8 @@ artist reflected in the tab title:</p>
     
       <div class="sharing">
   
-    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2014/05/28/setting-the-document-title-in-ember-apps.html" data-via="baaz"
-      data-counturl="http://balinterdi.com/2014/05/28/setting-the-document-title-in-ember-apps.html" data-size="large">Tweet</a>
+    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html" data-via="baaz"
+      data-counturl="http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html" data-size="large">Tweet</a>
   
   
   <div class="g-plusone" data-size="large"></div>
@@ -228,10 +212,8 @@ artist reflected in the tab title:</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2014/05/22/make-your-own-computed-property-macro-in-emberjs.html" title="Previous Post: Make your own computed property macro in Ember.js">&laquo; Make your own computed property macro in Ember.js</a>
+        <a class="basic-alignment left" href="/2014/05/28/setting-the-document-title-in-ember-apps.html" title="Previous Post: Setting the document title in Ember apps">&laquo; Setting the document title in Ember apps</a>
       
-      
-        <a class="basic-alignment right" href="/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html" title="Next Post: Replacing items in browser history in Ember.js">Replacing items in browser history in Ember.js &raquo;</a>
       
     </p>
   </footer>
@@ -322,8 +304,8 @@ artist reflected in the tab title:</p>
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://balinterdi.com/2014/05/28/setting-the-document-title-in-ember-apps.html';
-        var disqus_url = 'http://balinterdi.com/2014/05/28/setting-the-document-title-in-ember-apps.html';
+        var disqus_identifier = 'http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html';
+        var disqus_url = 'http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html';
         var disqus_script = 'embed.js';
       
     (function () {

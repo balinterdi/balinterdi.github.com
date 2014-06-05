@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-05-28T18:23:23+02:00</updated>
+  <updated>2014-06-04T19:41:33+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,71 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Replacing items in browser history in Ember.js]]></title>
+    <link href="http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html"/>
+    <updated>2014-06-04T07:49:00+02:00</updated>
+    <id>http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js</id>
+    <content type="html"><![CDATA[<p>One of the outstanding features of Ember.js is that all things related to URLs,
+including going back and forth in browser history, just work. This is something
+people got used to with "classical", server-side applications and that several
+other client-side frameworks lack.</p>
+
+<p>In this post, I am going to focus on a browser history feature, replacing
+entries in it as users navigate between routes instead of adding to it.</p>
+
+<h3>Navigating between routes in Ember</h3>
+
+<p>If either the <code>link-to</code> template helper or the route's <code>transitionTo</code> method is
+used to move between routes (and thus URLs), a new entry is going to be added to
+the browser's history. That is fine most of the time but sometimes the desired
+behavior might be replacing the current entry.</p>
+
+<p>Taking the example from the guide, if one is paging through the comments made on
+a photo where each one has its own route, we probably do not want these comment
+URLs to clutter the history. Similarly, we don't want the user to land on these
+URLs when she hits the Back button in the browser.</p>
+
+<h3>Using the link-to helper</h3>
+
+<p>All that needs to be done is adding the <code>replace=true</code> option to the <code>link-to</code> helper.</p>
+
+<p>So if the link that takes you to the next comment is written like this:</p>
+
+<p><div>
+  <pre><code class='html'>{{link-to 'Next comment' 'photo.comment' nextComment}}</code></pre>
+</div>
+</p>
+
+<p>It should now become:</p>
+
+<p><div>
+  <pre><code class='html'>{{link-to 'Next comment' 'photo.comment' nextComment replace=true}}</code></pre>
+</div>
+</p>
+
+<h3>Transitioning from inside routes</h3>
+
+<p>The canonical way to go from one route to another is <code>route.transitionTo</code>. If
+flipping between comments of a photo was implemented as an action in the route,
+the action handler would have the following line:</p>
+
+<p><code>js
+this.transitionTo('photo.comment', nextComment);
+</code></p>
+
+<p>To make that replace the current history entry, this becomes:</p>
+
+<p><code>js
+this.replaceWith('photo.comment', nextComment);
+</code></p>
+
+<p><code>replaceWith</code> takes the exact same parameters as <code>transitionTo</code>.</p>
+
+<p>Curtain falls.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Setting the document title in Ember apps]]></title>
@@ -484,178 +549,6 @@ jQuery(window).on('resize', Ember.run.bind(this, this.handleResize));
 
 <p>Less code to write and all the mustaches are gone (not that there is anything
 wrong with &#123;&#123;mustaches&#125;&#125;, of course).</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Dependency injection in Ember.js - First steps]]></title>
-    <link href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html"/>
-    <updated>2014-05-01T08:38:00+02:00</updated>
-    <id>http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js</id>
-    <content type="html"><![CDATA[<p>Dependency injection (DI) is a less-known, yet powerful feature of the framework
-we know and love called Ember.js. It works through the container and is
-comprised of two parts: <em>registration</em> and <em>injection</em>.</p>
-
-<p>The framework itself uses it so that the objects instantiated through the
-container have the dependencies correctly initialized on them (for the
-theoretical programmers out there, the Ember DI system is thus probably
-considered a construction-time DI). The API methods are exposed to application
-developers for them to register and inject their own objects.</p>
-
-<p>In this first blog post, I'll introduce the main concepts. In a couple of
-further blog posts I intend to dig deeper, give examples of what it can be used
-for and show a few gotchas.</p>
-
-<h3>Step 1 - Registration</h3>
-
-<p>To be able to inject an entity onto others it first has to be registered on the
-container. Think of the container as the birthplace of objects in Ember. It
-knows how to instantiate objects and look up factories by their name.</p>
-
-<p>Throughout the post, I'll use the example of a store. If you have worked with
-ember-data, the store is the principal piece. It creates model objects and
-finds them by their type, id or other criteria so you probably want it to be
-accessible from routes and controllers alike.</p>
-
-<p>If you have not come through such a store, don't despair. It is but a handy example to
-illustrate dependency injection and how it works for a singleton object.</p>
-
-<p>Let's assume we have a reference to the store "class" in a variable called
-<code>Store</code>. To register said store, we write the following:</p>
-
-<p>```js
-Ember.Application.initializer({
-  name: "store",</p>
-
-<p>  initialize: function(container, application) {</p>
-
-<pre><code>container.register('store:main', Store, { singleton: true });
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<p>The container now knows the store by the name <code>store:main</code>. That is the name it
-has to be referred by subsequently. The <code>singleton: true</code> option
-instructs the container not to instantiate a new object each time but use a
-singleton instead.</p>
-
-<h3>Step 2 - Injection</h3>
-
-<p>Once the object/factory is registered, it can be used on other objects in the
-application. As mentioned above, a store is best used from controllers and
-routes. So let's inject them there:</p>
-
-<p>```js
-Ember.Application.initializer({
-  name: "injectStore",
-  before: "store",</p>
-
-<p>  initialize: function(container, application) {</p>
-
-<pre><code>application.inject('controller', 'store', 'store:main');
-application.inject('route', 'store', 'store:main');
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<p>The main method, <code>application.inject</code> takes as its first argument the object(s)
-where we want the injection to happen, then the injected name and then the name
-of what should be injected. The "what should be injected" has to be the same
-name we had registered the object previously with.</p>
-
-<p>The first parameter, <code>controller</code> and <code>route</code> define what is called a type
-injection. This means the injected name will be available on all instances of
-the type, all controllers and routes in this case. The injected name is <code>store</code>
-and it refers to a single instance of the store class since that's how we
-defined it at registration time.</p>
-
-<p>We could also just define a simple injection. In a somewhat hypotethical
-example, let's assume we only need the store on the artists route.  We write the
-following to achieve that:</p>
-
-<p>```js
-Ember.Application.initializer({
-  name: "injectStore",
-  before: "store",</p>
-
-<p>  initialize: function(container, application) {</p>
-
-<pre><code>application.inject('route:artists', 'store', 'store:main');
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<h3>Step 3 - Putting the two pieces together</h3>
-
-<p>Let's say we want to create an artist object in a route and that creating
-objects happens through the store (as it does in ember-data, e.g). The following
-snippets set up the injection:</p>
-
-<p>```js
-Ember.Application.initializer({
-  name: "store",</p>
-
-<p>  initialize: function(container, application) {</p>
-
-<pre><code>container.register('store:main', App.Store, { singleton: true });
-</code></pre>
-
-<p>  }
-});</p>
-
-<p>Ember.Application.initializer({
-  name: "injectStore",
-  before: "store",</p>
-
-<p>  initialize: function(container, application) {</p>
-
-<pre><code>application.inject('route', 'store', 'store:main');
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<p>This makes the singleton instance of the store available on all routes of the
-application so we could, for example, write this:</p>
-
-<p>```js
-App.IndexRoute = Ember.Route.extend({
-  model: function() {</p>
-
-<pre><code>return this.store.createRecord('artist');
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<p>I also <a href="http://emberjs.jsbin.com/tufoy/2/edit?html,js,output">created a jsbin</a> to show this in action, although admittedly there is
-little action at this point.</p>
-
-<h3>Why DI?</h3>
-
-<p>This is all fine and dandy, but what problems does dependency injection solve?
-First and foremost, it decouples the pieces of your application. Dependencies
-are not hardcoded but injected at construction time. This makes your components
-easier to use together since pieces can be swapped in and out as needed.</p>
-
-<p>It is also the de facto way of adding the objects that are not provided by
-Ember.js to your application. The store is an example of such an object but you
-can also add analytics integration, a pool of workers and other fancy things
-easily.</p>
-
-<p>An added benefit is improved unit testing since you can inject mocks as
-cooperators and verify calls made on those.</p>
-
-<p>We are going to look at other aspects of DI in Ember.js in more detail in a next
-post. Stay tuned and prepare your mojitos.</p>
 ]]></content>
   </entry>
   

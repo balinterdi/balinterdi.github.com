@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Google Groups tracker using Yahoo Pipes - Balint Erdi</title>
+  <title>Balint Erdi</title>
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="I -and I suppose most of my developer mates- am subscribed to many Google Groups. When there is a topic I am interested in or a problem I posted or &hellip;">
+  <meta name="description" content="I returned two weeks ago from the fantastic Euruko 2008 conference in Prague dazzled by the outstanding presentations and the power of Ruby. It is &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2009/01/17/google-groups-tracker-using-yahoo-pipes.html">
+  <link rel="canonical" href="http://balinterdi.com/blog/page/9/index.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -74,12 +74,15 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div>
-<article class="hentry" role="article">
+      <div class="blog-index">
   
+  
+  
+    <article>
+      
   <header>
     
-      <h1 class="entry-title">Google Groups Tracker Using Yahoo Pipes</h1>
+      <h1 class="entry-title"><a href="/2008/04/09/quick-adaptor-my-role-model.html">Quick Adaptor - My Role Model</a></h1>
     
     
       <p class="meta">
@@ -95,91 +98,158 @@
   
 
 
-<time datetime="2009-01-17T00:00:00+01:00" pubdate data-updated="true">Jan 17<span>th</span>, 2009</time>
+<time datetime="2008-04-09T00:00:00+02:00" pubdate data-updated="true">Apr 9<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>I -and I suppose most of my developer mates- am subscribed to many Google Groups. When there is a topic I am interested in or a problem I posted or replied to it would be cool to get notified of changes to it. Instead of checking it five times a day to see if someone has commented on it which also slices up the big, continuous chunks of time we programmers need. Also, some groups are littered by spam topics so it would be nice to filter out all the things you are not particularly fascinated about and be left with the things you are.</p>
+  <div class="entry-content"><p>I returned two weeks ago from the fantastic <a href="http://www.euruko2008.org/">Euruko 2008 conference</a> in Prague dazzled by the outstanding presentations and the power of Ruby. It is hard to pick a favorite but I especially liked David Black&#8217;s &#8220;Per-Object Behavior in Ruby&#8221; (slides hopefully coming up) mainly because I am a sucker for metaprogramming and the true object-orientedness of Ruby in all its glory.</p>
 
-<p>Unfortunately, Google Groups does not offer us the possibility of following certain topics (e.g by sending you an email whenever someone added his comment, a la Lighthouse). But there is a solution although I&#8217;ll admit the one I am describing below is not a particularly cunning or elegant one. If you felt the same pain and found a remedy, I am curious to know what it is, so please leave a comment.</p>
+<p>One fundamental concept was the singleton class which I think I&#8217;ve finally understood from this session. His example was the OpenStruct class whose instances learn to respond to all messages sent to them (this is Smalltalk/Ruby parlance, we could also say they learn to handle method calls) instead of throwing a NoMethodError. So I thought a great way to gain an insight of how this works is to actually code that up myself. Here is what I got:</p>
 
-<p>So, as we all know, the Internet is just a <a href="http://en.wikipedia.org/wiki/Series_of_tubes">series of tubes</a>, so the idea to use Yahoo Pipes to cobble together something came quite naturally. Ladies and gentlement, I created the <a href="http://pipes.yahoo.com/balinterdi/google_groups_issue_tracker">Googe Groups issue tracker</a>. It is capable of tracking two Google groups. You can pass three strings for each one and it generates an RSS of the items whose title have any of the strings you provide.</p>
+<pre lang="ruby">
+require 'test/unit'
+class QuickAdaptor
+  def method_missing(method_id, *args)
+    method_name = method_id.to_s
+    if method_name =~ /=$/
+      attr = method_name.to_s.chop
+      self.class.class_eval do
+        define_method method_id do |x|
+          instance_variable_set("@#{attr}", x)
+        end
+        method_name.chop!
+        define_method method_name.to_sym do
+          instance_variable_get "@#{attr}"
+        end
+      end
+      instance_variable_set("@#{attr}", args[0])
+    end
+  end
 
-<p>I know it has many shortcomings (to say the least). What if you want to track issues for 3 groups or more? More than 3 issues per group? My puny tracker can&#8217;t do that right now since its &#8220;legoed&#8221; together from <a href="http://pipes.yahoo.com/pipes/">Yahoo Pipes</a> building blocks and so it&#8217;s not programmable. You can, however, clone my pipe, expand it to handle more groups or more expressions, enter the groups you want to track and subscribe to the resulting RSS with your reader of choice.</p>
+end
 
-<p>It may still feel clumsy, since you have to regularly update your strings based on the issues you are interested in. I know a more general solution would be to hack together something that is more manageable and expandable which I might do soon. But it still feels so good from time to time to leave the serious, hard-thinking adult world and build Lego castles. So go ahead, don&#8217;t be shy, build your own castle and let me know about it! :)</p>
+class QuickSingletonAdaptor
+  # does the same as QuickAdaptor
+  # but only defines methods for singleton
+  # class of object, so it is not the class
+  # that "learns", but the singleton class
+  def method_missing(method_id, *args)
+    method_name = method_id.to_s
+    if method_name =~ /=$/
+      attr = method_name.to_s.chop
+      singleton_class = class << self ; self; end
+      singleton_class.instance_eval do
+        define_method method_id do |x|
+          instance_variable_set("@#{attr}", x)
+        end
+        method_name.chop!
+        define_method method_name.to_sym do
+          instance_variable_get "@#{attr}"
+        end
+      end
+      instance_variable_set("@#{attr}", args[0])
+    end
+  end
 
-<p><strong>UPDATE:</strong> Thanks to Bob, I realized Google has the very option I missed and constructed the pipe for :) However, there can still be some valid scenarios where it can be of service. As per <a href="http://jaimeiniesta.com">Jaime&#8217;s</a> comment I realized I did not really explain how to run the pipe, so let me do it through an example that is not too contrived:</p>
+end
 
-<p>Let&#8217;s suppose you are a <a href="http://datamapper.org">DataMapper</a> expert and you want to help those newbies/impatient people who put &#8216;help&#8217; in the title of their post. In that case, you would input http://groups.google.com/group/datamapper in the &#8220;Group1 URL&#8221; box and &#8220;help&#8221; in the &#8220;Group1 - Title 1&#8221; field. At the pipe output you&#8217;d only see those posts which have help in their title, then.</p>
+if __FILE__ == $0
+  class ModuleTester < Test::Unit::TestCase
 
-<p>If you want to also see announcements and the convention would be to have [DM] in the title of those posts, you would then enter &#8220;[DM]&#8221; in the &#8220;Group1 - Title 2&#8221; field.</p>
+    def test_quick_adaptor_creates_methods
+      qa = QuickAdaptor.new
+      qa.age = 18
+      assert_equal(18, qa.age)
+      qa.age = 24
+      assert_equal(24, qa.age)
+      assert_equal(nil, qa.name)
+      qa.name = 'joe'
+      assert_equal('joe', qa.name)
+      assert(!qa.respond_to(:nam))
+    end
 
-<p>To construct a filter which only lists ruby-quiz related posts on <a href="http://groups.google.com/group/ruby-talk-google">http://groups.google.com/group/ruby-talk-google</a> is left as an exercise to the reader :).</p>
+    def test_quick_adaptor_creates_instance_methods
+      qa1 = QuickAdaptor.new
+      qa1.age = 18
+      qa2 = QuickAdaptor.new
+      assert(qa2.respond_to?(:age=))
+      assert(qa2.respond_to?(:age))
+      assert_equal(nil, qa2.age)
+    end
+
+    def test_quick_singleton_adaptor_creates_singleton_methods
+      qa1 = QuickSingletonAdaptor.new
+      qa1.age = 18
+      qa2 = QuickSingletonAdaptor.new
+      # qa2 at this point should not know anything!
+      assert(!qa2.respond_to?(:age=))
+      assert(!qa2.respond_to?(:age))
+    end
+
+  end
+end
+
+</pre>
+
+
+<p>As a test enthusiastic I embedded the tests in the same file which also has the advantage of giving a documentation of what the code achieves.</p>
+
+<p>You can see that the real difference between the QuickAdaptor and QuickSingletonAdaptor classes lies in the following lines:</p>
+
+<pre lang="ruby">
+class QuickAdaptor
+  ...
+  self.class.class_eval do
+    define_method method_id do |x|
+      ...
+    end
+  end
+end
+</pre>
+
+
+<pre lang="ruby">
+class QuickSingletonAdaptor
+  ...
+  singleton_class = class << self ; self; end
+  singleton_class.instance_eval do
+    define_method method_id do |x|
+      ...
+    end
+  end
+end
+</pre>
+
+
+<p>You can see from the tests that the QuickAdaptor shares the knowledge it gained with its peers (other QuickAdaptor instances), whereas QuickSingletonAdaptor is an egoist, it keeps it to itself! That&#8217;s why I agree with David Black that the best way to call the class that only one instance can access is singleton class because this has more expressive power than other terms (e.g metaclass, eigenclass, etc.)</p>
+
+<p>My goal is to act like the QuickAdaptor, to suck in all ruby knowledge and learn as fast as QuickAdaptor does while having fun at the same time!</p>
+
+<p>ps. I have also taken a look at how Matz&#8217;s <a href="http://www.ruby-doc.org/stdlib/libdoc/ostruct/rdoc/index.html">OpenStruct class</a> accomplishes the same (well, much more :) ). It uses a table of fields where each new &#8220;member method&#8221; is defined. Nice.</p>
 </div>
-
-
-  <footer>
-    <!--
-    <p class="meta">
-      
   
-
-<span class="byline author vcard">Posted by <span class="fn">Balint Erdi</span></span>
-
-      
-
-
-
-
-
-
-
-
   
 
 
-<time datetime="2009-01-17T00:00:00+01:00" pubdate data-updated="true">Jan 17<span>th</span>, 2009</time>
-      
-
-
-    </p>
-    -->
+    </article>
+  
+  <div class="pagination">
     
-      <div class="sharing">
-  
-    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2009/01/17/google-groups-tracker-using-yahoo-pipes.html" data-via="baaz"
-      data-counturl="http://balinterdi.com/2009/01/17/google-groups-tracker-using-yahoo-pipes.html" data-size="large">Tweet</a>
-  
-  
-  <div class="g-plusone" data-size="large"></div>
-  
-  
-</div>
-
+    <a href="/blog/archives">Blog Archives</a>
     
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2009/01/17/a-ruby-style-currency-converter.html" title="Previous Post: A ruby-style currency converter">&laquo; A ruby-style currency converter</a>
-      
-      
-        <a class="basic-alignment right" href="/2009/01/25/mysql-table-types-and-foreign-key-constraints.html" title="Next Post: MySQL table types and foreign key constraints">MySQL table types and foreign key constraints &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
+    <a class="next" href="/blog/page/8/">Newer &rarr;</a>
+    
+  </div>
 </div>
-
 <aside class="sidebar">
   
     <section>
   <h1>Contact</h1>
   <div>
-    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let's start talking.
+    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let&#8217;s start talking.
   </div>
 </section>
 
@@ -234,7 +304,6 @@
 
   
 </aside>
-
 
     </div>
   </div>

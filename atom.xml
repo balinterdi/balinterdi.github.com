@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-05-28T18:23:23+02:00</updated>
+  <updated>2014-06-04T19:41:33+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,73 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Replacing items in browser history in Ember.js]]></title>
+    <link href="http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html"/>
+    <updated>2014-06-04T07:49:00+02:00</updated>
+    <id>http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js</id>
+    <content type="html"><![CDATA[<p>One of the outstanding features of Ember.js is that all things related to URLs,
+including going back and forth in browser history, just work. This is something
+people got used to with &#8220;classical&#8221;, server-side applications and that several
+other client-side frameworks lack.</p>
+
+<p>In this post, I am going to focus on a browser history feature, replacing
+entries in it as users navigate between routes instead of adding to it.</p>
+
+<h3>Navigating between routes in Ember</h3>
+
+<p>If either the <code>link-to</code> template helper or the route&#8217;s <code>transitionTo</code> method is
+used to move between routes (and thus URLs), a new entry is going to be added to
+the browser&#8217;s history. That is fine most of the time but sometimes the desired
+behavior might be replacing the current entry.</p>
+
+<p>Taking the example from the guide, if one is paging through the comments made on
+a photo where each one has its own route, we probably do not want these comment
+URLs to clutter the history. Similarly, we don&#8217;t want the user to land on these
+URLs when she hits the Back button in the browser.</p>
+
+<h3>Using the link-to helper</h3>
+
+<p>All that needs to be done is adding the <code>replace=true</code> option to the <code>link-to</code> helper.</p>
+
+<p>So if the link that takes you to the next comment is written like this:</p>
+
+<div>
+  <pre><code class='html'>{{link-to 'Next comment' 'photo.comment' nextComment}}</code></pre>
+</div>
+
+
+<p>It should now become:</p>
+
+<div>
+  <pre><code class='html'>{{link-to 'Next comment' 'photo.comment' nextComment replace=true}}</code></pre>
+</div>
+
+
+<h3>Transitioning from inside routes</h3>
+
+<p>The canonical way to go from one route to another is <code>route.transitionTo</code>. If
+flipping between comments of a photo was implemented as an action in the route,
+the action handler would have the following line:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">transitionTo</span><span class="p">(</span><span class="s1">&#39;photo.comment&#39;</span><span class="p">,</span> <span class="nx">nextComment</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To make that replace the current history entry, this becomes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">replaceWith</span><span class="p">(</span><span class="s1">&#39;photo.comment&#39;</span><span class="p">,</span> <span class="nx">nextComment</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>replaceWith</code> takes the exact same parameters as <code>transitionTo</code>.</p>
+
+<p>Curtain falls.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Setting the document title in Ember apps]]></title>
@@ -3844,40 +3911,6 @@ or use a third-party service, like <a href="http://caliper.io/">Caliper</a>.</p>
 
 <p>That said, ember-renderspeed is a very quick and easy way to profile your app
 and can be the first tool you reach for when the need arises.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Find and Replace in all files]]></title>
-    <link href="http://balinterdi.com/2013/08/23/find-and-replace-in-all-files.html"/>
-    <updated>2013-08-23T22:01:00+02:00</updated>
-    <id>http://balinterdi.com/2013/08/23/find-and-replace-in-all-files</id>
-    <content type="html"><![CDATA[<p>You want to change a string with another one in some directory in your project.</p>
-
-<p>Here is a one liner to do that:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>for spec_file in $(ag -g _spec.rb spec/); do sed -i.bak 's/john/jane/g' $spec_file; done</span></code></pre></td></tr></table></div></figure>
-
-
-<p>A few caveats:</p>
-
-<ul>
-<li>The match should be case-insensitive. Unfortunately, <code>s/john/jane/gI</code> does not
-work under OSX.</li>
-<li>The -i tells sed to do an in-place replacement. Again, under OSX, however, you
-must give an extension for the backup files. A <code>git clean -f</code> can get rid of
-these in one fell swoop.</li>
-<li>You can use <code>find spec/ -name '_spec.rb'</code> instead of the ag command. <a href="http://geoff.greer.fm/2011/12/27/the-silver-searcher-better-than-ack/">But why
-would you?</a></li>
-</ul>
-
-
-<p>(If you know how to do the replacement with awk, or something similar, please
-tell me in the comments.)</p>
-
-<p>Your text editor might already have a <code>Find &amp; Replace in project</code> functionality.
-But maybe it does not. And surely, the command line version is most flexible.</p>
 ]]></content>
   </entry>
   
