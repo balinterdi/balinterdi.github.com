@@ -73,4 +73,9 @@ artist reflected in the tab title:
 
 ![Artist name in tab title](/images/posts/set-document-title-in-ember/see-artist-in-tab-title.png)
 
+*NOTE: Jonathan Evans has [a great post][2] in which he uses the `didTransition`
+action in routes to set the document title. I recommend you to read it.*
+
 [1]: https://github.com/balinterdi/rock-and-rol://github.com/balinterdi/rock-and-roll
+[2]: http://www.jrhe.co.uk/setting-the-document-title-in-ember-js-apps/
+

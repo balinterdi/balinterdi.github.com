@@ -65,3 +65,4 @@ this.replaceWith('photo.comment', nextComment);
 `replaceWith` takes the exact same parameters as `transitionTo`.
 
 Curtain falls.
+
