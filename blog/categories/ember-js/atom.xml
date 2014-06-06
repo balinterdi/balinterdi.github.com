@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-06-04T19:41:33+02:00</updated>
+  <updated>2014-06-06T15:19:45+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -152,6 +152,9 @@ $(document).attr('title', artistName + ' songs - Rock &amp; Roll');
 artist reflected in the tab title:</p>
 
 <p><img src="/images/posts/set-document-title-in-ember/see-artist-in-tab-title.png" alt="Artist name in tab title" /></p>
+
+<p><em>NOTE: Jonathan Evans has <a href="http://www.jrhe.co.uk/setting-the-document-title-in-ember-js-apps/">a great post</a> in which he uses the <code>didTransition</code>
+action in routes to set the document title. I recommend you to read it.</em></p>
 ]]></content>
   </entry>
   
