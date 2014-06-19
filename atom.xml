@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-06-06T15:19:45+02:00</updated>
+  <updated>2014-06-18T23:18:54+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,310 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Indicating Progress - Loading Routes in Ember.js]]></title>
+    <link href="http://balinterdi.com/2014/06/18/indicating-progress-loading-routes-in-ember-dot-js.html"/>
+    <updated>2014-06-18T21:38:00+02:00</updated>
+    <id>http://balinterdi.com/2014/06/18/indicating-progress-loading-routes-in-ember-dot-js</id>
+    <content type="html"><![CDATA[<p>When an Ember app is being loaded at first, the user sees a blank screen. When
+transitioning between two routes and loading data to render for the destination
+template, there is no indication that something is happening and thus the user can
+be perplexed. Ideally, loading data happens fast enough so that users barely
+notice the blank screen or freeze, but web apps do not always behave ideally.</p>
+
+<p>If you have read some of my other articles on Ember, you will not be surprised
+to hear that there is a splendid solution for this problem and that it is based
+on a convention.</p>
+
+<h3>Unresolved promises</h3>
+
+<p>The <code>model</code> hook of routes is the canonical place to fetch data needed
+to render the corresponding template. When a promise is returned, execution is
+blocked until that promise is resolved (or rejected). That is the period during
+which the application seems unresponsive. When starting up the application,
+this can even mean that the user only sees a blank screen. Since data is fetched
+asyncronously, not even the spinner in the tab title is going to spin.</p>
+
+<p>The user may just close the tab and go on with her life. We can&#8217;t let that
+happen and unsurprisingly Ember has a convention-based solution that is easy to
+work with and customize.</p>
+
+<h3>Beautiful, reusable conventions</h3>
+
+<p><a href="http://balinterdi.com/2014/02/26/a-common-resource-route-pattern-in-ember-dot-js.html">We saw</a> how each resource route (and thus each route level) creates an
+outlet for the level below to render content in. Let&#8217;s take a look at the routes
+of the application to see how that plays out:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">resource</span><span class="p">(</span><span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">resource</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;:slug&#39;</span> <span class="p">},</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">(</span><span class="s1">&#39;songs&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The outlet defined in the (top-level) application template is going to be filled
+in by the content rendered by the first-level templates (in this case, <code>artists</code>).</p>
+
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot;&gt;
+  &lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;page-header&quot;&gt;
+      {{#link-to &quot;index&quot;}}
+        &lt;h1&gt;Rock &amp; Roll&lt;small&gt; with Ember.js&lt;/small&gt;&lt;/h1&gt;
+      {{/link-to}}
+    &lt;/div&gt;
+    &lt;div class=&quot;row&quot;&gt;
+      {{outlet}}
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;</code></pre>
+</div>
+
+
+<p>Next, the outlet in the <code>artists</code> template is populated by the routes below the
+artists resource route:</p>
+
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artists&quot;&gt;
+  &lt;div class=&quot;col-md-4&quot;&gt;
+    (list of artists)
+  &lt;/div&gt;
+  &lt;div class=&quot;col-md-8&quot;&gt;
+    &lt;div class=&quot;list-group&quot;&gt;
+      {{outlet}}
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;</code></pre>
+</div>
+
+
+<p>The artist template also defines an outlet into which content is rendered by
+the routes below the artist resource. In this case, there is no common markup
+for a single artist so the template only defines the outlet:</p>
+
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist&quot;&gt;
+  {{outlet}}
+&lt;/script&gt;</code></pre>
+</div>
+
+
+<p>Finally, there is a single route defined below the <code>artist</code> resource, <code>artist.songs</code>:</p>
+
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/songs&quot;&gt;
+  (...)
+  {{#each sortedSongs}}
+    &lt;div class=&quot;list-group-item&quot;&gt;
+      {{title}}
+      {{star-rating ...}}
+    &lt;/div&gt;
+  {{/each}}
+  (...)
+&lt;/script&gt;</code></pre>
+</div>
+
+
+<h3>Loading routes build on the nested routes pattern</h3>
+
+<p>The ingenious thing about indicating that loading data from the backend is
+happening is that it leverages the &#8220;nested routes, nested templates&#8221;
+architecture explained above.</p>
+
+<p>When the model hook of a certain route returns a promise that is not resolved, a
+so-called loading template <strong>at the same level as the route</strong> is going to be
+rendered.</p>
+
+<p>When loading the list of artists in the <code>artists</code> route, a loading route at the
+same level is going to be activated. That, by default, means a top-level loading
+template is rendered.</p>
+
+<p>Consequently, all we need to do is to put into that template what we want the user to see
+while data is being fetched. Currently that is what she sees in that scenario:</p>
+
+<p><img src="http://balinterdi.com/images/posts/loading-routes/top-level-loading-indication-before.png" alt="Loading indication before" /></p>
+
+<p>You think we can beat that?</p>
+
+<h3>Top-level loading template</h3>
+
+<p>The convention says that the loading route (and thus template) should be the
+sibling of the route we define it for and should be called <code>loading</code>.</p>
+
+<p>The loading template for the <code>artists</code> route should consequently be called
+<code>loading</code>:</p>
+
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;loading&quot;&gt;
+  &lt;div class=&quot;loading-pane&quot;&gt;
+    &lt;div class=&quot;loading-message&quot;&gt;
+      Loading stuff, please have a cold beer.
+      &lt;div class=&quot;spinner&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;</code></pre>
+</div>
+
+
+<p>Let&#8217;s inspect what our app looks like while loading data from the backend:</p>
+
+<p><img src="http://balinterdi.com/images/posts/loading-routes/top-level-loading-indication-after.png" alt="Loading indication before" /></p>
+
+<p>Nice, but it gets nicer still.</p>
+
+<h3>Loading route for the songs</h3>
+
+<p>We can now descend a couple of levels and make a loading template for when the
+songs of a certain artist are being fetched.</p>
+
+<p>Let&#8217;s take a look at the &#8220;routing table&#8221; to see what that template should be
+named:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">resource</span><span class="p">(</span><span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">resource</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;:slug&#39;</span> <span class="p">},</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">(</span><span class="s1">&#39;songs&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The loading route should be the sibling of the route under consideration.</p>
+
+<p>In this particular case, this latter is <code>artist.songs</code> and thus the loading
+template should be named <code>artist.loading</code>:</p>
+
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/loading&quot;&gt;
+  &lt;div class=&quot;loading-pane&quot;&gt;
+    &lt;div class=&quot;loading-message&quot;&gt;
+      Loading the artist, please have an organic orange juice.
+    &lt;/div&gt;
+    &lt;div class=&quot;spinner&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;</code></pre>
+</div>
+
+
+<p><img src="http://balinterdi.com/images/posts/loading-routes/artist-loading-indication.png" alt="Indicating loading artist" /></p>
+
+<h3>Customizing loading route behavior</h3>
+
+<p>More precisely, what happens when entering a route where one of the model hooks
+returns an unresolved promise is that a <code>loading</code> event is fired on the
+route.</p>
+
+<p>We saw above that the default implementation is to look up a route at the same
+level as the route itself and render the corresponding template.</p>
+
+<p>However, this behavior is customizable. For example, we can pop up an alert box
+in 1993-style, telling the user she needs to wait.</p>
+
+<p>Below, I do that for the top-level <code>artists</code> route:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">someDataThatTakesTooLongToFetch</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">loading</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;Loading data, go make some coffee.&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It works:</p>
+
+<p><img src="http://balinterdi.com/images/posts/loading-routes/top-level-loading-with-alert.png" alt="1993-style loading indication" /></p>
+
+<p>Another thing we can do is to render another loading template:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">LoadingRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">renderTemplate</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;working&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;working&quot;&gt;
+  &lt;div class=&quot;loading-pane&quot;&gt;
+    &lt;div class=&quot;loading-message&quot;&gt;
+      I work hard while you play hard.
+      &lt;div class=&quot;spinner&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;</code></pre>
+</div>
+
+
+<p>Which also just works:</p>
+
+<p><img src="http://balinterdi.com/images/posts/loading-routes/top-level-different-template.png" alt="Rendering a different template" /></p>
+
+<p>Since handling the loading state happens in the route, the most powerful piece
+of Ember architecture, the possibilities are many.</p>
+
+<h3>Why I love this solution and why you should, too</h3>
+
+<p>In summary, let&#8217;s see what Ember&#8217;s solution of indicating the loading of data
+brings to the table:</p>
+
+<ol>
+<li>It uses a convention to eliminate boilerplate and spare you from having to
+come up with your own solution.</li>
+<li>It allows different markup and text for the different &#8220;slow&#8221; parts. By
+default, each loading template will be rendered exactly where the data would
+be rendered.</li>
+<li>If this default behavior does not suit your taste or needs, there are several
+ways to tweak it, in well-defined ways.</li>
+</ol>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Replacing items in browser history in Ember.js]]></title>
@@ -3882,38 +4186,6 @@ the identity map.</p>
 <p>Furthermore, I also think our code has become better organized. The models for
 our routes have now become one-liners and can quickly be read and understood at
 a casual glance instead of being buried under the minutiae of AJAX calls.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Profile your Ember app with ember-renderspeed]]></title>
-    <link href="http://balinterdi.com/2013/11/27/profile-your-ember-app-with-ember-renderspeed.html"/>
-    <updated>2013-11-27T18:56:00+01:00</updated>
-    <id>http://balinterdi.com/2013/11/27/profile-your-ember-app-with-ember-renderspeed</id>
-    <content type="html"><![CDATA[<p>If your application has lots of things going on or you render a large list, you
-might see your once snappy app lose some of that swiftness. Naturally, you want
-to speed your application up and the first thing to do in these cases is to know
-where the bottlenecks are.</p>
-
-<p>One solution to this is to integrate <a href="https://github.com/eviltrout/ember-renderspeed">ember-renderspeed</a>, a very simple library
-released by the Discourse team. It shows the rendering time of your templates
-and views on your development console, in a nicely nested form. Don&#8217;t get
-frightened by the verb &#8220;integrate&#8221;. It is as easy as <a href="https://raw.github.com/eviltrout/ember-renderspeed/master/ember-renderspeed.js">downloading the js file</a> and
-adding a script tag to it.</p>
-
-<p>Once you did that, open your Javascript console in your browser, reload the page
-and observe the profile of your application. It is enabled by default on the
-Ember discussion forum, so you can take a look there. You will see something
-like the following:</p>
-
-<p><img src="http://balinterdi.com/images/ember-renderspeed-screenshot.png" alt="ember-renderspeed screenshot" /></p>
-
-<p>Under the hood, ember-renderspeed uses <a href="http://emberjs.com/api/classes/Ember.Instrumentation.html">Ember&#8217;s instrumentation facilities</a>, so
-should ember-renderspeed not work for your problem, you can always roll your own
-or use a third-party service, like <a href="http://caliper.io/">Caliper</a>.</p>
-
-<p>That said, ember-renderspeed is a very quick and easy way to profile your app
-and can be the first tool you reach for when the need arises.</p>
 ]]></content>
   </entry>
   
