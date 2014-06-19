@@ -274,4 +274,7 @@ brings to the table:
 1. If this default behavior does not suit your taste or needs, there are several
    ways to tweak it, in well-defined ways.
 
+*Note: The latest version of the code that contains these changes is [available on Github][2].*
+
 [1]: /2014/02/26/a-common-resource-route-pattern-in-ember-dot-js.html
+[2]: https://github.com/balinterdi/rock-and-roll/releases/tag/loading-routes
