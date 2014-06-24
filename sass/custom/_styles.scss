@@ -1,2 +1,8 @@
 // This File is imported last, and will override other styles in the cascade
 // Add styles here to make changes without digging in too much
+.email-optin-box {
+  @extend .serif;
+  padding: 10px;
+  border: 1px solid #d8d8d8;
+  background-color: #f4f2ed;
+}
