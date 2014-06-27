@@ -9,8 +9,8 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="When an Ember app is being loaded at first, the user sees a blank screen. When
-transitioning between two routes and loading data to render for the &hellip;">
+  <meta name="description" content="There is a somewhat subtle bug in the current version of the Rock &amp; Roll with
+Ember app. If you start to create a song for an artist that does &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,6 +74,229 @@ transitioning between two routes and loading data to render for the &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2014/06/26/ember-gotcha-controllers-are-singletons.html">Ember Gotcha: Controllers Are Singletons</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-06-26T08:25:00+02:00" pubdate data-updated="true">Jun 26<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>There is a somewhat subtle bug in the current version of the Rock &amp; Roll with
+Ember app. If you start to create a song for an artist that does not have one
+and then switch to another one, the song creation process does not need to be
+restarted by clicking on the &#8220;Why don&#8217;t you create one?&#8221; link. Also, if you&#8217;ve
+already partially inputted the name of the song for the first one, it stays
+there for the second artist:</p>
+
+<p><img src="/images/posts/singleton-controllers/start-song-creation-for-radiohead.png" alt="Start creating a song for Radiohead" />
+<img src="/images/posts/singleton-controllers/new-song-for-radiohead.png" alt="Input Karma for Radiohead" />
+<img src="/images/posts/singleton-controllers/new-song-for-rhcp.png" alt="Observe song title stays for Red Hot Chili Peppers" /></p>
+
+<p>The above behavior was brought to my attention by <a href="https://twitter.com/davidlormor">David</a>
+<a href="http://davidlormor.com">Lormor</a>, an astute reader and watcher of my screencasts.</p>
+
+<p>In some circumstances it is desirable for the result of some user interaction to
+linger between route transitions but in other cases it is not. I put the
+current example firmly in the latter camp and thus consider the above a bug.</p>
+
+<p>Let me explain what causes this behavior and then provide a simple solution to fix it.</p>
+
+<h3>Repeat after me: controllers are singletons</h3>
+
+<p>Controllers in Ember are singletons. Controllers in Ember are singletons.
+Controllers in Ember are singletons.</p>
+
+<p>When the user leaves a page and goes to another one, the controller is not
+torn down. It lives on, keeping its properties.</p>
+
+<p>This makes total sense for a framework that aims to be a tool for creating
+long-lived, rich-client side applications but is something to watch out for
+when you develop Ember applications.</p>
+
+<p>If you have a long background in back-end development, like yours truly,
+it is especially easy to fall prey to this, as you could see.</p>
+
+<h3>Same controller, different model</h3>
+
+<p>Initially, when the applicaiton is loaded, the <code>songCreationStarted</code> property
+of the controller is set to false. When the user clicks the &#8220;create one&#8221; in the
+&#8220;Why don&#8217;t you create one?&#8221; blurb, it is set to true and thus the text input
+field appears to allow adding a new song.</p>
+
+<p>Now comes the tricky part. If the user then decides to go to a different artist,
+she clicks the name of another artist in the sidebar. What happens? A transition
+is made from one <code>ArtistSongsRoute</code> to another <code>ArtistSongsRoute</code>. The artist
+is going to be different but the same <code>ArtistSongsController</code> is used.</p>
+
+<p>To prove my point, here are two screenshots of the Ember Inspector&#8217;s sidebar.
+The first one is before, the second one is after the transition between
+<code>/artists/radiohead/songs</code> and <code>/artists/red-hot-chili-peppers/songs</code>:</p>
+
+<p><img src="/images/posts/singleton-controllers/ember-inspector-radiohead-songs.png" alt="Ember Inspector - Radiohead songs" />
+<img src="/images/posts/singleton-controllers/ember-inspector-rhcp-songs.png" alt="Ember Inspector - RHCP songs" /></p>
+
+<p>You can see that the controller is the same Ember object but the value of the <code>artist</code> property changes.</p>
+
+<h3>Understanding the problem</h3>
+
+<p>When the transition is made between the two artists, the artist object is
+changed and consequently any data bound to the artist (and the <code>artist</code> property
+of the <code>ArtistSongs</code> controller) is going to be rerendered but, since the
+controller instance is not changed, unrelated data will stay unchanged on
+screen.</p>
+
+<p>What happens in the code? If you take a look at the template, you see that the
+text input field is shown if <code>canCreateSong</code> is true:</p>
+
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/songs&quot;&gt;
+  {{#if canCreateSong}}
+    &lt;div class=&quot;list-group-item&quot;&gt;
+      {{input type=&quot;text&quot; class=&quot;new-artist&quot; placeholder=newSongPlaceholder value=newTitle insert-newline=&quot;createSong&quot; }}
+      &lt;button class=&quot;btn btn-primary btn-sm new-song-button&quot; {{action &quot;createSong&quot;}}&gt;Add&lt;/button&gt;
+      (...)
+    &lt;/div&gt;
+  {{/if}}
+&lt;/script&gt;</code></pre>
+</div>
+
+
+<p><code>canCreateSong</code> is defined in the controller and is true if either
+<code>songCreationStarted</code> is true or if there are already songs. Since
+<code>songCreationStarted</code> has just been set to true by the <code>enabledSongCreation</code>
+action (and the controller instance is not changed) when the user clicked the
+&#8220;create one&#8221; link for the first artist, <code>canCreateSong</code> stays true and the
+text field stays visible:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">songCreationStarted</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">canCreateSong</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">enableSongCreation</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>A simple fix</h3>
+
+<p>To fix this, the simplest solution is to manually reset the properties that we
+do not want to persist.</p>
+
+<p>One solution is to do this in the <code>setupController</code> of the route since that
+always gets called when transitioning to a new route:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">setupController</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">controller</span><span class="p">,</span> <span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">(</span><span class="nx">controller</span><span class="p">,</span> <span class="nx">model</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">controller</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">modelFor</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">));</span>
+</span><span class='line'>    <span class="nx">controller</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;newTitle&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">controller</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And that totally works. However, I prefer placing this &#8220;resetting&#8221; code to the
+controller, probably because it is strictly controller-related and also because
+I can make the code really telling there:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">songCreationStarted</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">canCreateSong</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">artistDidChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;newTitle&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}.</span><span class="nx">observes</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">),</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <code>observes</code> function property extension will run the <code>artistDidChange</code> code
+every time the <code>artist</code> property of the controller changes and that is exactly
+when we need to clear the title and allow the song creation process to be
+restarted. Nice, clean and does exactly one thing.</p>
+
+<p><em>Note: The latest version of the code that contains these changes is <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/fix-start-song-creation-bug">available on Github</a>.</em></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2071,196 +2294,6 @@ pretend you did not see this.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria.html">Sorting Arrays in Ember.js by Various Criteria</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-03-05T08:02:00+01:00" pubdate data-updated="true">Mar 5<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I concluded <a href="http://balinterdi.com/2014/02/26/a-common-resource-route-pattern-in-ember-dot-js.html">the previous post on route refactoring</a> by saying
-that the fact that the <code>artists.songs</code> route now has the songs as its model will
-pay dividends in the future.</p>
-
-<p>I will show one thing that becomes really easy this way and also one
-less-known Ember feature that builds on top of that.</p>
-
-<h2>Showing list items in a certain order</h2>
-
-<p>Even with our superb routing, songs for an artist appear in random order,
-differently at each load of the application. This is confusing and it is now
-easy to remedy.</p>
-
-<p>The controller backing the <code>artist.songs</code> template is now an ArrayController so
-establishing a sort order is a piece of cake:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>  <span class="nx">sortAscending</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">],</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>What I say with these sorting-related definitions is that I want songs to be
-shown in descending order of first their ratings and then -should the rating be
-the same- by title. That&#8217;s all there is to it, those tunes are now aptly sorted:</p>
-
-<p><img src="http://f.cl.ly/items/1v3C3Q241g1w3k1X2c04/Screen%20Shot%202014-03-03%20at%2019.39.01.png" alt="Ascending ordering" /></p>
-
-<h2>Sorting by multiple properties, in different directions</h2>
-
-<p>There is a slight deficiency in the above sorting API. It cannot sort multiple
-properties if the sorting is to be done ascending for some properties and
-descending for others. The <code>sortAscending</code> flag is &#8220;global&#8221; for the
-whole <code>sortProperties</code> array.</p>
-
-<p>Taking the above example, it is a perfectly valid request to have songs first
-ordered in descending order of their rating and then in ascending order of their
-title. But how can we do that?</p>
-
-<h2>Reduce computed macros</h2>
-
-<p>The <code>Ember.computed.sort</code> macro in the <a href="https://github.com/emberjs/ember.js/blob/v1.4.0/packages/ember-runtime/lib/computed/reduce_computed_macros.js"><code>reduce_computed_macros</code> package</a> provides
-a clean way to do exactly that:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;rating:desc&#39;</span><span class="p">,</span> <span class="s1">&#39;title:asc&#39;</span><span class="p">],</span>
-</span><span class='line'>  <span class="nx">sortedSongs</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="s1">&#39;sortProperties&#39;</span><span class="p">),</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The API is so explicit it does not need any explanation. In order for the songs
-to appear in the specified order, we now need to iterate through <code>sortedSongs</code>
-so the <code>#each</code> in the template becomes <code>#each sortedSongs</code>.</p>
-
-<p>Let&#8217;s take a look at how it has changed the order of the songs:</p>
-
-<p><img src="http://f.cl.ly/items/1D1R183h0h103O0p421O/Screen%20Shot%202014-03-03%20at%2019.58.24.png" alt="Perfect ordering" /></p>
-
-<p>Perfect, I would say that is the ordering that makes most sense.</p>
-
-<h2>Wait, it gets better still</h2>
-
-<p>When first playing with <code>Ember.computed.sort</code>, my initial try was to set up
-<code>sortedSongs</code> like that:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'>  <span class="nx">sortedSongs</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;rating:desc&#39;</span><span class="p">,</span> <span class="s1">&#39;title:asc&#39;</span><span class="p">]),</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>That, however, throws an error. Taking a look at the code and the tests, I
-realized that the second argument needs to be a property on the same object the
-sorting is defined on. This seems &#8220;over-engineered&#8221; at first but in fact opens
-up further possibilities.</p>
-
-<p>Under the hood, <code>Ember.computed.sort</code> sets up an observer not only to the array
-being sorted but also to the sort properties. That way, when the sorting
-criteria changes, the list is reordered and rerendered automatically. This makes
-it possible for the criteria to be easily modified via user action.</p>
-
-<p>To give you an example, I&#8217;ll make a button set the rating to happen only by title,
-in ascending alphabetical order:</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/songs&quot;&gt;
-  {{#if canCreateSong}}
-    &lt;div class=&quot;list-group-item&quot;&gt;
-      (...)
-      &lt;button class=&quot;btn btn-link pull-right&quot; {{action &quot;sortBy&quot; &quot;title:asc&quot;}}&gt;Sort by title&lt;/button&gt;
-    &lt;/div&gt;
-  {{/if}}
-  (...)
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p>The <code>sortBy</code> action handler sets the passed string as the value
-for the <code>sortProperties</code> which will rearrange the list:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;rating:desc&#39;</span><span class="p">,</span> <span class="s1">&#39;title:asc&#39;</span><span class="p">],</span>
-</span><span class='line'>  <span class="nx">sortedSongs</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="s1">&#39;sortProperties&#39;</span><span class="p">),</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">sortBy</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sortProperties</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;sortProperties&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nx">sortProperties</span><span class="p">]);</span>
-</span><span class='line'>    <span class="p">},</span>
-</span><span class='line'>    <span class="p">(...)</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Indeed when the link is clicked, the songs become ordered by title only:</p>
-
-<p><img src="http://f.cl.ly/items/1H0v0w3C0u0Q2A2j451Z/Screen%20Shot%202014-03-03%20at%2021.12.00.png" alt="Ordering by only title" /></p>
-
-<h2>Declarative sorting</h2>
-
-<p>Let me finish by pointing out that this arrangment makes it possible to have
-several actions that set (or modify) the ordering criteria, without having to
-write a single line of code to implement the sorting itself.</p>
-
-<p>You gotta love this.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2283,6 +2316,10 @@ write a single line of code to implement the sorting itself.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/06/26/ember-gotcha-controllers-are-singletons.html">Ember gotcha: Controllers are singletons</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/06/18/indicating-progress-loading-routes-in-ember-dot-js.html">Indicating Progress - Loading Routes in Ember.js</a>
       </li>
     
@@ -2296,10 +2333,6 @@ write a single line of code to implement the sorting itself.</p>
     
       <li class="post">
         <a href="/2014/05/22/make-your-own-computed-property-macro-in-emberjs.html">Make your own computed property macro in Ember.js</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/05/16/dependency-injection-in-ember-dot-js-going-deeper.html">Dependency injection in Ember.js - Going deeper</a>
       </li>
     
   </ul>
