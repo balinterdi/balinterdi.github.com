@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-06-27T13:58:00+02:00</updated>
+  <updated>2014-07-08T20:45:54+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -576,7 +576,19 @@ this.replaceWith('photo.comment', nextComment);
 
 <p><code>replaceWith</code> takes the exact same parameters as <code>transitionTo</code>.</p>
 
-<p>Curtain falls.</p>
+<h3>In the controller</h3>
+
+<p>As <a href="https://twitter.com/jacquescrocker">Jacques Crocker</a> points out <a href="http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html#comment-1452078154">in his comment</a>
+below, I missed the case where we want to transition to another route, replacing
+the current item in the history, from inside a controller.</p>
+
+<p>Here is how to do that:</p>
+
+<p><code>js
+this.replaceRoute('photo.comment', nextComment);
+</code></p>
+
+<p>So thank you, Jacques.</p>
 ]]></content>
   </entry>
   

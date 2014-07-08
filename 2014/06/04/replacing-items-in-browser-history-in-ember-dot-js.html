@@ -158,7 +158,20 @@ the action handler would have the following line:</p>
 
 <p><code>replaceWith</code> takes the exact same parameters as <code>transitionTo</code>.</p>
 
-<p>Curtain falls.</p>
+<h3>In the controller</h3>
+
+<p>As <a href="https://twitter.com/jacquescrocker">Jacques Crocker</a> points out <a href="http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html#comment-1452078154">in his comment</a>
+below, I missed the case where we want to transition to another route, replacing
+the current item in the history, from inside a controller.</p>
+
+<p>Here is how to do that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">replaceRoute</span><span class="p">(</span><span class="s1">&#39;photo.comment&#39;</span><span class="p">,</span> <span class="nx">nextComment</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So thank you, Jacques.</p>
 </div>
 
 
