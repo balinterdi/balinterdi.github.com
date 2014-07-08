@@ -291,6 +291,22 @@ when we need to clear the title and allow the song creation process to be
 restarted. Nice, clean and does exactly one thing.</p>
 
 <p><em>Note: The latest version of the code that contains these changes is <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/fix-start-song-creation-bug">available on Github</a>.</em></p>
+
+<h3>Model Dependent State - UPDATE</h3>
+
+<p>It turns out I stumbled into something substantial. As <a href="http://localhost:4000/2014/06/26/ember-gotcha-controllers-are-singletons.html#comment-1461013970">Luke Melia points out</a> below in the comments (thank you, Luke!),
+the above problem has been under consideration for a while.</p>
+
+<p>Alex Matchneer, a member of the Ember core team gave <a href="http://youtu.be/Syv_OTzHOr0">a presentation at
+EmberFest</a> in which he explains that there is a missing
+primitive.</p>
+
+<p>He calls it &#8220;Model Dependent State&#8221; and it is what would decice under what
+conditions a certain controller property is &#8220;sticky&#8221; (whether it retains its
+value when you change the model of a certain controller or not).</p>
+
+<p><a href="http://youtu.be/Syv_OTzHOr0?t=14m18s">Here</a> is the part where he begins to talk about Model
+Dependent State.</p>
 </div>
   
   
