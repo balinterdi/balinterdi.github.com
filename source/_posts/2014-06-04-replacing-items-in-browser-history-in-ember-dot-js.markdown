@@ -64,5 +64,19 @@ this.replaceWith('photo.comment', nextComment);
 
 `replaceWith` takes the exact same parameters as `transitionTo`.
 
-Curtain falls.
+### In the controller
 
+As [Jacques Crocker][jacques-twitter] points out [in his comment][jacques-comment]
+below, I missed the case where we want to transition to another route, replacing
+the current item in the history, from inside a controller.
+
+Here is how to do that:
+
+```js
+this.replaceRoute('photo.comment', nextComment);
+```
+
+So thank you, Jacques.
+
+[jacques-twitter]: https://twitter.com/jacquescrocker
+[jacques-comment]: http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html#comment-1452078154
