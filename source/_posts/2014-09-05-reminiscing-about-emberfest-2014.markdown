@@ -68,7 +68,7 @@ building apps with a tool that is new and hot now but is probably going to be
 the framework of choice for many in a few years. It is definitely a fascinating
 world to live in.
 
-I'll certainly be there at EmberConf 2015, so hopefully see you there!
+I'll certainly be there at EmberFest 2015, so hopefully see you there!
 
 [emberfest]: https://emberfest.eu
 [joachimhs]: https://haagen-software.no
