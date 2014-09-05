@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-08-22T13:37:37+02:00</updated>
+  <updated>2014-09-05T11:27:47+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,78 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Reminiscing about EmberFest 2014]]></title>
+    <link href="http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014.html"/>
+    <updated>2014-09-05T09:55:00+02:00</updated>
+    <id>http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014</id>
+    <content type="html"><![CDATA[<p><a href="https://emberfest.eu">EmberFest 2014</a> ended a week ago and I already feel nostalgic. It
+was a great event with great people and you could feel the excitement about
+Ember in the air and in all conversations. It was almost single-handedly
+organized by <a href="https://haagen-software.no">Joachim Haagen-Skeie</a> for which he deserves huge kudos.</p>
+
+<p>It was really great to associate real people with twitter avatars and have
+fascinating conversations about various topics that included the Ember
+Inspector, the difficulties in building a build tool and even Firefox OS.</p>
+
+<h3>The functional paradigm making a headway into Emberland</h3>
+
+<p>One thing that struck me about Ember initially is that it seems to rely heavily
+on (shared) state. Some (most?) of that is inevitable given Ember being a
+performant framework that runs in the browser and is written in Javascript.
+None of these facilitates ditching (or minimizing) state and go with a
+functional, stateless approach.</p>
+
+<p>On the other hand, I really came to cherish the <a href="http://www.infoq.com/presentations/Simple-Made-Easy">simplicity</a> of the
+functional paradigm and have been gravitating towards languages that allow this
+(Clojure was, and still is, <a href="http://balinterdi.com/2013/06/19/the-appeal-of-one-paradigm-languages.html">my favorite</a>). So I added a mental
+note about my two favorite things being at such a great distance from each other
+and moved on.</p>
+
+<p>One theme of the conference and the hallway talks, however, is how Ember
+embraces the functional, immutable approach where it makes sense to. It might
+have something to do with my confirmation bias, but let me cite the examples
+nevertheless. <a href="https://twitter.com/tchak13">Paul Chavard</a> had a talk on his using immutable data
+structures in Ember. <a href="http://www.solitr.com/blog/">Jo Liss</a> revealed how Broccoli uses a
+&#8220;rebuild-from-scratch&#8221; approach instead of trying to find out which assets to
+rebuild at each modification. Finally, Alex Matchneer, aka. machty, prolific
+Ember and router.js contributor had <a href="https://docs.google.com/presentation/d/1afMLTCpRxhJpurQ97VBHCZkLbR1TEsRnd3yyxuSQ5YY/edit#slide=id.p">a presentation on React vs.  Ember</a>
+at EmberNYC which you should go read. His <a href="https://docs.google.com/presentation/d/1afMLTCpRxhJpurQ97VBHCZkLbR1TEsRnd3yyxuSQ5YY/edit#slide=id.g380053cce_1786">last slide</a> has a bullet-point
+that states: &#8220;Don&#8217;t be surprised if Ember adopts DOM-diffing&#8221;.</p>
+
+<p>It would be an understatement if I said I&#8217;m happy to see the functional world
+coming to Ember.</p>
+
+<h3>Promises</h3>
+
+<p>I had a talk at the conference called &#8220;Don&#8217;t call me back - How Ember uses
+promises and how you can, too&#8221;. As it usually happens, in doing research for the
+talk, I learned a lot not just about promises but about other topics, too. This
+time, it was the (in)famous run loop I stumbled across on several
+occasions so I am really happy I know a lot more about that beast now. You can
+find the slides of my presentation below.</p>
+
+<script async class="speakerdeck-embed" data-slide="10"
+data-id="47ee01e011b60132c86e02e2e0c65448" data-ratio="1.33333333333333"
+src="http://balinterdi.com//speakerdeck.com/assets/embed.js"></script>
+
+
+<p>I might even do another talk &#8220;How Ember uses the run loop and how you should
+probably not&#8221;, or something to this effect.</p>
+
+<h3>EmberFest 2015</h3>
+
+<p>The greatest thing about EmberFest was its vibe. I saw the tweets coming
+in from EmberConf this March and <a href="http://reefpoints.dockyard.com/2014/03/17/emberconf-picks-ups-where-the-rails-community-left-off.html">the post-conf blog posts</a>
+about the awesome community and how one could feel the excitement that we are
+building apps with a tool that is new and hot now but is probably going to be
+the framework of choice for many in a few years. It is definitely a fascinating
+world to live in.</p>
+
+<p>I&#8217;ll certainly be there at EmberConf 2015, so hopefully see you there!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Ember gotcha: Controllers are singletons]]></title>
@@ -3843,259 +3915,6 @@ modify the server config but this is the bare minimum that got the job done.</p>
 <p>Hooray for clean URLs:
 <img src="http://balinterdi.com/images/posts/change-the-url-type/rock-and-roll-history-api-urls.png" alt="History API
 URLs" /></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Build an Ember.js app with Firebase]]></title>
-    <link href="http://balinterdi.com/2013/12/11/build-an-ember-dot-js-app-with-firebase.html"/>
-    <updated>2013-12-11T08:42:46+01:00</updated>
-    <id>http://balinterdi.com/2013/12/11/build-an-ember-dot-js-app-with-firebase</id>
-    <content type="html"><![CDATA[<p>Ember.js is an outstanding client-side framework for building single-page
-applications. To make your application truly come to life, Firebase, being a
-real-time backend, is a natural choice as the server-side component.</p>
-
-<p>Sending data between the server and the client is a task all web applications
-have to address. However, if one uses the Firebase-Ember.js stack, this
-problem is largely abstracted away by these wonderful frameworks.</p>
-
-<p>To make them work together, the Firebase team released their official
-Ember.js bindings, <a href="https://github.com/firebase/emberFire">emberFire</a>.</p>
-
-<h3>How does it work?</h3>
-
-<p>Before we look at the making of the actual application it is important to
-understand how the emberFire library works.</p>
-
-<p>It is built on two primitives, <code>EmberFire.Object</code> and <code>EmberFire.Array</code>. These
-extend <code>Ember.ObjectProxy</code> and <code>Ember.ArrayProxy</code>, respectively. These proxy
-objects delegate any <code>get</code> and <code>setProperty</code> calls that are not defined on the
-proxy to an underlying content object.</p>
-
-<p>What this means is that we can work with Firebase references in our
-application as if they were Ember objects. In the case of a single object,
-setting a property will cause a child with that name to be written with the
-passed value. When working with an array, the usual array methods (e.g
-<code>pushObject</code>) can be used and they will do the right thing in the underlying
-Firebase reference (e.g <code>push</code> the new node).</p>
-
-<h3>Setting up the environment</h3>
-
-<p>To set up the necessary dependencies, it is easiest to download the <a href="http://emberjs.com/">latest Ember
-starter kit</a> and add the following script tags to the main
-template:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;https://cdn.firebase.com/v0/firebase.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-</span><span class='line'><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&#39;https://cdn.firebase.com/v0/firebase-simple-login.js&#39;</span><span class="nt">&gt;&lt;/script&gt;</span>
-</span><span class='line'><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;http://firebase.github.io/emberFire/emberfire-latest.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>With that in place, we can start developing. For the sake of focusing on one
-single issue at a time, the code snippets in this post do not always exactly
-match those in the actual application. If you want to see them in their
-entirety, you can always <a href="https://github.com/balinterdi/ideavote-emberfire">check the source code on Github</a>.</p>
-
-<h3>The Idealist</h3>
-
-<p>The application we are going to build is an &#8220;Idealist&#8221;. Users can submit ideas
-and vote on existing ones.</p>
-
-<p>When one loads the application it looks like the following:</p>
-
-<p><img src="https://raw.github.com/balinterdi/ideavote-emberfire/master/public/img/screenshots/ideavote-screenshot-3-640.png" alt="Ideavote screenshot" /></p>
-
-<p>A list of ideas is displayed along with the number of votes for that idea and a
-button to vote that idea up.</p>
-
-<p>To get the existing ideas from Firebase, we use the <code>model</code> hook of the
-appropriate route:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">dbRoot</span> <span class="o">=</span> <span class="s2">&quot;https://emberfire-ideavote.firebaseio.com&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="kd">var</span> <span class="nx">ideasPath</span> <span class="o">=</span> <span class="nx">dbRoot</span> <span class="o">+</span> <span class="s2">&quot;/ideas&quot;</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IdeasRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">EmberFire</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-</span><span class='line'>      <span class="nx">ref</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Firebase</span><span class="p">(</span><span class="nx">ideasPath</span><span class="p">)</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This loads the ideas in an <code>EmberFire.Array</code> and then iterates through them in the <code>ideas</code> template:</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;ideas&quot;&gt;
-  {{ render &quot;ideas/new&quot; }}
-  &lt;div class=&quot;idea-list&quot;&gt;
-    &lt;ul class=&quot;unstyled&quot;&gt;
-      {{#each controller}}
-        {{ render &quot;idea&quot; this }}
-      {{/each}}
-    &lt;/ul&gt;
-  &lt;/div&gt;
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p>So how does adding a new idea happen? If we take a look at the <code>ideas/new</code>
-template, we can see that clicking on the &#8220;Send my idea&#8221; button triggers the
-<code>sendIdea</code> action:</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;ideas/new&quot;&gt;
-  &lt;div class=&quot;idea new-idea&quot;&gt;
-    &lt;div class=&quot;row&quot;&gt;
-      &lt;div class=&quot;span9&quot;&gt;
-        {{input value=title placeholder=&quot;Your idea here&quot; insert-newline=&quot;sendIdea&quot;}}
-      &lt;/div&gt;
-      &lt;div class=&quot;span2&quot;&gt;
-        {{#if isDisabled}}
-          &lt;button disabled=&quot;disabled&quot; {{bindAttr class=&quot;isDisabled:disabled&quot;}}&gt;Send my idea&lt;/button&gt;
-        {{else}}
-          &lt;button {{bindAttr class=&quot;isDisabled:disabled&quot;}} {{action sendIdea}}&gt;Send my idea&lt;/button&gt;
-        {{/if}}
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p>The triggered <code>sendIdea</code> action is then handled on the controller:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IdeasNewController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ObjectController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">sendIdea</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">newIdeaRef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Firebase</span><span class="p">(</span><span class="nx">ideasPath</span><span class="p">).</span><span class="nx">push</span><span class="p">();</span>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">newIdea</span> <span class="o">=</span> <span class="nx">EmberFire</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span> <span class="nx">ref</span><span class="o">:</span> <span class="nx">newIdeaRef</span> <span class="p">});</span>
-</span><span class='line'>      <span class="nx">newIdea</span><span class="p">.</span><span class="nx">setProperties</span><span class="p">({</span>
-</span><span class='line'>        <span class="nx">id</span><span class="o">:</span> <span class="nx">newIdeaRef</span><span class="p">.</span><span class="nx">name</span><span class="p">(),</span>
-</span><span class='line'>        <span class="nx">title</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">),</span>
-</span><span class='line'>        <span class="nx">submittedBy</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;auth.currentUser.id&#39;</span><span class="p">),</span>
-</span><span class='line'>        <span class="nx">timestamp</span><span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(),</span>
-</span><span class='line'>        <span class="nx">voteCount</span><span class="o">:</span> <span class="mi">0</span>
-</span><span class='line'>      <span class="p">});</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We get a reference with a unique id by using Firebase&#8217;s push operation. We
-create an <code>EmberFire.Object</code> with that reference and that enables us to do our
-magic with the help of Firebase. When we then set any property on the object,
-it is going to be persisted on our backend and synchronized to all clients.</p>
-
-<h3>Extending the EmberFire classes</h3>
-
-<p>Up until this point, we did not need to create our own model classes. The basic
-EmberFire classes were sufficient for our needs. However, if we need to define
-additional behavior for our models, we have to extend these primitives.</p>
-
-<p>Suppose, for example, that each user has a certain number of votes and we want
-to prevent further voting when she does not have any votes left, as shown on the
-next mockup:</p>
-
-<p><img src="https://raw.github.com/balinterdi/ideavote-emberfire/master/public/img/screenshots/ideavote-screenshot-2-640.png" alt="Ideavote screenshot" /></p>
-
-<p>We can define a computed property on the user that would tell whether she has
-any votes left. Computed properties in Ember are properties that depend on
-other -computed or &#8220;normal&#8221;- properties and get automatically updated when one of
-the dependent properties change.</p>
-
-<p>To do that, we need to define our User model:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">User</span> <span class="o">=</span> <span class="nx">EmberFire</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">noVotesLeft</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">lte</span><span class="p">(</span><span class="s1">&#39;votesLeft&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The above is a computed macro definition that defines <code>noVotesLeft</code> as true if
-the <code>votesLeft</code> property of the user is less than or equal to zero.</p>
-
-<p>Then, in the template that renders each idea, we disable the button if that
-computed property is true and also give it a grey hue to indicate its disabled
-state:</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;idea&quot;&gt;
-  &lt;li&gt;
-    &lt;div class=&quot;idea&quot;&gt;
-      &lt;div class=&quot;row&quot;&gt;
-        &lt;div class=&quot;span8&quot;&gt;
-          &lt;strong&gt;{{title}}&lt;/strong&gt;
-        &lt;/div&gt;
-        &lt;div class=&quot;span1&quot;&gt;
-          {{voteCount}}
-        &lt;/div&gt;
-          &lt;div class=&quot;span2&quot;&gt;
-            &lt;button {{bind-attr class=&quot;:btn auth.currentUser.noVotesLeft:btn-disabled:btn-primary&quot;}}
-                    {{bind-attr disabled=&quot;auth.currentUser.noVotesLeft&quot;}}&gt;Vote&lt;/button&gt;
-          &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/li&gt;
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p>Keep in mind that the context of the template is an idea and our computed
-property is defined on the user, hence the need for
-<code>auth.currentUser.noVotesLeft</code>.</p>
-
-<h3>Wait, there is more</h3>
-
-<p>Taking things a step further, I have also integrated Firebase&#8217;s SimpleLogin
-authentication service and prevented the same user to vote on the same idea
-multiple times. If you wish to see how these are implemented, I encourage you to
-check out <a href="https://github.com/balinterdi/ideavote-emberfire">the source code of the project</a>.</p>
-
-<p>I hope I got you interested in learning more about how to build real-time web
-applications and gave you a basic example of how to use state-of-the-art tools
-to do so.</p>
 ]]></content>
   </entry>
   

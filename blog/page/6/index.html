@@ -9,7 +9,7 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="I am reading Andy Hunt&#8217;s excellent Pragmatic Thinking and Learning book. There is a section about so called &#8220;oblique strategies&#8221;, &hellip;">
+  <meta name="description" content="To be able to experiment freely and find a store for my twuckoos and other goodies I have recently purchased a Linode 360 slice and had Ubuntu 9.04 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -73,6 +73,144 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/07/02/installing-ruby-on-a-linode-slice.html">Installing Ruby on a Linode Slice</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-07-02T00:00:00+02:00" pubdate data-updated="true">Jul 2<span>nd</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>To be able to experiment freely and find a store for my <a href="http://bucionrails.com/2009/06/22/twuckoo/">twuckoos</a> and other goodies I have recently purchased a Linode 360 slice and had Ubuntu 9.04 installed on it. Next thing was setting up ruby (ruby 1.8.6, to be precise).</p>
+
+<p>When deciding about how to install ruby, in part I wanted to have flexibility but mostly I wanted to feel like I am a professional sysadmin for some hours so I balked at pre-built ruby packages and went with the roll-your-own approach. I&#8217;ll summarize below the process and some pitfalls I encountered so it might help someone.</p>
+
+<h2>Some basic tools</h2>
+
+
+<p>First, you will need wget (or curl) to download the sources you will need along the way, so:</p>
+
+<pre lang="bash">$ sudo apt-get install wget</pre>
+
+
+<p>Also, before you stare dumbly at the screen (like I did) wondering why can&#8217;t the stupid machine run make when the Makefile is clearly there in the directory , don&#8217;t forget to install make:</p>
+
+<pre lang="bash">$ sudo apt-get install make</pre>
+
+
+<h2>Updating the package repos</h2>
+
+
+<p>Plus, since we&#8217;ll be installing packages that are found in the &#8220;universe&#8221; namespace (or whatever it is called) you should uncomment the below two lines in /etc/apt/sources.list :</p>
+
+<pre lang="bash">deb http://us.archive.ubuntu.com/ubuntu/ jaunty universe
+deb-src http://us.archive.ubuntu.com/ubuntu/ jaunty universe</pre>
+
+
+<p>&#8230; and then update your package index:</p>
+
+<pre lang="bash">$ sudo apt-get update</pre>
+
+
+<h2>Installing some packages ruby needs</h2>
+
+
+<p>Before we download and build ruby, however, it is recommendable to have the zlib and openssl libraries so ruby can already bind to them. This is one of the things that is a lot easier to see with hindsight, but here I am, blogging this to you:</p>
+
+<pre lang="bash">$ sudo apt-get install zlib1g zlib1g-dev zlibc
+$ sudo apt-get install openssl</pre>
+
+
+<p>It turns out from <a href="http://www.ruby-forum.com/topic/71774">this thread</a>, that the zlib bindings are part of ruby since 1.8.6 so you will not need the libzlib-ruby package.</p>
+
+<p>Now, on to ruby itself.</p>
+
+<h2>Ruby &amp; Rubygems</h2>
+
+
+<pre lang="bash">$ wget ftp://ftp.ruby-lang.org/pub/ruby/ruby-1.8.6-p369.tar.bz2
+(untar and cd to new directory)
+$ ./configure
+configure: error: no acceptable C compiler found in $PATH</pre>
+
+
+<p>Piece of cake:</p>
+
+<pre lang="bash">$ sudo apt-get install gcc
+$ ./configure
+configure: error: in `/home/balint/ruby-1.8.6-p369':
+configure: error: C compiler cannot create executables
+See `config.log' for more details.</pre>
+
+
+<p>A bit harder, but I have quickly found the answer <a href="http://ubuntuforums.org/showthread.php?t=17033">here</a>, and then did:</p>
+
+<pre lang="bash">$ sudo apt-get install libc6-dev g++
+$ ./configure
+$ make
+$ sudo make install
+$ ruby -e "p 'hello from linode slice'"
+"hello from linode slice"</pre>
+
+
+<p>Rolling!</p>
+
+<p>However, we all know that a ruby installation without gems is a toothless tiger (lion?) so we&#8217;ll install rubygems last, first downloading the source, and then installing it:</p>
+
+<pre lang="bash">$ wget http://rubyforge.org/frs/download.php/57643/rubygems-1.3.4.tgz
+(untar and cd to new directory)
+$ sudo ruby setup.rb</pre>
+
+
+<p>If you want to use gems stored on github (and you probably do) it is convenient to add the gem github repository to your gem sources:</p>
+
+<pre lang="bash">$ gem source -a http://gems.github.com
+$ sudo gem install balinterdi-twuckoo</pre>
+
+
+<p>Ok, that&#8217;s all. I hope you have found this useful.</p>
+
+<hr /><em>Note:</em>
+
+
+<p>If you receive an error message similar to the following when trying to install a gem:</p>
+
+<pre lang="bash">/usr/local/lib/ruby/site_ruby/1.8/rubygems/custom_require.rb:31:in `gem_original_require': no such file to load -- zlib (LoadError)</pre>
+
+
+<p>Then you need to install the appropriate lib package and recompile ruby. Go to the directory where you unpacked the ruby source to and do:</p>
+
+<pre lang="bash">$ make clean
+$ make
+$ sudo make install</pre>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -547,83 +685,6 @@ But you -or at least I- could not do it for the last element (there is no User.l
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/02/04/strings-as-haml-render-parameters-in-sinatra-do-not-work.html">Strings as Haml Render Parameters in Sinatra Do Not Work</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-02-04T00:00:00+01:00" pubdate data-updated="true">Feb 4<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I was intrigued by the simplicity and elegance of Sinatra as presented by Bence Golda at <a href="http://files.meetup.com/1271139/09-01-22-golda_bence-sinatra.pdf">the last budapest.rb meetup.</a>, so I decided to build a simple application with it (I am planning to talk just a little bit more about that in a later post).</p>
-
-<p>One quick thing I learned the hard way is when generating haml views in Sinatra, you have to use symbols as the name of the view, strings will just be rendered as strings. That was a tough lesson to learn coming from Rails. So while in Rails you can write:</p>
-
-<pre lang="ruby">
-  def index
-    render :action => :index
-  end
-</pre>
-
-
-<p>or</p>
-
-<pre lang="ruby">
-  def index
-    render :action => "index"
-  end
-</pre>
-
-
-<p>In Sinatra, you can only use a symbol to designate the view to be rendered:</p>
-
-<pre lang="ruby">
-get '/' do
-  haml :index
-end
-</pre>
-
-
-<p>Which makes sense, I think, since symbols (unlike strings, see <a href="#strings-symbols">below</a>) with the same name refer to the same entity which is a perfect fit for naming views, now ain&#8217;t they? Plus, I&#8217;ll admit I am in love with them symbols, with their colon in the front and all. And when they are syntax highlighted, I melt.</p>
-
-<div id="strings-symbols">
-<pre lang="bash">
-irb(main):002:0> sym1 = :index; sym2 = :index; sym1.object_id == sym2.object_id
-=> true
-irb(main):003:0> s1 = "index"; s2 = "index"; s1.object_id == s2.object_id
-=> false
-</pre>
-</div>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/7/">&larr; Older</a>
@@ -660,6 +721,10 @@ irb(main):003:0> s1 = "index"; s2 = "index"; s1.object_id == s2.object_id
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/09/05/reminiscing-about-emberfest-2014.html">Reminiscing about EmberFest 2014</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/06/26/ember-gotcha-controllers-are-singletons.html">Ember gotcha: Controllers are singletons</a>
       </li>
     
@@ -675,11 +740,10 @@ irb(main):003:0> s1 = "index"; s2 = "index"; s1.object_id == s2.object_id
         <a href="/2014/05/28/setting-the-document-title-in-ember-apps.html">Setting the document title in Ember apps</a>
       </li>
     
-      <li class="post">
-        <a href="/2014/05/22/make-your-own-computed-property-macro-in-emberjs.html">Make your own computed property macro in Ember.js</a>
-      </li>
-    
   </ul>
+</section>
+<section class="codementor">
+  <script data-codementor="balint" data-style="button" data-theme="dark" src="https://cdn.codementor.io/d/badge.js"></script>
 </section>
 
 

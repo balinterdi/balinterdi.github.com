@@ -5,11 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>A Git guide that emboldens - Balint Erdi</title>
+  <title>Reminiscing about EmberFest 2014 - Balint Erdi</title>
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="Git is extremely powerful. I knew that much and that I would really like to thoroughly master it because it is so cool. However, it is quite &hellip;">
+  <meta name="description" content="EmberFest 2014 ended a week ago and I already feel nostalgic. It
+was a great event with great people and you could feel the excitement about
+Ember in &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2008/12/04/a-git-guide-that-emboldens.html">
+  <link rel="canonical" href="http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -76,7 +78,7 @@
   
   <header>
     
-      <h1 class="entry-title">A Git Guide That Emboldens</h1>
+      <h1 class="entry-title">Reminiscing About EmberFest 2014</h1>
     
     
       <p class="meta">
@@ -92,18 +94,77 @@
   
 
 
-<time datetime="2008-12-04T00:00:00+01:00" pubdate data-updated="true">Dec 4<span>th</span>, 2008</time>
+<time datetime="2014-09-05T09:55:00+02:00" pubdate data-updated="true">Sep 5<span>th</span>, 2014</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Git is extremely powerful. I knew that much and that I would really like to thoroughly master it because it is so cool. However, it is quite sophisticated (not to mention that some commands, like checkout and revert designate totally different actions than in Subversion where I am coming from) and like with most things one learns by doing.</p>
+<div class="entry-content"><p><a href="https://emberfest.eu">EmberFest 2014</a> ended a week ago and I already feel nostalgic. It
+was a great event with great people and you could feel the excitement about
+Ember in the air and in all conversations. It was almost single-handedly
+organized by <a href="https://haagen-software.no">Joachim Haagen-Skeie</a> for which he deserves huge kudos.</p>
 
-<p>One key to doing is the ability to play around with a git repository. The possibility to have an account on <a href="http://github.com">github.com</a> and to contribute to a myriad of open source projects there removed that obstacle. The other ingredient to be a master chef is a good guide in the subject. One needs some initial self-confidence to know what he is doing lest he screws up his own work. (Note: that is very hard with git but I remember the panic when I did &#8220;git checkout &lt;earlier commit&gt;&#8221; and I did not find my earlier HEAD with &#8220;git log&#8221; )</p>
+<p>It was really great to associate real people with twitter avatars and have
+fascinating conversations about various topics that included the Ember
+Inspector, the difficulties in building a build tool and even Firefox OS.</p>
 
-<p>We may be different but I have not read a really insightful guide albeit I have gone through a dozen of them. Some are too vague or concentrate on one specific task (e.g how to create a repo on github and push to it) and some present too many options and go into details that intimidate the novice. (like the official man pages). Ladies and gentlemen, I have found it. It&#8217;s the <a href="http://www.kernel.org/pub/software/scm/git/docs/user-manual.html">Git User&#8217;s Manual</a> and it strikes the perfect balance between verbosity and shallowness. It gives examples which nicely clarify the concepts. It won&#8217;t make you an expert right away, of course, but it provides you with the insight and initial courage to embark on the journey.</p>
+<h3>The functional paradigm making a headway into Emberland</h3>
+
+<p>One thing that struck me about Ember initially is that it seems to rely heavily
+on (shared) state. Some (most?) of that is inevitable given Ember being a
+performant framework that runs in the browser and is written in Javascript.
+None of these facilitates ditching (or minimizing) state and go with a
+functional, stateless approach.</p>
+
+<p>On the other hand, I really came to cherish the <a href="http://www.infoq.com/presentations/Simple-Made-Easy">simplicity</a> of the
+functional paradigm and have been gravitating towards languages that allow this
+(Clojure was, and still is, <a href="http://balinterdi.com/2013/06/19/the-appeal-of-one-paradigm-languages.html">my favorite</a>). So I added a mental
+note about my two favorite things being at such a great distance from each other
+and moved on.</p>
+
+<p>One theme of the conference and the hallway talks, however, is how Ember
+embraces the functional, immutable approach where it makes sense to. It might
+have something to do with my confirmation bias, but let me cite the examples
+nevertheless. <a href="https://twitter.com/tchak13">Paul Chavard</a> had a talk on his using immutable data
+structures in Ember. <a href="http://www.solitr.com/blog/">Jo Liss</a> revealed how Broccoli uses a
+&#8220;rebuild-from-scratch&#8221; approach instead of trying to find out which assets to
+rebuild at each modification. Finally, Alex Matchneer, aka. machty, prolific
+Ember and router.js contributor had <a href="https://docs.google.com/presentation/d/1afMLTCpRxhJpurQ97VBHCZkLbR1TEsRnd3yyxuSQ5YY/edit#slide=id.p">a presentation on React vs.  Ember</a>
+at EmberNYC which you should go read. His <a href="https://docs.google.com/presentation/d/1afMLTCpRxhJpurQ97VBHCZkLbR1TEsRnd3yyxuSQ5YY/edit#slide=id.g380053cce_1786">last slide</a> has a bullet-point
+that states: &#8220;Don&#8217;t be surprised if Ember adopts DOM-diffing&#8221;.</p>
+
+<p>It would be an understatement if I said I&#8217;m happy to see the functional world
+coming to Ember.</p>
+
+<h3>Promises</h3>
+
+<p>I had a talk at the conference called &#8220;Don&#8217;t call me back - How Ember uses
+promises and how you can, too&#8221;. As it usually happens, in doing research for the
+talk, I learned a lot not just about promises but about other topics, too. This
+time, it was the (in)famous run loop I stumbled across on several
+occasions so I am really happy I know a lot more about that beast now. You can
+find the slides of my presentation below.</p>
+
+<script async class="speakerdeck-embed" data-slide="10"
+data-id="47ee01e011b60132c86e02e2e0c65448" data-ratio="1.33333333333333"
+src="//speakerdeck.com/assets/embed.js"></script>
+
+
+<p>I might even do another talk &#8220;How Ember uses the run loop and how you should
+probably not&#8221;, or something to this effect.</p>
+
+<h3>EmberFest 2015</h3>
+
+<p>The greatest thing about EmberFest was its vibe. I saw the tweets coming
+in from EmberConf this March and <a href="http://reefpoints.dockyard.com/2014/03/17/emberconf-picks-ups-where-the-rails-community-left-off.html">the post-conf blog posts</a>
+about the awesome community and how one could feel the excitement that we are
+building apps with a tool that is new and hot now but is probably going to be
+the framework of choice for many in a few years. It is definitely a fascinating
+world to live in.</p>
+
+<p>I&#8217;ll certainly be there at EmberConf 2015, so hopefully see you there!</p>
 </div>
 
 
@@ -127,8 +188,14 @@
   
 
 
-<time datetime="2008-12-04T00:00:00+01:00" pubdate data-updated="true">Dec 4<span>th</span>, 2008</time>
+<time datetime="2014-09-05T09:55:00+02:00" pubdate data-updated="true">Sep 5<span>th</span>, 2014</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ember-js/'>ember.js</a>
+  
+</span>
 
 
     </p>
@@ -142,8 +209,8 @@
     
       <div class="sharing">
   
-    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2008/12/04/a-git-guide-that-emboldens.html" data-via="baaz"
-      data-counturl="http://balinterdi.com/2008/12/04/a-git-guide-that-emboldens.html" data-size="large">Tweet</a>
+    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014.html" data-via="baaz"
+      data-counturl="http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014.html" data-size="large">Tweet</a>
   
   
   <div class="g-plusone" data-size="large"></div>
@@ -154,14 +221,18 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2008/11/28/installing-rmagick.html" title="Previous Post: Installing rmagick">&laquo; Installing rmagick</a>
+        <a class="basic-alignment left" href="/2014/06/26/ember-gotcha-controllers-are-singletons.html" title="Previous Post: Ember gotcha: Controllers are singletons">&laquo; Ember gotcha: Controllers are singletons</a>
       
-      
-        <a class="basic-alignment right" href="/2008/12/06/exploring-ruby-metaprogramming-call-counter.html" title="Next Post: Exploring Ruby metaprogramming: call counter">Exploring Ruby metaprogramming: call counter &raquo;</a>
       
     </p>
   </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -256,7 +327,10 @@
       var disqus_shortname = 'codigoergosum';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014.html';
+        var disqus_url = 'http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
