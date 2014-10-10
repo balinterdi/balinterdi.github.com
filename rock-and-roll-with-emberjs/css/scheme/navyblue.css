@@ -1,0 +1,30 @@
+ .bb-custom-wrapper > nav a {
+     background: #5E7484;
+ }
+ a {
+     color: #5E7484;
+ }
+ .headcontent .text-content h1 {
+     color:#5E7484;
+ }
+ .content-title .separator-title h2 {
+     color: #5E7484;
+ }
+ .contentbody .benefits .items:hover {
+     background: #5E7484;
+ }
+ .contentbody .benefits .items i {
+     color: #5E7484;
+ }
+ .chapter .cprofile:hover {
+     border-bottom: 5px solid #5E7484;
+ }
+ .comment .testi .testi-profile .testi-name strong {
+     color: #5E7484;
+ }
+ .price_block.special .price {
+     background:#5E7484;
+ }
+ .price_block:hover .price {
+     background:#5E7484;
+ }

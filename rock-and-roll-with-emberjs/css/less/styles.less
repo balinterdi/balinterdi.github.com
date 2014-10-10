@@ -1,0 +1,246 @@
+/* LESS FOR MEMBACA THEME
+
+    Author  : Chandra Noor
+    Company : Develpixel
+    Time    : 11/11/2013
+    -----------------------
+*/
+ @import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
+ @import url(http://fonts.googleapis.com/css?family=Oxygen:400,300,700);
+ @import url(http://fonts.googleapis.com/css?family=Merriweather:300,400,700);
+
+/*
+    TABLE OF CONTENT
+
+    [A] FONT
+    [B] COLOR
+    [C] GENERAL STYLE
+    [D] ICON
+    [D.A] BUTTON
+ ============================
+    [1] HEAD
+    [2] HEAD CONTENT
+    [3] MARKETEXT
+*/
+
+/*-- VARIABLE --*/
+
+/* 960px or 100% */
+ @outboxwidth: 100%;
+
+/* 0 or 20px auto*/
+ @outboxmargin: 0;
+
+/*
+    [A] FONT
+*/
+ .font-oxygen {
+    font-family:'Oxygen', sans-serif;
+}
+.fonts-montserrat {
+    font-family:'Montserrat', sans-serif;
+}
+.fonts-merriweather {
+    font-family:'Merriweather', serif;
+}
+/*
+    [B] COLOR
+*/
+ @primarycolor: #00AED7;
+ @grey: #E5E5E5;
+ @greydark: (@grey - #555);
+ @smoke : #F5F5F5;
+ @black : #404040;
+ @white: #FFF;
+ @facebookcolor : #3B5998;
+ @twittercolor : #3EE1FA;
+ @dribbblecolor : #EA4C88;
+ @linkedincolor : #05829C;
+
+/*
+    [C] GENERAL STYLE
+*/
+ body {
+    background: @greydark;
+}
+.outbox {
+    width: @outboxwidth;
+    margin: @outboxmargin;
+}
+a:hover {
+    text-decoration: none;
+}
+.wrapper {
+    width: 960px;
+    margin: 0 auto;
+}
+.transition {
+    -webkit-transition: all .4s ease;
+    -moz-transition: all .4s ease;
+    -ms-transition: all .4s ease;
+    -o-transition: all .4s ease;
+    transition: all .4s ease;
+}
+.border-bottom-grey-dark {
+    border-bottom: 1px solid @grey;
+}
+.box-shadow-smooth {
+    box-shadow: 1px 3px 2px 3px fade(@black, 30%);
+}
+.break-shadow{
+    height: 10px;
+    background: url('../../images/box-shadow.png') center no-repeat,@white;
+}
+/*
+    [D] ICON
+*/
+ .icon-social {
+    width: 35px;
+    height: 35px;
+    display: inline-block !important;
+    border-radius: 15%;
+    vertical-align: center;
+    text-align: center;
+    font-size: 18;
+    line-height: 34px;
+    background: @grey;
+    color: @greydark;
+    .transition;
+}
+a i.icon-social:hover {
+    background: @primarycolor;
+    color: @white;
+}
+a i.icon-facebook:hover {
+    background: @facebookcolor;
+}
+a i.icon-twitter:hover {
+    background: @twittercolor;
+}
+a i.icon-dribbble:hover {
+    background: @dribbblecolor;
+}
+a i.icon-linkedin:hover {
+    background: @linkedincolor;
+}
+/*
+    [D.A] BUTTON
+*/
+
+/*
+    [1] HEAD
+*/
+ .head {
+}
+.head .phone-head {
+    background: @smoke;
+    padding: 10px 0;
+    font-size: 11px;
+    .font-oxygen;
+    font-weight: 700;
+    color: @black;
+    text-align: right;
+    .border-bottom-grey-dark;
+}
+.head .phone-head i {
+    margin-right: 10px;
+    font-size: 12px;
+}
+.head .logo-head {
+    line-height:80px;
+    display:inline-block;
+    float :left;
+}
+.head .icon-head {
+    display: inline-block;
+    float: right;
+    text-align: right;
+}
+.head .icon-head a {
+    line-height:80px
+}
+.head .content-head {
+    background: @white;
+    .border-bottom-grey-dark;
+}
+/*
+    [2] HEAD CONTENT
+*/
+ .headcontent {
+    background: url('../../images/base-section.png');
+    padding: 60px 0 80px;
+}
+.headcontent .image-content img {
+    min-width: 100%;
+    height: auto;
+}
+.headcontent .image-content {
+    position: relative;
+}
+.headcontent .image-content:before, .headcontent .image-content:after {
+    z-index: -1;
+    position: absolute;
+    content:"";
+    bottom: 15px;
+    left: 10px;
+    width: 50%;
+    top: 80%;
+    max-width:300px;
+    background: #777;
+    -webkit-box-shadow: 0 15px 10px #777;
+    -moz-box-shadow: 0 15px 10px #777;
+    box-shadow: 0 15px 10px #777;
+    -webkit-transform: rotate(-3deg);
+    -moz-transform: rotate(-3deg);
+    -o-transform: rotate(-3deg);
+    -ms-transform: rotate(-3deg);
+    transform: rotate(-3deg);
+}
+.headcontent .image-content:after {
+    -webkit-transform: rotate(3deg);
+    -moz-transform: rotate(3deg);
+    -o-transform: rotate(3deg);
+    -ms-transform: rotate(3deg);
+    transform: rotate(3deg);
+    right: 10px;
+    left: auto;
+}
+.headcontent .text-content h1 {
+    .fonts-montserrat;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 50px;
+    letter-spacing: -1.4px;
+    margin-bottom: 15px;
+    color:@black;
+}
+.headcontent .text-content h2 {
+    .fonts-merriweather;
+    font-size: 18px;
+    line-height: 26px;
+    font-weight: 400;
+    color:@greydark;
+    margin: 15px 0;
+}
+.headcontent .text-content p {
+    .fonts-merriweather;
+    font-size: 18px;
+    color: @greydark;
+    font-weight: 300;
+    line-height: 32px;
+    margin-bottom: 15px;
+}
+/*
+    [3.] MARKETEXT
+*/
+.marketext{
+    padding: 60px 0 75px;
+    background: @white;
+}
+.marketext{
+    .fonts-merriweather;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 34px;
+    text-align: center;
+}
