@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="images/favicon/favicon.ico" type="image/x-icon">
+
+    <title>Rock & Roll with Ember.js</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ page.rarwe_book_path }}/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ page.rarwe_book_path }}/css/lib/font-awesome.min.css" rel="stylesheet">
+    <!-- Style LESS -->
+    <!--<link rel="stylesheet/less" type="text/css" href="css/less/styles.less" />-->
+    <link rel="stylesheet" href="{{ page.rarwe_book_path }}/css/lib/nivo-lightbox.css" type="text/css" />
+    <link rel="stylesheet" href="{{ page.rarwe_book_path }}/css/lib/nivo-themes/default/default.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{{ page.rarwe_book_path }}/css/styles.css" />
+    <link rel="stylesheet" type="text/css" href="{{ page.rarwe_book_path }}/css/tweaks.css" />
+    <link rel="stylesheet" type="text/css" href="{{ page.rarwe_book_path }}/css/scheme/brown.css" />
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.js"></script>
+      <script src="js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div class="outbox">
+        <section class="headcontent">
+            <div class="container">
+              <div id="masthead" class="row text-content">
+                <div class="col-lg-12 col-md-12">
+                  <h1>Tame the dreaded Ember.js learning curve</h1>
+                </div>
+              </div>
+              <div class="row">
+                  <div class="col-lg-5  col-md-5">
+                    <div class="image-content">
+                      <img src="{{ page.rarwe_book_path }}/images/cover.jpg" alt="Rock & Roll with Ember.js" />
+                    </div>
+                  </div>
+                  <div class="col-lg-7 col-md-7">
+                    <div class="text-content selling-points">
+                      <h1>Build ambitious apps with confidence</h1>
+                      <p>Ember.js is an opinionated framework for building kickass web applications. Its strong opinions and heavy reliance of “convention over configuration” can give developers coming to the framework a hard time finding out how "Ember wants them to do things”.</p>
+                      <p>This book helps to overcome that initial frustration and sets you on your way to master Ember.js. It does this by guiding you through the steps of building a real application.</p>
+                      <p>You are going to learn about the building components of Ember one-by-one, in a way that crushes the steep learning curve. Knowledge is dripped, chapter by chapter, to prevent you from drowning in a sea of novel information. By improving an existing and working application, you will learn quicker and new knowledge will sink in better.</p>
+                      <p>The book is a work in progress and you can <a href="#top-signup-form">sign up below</a> to receive the sample chapter and regular updates.</p>
+                      <p>Once you went through the book, you might not be a Ember.js rock star (yet) but at least you have surely written an Ember app with rock stars in it.</p>
+                      <br/>
+                    </div>
+                  </div>
+              </div>
+              <div class="row text-content signup">
+                <div class="col-lg-8 col-md-8">
+                  <div class="center-block" id="sample-chapter-shot"></div>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                  <div class="row">
+                    <div class="signup-form" id="top-signup-form">
+                      <form action="http://balinterdi.us6.list-manage.com/subscribe/post?u=6bdf378a5947221cb5387b72f&amp;id=8b3a0276c3"
+                        method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form"
+                        class="validate" target="_blank" novalidate>
+                        <div class="form-group">
+                          <label for="name-input">First name&#42;</label>
+                          <input type="text" name="FNAME" class="form-control" id="name-input" required="required">
+                        </div>
+                        <div class="form-group">
+                          <label for="name-input">Last name</label>
+                          <input type="text" name="LNAME" class="form-control" id="name-input">
+                        </div>
+                        <div class="form-group">
+                          <label for="email-input">Email address&#42;</label>
+                          <input type="email" name="EMAIL" class="form-control" id="email-input" required="required">
+                        </div>
+                        <div id="mce-responses" class="clear">
+                          <div class="response" id="mce-error-response" style="display:none"></div>
+                          <div class="response" id="mce-success-response" style="display:none"></div>
+                        </div>
+                        <div style="position: absolute; left: -5000px;">
+                          <input type="text" name="b_6bdf378a5947221cb5387b72f_8b3a0276c3" value="">
+                        </div>
+                        <input type="hidden" name="SIGNUP" id="SIGNUP" value="rarwe-landing-page" />
+                        <div class="text-center">
+                          <button type="submit" name="subscribe" class="btn-lg darkbg-blue">
+                            <span>Send me the sample chapter</span>
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </section>
+        <div class="break-shadow"></div>
+
+        <section class="story">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="content-title">
+                  <div class="separator-title">
+                    <h2>Once upon a time...</h2>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12 marketext">
+                <p>
+                  It all started last September. Having just returned from the first European
+                  Ember.js conference my enthusiasm went through the roof. I wanted to spread the
+                  word. I knew I wanted people to realize how beautiful Ember is.  I wanted them to
+                  know that Ember.js is not hard to learn. It's all just a matter of having the core
+                  concepts internalized.
+                </p>
+                <p>
+                  So without proper equipment I started producing a Ember screencasts. A series in
+                  which a simple application is developed step-by-step. I sent them to my
+                  subscribers and kept producing them. And people seemed to have <a href="#testimonials">liked them.</a>
+                </p>
+                <p>
+                  Once the screencast series was finished, I switched to blog posts and lengthier
+                  articles, and in 2014 I committed to sending something of value each week. And
+                  now, this book.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BEGIN Testimoni -->
+        <section class="comment" id="testimonials">
+            <div class="container">
+              <div class="row">
+                <div class="col-lg-12">
+                  <span class="icon-separator"><i class="icon-quote-right"></i>
+                  </span>
+                  <div class="content-title">
+                    <div class="separator-title">
+                      <h2>Testimonials</h2>
+                    </div>
+                    <span>What people say about the screencasts</span>
+                  </div>
+                </div>
+              </div>
+              <div class="row top-margin">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                  <div class="testi">
+                    <div class="testi-content">
+                      <p>Great episode! Pace and depth was perfect. Thanks for such a great webcast series!</p>
+                    </div>
+                    <div class="testi-profile">
+                      <figure>
+                        <img src="{{ page.rarwe_book_path }}/images/testimonials/curtis-wallen-100x100.jpg" alt="">
+                      </figure>
+                      <div class="testi-name">
+                        <strong>&mdash; Curtis Wallen</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                  <div class="testi">
+                    <div class="testi-content">
+                      <p>Awesome series, Balint!</p>
+                    </div>
+                    <div class="testi-profile">
+                      <figure>
+                        <img src="{{ page.rarwe_book_path }}/images/testimonials/chase-pursley-100x100.jpg" alt="">
+                      </figure>
+                      <div class="testi-name">
+                        <strong>&mdash; Chase Pursley</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row top-margin">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                  <div class="testi">
+                    <div class="testi-content">
+                      <p>Nice work with these Ember tutorials.  You're doing a really nice thing for the community.</p>
+                    </div>
+                    <div class="testi-profile">
+                      <figure>
+                        <img src="{{ page.rarwe_book_path }}/images/testimonials/steven-kane-100x100.png" alt="">
+                      </figure>
+                      <div class="testi-name">
+                        <strong>&mdash; Steven Kane</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                  <div class="testi">
+                    <div class="testi-content">
+                      <p>This was a truly great series of screencasts. Very, very well done. Simple enough while not being simplistic.</p>
+                    </div>
+                    <div class="testi-profile">
+                      <figure>
+                        <img src="{{ page.rarwe_book_path }}/images/testimonials/claude-precourt-100x100.jpg" alt="">
+                      </figure>
+                      <div class="testi-name">
+                        <strong>&mdash; Claude Précourt</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row top-margin">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                  <div class="testi">
+                    <div class="testi-content">
+                      <p>I really appreciate the effort you want to put up. Just wanted to thank you for this and let you know that your video series rock!</p>
+                    </div>
+                    <div class="testi-profile">
+                      <figure>
+                        <img src="{{ page.rarwe_book_path }}/images/testimonials/antonio-antillon-100x100.jpg" alt="">
+                      </figure>
+                      <div class="testi-name">
+                        <strong>&mdash; Antonio Antillon</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                  <div class="testi">
+                    <div class="testi-content">
+                      <p> I just watched all episodes, and they are absolutely clear and amazing. Keep doing the great job!</p>
+                    </div>
+                    <div class="testi-profile">
+                      <figure>
+                        <img src="{{ page.rarwe_book_path }}/images/testimonials/evgenij-pirogov-70x70.jpg" alt="">
+                      </figure>
+                      <div class="testi-name">
+                        <strong>&mdash; Evgenij Pirogov</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </section>
+        <!-- END Testimoni -->
+
+        <div class="break-shadow"></div>
+
+        <!-- BEGIN AUTHOR -->
+        <section class="author" id="about-the-author">
+          <div class="container">
+            <div class="row authorow">
+              <div class="col-lg-2 col-md-2">
+                <img class="thumbnail profpic" src="{{ page.rarwe_book_path }}/images/balint.jpg" alt="">
+              </div>
+              <div class="author-bio col-lg-offset-1 col-md-offset-1 col-lg-7 col-md-7">
+                <h3>About the author</h3>
+                <p>Hello there, I'm Balint Erdi.</p>
+                <p>
+                  I have a long history of building web applications and have mostly been a back-end
+                  guy.
+                </p>
+                <p>
+                  On a grey, chilly February day that I’ll never forget (maybe it was
+                  January?) I got acquainted with Ember.js. Ember.js made that day bright and the
+                  ones that came after that. After learning the ropes I shifted gears and have been
+                  proselytizing for Ember since last summer.
+                </p>
+                <p>
+                  I gave a beginner’s workshop at Eurucamp, and held presentations at Arrrrcamp and
+                  The Geek Gathering. I started an Ember.js mailing list, made an introductory
+                  screencast series and have been sending Ember content to my dear subscribers on a
+                  weekly basis. I have also written guest articles for Safari Books Online, Firebase
+                  and Toptal.
+                </p>
+                <p>
+                  I guess you could say I’m pretty passionate about this.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- END AUTHOR -->
+
+        <section class="unconvinced">
+          <div class="container">
+            <div class="row headline" >
+              <div class="col-lg-12">
+                <div class="content-title">
+                  <div class="separator-title">
+                    <h2>Still on the fence?</h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-8 col-md-8 perks">
+                <p>Sign up now and you will:</p>
+                <ul>
+                  <li>Be kept up-to-date on the progress I make with the book</li>
+                  <li>Get the sample chapter of the <em>Rock & Roll with Ember.js</em> book</li>
+                  <li>Receive the screencast series which shows how to build an Ember app</li>
+                  <li>Get articles, screencasts or small Ember.js tips regularly</li>
+                  <li>Be eligible for perks and discounts that are exclusive to my subscribers</li>
+                </ul>
+              </div>
+              <div class="col-lg-4 col-md-4">
+                <div class="row">
+                  <div class="signup-form" id="bottom-signup-form">
+                    <form action="http://balinterdi.us6.list-manage.com/subscribe/post?u=6bdf378a5947221cb5387b72f&amp;id=8b3a0276c3"
+                        method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form"
+                        class="validate" target="_blank" novalidate>
+                      <div class="form-group">
+                        <label for="name-input">First name&#42;</label>
+                        <input type="text" name="FNAME" class="form-control" id="name-input" required="required">
+                      </div>
+                      <div class="form-group">
+                        <label for="name-input">Last name</label>
+                        <input type="text" name="LNAME" class="form-control" id="name-input">
+                      </div>
+                      <div class="form-group">
+                        <label for="email-input">Email address&#42;</label>
+                        <input type="email" name="EMAIL" class="form-control" id="email-input" required="required">
+                      </div>
+                      <div id="mce-responses" class="clear">
+                        <div class="response" id="mce-error-response" style="display:none"></div>
+                        <div class="response" id="mce-success-response" style="display:none"></div>
+                      </div>
+                      <div style="position: absolute; left: -5000px;">
+                        <input type="text" name="b_6bdf378a5947221cb5387b72f_8b3a0276c3" value="">
+                      </div>
+                      <input type="hidden" name="SIGNUP" id="SIGNUP" value="rarwe-landing-page" />
+                      <div class="text-center">
+                        <button type="submit" name="subscribe" class="btn-lg darkbg-blue">
+                          <span>Send me the sample chapter</span>
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BEGIN FOOTER -->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-offset-6 col-md-offset-6 col-sm-offset-6 col-lg-6 col-md-6 col-sm-4">
+                        <span class="powered">Powered by
+                            <a href="javascript:;">
+                                <strong>Bootstrap</strong>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- END FOOTER -->
+
+    </div>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="{{ page.rarwe_book_path }}/js/bootstrap.min.js"></script>
+    <script src="{{ page.rarwe_book_path }}/js/events.js"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-51868942-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+</body>
+
+</html>
+
