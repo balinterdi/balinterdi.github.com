@@ -101,3 +101,6 @@ facebook_like: false
 
 # Hellobar
 enable_hellobar: true
+
+# Home-made post-footer email optin
+newsletter_optin: false

@@ -14,7 +14,9 @@ single: true
       {% include post/categories.html %}
     </p>
     -->
-    {% include post/email_list_optin.html %}
+    {% if site.newsletter_optin == true %}
+      {% include post/email_list_optin.html %}
+    {% endif %}
     {% unless page.sharing == false %}
       {% include post/sharing.html %}
     {% endunless %}
