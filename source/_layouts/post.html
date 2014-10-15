@@ -17,7 +17,7 @@ single: true
     {% if site.newsletter_optin == true %}
       {% include post/email_list_optin.html %}
     {% endif %}
-    {% unless page.sharing == false %}
+    {% unless true or page.sharing == false %}
       {% include post/sharing.html %}
     {% endunless %}
     <p class="meta">
