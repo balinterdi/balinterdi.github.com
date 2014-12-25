@@ -176,7 +176,7 @@ describe CallFoo do
     CallFoo.reset_counters
   end
         
-  it &quot;should be able to count several methods' calls&quot; do
+  it &quot;should be able to count several methods&#39; calls&quot; do
     4.times { @call_foo.foo }
     CallFoo.calls_to(:foo).should == 4
     7.times { @call_foo.bar }

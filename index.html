@@ -352,7 +352,7 @@ always gets called when transitioning to a new route:</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>And that totally works. However, I prefer placing this &#8220;resetting&#8221; code to the
+<p>And that totally works. However, I prefer placing this &#8220;resetting&#8221; code in the
 controller, probably because it is strictly controller-related and also because
 I can make the code really telling there:</p>
 
@@ -397,8 +397,7 @@ restarted. Nice, clean and does exactly one thing.</p>
 <p>It turns out I stumbled into something substantial. As <a href="http://localhost:4000/2014/06/26/ember-gotcha-controllers-are-singletons.html#comment-1461013970">Luke Melia points out</a> below in the comments (thank you, Luke!),
 the above problem has been under consideration for a while.</p>
 
-<p>Alex Matchneer, a member of the Ember core team gave <a href="http://youtu.be/Syv_OTzHOr0">a presentation at
-EmberFest</a> in which he explains that there is a missing
+<p>Alex Matchneer, a member of the Ember core team gave <a href="http://youtu.be/Syv_OTzHOr0">a presentation at EmberConf</a> in which he explains that there is a missing
 primitive.</p>
 
 <p>He calls it &#8220;Model Dependent State&#8221; and it is what would decice under what
@@ -802,14 +801,14 @@ URLs when she hits the Back button in the browser.</p>
 <p>So if the link that takes you to the next comment is written like this:</p>
 
 <div>
-  <pre><code class='html'>{{link-to 'Next comment' 'photo.comment' nextComment}}</code></pre>
+  <pre><code class='html'>{{link-to &#39;Next comment&#39; &#39;photo.comment&#39; nextComment}}</code></pre>
 </div>
 
 
 <p>It should now become:</p>
 
 <div>
-  <pre><code class='html'>{{link-to 'Next comment' 'photo.comment' nextComment replace=true}}</code></pre>
+  <pre><code class='html'>{{link-to &#39;Next comment&#39; &#39;photo.comment&#39; nextComment replace=true}}</code></pre>
 </div>
 
 
