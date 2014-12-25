@@ -132,7 +132,7 @@ App.ArtistSongsRoute = Ember.Route.extend({
 });
 ```
 
-And that totally works. However, I prefer placing this "resetting" code to the
+And that totally works. However, I prefer placing this "resetting" code in the
 controller, probably because it is strictly controller-related and also because
 I can make the code really telling there:
 
@@ -164,8 +164,7 @@ restarted. Nice, clean and does exactly one thing.
 It turns out I stumbled into something substantial. As [Luke Melia points out][luke-comment] below in the comments (thank you, Luke!),
 the above problem has been under consideration for a while.
 
-Alex Matchneer, a member of the Ember core team gave [a presentation at
-EmberFest][machty-presentation] in which he explains that there is a missing
+Alex Matchneer, a member of the Ember core team gave [a presentation at EmberConf][machty-presentation] in which he explains that there is a missing
 primitive.
 
 He calls it "Model Dependent State" and it is what would decice under what
