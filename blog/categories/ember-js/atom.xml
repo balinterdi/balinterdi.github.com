@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2014-12-25T22:17:15+01:00</updated>
+  <updated>2015-01-15T10:07:15+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -270,7 +270,7 @@ the above problem has been under consideration for a while.</p>
 <p>Alex Matchneer, a member of the Ember core team gave <a href="http://youtu.be/Syv_OTzHOr0">a presentation at EmberConf</a> in which he explains that there is a missing
 primitive.</p>
 
-<p>He calls it "Model Dependent State" and it is what would decice under what
+<p>He calls it "Model Dependent State" and it is what would decide under what
 conditions a certain controller property is "sticky" (whether it retains its
 value when you change the model of a certain controller or not).</p>
 
