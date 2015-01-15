@@ -167,7 +167,7 @@ the above problem has been under consideration for a while.
 Alex Matchneer, a member of the Ember core team gave [a presentation at EmberConf][machty-presentation] in which he explains that there is a missing
 primitive.
 
-He calls it "Model Dependent State" and it is what would decice under what
+He calls it "Model Dependent State" and it is what would decide under what
 conditions a certain controller property is "sticky" (whether it retains its
 value when you change the model of a certain controller or not).
 
