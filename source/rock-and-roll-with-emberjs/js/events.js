@@ -1,22 +1,35 @@
 (function($) {
-   function clickedSubscribe(label) {
+   function clickedButton(label, value) {
      ga('send', {
        'hitType': 'event',
        'eventCategory': 'button',
        'eventAction': 'click',
-       'eventLabel': label
+       'eventLabel': label,
+       'eventValue': value
      });
    }
 
   $(function() {
     $('#top-signup-form *[type=submit]').click(function() {
-      clickedSubscribe('signup-top');
+      clickedButton('signup-top');
     });
     $('#bottom-signup-form *[type=submit]').click(function() {
-      clickedSubscribe('signup-bottom');
+      clickedButton('signup-bottom');
     });
     $('.signup-form *[type=submit]').click(function() {
-      clickedSubscribe('signup');
+      clickedButton('signup');
+    });
+
+    $('.buy-button').click(function(event) {
+      var button$ = $(event.target);
+      if (!button$.hasClass('buy-button')) {
+        button$ = button$.parent();
+      }
+      var price = button$.attr('data-price');
+      if (price) {
+        price = parseInt(price, 10);
+      }
+      clickedButton('buy', price);
     });
   });
 }(jQuery));

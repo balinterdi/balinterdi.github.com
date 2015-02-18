@@ -405,12 +405,7 @@ a i.icon-linkedin:hover {
     }
 }
 
-.headcontent {
-    background:url('../images/base-section.png');
-    padding:60px 0 80px;
-    box-shadow: 0px 2px 4px 3px #e5e5e5;
-    border-bottom:1px solid #e5e5e5;
-}
+
 
 .headcontent #masthead h1 {
     text-align: center;
@@ -466,6 +461,8 @@ a i.icon-linkedin:hover {
         line-height: 30px;
     }
 }
+
+/*
 .headcontent .text-content h2 {
     font-family:'Merriweather', serif;
     font-size:18px;
@@ -474,6 +471,7 @@ a i.icon-linkedin:hover {
     color:#909090;
     margin:15px 0;
 }
+*/
 .headcontent .text-content h3 {
     font-family:'Merriweather', serif;
     font-size:18px;
@@ -534,7 +532,7 @@ a i.icon-linkedin:hover {
     margin-top: 5px;
 }
 .marketext {
-    padding:40px 0 0;
+    padding:40px 15px 0;
     background:#ffffff;
 }
 .marketext {
@@ -984,6 +982,8 @@ _:-o-prefocus, .lightbox-item:hover img {
     transform: translateY(0px);
 }
 /* TESTIMONIAL */
+
+/*
  .comment {
     background:url('../images/base-section.png');
     padding:60px 0 120px;
@@ -993,6 +993,8 @@ _:-o-prefocus, .lightbox-item:hover img {
     border-top:1px solid #e5e5e5;
     color: #404040;
 }
+*/
+
 .comment .content-title .separator-title h2 {
     background:url('../images/base-section.png');
 }
@@ -1250,6 +1252,9 @@ _:-o-prefocus, .lightbox-item:hover img {
     .price_block:nth-child(odd):hover {
         border: 0 none;
     }
+    .comment .testi {
+      padding-bottom: 20px;
+    }
 }
 @media only screen and (min-width : 768px) {
     .pricing_table.three .price_block {
@@ -1306,11 +1311,13 @@ _:-o-prefocus, .lightbox-item:hover img {
 }
 /* Author */
  .author {
+   /*
     padding:60px 0 120px;
     box-shadow: 0px -1px 3px -1px #e5e5e5;
     border-bottom:1px solid #e5e5e5;
     border-top:1px solid #e5e5e5;
     color: #404040;
+   */
 }
 .author h3 {
     font-family:'Montserrat', sans-serif;
