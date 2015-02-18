@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-02-18T14:04:04+01:00</updated>
+  <updated>2015-02-18T22:31:08+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -50,6 +50,32 @@ selected band, we reach for nested routes.  When we need a widget that displays
 stars for the songs, we introduce components. When we want to show the user
 that loading data from the backend is in progress, we learn about loading
 routes.</p>
+
+<h2>Set List</h2>
+
+<p>The book currently has the following chapters:</p>
+
+<ol>
+<li>Introduction to Ember.js</li>
+<li>Ember CLI</li>
+<li>Templates and data bindings</li>
+<li>Routing</li>
+<li>Nested routes</li>
+<li>Actions</li>
+<li>Components</li>
+<li>Controllers</li>
+<li>Advanced routing</li>
+<li>Talking to a backend - with Ember Data</li>
+<li>Testing</li>
+<li>Sorting and searching with query params</li>
+<li>Loading and error routes</li>
+<li>Helpers</li>
+<li>Getting ready for Ember 2.0</li>
+</ol>
+
+
+<p>I say 'currently' because I will definitely have to change some chapters as
+Ember evolves (To give an example, Controllers will probably become Routable components).</p>
 
 <h2>A reference book and a reference application</h2>
 
@@ -243,22 +269,23 @@ screen.</p>
 <p>What happens in the code? If you take a look at the template, you see that the
 text input field is shown if <code>canCreateSong</code> is true:</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars" data-template-name="artist/songs">
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/songs&quot;&gt;
   {{#if canCreateSong}}
-    <div class="list-group-item">
-      {{input type="text" class="new-artist" placeholder=newSongPlaceholder value=newTitle insert-newline="createSong" }}
-      <button class="btn btn-primary btn-sm new-song-button" {{action "createSong"}}>Add</button>
+    &lt;div class=&quot;list-group-item&quot;&gt;
+      {{input type=&quot;text&quot; class=&quot;new-artist&quot; placeholder=newSongPlaceholder value=newTitle insert-newline=&quot;createSong&quot; }}
+      &lt;button class=&quot;btn btn-primary btn-sm new-song-button&quot; {{action &quot;createSong&quot;}}&gt;Add&lt;/button&gt;
       (...)
-    </div>
+    &lt;/div&gt;
   {{/if}}
-</script>
+&lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
 <p><code>canCreateSong</code> is defined in the controller and is true if either
 <code>songCreationStarted</code> is true or if there are already songs. Since
@@ -414,81 +441,85 @@ App.Router.map(function() {
 <p>The outlet defined in the (top-level) application template is going to be filled
 in by the content rendered by the first-level templates (in this case, <code>artists</code>).</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars">
-  <div class="container">
-    <div class="page-header">
-      {{#link-to "index"}}
-        <h1>Rock & Roll<small> with Ember.js</small></h1>
+&lt;script type=&quot;text/x-handlebars&quot;&gt;
+  &lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;page-header&quot;&gt;
+      {{#link-to &quot;index&quot;}}
+        &lt;h1&gt;Rock &amp; Roll&lt;small&gt; with Ember.js&lt;/small&gt;&lt;/h1&gt;
       {{/link-to}}
-    </div>
-    <div class="row">
+    &lt;/div&gt;
+    &lt;div class=&quot;row&quot;&gt;
       {{outlet}}
-    </div>
-  </div>
-</script>
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
 <p>Next, the outlet in the <code>artists</code> template is populated by the routes below the
 artists resource route:</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars" data-template-name="artists">
-  <div class="col-md-4">
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artists&quot;&gt;
+  &lt;div class=&quot;col-md-4&quot;&gt;
     (list of artists)
-  </div>
-  <div class="col-md-8">
-    <div class="list-group">
+  &lt;/div&gt;
+  &lt;div class=&quot;col-md-8&quot;&gt;
+    &lt;div class=&quot;list-group&quot;&gt;
       {{outlet}}
-    </div>
-  </div>
-</script>
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
 <p>The artist template also defines an outlet into which content is rendered by
 the routes below the artist resource. In this case, there is no common markup
 for a single artist so the template only defines the outlet:</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars" data-template-name="artist">
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist&quot;&gt;
   {{outlet}}
-</script>
+&lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
 <p>Finally, there is a single route defined below the <code>artist</code> resource, <code>artist.songs</code>:</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars" data-template-name="artist/songs">
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/songs&quot;&gt;
   (...)
   {{#each sortedSongs}}
-    <div class="list-group-item">
+    &lt;div class=&quot;list-group-item&quot;&gt;
       {{title}}
       {{star-rating ...}}
-    </div>
+    &lt;/div&gt;
   {{/each}}
   (...)
-</script>
+&lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
 <h3>Loading routes build on the nested routes pattern</h3>
 
@@ -519,21 +550,22 @@ sibling of the route we define it for and should be called <code>loading</code>.
 <p>The loading template for the <code>artists</code> route should consequently be called
 <code>loading</code>:</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars" data-template-name="loading">
-  <div class="loading-pane">
-    <div class="loading-message">
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;loading&quot;&gt;
+  &lt;div class=&quot;loading-pane&quot;&gt;
+    &lt;div class=&quot;loading-message&quot;&gt;
       Loading stuff, please have a cold beer.
-      <div class="spinner"></div>
-    </div>
-  </div>
-</script>
+      &lt;div class=&quot;spinner&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
 <p>Let's inspect what our app looks like while loading data from the backend:</p>
 
@@ -567,21 +599,22 @@ App.Router.map(function() {
 <p>In this particular case, this latter is <code>artist.songs</code> and thus the loading
 template should be named <code>artist.loading</code>:</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars" data-template-name="artist/loading">
-  <div class="loading-pane">
-    <div class="loading-message">
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/loading&quot;&gt;
+  &lt;div class=&quot;loading-pane&quot;&gt;
+    &lt;div class=&quot;loading-message&quot;&gt;
       Loading the artist, please have an organic orange juice.
-    </div>
-    <div class="spinner"></div>
-  </div>
-</script>
+    &lt;/div&gt;
+    &lt;div class=&quot;spinner&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
 <p><img src="/images/posts/loading-routes/artist-loading-indication.png" alt="Indicating loading artist" /></p>
 
@@ -637,21 +670,22 @@ App.LoadingRoute = Ember.Route.extend({
 });
 ```</p>
 
-<p>{% highlight html %}
-{% raw %}</p>
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
 
-<script type="text/x-handlebars" data-template-name="working">
-  <div class="loading-pane">
-    <div class="loading-message">
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;working&quot;&gt;
+  &lt;div class=&quot;loading-pane&quot;&gt;
+    &lt;div class=&quot;loading-message&quot;&gt;
       I work hard while you play hard.
-      <div class="spinner"></div>
-    </div>
-  </div>
-</script>
+      &lt;div class=&quot;spinner&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;
 
 
-<p>{% endraw %}
-{% endhighlight %}</p>
+&lt;p&gt;</code></pre>
+</div>
+</p>
 
 <p>Which also just works:</p>
 
@@ -711,19 +745,17 @@ URLs when she hits the Back button in the browser.</p>
 
 <p>So if the link that takes you to the next comment is written like this:</p>
 
-<p>{% highlight html %}
-{% raw %}
-{{link-to 'Next comment' 'photo.comment' nextComment}}
-{% endraw %}
-{% endhighlight %}</p>
+<p><div>
+  <pre><code class='html'>{{link-to &#39;Next comment&#39; &#39;photo.comment&#39; nextComment}}</code></pre>
+</div>
+</p>
 
 <p>It should now become:</p>
 
-<p>{% highlight html %}
-{% raw %}
-{{link-to 'Next comment' 'photo.comment' nextComment replace=true}}
-{% endraw %}
-{% endhighlight %}</p>
+<p><div>
+  <pre><code class='html'>{{link-to &#39;Next comment&#39; &#39;photo.comment&#39; nextComment replace=true}}</code></pre>
+</div>
+</p>
 
 <h3>Transitioning from inside routes</h3>
 

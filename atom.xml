@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-02-18T13:54:09+01:00</updated>
+  <updated>2015-02-18T22:31:08+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -50,6 +50,32 @@ selected band, we reach for nested routes.  When we need a widget that displays
 stars for the songs, we introduce components. When we want to show the user
 that loading data from the backend is in progress, we learn about loading
 routes.</p>
+
+<h2>Set List</h2>
+
+<p>The book currently has the following chapters:</p>
+
+<ol>
+<li>Introduction to Ember.js</li>
+<li>Ember CLI</li>
+<li>Templates and data bindings</li>
+<li>Routing</li>
+<li>Nested routes</li>
+<li>Actions</li>
+<li>Components</li>
+<li>Controllers</li>
+<li>Advanced routing</li>
+<li>Talking to a backend - with Ember Data</li>
+<li>Testing</li>
+<li>Sorting and searching with query params</li>
+<li>Loading and error routes</li>
+<li>Helpers</li>
+<li>Getting ready for Ember 2.0</li>
+</ol>
+
+
+<p>I say &#8216;currently&#8217; because I will definitely have to change some chapters as
+Ember evolves (To give an example, Controllers will probably become Routable components).</p>
 
 <h2>A reference book and a reference application</h2>
 
