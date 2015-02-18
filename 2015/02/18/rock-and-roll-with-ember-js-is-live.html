@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>upstream or downstream? - Balint Erdi</title>
+  <title>My book, Rock and Roll with Ember.js, is now live! - Balint Erdi</title>
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="With the proliferation of middleware applications the mentions of upstream and downstream servers has intensified so I decided to get to the end of &hellip;">
+  <meta name="description" content="I started writing my book, Rock &amp; Roll with Ember.js, on July 18, 2014, exactly
+7 months ago (More precisely, I prepared some drafts from early &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2009/04/27/upstream-or-downstream.html">
+  <link rel="canonical" href="http://balinterdi.com/2015/02/18/rock-and-roll-with-ember-js-is-live.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -76,7 +77,7 @@
   
   <header>
     
-      <h1 class="entry-title">Upstream or Downstream?</h1>
+      <h1 class="entry-title">My Book, Rock and Roll With Ember.js, Is Now Live!</h1>
     
     
       <p class="meta">
@@ -92,46 +93,91 @@
   
 
 
-<time datetime="2009-04-27T00:00:00+02:00" pubdate data-updated="true">Apr 27<span>th</span>, 2009</time>
+<time datetime="2015-02-18T09:51:00+01:00" pubdate data-updated="true">Feb 18<span>th</span>, 2015</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>With the proliferation of <a href="http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html">middleware applications</a> the mentions of upstream and downstream servers has intensified so I decided to get to the end of this and find out what exactly an upstream server is. I first looked up <a href="http://en.wikipedia.org/wiki/Upstream_server">wikipedia</a>:</p>
+<div class="entry-content"><p>I started writing my book, Rock &amp; Roll with Ember.js, on July 18, 2014, exactly
+7 months ago (More precisely, I prepared some drafts from early chapters most of
+which I ended up rewriting before that, but who doesn&#8217;t like a good story?).</p>
 
-<blockquote>
-In <a title="Computer networking" href="http://en.wikipedia.org/wiki/Computer_networking">computer networking</a>, <strong>upstream server</strong> refers to a <a title="Server (computing)" href="http://en.wikipedia.org/wiki/Server_(computing)">server</a> that provides service to another server. In other words, upstream server is a server that is located higher in the <a title="Hierarchy" href="http://en.wikipedia.org/wiki/Hierarchy">hierarchy</a> of servers.
-</blockquote>
+<p>Today, I am extremely happy to announce that <a href="http://rockandrollwithemberjs.com">the book is available for purchase</a>!</p>
 
+<h2>Tame the dreaded Ember.js learning curve</h2>
 
-<p>Ok, so based on this simplistic definition, a sketch of a request&#8217;s route to the application server and the response back can be illustrated like this:</p>
+<p>Ember is said to be hard to learn. Developers who are new to the framework hit
+a wall and can&#8217;t easily find out how all the pieces fit together.</p>
 
-<p><img src="http://bucionrails.com/wp-content/uploads/2009/04/request-stack.jpg" border="0" /></p>
+<p>My own experience tells me that Ember has a small number of core concepts that
+you have to grok to be able to tame the learning curve. Once you understand
+these key ideas behind the framework&#8217;s design, you will fly over that wall and
+see the green meadow filled with flowers and bunnies.</p>
 
-<p>In this drawing, the middleware is an upstream server to the underlying application since it provides a service to it (be it caching, url mapping, exception handling and <a href="http://github.com/rack/rack-contrib/tree/master">plenty of others</a>).</p>
+<p>You will build Ember applications with confidence and - if you are like me -
+you will love building them.</p>
 
-<p>So now with my definition established, I was looking for examples in the wild that support it. <a href="http://mwrc2009.confreaks.com/13-mar-2009-11-05-in-a-world-of-middleware-who-needs-monolithic-applications-jon-crosby.html">Jon Crosby&#8217;s excellent presentation</a> at the MountainWest Ruby Conference used upstream in this context as far as I remember. Check one.</p>
+<h2>Read it and build it!</h2>
 
-<p>Browsing the source code of <a href="http://github.com/rtomayko/rack-cache/tree/master">rack-cache</a> -which, by the way, I strongly encourage you to do if you want to understand caching (better) or just like the look of clean Ruby code- I realized Ryan Tomayko&#8217;s definition of upstream coincides with the above one since he uses downstream in the code to refer to the component/application below the rack-cache component. Check two.</p>
+<p>My book also has a concept, and a very pragmatic one at that.</p>
 
-<p>I recently set up an nginx web server as a front end server to a mongrel cluster that runs a Rails application. Ok, so in this case, the nginx server must be the upstream server since requests hit there first and then are passed to the mongrels. One must hear the sound of collapse of cards in my head when I saw the following <a href="http://wiki.nginx.org/NginxHttpUpstreamModule">nginx directive</a>:</p>
+<p>In the book, we are building an application, chapter by chapter. As we
+progress, we are adding new features to the application, introducing new
+Ember concepts that are needed for implementing the feature.</p>
 
-<div>
-  <pre><code class='bash'>upstream production_mongrels {
-  server 127.0.0.1:8000;
-  server 127.0.0.1:8001;
-  server 127.0.0.1:8002;
-}</code></pre>
-</div>
+<p>When a list of bands need to be displayed alongside with the songs of the
+selected band, we reach for nested routes.  When we need a widget that displays
+stars for the songs, we introduce components. When we want to show the user
+that loading data from the backend is in progress, we learn about loading
+routes.</p>
 
+<h2>A reference book and a reference application</h2>
 
-<p>Hmm, what? Nginx is above the component it provides a load-balancing service to so by any -ok, by my- definition the directive should say &#8220;downstream&#8221; and not &#8220;upstream&#8221;.</p>
+<p>Ember moves rapidly towards version 2.0. As each minor version is released, it
+brings new syntaxes and deprecates old ones. Even though the Ember Core team
+takes extreme care to ensure a smooth upgrade process, it is easy for an
+application to lag behind, having a few deprecations here and there and not
+using the shiny new tools.</p>
 
-<p>I realize that the request arrow on the diagram moving from top to bottom is a matter of convention and that it probably correlates with the fact that most languages write from the top to the bottom. Nevertheless, as far as I know Nginx is made by a Russian guy and Russians write top to bottom, too, so he should still use &#8220;downstream&#8221; for the directive, now shouldn&#8217;t he? Or did he simply start to sketch up boxes and arrows from bottom to top for the sake of it when designing his web server?</p>
+<p>The motto of the Ember 2.0 roadmap is &#8220;Stability without Stagnation&#8221;, that old
+syntaxes and practices should vanish gradually, giving ample time for developers
+to update their applications. At the same time, Ember should not stagnate, it
+should introduce new features.</p>
 
-<p>Summing up, I think the above described convention is the common one but since it is not standardized there will always be people and software that uses it the other way around. I am not overly confident though, so please tell me about your definition or just point to examples which support or contradict mine.</p>
+<p>I adhere to this motto, but, more importantly, my book does, too.</p>
+
+<p>I want the book and the Rock &amp; Roll application to be up-to-date with the latest
+stable Ember version and not have any of the deprecations. What that means in
+practice is that if you buy one of the packages, you will most likely get book
+updates after each 1.x release. And at no extra cost to you until 2.0 ships!</p>
+
+<h2>A bonus deal you will definitely like</h2>
+
+<p>When you <a href="http://rockandrollwithemberjs.com/#stairway-to-heaven">buy one of the packages</a> you also get access to an awesome deal
+from <a href="https://divshot.com">Divshot</a>, a company that provides static hosting for your Ember apps.</p>
+
+<p>You get 3 months free of <a href="https://divshot.com/pricing">their Fleet plan</a>, a $150 value.</p>
+
+<h2>The &#8220;New Beginning&#8221; tour</h2>
+
+<p><del>Wait, there is more!</del> To celebrate that the book has finally seen the
+light of day, there is a 25% discount <a href="http://rockandrollwithemberjs.com/#pricing">on all packages</a>.</p>
+
+<p>This offer expires on Sunday, February 22, at 23:59 PST, so <a href="http://rockandrollwithemberjs.com">grab yours</a> now!</p>
+
+<h2>Acknowledgements</h2>
+
+<p>I am indebted to all of you who have pushed me through the finish line, either
+by praising my screencasts, blog posts and review copies of my book, retweeting
+my marketing tweets, giving valuable feedback that made the book better or
+simply by pointing out typos in the text.</p>
+
+<p>I would also like to thank you to the Ember Core team whose relentless work
+makes Ember better every day. You are putting so much time in, it&#8217;s almost
+insane. It&#8217;s kinda obvious but without your contributions, this book would not
+exist.</p>
 </div>
 
 
@@ -155,8 +201,14 @@ In <a title="Computer networking" href="http://en.wikipedia.org/wiki/Computer_ne
   
 
 
-<time datetime="2009-04-27T00:00:00+02:00" pubdate data-updated="true">Apr 27<span>th</span>, 2009</time>
+<time datetime="2015-02-18T09:51:00+01:00" pubdate data-updated="true">Feb 18<span>th</span>, 2015</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ember-js/'>ember.js</a>
+  
+</span>
 
 
     </p>
@@ -165,14 +217,18 @@ In <a title="Computer networking" href="http://en.wikipedia.org/wiki/Computer_ne
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2009/03/25/finding-missing-i18n-translations-with-missing_t.html" title="Previous Post: finding missing I18n translations with missing_t">&laquo; finding missing I18n translations with missing_t</a>
+        <a class="basic-alignment left" href="/2014/09/05/reminiscing-about-emberfest-2014.html" title="Previous Post: Reminiscing about EmberFest 2014">&laquo; Reminiscing about EmberFest 2014</a>
       
-      
-        <a class="basic-alignment right" href="/2009/06/22/twuckoo-my-twitter-mini-framework.html" title="Next Post: twuckoo - my twitter mini framework">twuckoo - my twitter mini framework &raquo;</a>
       
     </p>
   </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -263,7 +319,10 @@ In <a title="Computer networking" href="http://en.wikipedia.org/wiki/Computer_ne
       var disqus_shortname = 'codigoergosum';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://balinterdi.com/2015/02/18/rock-and-roll-with-ember-js-is-live.html';
+        var disqus_url = 'http://balinterdi.com/2015/02/18/rock-and-roll-with-ember-js-is-live.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
