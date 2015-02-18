@@ -4,23 +4,23 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content='Ember.js is an opinionated framework for building kickass web applications. Its strong opinions and heavy reliance of “convention over configuration” can give developers coming to the framework a hard time finding out how "Ember wants them to do things”. This book helps to overcome that initial frustration and sets you on your way to master Ember.js. It does this by guiding you through the steps of building a real application.'>
+    <meta name="author" content="Balint Erdi">
     <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
     <link rel="icon" href="images/favicon/favicon.ico" type="image/x-icon">
 
-    <title>Rock & Roll with Ember.js</title>
+    <title>Rock &amp; Roll with Ember.js</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/lib/font-awesome.min.css" rel="stylesheet">
-    <!-- Style LESS -->
-    <!--<link rel="stylesheet/less" type="text/css" href="css/less/styles.less" />-->
+    <link href="css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/lib/nivo-lightbox.css" type="text/css" />
     <link rel="stylesheet" href="css/lib/nivo-themes/default/default.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="css/styles.css" />
-    <link rel="stylesheet" type="text/css" href="css/tweaks.css" />
+    <link rel="stylesheet" type="text/css" href="css/custom.css" />
     <link rel="stylesheet" type="text/css" href="css/scheme/brown.css" />
+
+    <link href='http://fonts.googleapis.com/css?family=Allura' rel='stylesheet' type='text/css'>
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="js/html5shiv.js"></script>
@@ -29,124 +29,145 @@
 </head>
 
 <body>
-    <div class="outbox">
-        <section class="headcontent">
+    <div class="outbox" style="position: relative">
+
+      <div class="wings-badge wings-badge-fixed">
+        <a href="#new-beginning-tour"><img src="images/beggining-tour-offer.gif"  alt="Special Offer 25% Off"></a>
+      </div>
+
+        <!-- BEGIN Headcontent -->
+        <section class="headcontent section-gray" id="headcontent">
             <div class="container">
+
               <div id="masthead" class="row text-content">
                 <div class="col-lg-12 col-md-12">
                   <h1>Tame the dreaded Ember.js learning curve</h1>
                 </div>
               </div>
+
               <div class="row">
-                  <div class="col-lg-5  col-md-5">
+                  <div class="col-lg-5 col-md-5">
                     <div class="image-content">
-                      <img src="images/cover.jpg" alt="Rock & Roll with Ember.js" />
+                      <img src="images/cover.jpg" alt="Rock &amp; Roll with Ember.js" />
                     </div>
                   </div>
                   <div class="col-lg-7 col-md-7">
                     <div class="text-content selling-points">
-                      <h1>Build ambitious apps with confidence</h1>
-                      <p>Ember.js is an opinionated framework for building kickass web applications. Its strong opinions and heavy reliance of “convention over configuration” can give developers coming to the framework a hard time finding out how "Ember wants them to do things”.</p>
-                      <p>This book helps to overcome that initial frustration and sets you on your way to master Ember.js. It does this by guiding you through the steps of building a real application.</p>
-                      <p>You are going to learn about the building components of Ember one-by-one, in a way that crushes the steep learning curve. Knowledge is dripped, chapter by chapter, to prevent you from drowning in a sea of novel information. By improving an existing and working application, you will learn quicker and new knowledge will sink in better.</p>
-                      <p>The book is a work in progress and you can <a href="#top-signup-form">sign up below</a> to receive the sample chapter and regular updates.</p>
-                      <p>Once you went through the book, you might not be a Ember.js rock star (yet) but at least you have surely written an Ember app with rock stars in it.</p>
-                      <br/>
+                      <h2 class="hightlighted">Build ambitious apps with confidence</h2>
+                      <p><strong>Ember.js is a kick-ass framework for building web applications</strong>. It's the only tool you need (on the client-side) to craft your idea into a working wonder. However, its strong opinions and heavy reliance of “convention over configuration” can give developers who are new to the framework a hard time figuring out how Ember wants them to do things.</p>
+                      <p><strong>This book helps to overcome that initial frustration</strong> by pinpointing the core concepts and explaining them in detail. Once you understand them  you are on your way to taming and mastering Ember.js.</p>
+                      <p>The book guides you through the steps of building a real application so that you can see how the concepts are applied in practice. You'll learn learn about the building blocks of Ember one by one, in a way that crushes the steep learning curve. Knowledge is dripped in slowly, chapter by chapter, to prevent you from drowning in a sea of novel information. <strong>By improving an existing and working application, you will learn more quickly and new knowledge will sink in deeper.</strong></p>
+                      <p><strong>Get 25% off of all packages</strong> during the <a href="#new-beginning-tour">"New Beginning Tour"</a> by buying before Sunday, February 22, 23:59 PST.
+                      <p id="convinced">Already convinced? <a href="#stairway-to-heaven">Skip to the packages.</a></p>
                     </div>
                   </div>
-              </div>
-              <div class="row text-content signup">
-                <div class="col-lg-8 col-md-8">
-                  <div class="center-block" id="sample-chapter-shot"></div>
-                </div>
-                <div class="col-lg-4 col-md-4">
-                  <div class="row">
-                    <div class="signup-form" id="top-signup-form">
-                      <form action="http://balinterdi.us6.list-manage.com/subscribe/post?u=6bdf378a5947221cb5387b72f&amp;id=8b3a0276c3"
-                        method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form"
-                        class="validate" target="_blank" novalidate>
-                        <div class="form-group">
-                          <label for="name-input">First name&#42;</label>
-                          <input type="text" name="FNAME" class="form-control" id="name-input" required="required">
-                        </div>
-                        <div class="form-group">
-                          <label for="name-input">Last name</label>
-                          <input type="text" name="LNAME" class="form-control" id="name-input">
-                        </div>
-                        <div class="form-group">
-                          <label for="email-input">Email address&#42;</label>
-                          <input type="email" name="EMAIL" class="form-control" id="email-input" required="required">
-                        </div>
-                        <div id="mce-responses" class="clear">
-                          <div class="response" id="mce-error-response" style="display:none"></div>
-                          <div class="response" id="mce-success-response" style="display:none"></div>
-                        </div>
-                        <div style="position: absolute; left: -5000px;">
-                          <input type="text" name="b_6bdf378a5947221cb5387b72f_8b3a0276c3" value="">
-                        </div>
-                        <input type="hidden" name="SIGNUP" id="SIGNUP" value="rarwe-landing-page" />
-                        <div class="text-center">
-                          <button type="submit" name="subscribe" class="btn-lg darkbg-blue">
-                            <span>Send me the sample chapter</span>
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
         </section>
-        <div class="break-shadow"></div>
+        <!-- END Headcontent -->
 
-        <section class="story">
+        <!-- BEGIN new-beginning-tour -->
+        <section class="section-gray" id="new-beginning-tour">
           <div class="container">
             <div class="row">
               <div class="col-lg-12">
+                <span class="icon-separator"><i class="fa fa-road"></i></span>
+
+                <div class="content-title">
+                  <div class="wings-badge wings-badge-absolute">
+                    <img src="images/beggining-tour-offer.gif"  alt="Special Offer 25% Off">
+                  </div>
+
+                  <div class="separator-title">
+                    <h2>"New Beginning" Tour</h2>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-12 marketext">
+                <p>I announced I would write the “Rock and Roll with Ember.js” book on July 18, 2014, so it has been at least seven months in the making. If I also count the time I spent producing the early screencasts and writing the blog posts it adds up to a lot more. To celebrate that the book has finally seen the light of day, there is a <strong>25% discount <a href="#pricing">on all packages</a></strong>. The tour ends on Sunday, February 22, at 23:59 PST so make sure to get your copy before prices rise.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- END new-beginning-tour -->
+
+        <!-- BEGIN Stability -->
+        <section class="section-gray" id="stability-without-stagnation">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                <span class="icon-separator"><i class="fa fa-signal"></i></span>
+                <div class="content-title">
+                  <div class="separator-title">
+                    <h2>Stability without Stagnation, and without paying a dime!</h2>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-12 marketext">
+                <p>Ember.js is heading towards its 2.0 release. The motto of the development roadmap is “<strong>stability without stagnation</strong>”, meaning that deprecations are introduced gradually with each minor version and only removed with Ember 2.0 (and a lot them keep working even after that!). That ensures that people developing and maintaining Ember applications have time to move them off of syntaxes that will vanish and that these applications are not left at the wayside. The “without stagnation” part states that at the same time, the framework should move forward, and that new features should be added to it.</p>
+
+                <p><strong>I aim to follow a similar strategy with this book</strong>. On one hand, I will regularly update the book so that it stays operational and idiomatic with the latest stable version on the road to Ember 2.0. On the other hand, I also want to add new content up to and beyond the 2.0 release. <strong>If you have purchased the book, all the updates until 2.0 are free</strong>, no strings attached. That way, you'll have a guide that is up-to-date with the latest Ember version and a reference application that uses (some of) its features and has none of its deprecations.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- END Stability -->
+
+        <!-- BEGIN My story -->
+        <section class="section-white" id="story">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                <span class="icon-separator"><i class="fa fa-calendar"></i></span>
                 <div class="content-title">
                   <div class="separator-title">
                     <h2>Once upon a time...</h2>
                   </div>
                 </div>
               </div>
+
               <div class="col-lg-12 marketext">
                 <p>
                   It all started in September 2013. Having just returned from the first European
-                  Ember.js conference my enthusiasm went through the roof. I wanted to spread the
-                  word. I knew I wanted people to realize how beautiful Ember is.  I wanted them to
-                  know that Ember.js is not hard to learn. It's all just a matter of having the core
+                  Ember.js conference, my enthusiasm went through the roof. <strong>I wanted to spread the
+                  word</strong>, for people to realize how beautiful Ember is, for them to know
+                  that Ember.js is not that hard to learn. It's just a matter of having the core
                   concepts internalized.
                 </p>
                 <p>
-                  So without proper equipment I started producing a Ember screencasts. A series in
-                  which a simple application is developed step-by-step. I sent them to my
-                  subscribers and kept producing them. And people seemed to have <a href="#testimonials">liked them.</a>
+                  So without proper equipment (and after a few episodes, with a ~$80 mic)  I started producing <strong>screencasts</strong>, a series in
+                  which a simple application is developed step-by-step. I sent the first few to my
+                  subscribers and kept producing them. And people seemed to have <a href="#screencast-testimonials">liked them.</a>
                 </p>
                 <p>
                   Once the screencast series was finished, I switched to blog posts and lengthier
-                  articles, and in 2014 I committed to sending something of value each week. And
-                  now, this book.
+                  articles, and in 2014 I committed to posting something of value each week. Now,
+                  after a long labor of (mostly) love, I published this book.
                 </p>
               </div>
             </div>
           </div>
         </section>
+        <!-- END My story -->
 
-        <!-- BEGIN Testimoni -->
-        <section class="comment" id="testimonials">
+        <!-- BEGIN Testimoni Screencast -->
+        <section class="section-gray comment" id="screencast-testimonials">
             <div class="container">
               <div class="row">
                 <div class="col-lg-12">
-                  <span class="icon-separator"><i class="icon-quote-right"></i>
+                  <span class="icon-separator"><i class="fa fa-quote-right"></i>
                   </span>
                   <div class="content-title">
                     <div class="separator-title">
                       <h2>Testimonials</h2>
                     </div>
-                    <span>What people say about the screencasts</span>
+                    <span>What people say about <strong>the screencasts</strong></span>
                   </div>
                 </div>
               </div>
+
               <div class="row top-margin">
                 <div class="col-lg-6 col-md-6 col-sm-6">
                   <div class="testi">
@@ -155,7 +176,7 @@
                     </div>
                     <div class="testi-profile">
                       <figure>
-                        <img src="images/testimonials/curtis-wallen-100x100.jpg" alt="">
+                        <img src="images/testimonials/curtis-wallen-100x100.jpg" alt="Curtis Wallen">
                       </figure>
                       <div class="testi-name">
                         <strong>&mdash; Curtis Wallen</strong>
@@ -163,6 +184,7 @@
                     </div>
                   </div>
                 </div>
+
                 <div class="col-lg-6 col-md-6 col-sm-6">
                   <div class="testi">
                     <div class="testi-content">
@@ -170,7 +192,7 @@
                     </div>
                     <div class="testi-profile">
                       <figure>
-                        <img src="images/testimonials/chase-pursley-100x100.jpg" alt="">
+                        <img src="images/testimonials/chase-pursley-100x100.jpg" alt="Chase Pursley">
                       </figure>
                       <div class="testi-name">
                         <strong>&mdash; Chase Pursley</strong>
@@ -179,6 +201,7 @@
                   </div>
                 </div>
               </div>
+
               <div class="row top-margin">
                 <div class="col-lg-6 col-md-6 col-sm-6">
                   <div class="testi">
@@ -187,7 +210,7 @@
                     </div>
                     <div class="testi-profile">
                       <figure>
-                        <img src="images/testimonials/steven-kane-100x100.png" alt="">
+                        <img src="images/testimonials/steven-kane-100x100.png" alt="Steven Kane">
                       </figure>
                       <div class="testi-name">
                         <strong>&mdash; Steven Kane</strong>
@@ -195,6 +218,7 @@
                     </div>
                   </div>
                 </div>
+
                 <div class="col-lg-6 col-md-6 col-sm-6">
                   <div class="testi">
                     <div class="testi-content">
@@ -202,7 +226,7 @@
                     </div>
                     <div class="testi-profile">
                       <figure>
-                        <img src="images/testimonials/claude-precourt-100x100.jpg" alt="">
+                        <img src="images/testimonials/claude-precourt-100x100.jpg" alt="Claude Précourt">
                       </figure>
                       <div class="testi-name">
                         <strong>&mdash; Claude Précourt</strong>
@@ -211,6 +235,7 @@
                   </div>
                 </div>
               </div>
+
               <div class="row top-margin">
                 <div class="col-lg-6 col-md-6 col-sm-6">
                   <div class="testi">
@@ -219,7 +244,7 @@
                     </div>
                     <div class="testi-profile">
                       <figure>
-                        <img src="images/testimonials/antonio-antillon-100x100.jpg" alt="">
+                        <img src="images/testimonials/antonio-antillon-100x100.jpg" alt="Antonio Antillon">
                       </figure>
                       <div class="testi-name">
                         <strong>&mdash; Antonio Antillon</strong>
@@ -227,6 +252,7 @@
                     </div>
                   </div>
                 </div>
+
                 <div class="col-lg-6 col-md-6 col-sm-6">
                   <div class="testi">
                     <div class="testi-content">
@@ -234,7 +260,7 @@
                     </div>
                     <div class="testi-profile">
                       <figure>
-                        <img src="images/testimonials/evgenij-pirogov-70x70.jpg" alt="">
+                        <img src="images/testimonials/evgenij-pirogov-70x70.jpg" alt="Evgenij Pirogov">
                       </figure>
                       <div class="testi-name">
                         <strong>&mdash; Evgenij Pirogov</strong>
@@ -245,39 +271,61 @@
               </div>
             </div>
         </section>
-        <!-- END Testimoni -->
+        <!-- END Testimoni Screencast -->
 
-        <div class="break-shadow"></div>
+        <!-- BEGIN Bonus -->
+        <section class="section-gray" id="bonus">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                <span class="icon-separator"><i class="fa fa-plus"></i></span>
+                <div class="content-title">
+                  <div class="separator-title">
+                    <h2>Bonus: An exclusive deal with Divshot</h2>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-12 marketext">
+                <p><a href="https://divshot.com">Divshot</a> is an amazing static hosting service, <strong>perfect for Ember.js applications</strong>. I secured a deal for you with them that is included in all the packages. They were kind enough to offer <strong>3 months free</strong> <a href="https://divshot.com/pricing">of their Fleet plan</a>, <strong>a $150 value!</strong></p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- END Bonus -->
 
         <!-- BEGIN AUTHOR -->
-        <section class="author" id="about-the-author">
+        <section class="section-gray author" id="about-the-author">
           <div class="container">
             <div class="row authorow">
               <div class="col-lg-2 col-md-2">
-                <img class="thumbnail profpic" src="images/balint.jpg" alt="">
+                <img class="thumbnail profpic" src="images/balint-s.jpg" alt="Balint Erdi">
               </div>
+
               <div class="author-bio col-lg-offset-1 col-md-offset-1 col-lg-7 col-md-7">
-                <h3>About the author</h3>
-                <p>Hello there, I'm Balint Erdi.</p>
+                <h3>About me</h3>
+                <p><strong>Hello there, I'm Balint Erdi.</strong></p>
                 <p>
                   I have a long history of building web applications and have mostly been a back-end
                   guy.
                 </p>
                 <p>
-                  On a grey, chilly February day that I’ll never forget (maybe it was
+                  On a grey, chilly February day in 2013 that I’ll never forget (maybe it was
                   January?) I got acquainted with Ember.js. Ember.js made that day bright and the
                   ones that came after that. After learning the ropes I shifted gears and have been
                   proselytizing for Ember since last summer.
                 </p>
                 <p>
-                  I gave a beginner’s workshop at Eurucamp, and held presentations at Arrrrcamp and
-                  The Geek Gathering. I started an Ember.js mailing list, made an introductory
+                  I gave a beginner’s workshop at <a href="http://eurucamp.org">Eurucamp</a>, and held presentations at <a href="http://arrrrcamp.be">Arrrrcamp</a>, <a href="http://thegeekgathering2013.sched.org/speaker/balint">The Geek Gathering</a> and <a href="https://emberfest.eu/">EmberFest</a>. I started an Ember.js mailing list, made an introductory
                   screencast series and have been sending Ember content to my dear subscribers on a
-                  weekly basis. I have also written guest articles for Safari Books Online, Firebase
-                  and Toptal.
+                  weekly basis. I have also written guest articles for <a href="https://blog.safaribooksonline.com/2013/10/29/marking-links-as-active-in-ember-js-markdown">Safari Books Online</a>, <a href="https://www.firebase.com/blog/2013-12-16-emberfire-guest-blog.html">Firebase</a>
+                  and <a href="http://www.toptal.com/javascript/a-step-by-step-guide-to-building-your-first-ember-js-app">Toptal</a>.
                 </p>
                 <p>
-                  I guess you could say I’m pretty passionate about this.
+                  I guess you could say I’m pretty passionate about Ember.
+                </p>
+                <p>
+                  Oh, and I love rock &amp; roll, obviously.
                 </p>
               </div>
             </div>
@@ -285,72 +333,489 @@
         </section>
         <!-- END AUTHOR -->
 
-        <section class="unconvinced">
+        <!-- BEGIN Stairway to Heaven package -->
+        <section class="section-white package" id="stairway-to-heaven">
           <div class="container">
-            <div class="row headline" >
+            <div class="row">
               <div class="col-lg-12">
-                <div class="content-title">
-                  <div class="separator-title">
-                    <h2>Still on the fence?</h2>
+                <div class="content-title author">
+                  <h2>Stairway to Heaven <span>Package</span></h2>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <p class="package-intro">
+                  The path to Ember.js bliss, this package contains all you need to take your Ember.js skills to the next level. <strong>It contains:</strong>
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="benefits">
+                <div class="col-lg-3 col-sm-6 col-xs-12">
+                  <div class="items">
+                    <div class="benefits-icon">
+                      <img src="images/icon-book.jpg" alt="The book" />
+                    </div>
+                    <h3>The book</h3>
+                    <span>15 chapters</span>
+                    <p>This is what you absolutely need to get up &amp; running with Ember.js. Comes in pdf, mobi and epub formats for your reading pleasure.</p>
+                  </div>
+                </div>
+
+                <div class="col-lg-3 col-sm-6 col-xs-12">
+                  <div class="items">
+                    <div class="benefits-icon">
+                      <img src="images/icon-code.jpg" alt="Code" />
+                    </div>
+                    <h3>Access to the code</h3>
+                    <span>All of the source code</span>
+                    <p> in the application so that you can check how the app looks &amp; works at each step. Or tweak it to your liking.</p>
+                  </div>
+                </div>
+
+                <div class="col-lg-3 col-sm-6 col-xs-12">
+                  <div class="items">
+                    <div class="benefits-icon">
+                      <img src="images/icon-screencast.jpg" alt="Screencast" />
+                    </div>
+                    <h3>Screencast</h3>
+                    <span>4 soon-to-be-released-screencasts</span>
+                    <p> on subjects that are not covered in the book. Think of it as an extension to the book material, to take your Ember skills to the next level.</p>
+                  </div>
+                </div>
+
+                <div class="col-lg-3 col-sm-6 col-xs-12">
+                  <div class="items">
+                    <div class="benefits-icon">
+                      <img src="images/icon-rnr.gif" alt="Rock and Roll" />
+                    </div>
+                    <h3>Rock &amp; More</h3>
+                    <span>Includes</span>
+                    <p>3 months of the Fleet package on <a href="https://divshot.com/pricing">Divshot</a></p>
                   </div>
                 </div>
               </div>
             </div>
+
             <div class="row">
-              <div class="col-lg-8 col-md-8 perks">
-                <p>Sign up now and you will:</p>
-                <ul>
-                  <li>Be kept up-to-date on the progress I make with the book</li>
-                  <li>Get the sample chapter of the <em>Rock & Roll with Ember.js</em> book</li>
-                  <li>Receive the screencast series which shows how to build an Ember app</li>
-                  <li>Get articles, screencasts or small Ember.js tips regularly</li>
-                  <li>Be eligible for perks and discounts that are exclusive to my subscribers</li>
-                </ul>
+              <div class="col-lg-12">
+                <div class="package-buy">
+                  <a href="https://gum.co/rarwe-high-tier" class="button buy-button darkbg-blue clearfix" data-price="67">
+                    Buy now for <del>$89</del> <span>$67</span>
+                  </a>
+                </div>
               </div>
-              <div class="col-lg-4 col-md-4">
-                <div class="row">
-                  <div class="signup-form" id="bottom-signup-form">
-                    <form action="http://balinterdi.us6.list-manage.com/subscribe/post?u=6bdf378a5947221cb5387b72f&amp;id=8b3a0276c3"
-                        method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form"
-                        class="validate" target="_blank" novalidate>
-                      <div class="form-group">
-                        <label for="name-input">First name&#42;</label>
-                        <input type="text" name="FNAME" class="form-control" id="name-input" required="required">
+            </div>
+
+          </div>
+        </section>
+        <!-- END Stairway to Heaven package -->
+
+        <!-- BEGIN Light my Fire package -->
+        <section class="section-white package" id="light-my-fire">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="content-title author">
+                  <h2>Light my Fire <span>Package</span></h2>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <p class="package-intro">
+                  Take out the screencasts and you have this smaller package that will still ignite your Ember rocket. <strong>It contains:</strong>
+                </p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="benefits col-lg-9 col-centered">
+                <div class="col-lg-4 col-sm-6 col-xs-12">
+                  <div class="items">
+                    <div class="benefits-icon">
+                      <img src="images/icon-book.jpg" alt="The book" />
+                    </div>
+                    <h3>The book</h3>
+                    <span>15 chapters</span>
+                    <p>This is what you absolutely need to get up &amp; running with Ember.js. Comes in pdf, mobi and epub formats for your reading pleasure.</p>
+                  </div>
+                </div>
+
+                <div class="col-lg-4 col-sm-6 col-xs-12">
+                  <div class="items">
+                    <div class="benefits-icon">
+                      <img src="images/icon-code.jpg" alt="Code" />
+                    </div>
+                    <h3>Access to the code</h3>
+                    <span>All of the source code</span>
+                    <p> in the application so that you can check how the app looks &amp; works at each step. Or tweak it to your liking.</p>
+                  </div>
+                </div>
+
+                <div class="col-lg-4 col-sm-6 col-xs-12 rock-and-roll">
+                  <div class="items">
+                    <div class="benefits-icon">
+                      <img src="images/icon-rnr.gif" alt="Rock and Roll" />
+                    </div>
+                    <h3>Rock &amp; More</h3>
+                    <span>Includes</span>
+                    <p>3 months of the Fleet package on <a href="https://divshot.com/pricing">Divshot</a></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="package-buy">
+                  <a href="https://gum.co/rarwe-middle-tier" class="button buy-button darkbg-blue clearfix" data-price="44">
+                    Buy now for <del>$59</del> <span>$44</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- END Light my Fire package -->
+
+        <!-- BEGIN Smoke on the Water package -->
+        <section class="section-white package" id="smoke-on-the-water">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="content-title author">
+                  <h2>Smoke on the Water <span>Package</span></h2>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <p class="package-intro">
+                  Basic but still solid, as the name suggests. This package inclues the book and the Divshot deal. <strong>It contains:</strong>
+                </p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="benefits">
+                <div class="col-lg-3 col-lg-offset-3 col-sm-6 col-xs-12">
+                  <div class="items">
+                    <div class="benefits-icon">
+                      <img src="images/icon-book.jpg" alt="The book" />
+                    </div>
+                    <h3>The book</h3>
+                    <span>15 chapters</span>
+                    <p>This is what you absolutely need to get up &amp; running with Ember.js. Comes in pdf, mobi and epub formats for your reading pleasure.</p>
+                  </div>
+                </div>
+
+                <div class="col-lg-3 col-sm-6 col-xs-12">
+                  <div class="items">
+                    <div class="benefits-icon">
+                      <img src="images/icon-rnr.gif" alt="Rock and Roll" />
+                    </div>
+                    <h3>Rock &amp; More</h3>
+                    <span>Includes</span>
+                    <p>3 months of the Fleet package on <a href="https://divshot.com/pricing">Divshot</a></p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="package-buy">
+                  <a href="https://gum.co/rarwe-low-tier" class="button buy-button darkbg-blue clearfix" data-price="29">
+                    Buy now for <del>$39</del> <span>$29</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- END Smoke on the water package -->
+
+        <!-- BEGIN Testimoni -->
+        <section class="section-gray comment testimonials" id="book-testimonials">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                <span class="icon-separator"><i class="fa fa-quote-right"></i></span>
+                <div class="content-title">
+                  <div class="separator-title">
+                    <h2>Testimonials</h2>
+                  </div>
+                  <span>Here is what people say about <strong>the book</strong></span>
+                </div>
+              </div>
+            </div>
+            <div class="row top-margin">
+              <div class="col-lg-6 col-md-6 col-sm-6">
+
+                <div class="testi">
+                  <div class="testi-content">
+                      <p>This is a really great book. I think it will be very helpful to many people. I’m definitely going to recommend it to beginners.</p>
+                  </div>
+                  <div class="testi-profile">
+                      <figure>
+                          <img src="images/testimonials/avatar-taras-mankowski.jpg" alt="Taras Mankowski">
+                      </figure>
+                      <div class="testi-name">
+                          <strong>&mdash; Taras Mankowski</strong>
+                          <i>EmberSherpa</i>
                       </div>
-                      <div class="form-group">
-                        <label for="name-input">Last name</label>
-                        <input type="text" name="LNAME" class="form-control" id="name-input">
+                  </div>
+                </div>
+
+                <div class="testi">
+                  <div class="testi-content">
+                      <p>This book is a fabulous, approachable, foray into Emberjs that makes the learning curve much less scary. I just wish it had been available sooner for students in my previous classes.</p>
+                  </div>
+                  <div class="testi-profile">
+                      <figure>
+                          <img src="images/testimonials/avatar-matt-hale.jpg" alt="Matt Hale">
+                      </figure>
+                      <div class="testi-name">
+                          <strong>&mdash; Matt Hale</strong>
+                          <i>Assistant Professor at the University of Nebraska</i>
                       </div>
-                      <div class="form-group">
-                        <label for="email-input">Email address&#42;</label>
-                        <input type="email" name="EMAIL" class="form-control" id="email-input" required="required">
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-6 col-md-6 col-sm-6">
+               <div class="testi">
+                 <div class="testi-content">
+                     <p>I really like it! It is super difficult to find the right balance between pacing and detail
+and put it all together in an understandable form but you pulled it off.</p>
+                 </div>
+                 <div class="testi-profile">
+                     <figure>
+                         <img src="images/testimonials/avatar-cory-forsyth.jpg" alt="Cory Forsyth">
+                     </figure>
+                     <div class="testi-name">
+                         <strong>&mdash; Cory Forsyth</strong>
+                         <i>201 Created</i>
+                     </div>
+                 </div>
+               </div>
+
+                <div class="testi">
+                  <div class="testi-content">
+                      <p>I’ve gone through the first four chapters and I am already loving it.</p>
+                  </div>
+                  <div class="testi-profile">
+                      <figure>
+                          <img src="images/testimonials/avatar-sergio-arbeo.jpg" alt="Sergio Arbeo">
+                      </figure>
+                      <div class="testi-name">
+                          <strong>&mdash; Sergio Arbeo</strong>
+                          <i>EmberMadrid</i>
                       </div>
-                      <div id="mce-responses" class="clear">
-                        <div class="response" id="mce-error-response" style="display:none"></div>
-                        <div class="response" id="mce-success-response" style="display:none"></div>
-                      </div>
-                      <div style="position: absolute; left: -5000px;">
-                        <input type="text" name="b_6bdf378a5947221cb5387b72f_8b3a0276c3" value="">
-                      </div>
-                      <input type="hidden" name="SIGNUP" id="SIGNUP" value="rarwe-landing-page" />
-                      <div class="text-center">
-                        <button type="submit" name="subscribe" class="btn-lg darkbg-blue">
-                          <span>Send me the sample chapter</span>
-                        </button>
-                      </div>
-                    </form>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
+        <!-- END Testimoni -->
+
+        <!-- BEGIN Concerns -->
+        <section class="section-gray" id="concerns">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                <span class="icon-separator"><i class="fa fa-comments-o"></i></span>
+                <div class="content-title">
+                  <div class="separator-title">
+                    <h2>Hmm, I’m not sure...</h2>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-12">
+                <ul class="check">
+                  <li class="col-lg-6 col-md-12">
+                    <h4>Is the book ready for Ember 2.0?</h4>
+                    <p>
+                    Yes, it is! Ember 2.0 is not a big-bang rewrite but more
+                    of a series of new features/syntaxes and deprecations.
+                    After every new Ember minor version (for example, 1.12)
+                    comes out, I will make sure the book does not contain
+                    deprecated code and works correctly with the latest
+                    version.
+                    </p>
+                  </li>
+
+                  <li class="col-lg-6 col-md-12">
+                    <h4>Is this book for me?</h4>
+                    <p>
+                    The book starts from the very basics (installing
+                    ember-cli, writing your first template, etc.) so if you
+                    completely get Ember, this book is probably not for you. If
+                    you are just starting out (or about to) or want to
+                    understand fundamental concepts in Ember, the book is
+                    definitely for you.
+                    </p>
+                  </li>
+
+                  <li class="col-lg-6 col-md-12">
+                    <h4>Everything is changing so fast; won't the content be outdated by next week?</h4>
+                    <p>
+                    It will not, maybe next month :). Joking aside, as
+                    Ember.js moves towards 2.0, I will keep updating the
+                    contents of the book so that it stays void of deprecation
+                    warnings and does not promote practices that are no longer
+                    considered idiomatic. In practice, that might involve sending
+                    you an updated copy each time a new 1.x version lands
+                    and some feature in the Rock &amp; Roll application become
+                    deprecated.
+                    </p>
+                  </li>
+
+                  <li class="col-lg-6 col-md-12">
+                    <h4>I heard Ember is so hard. Will this book help me understand it?</h4>
+                    <p>
+                    I think there are a handful of key concepts in Ember.js
+                    that you need to understand to master it (probably the main
+                    one among these is routing). Once you understand these,
+                    Ember is not that hard. The intention of the book is
+                    to introduce concepts by way of building an actual
+                    application, so you see them applied in practice right away.
+                    That also helps the learning process. I also encourage you
+                    to work through the book as you read it, since that makes
+                    things sink in even deeper. You have access to the code
+                    repository if you have purchased the middle- or
+                    high-tier package. If I failed to explain Ember for you, please
+                    send me your purchase receipt to <a href="mailto:rarwe-book@balinterdi.com">rarwe-book@balinterdi.com</a>
+                    within 60 days of purchase and I’ll issue a refund.
+                    </p>
+                  </li>
+
+                  <li class="col-lg-6 col-md-12">
+                    <h4>Is the book DRM protected?</h4>
+                    <p>
+                    No, it’s not. If you would like to share it with
+                    colleagues (or a class), please contact me at <a href="mailto:rarwe-book@balinterdi.com">rarwe-book@balinterdi.com</a>.</p>
+                  </li>
+
+                  <li class="col-lg-6 col-md-12">
+                    <h4>What if I buy the book-only package and later realize I want to switch to a higher package?</h4>
+                    <p>No problem! Just send me your purchase receipt to <a href="mailto:rarwe-book@balinterdi.com">rarwe-book@balinterdi.com</a>, and I will upgrade you for the difference between the package prices.</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- END Concerns -->
+
+        <!-- BEGIN PRICING -->
+        <section class="section-white pricing" id="pricing">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                  <div class="wings-badge wings-badge-absolute">
+                    <img src="images/beggining-tour-offer.gif"  alt="Special Offer 25% Off">
+                  </div>
+                  <span class="icon-separator"><i class="fa fa-credit-card"></i>
+                  </span>
+                  <div class="content-title">
+                    <div class="separator-title">
+                        <h2>Choose a Package</h2>
+                    </div>
+                    <span><strong>Get 25% off of all packages</strong> during the <a href="#new-beginning-tour">"New Beginning Tour"</a> that ends on Sunday, February 22, at 23:59 PST.
+                    </span>
+                  </div>
+                </div>
+            </div>
+
+              <div class="row top-margin">
+                <div class="col-lg-12">
+                  <ul class="pricing_table three col-centered">
+                    <li class="price_block col-centered">
+                      <h3>Smoke on the Water</h3>
+                      <div class="price">
+                        <div class="price_figure">
+                          <span class="price_number">$29</span>
+                          <span class="price_tenure">Normal price: $39</span>
+                        </div>
+                      </div>
+                      <ul class="features">
+                        <li><i class="fa fa-book"></i> The book with 15 chapters</li>
+                        <li><i class="fa fa-fire"></i> 3 months of the Fleet package on <a href="https://divshot.com/pricing">Divshot</a>, $150 value</li>
+                        <li><i class="fa fa-check-circle"></i> 60-days money back guarantee</li>
+                        <li><i class="fa fa-music"></i> Rock &amp; Roll!</li>
+                        <li class="no-content"></li>
+                        <li class="no-content"></li>
+                      </ul>
+                      <div class="footer">
+                        <a href="https://gum.co/rarwe-low-tier" class="btn-glow buy-button small inverse" data-price="29">Buy Now</a>
+                      </div>
+                    </li>
+                    <li class="price_block col-centered">
+                      <h3>Light my Fire</h3>
+                      <div class="price">
+                        <div class="price_figure">
+                          <span class="price_number">$44</span>
+                          <span class="price_tenure">Normal price: $59</span>
+                        </div>
+                      </div>
+                      <ul class="features">
+                        <li><i class="fa fa-book"></i> The book with 15 chapters</li>
+                        <li><i class="fa fa-code"></i> Access to the code</li>
+                        <li><i class="fa fa-fire"></i> 3 months of the Fleet package on <a href="https://divshot.com/pricing">Divshot</a>, $150 value</li>
+                        <li><i class="fa fa-check-circle"></i> 60-days money back guarantee</li>
+                        <li><i class="fa fa-music"></i> Rock &amp; Roll!</li>
+                        <li class="no-content"></li>
+                      </ul>
+                      <div class="footer">
+                        <a href="https://gum.co/rarwe-middle-tier" class="btn-glow buy-button small inverse" data-price="44">Buy Now</a>
+                      </div>
+                    </li>
+                    <li class="price_block col-centered special">
+                      <h3>Stairway to Heaven</h3>
+                      <div class="price">
+                        <div class="price_figure">
+                          <span class="price_number">$67</span>
+                          <span class="price_tenure">Normal price: $89</span>
+                        </div>
+                      </div>
+                      <ul class="features">
+                        <li><i class="fa fa-book"></i> The book with 15 chapters</li>
+                        <li><i class="fa fa-code"></i> Access to the code</li>
+                        <li><i class="fa fa-film"></i> 4 Screencasts</li>
+                        <li><i class="fa fa-fire"></i> 3 months of the Fleet package on <a href="https://divshot.com/pricing">Divshot</a>, $150 value</li>
+                        <li><i class="fa fa-check-circle"></i> 60-days money back guarantee</li>
+                        <li><i class="fa fa-music"></i> Rock &amp; Roll!</li>
+                      </ul>
+                      <div class="footer">
+                        <a href="https://gum.co/rarwe-high-tier" class="btn-glow small buy-button inverse" data-price="67">Buy Now</a>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+        </section>
+        <!-- END PRICING -->
 
         <!-- BEGIN FOOTER -->
         <footer>
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-offset-6 col-md-offset-6 col-sm-offset-6 col-lg-6 col-md-6 col-sm-4">
+                    <div class="col-lg-6 col-md-6 col-sm-8">
+                        <span class="copyright">Copyright &copy; 2015
+                            <strong><a href="http://balinterdi.com">Balint Erdi</a></strong>
+                        </span>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-4">
                         <span class="powered">Powered by
                             <a href="javascript:;">
                                 <strong>Bootstrap</strong>
@@ -364,13 +829,13 @@
 
     </div>
 
-
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/events.js"></script>
+
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -379,9 +844,8 @@
 
       ga('create', 'UA-51868942-2', 'auto');
       ga('send', 'pageview');
-
     </script>
+
 </body>
 
 </html>
-

@@ -1,0 +1,425 @@
+a {
+  font-weight: bold
+}
+
+.col-centered {
+  float: none;
+  margin: 0 auto;
+}
+
+/*********************** SECTIONS ***********************/
+
+section {
+  padding: 60px 0;
+  box-shadow: 0px -1px 3px -1px #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+  color: #404040;
+}
+
+.package {
+  padding: 5px 0 10px;
+}
+
+.section-white, footer {
+  background: #FFF url('../images/box-shadow.png') top center no-repeat;
+}
+
+.section-gray {
+  border-top: 1px solid #e5e5e5;
+  background: url('../images/base-section.png');
+}
+
+.section-gray + .section-gray {
+  margin-top: 30px;
+  position: relative;
+}
+
+section.comment {
+  padding-bottom: 100px
+}
+
+.section-gray .marketext, .section-gray .content-title .separator-title h2 {
+  background: url('../images/base-section.png')
+}
+
+.content-title .separator-title h2 {
+  padding-bottom: 6px
+}
+
+.marketext, .selling-points p {
+  font-size: 17px !important;
+  line-height: 1.4em !important;
+}
+
+/*********************** picks ***********************/
+
+#stability-without-stagnation:before, #about-the-author:before, #concerns:before {
+  content: '';
+  display: inline;
+  position: absolute;
+  top: -60px;
+  width: 120px;
+  height: 142px;
+  left: 47%;
+  background-repeat: no-repeat;
+}
+
+#stability-without-stagnation:before {
+  background: url("../images/pick-stay.png") no-repeat;
+  background-size: 80%;
+}
+
+#about-the-author:before {
+  background: url("../images/pick-born.png") no-repeat;
+  background-size: 80%;
+}
+
+#concerns:before {
+  background: url("../images/pick-only.png") no-repeat;
+  background-size: 80%;
+}
+
+/*********************** headcontent ***********************/
+
+.headcontent {
+  padding-bottom: 20px;
+  background: url("../images/rock-star.gif") bottom right no-repeat, url('../images/base-section.png');
+}
+
+.hightlighted {
+  font-family:'Montserrat', sans-serif;
+  font-weight: 700;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  font-size: 24px;
+  margin-bottom: 25px;
+  text-shadow: 0px 2px 1px #fff;
+}
+
+#convinced {
+  font-size: 19px !important;
+  margin-top: 1em;
+}
+
+#convinced a {
+  color: #64a8a6;
+}
+
+.image-content {
+  text-align: center;
+  margin-bottom: 4em;
+}
+
+#sample-chapter-shotd img {
+  max-width: 100%;
+  padding: 1em;
+}
+
+/*********************** signup ***********************/
+
+.headcontent .signup {
+  margin-top: 1em;
+}
+
+.headcontent .signup .note {
+  margin-top: 1.5em;
+  display: block;
+}
+
+.note {
+  font-size: 11px;
+}
+
+/*********************** author ***********************/
+
+.author p {
+  font-size: 1.1em;
+}
+
+/*********************** pricing ***********************/
+
+.pricing_table {
+  text-align: center;
+}
+
+.pricing {
+  box-shadow: 0px -1px 3px -1px #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.pricing_table.three .price_block {
+  width: 32%;
+  display: inline-block;
+}
+
+.price_block h3, .price_block.special h3 {
+  padding: 8px 6px;
+}
+
+.price_block .features li {
+  font-size: 13px
+}
+
+.price_block .features li i {
+  padding-right: .5em;
+  font-size: 16px;
+}
+
+.price_block .features li.no-content {
+  height: 3em;
+}
+
+/*********************** concerns ***********************/
+
+#concerns ul {
+  margin-top: 3em;
+  padding: 0;
+  list-style: none;
+}
+
+#concerns ul li {
+  padding-left: 1.8em;
+  padding-bottom: 2em;
+}
+
+#concerns ul li:nth-child(odd) {
+  padding-right: 2em
+}
+
+#concerns ul li:nth-child(even) {
+  padding-left: 2em
+}
+
+#concerns ul li h4:before {
+  content: '\f105 ';
+  font-family: 'FontAwesome';
+  display: inline-block;
+  margin-left: -1.2em;
+  width: 1.2em;
+  color: #59ba00;
+}
+
+/*********************** packages ***********************/
+
+.package {
+  overflow: hidden;
+  position: relative;
+}
+
+.package h2 {
+  font-family: 'Allura', cursive;
+  font-size: 48px;
+  line-height: 1.4em;
+  color: black;
+}
+
+.package h2 span {
+  text-transform: uppercase;
+  color: #111;
+}
+
+.package p {
+  font-size: 14px
+}
+
+.package-intro {
+  text-align: center;
+}
+
+.package span {
+  font-weight: bold;
+}
+
+.package .contains {
+  font-size: 18px;
+  margin: 2em 0;
+}
+
+.package .benefits {
+  margin: 1em auto
+}
+
+.package .benefits .items {
+  margin: 2em auto
+}
+
+.package .benefits .items {
+  text-align: center
+}
+
+.benefits img {
+  height: 120px
+}
+
+.benefits-icon {
+  font-size: 70px;
+  color: #a39381;
+}
+
+.benefits h3 {
+  color: #a39381
+}
+
+.package-buy {
+  text-align: center;
+  margin: 2em auto 1em;
+}
+
+.package-buy a {
+  color: #E9FCE6;
+  text-transform: uppercase;
+}
+
+.package-buy a span {
+  color: #fff
+}
+
+/*********************** Announcements ***********************/
+
+.wings-badge-absolute {
+  position: absolute;
+  top: -18px;
+}
+
+.wings-badge-fixed {
+  position:fixed;
+  left: 10px;
+  top: 25px;
+  z-index: 4
+}
+
+.wings-badge img {
+  width: 235px;
+}
+
+.announcement {
+  position: relative;
+}
+
+.announcement:before {
+  position: absolute;
+  color: #A71411;
+  border: 1px dotted;
+  padding: 1px 5px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  letter-spacing: -1px;
+  -ms-transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-15deg);
+  content: "New Beginning Tour SPECIAL OFFER 25% OFF";
+  top: 65px;
+  left: 7em;
+}
+
+/*********************** MEDIA QUERIES ***********************/
+
+@media (max-width: 550px) {
+  .pricing_table.three .price_block {
+    width: 100%;
+    margin-bottom: 4em;
+  }
+
+  .price_block .features li.no-content {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .comment .row.top-margin {
+    margin-top: 0;
+  }
+
+  .comment .testi:first-child {
+    margin-top: 3em;
+  }
+
+  .pricing_table h3 {
+    height: 3em;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1200px) {
+  #light-my-fire .rock-and-roll {
+    float: none;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 992px) {
+  #sample-chapter-shotd {
+    text-align: center;
+  }
+
+  #stability-without-stagnation:before, #about-the-author:before, #concerns:before {
+    left: 43%;
+  }
+}
+
+@media (max-width: 992px) {
+  #sample-chapter-shotd {
+    text-align: center;
+  }
+
+  .wings-badge {
+    top: -125px;
+    left: 20%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .pricing_table.three .price_block {
+    width: 25%;
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  .package:after {
+    content: '';
+    display: inline;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    height: 100%;
+  }
+
+  #stairway-to-heaven:after {
+    background: url("../images/guitar-stairway.jpg") no-repeat;
+    width: 110px;
+  }
+
+  #light-my-fire:after {
+    background: url("../images/guitar-fire.jpg") no-repeat;
+    width: 79px;
+  }
+
+  #smoke-on-the-water:after {
+    background: url("../images/guitar-smoke.jpg") no-repeat;
+    width: 79px;
+  }
+
+}
+
+@media screen and (min-width: 1600px) {
+
+  .wings-badge-absolute {
+    visibility: hidden;
+  }
+
+  .wings-badge-fixed {
+    visibility: normal;
+  }
+
+}
+
+@media screen and (max-width: 1600px) {
+
+  .wings-badge-absolute {
+    visibility: normal;
+  }
+
+  .wings-badge-fixed {
+    visibility: hidden;
+  }
+
+}
