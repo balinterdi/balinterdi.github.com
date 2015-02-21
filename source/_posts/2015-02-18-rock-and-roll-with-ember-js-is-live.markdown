@@ -39,6 +39,29 @@ stars for the songs, we introduce components. When we want to show the user
 that loading data from the backend is in progress, we learn about loading
 routes.
 
+## Set List
+
+The book currently has the following chapters:
+
+1. Introduction to Ember.js
+1. Ember CLI
+1. Templates and data bindings
+1. Routing
+1. Nested routes
+1. Actions
+1. Components
+1. Controllers
+1. Advanced routing
+1. Talking to a backend - with Ember Data
+1. Testing
+1. Sorting and searching with query params
+1. Loading and error routes
+1. Helpers
+1. Getting ready for Ember 2.0
+
+I say 'currently' because I will definitely have to change some chapters as
+Ember evolves (To give an example, Controllers will probably become Routable components).
+
 ## A reference book and a reference application
 
 Ember moves rapidly towards version 2.0. As each minor version is released, it
