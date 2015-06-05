@@ -9,8 +9,8 @@
   <meta name="author" content="Balint Erdi">
 
   
-  <meta name="description" content="Property paths are the heart and soul of Ember.js apps. You use them in
-templates and you define dependencies for computed properties and observers &hellip;">
+  <meta name="description" content="Dependency injection (DI) is a less-known, yet powerful feature of the framework
+we know and love called Ember.js. It works through the container and &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,6 +74,232 @@ templates and you define dependencies for computed properties and observers &hel
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2014/05/01/dependency-injection-in-ember-dot-js.html">Dependency Injection in Ember.js - First Steps</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-01T08:38:00+02:00" pubdate data-updated="true">May 1<span>st</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Dependency injection (DI) is a less-known, yet powerful feature of the framework
+we know and love called Ember.js. It works through the container and is
+comprised of two parts: <em>registration</em> and <em>injection</em>.</p>
+
+<p>The framework itself uses it so that the objects instantiated through the
+container have the dependencies correctly initialized on them (for the
+theoretical programmers out there, the Ember DI system is thus probably
+considered a construction-time DI). The API methods are exposed to application
+developers for them to register and inject their own objects.</p>
+
+<p>In this first blog post, I&#8217;ll introduce the main concepts. In a couple of
+further blog posts I intend to dig deeper, give examples of what it can be used
+for and show a few gotchas.</p>
+
+<h3>Step 1 - Registration</h3>
+
+<p>To be able to inject an entity onto others it first has to be registered on the
+container. Think of the container as the birthplace of objects in Ember. It
+knows how to instantiate objects and look up factories by their name.</p>
+
+<p>Throughout the post, I&#8217;ll use the example of a store. If you have worked with
+ember-data, the store is the principal piece. It creates model objects and
+finds them by their type, id or other criteria so you probably want it to be
+accessible from routes and controllers alike.</p>
+
+<p>If you have not come through such a store, don&#8217;t despair. It is but a handy example to
+illustrate dependency injection and how it works for a singleton object.</p>
+
+<p>Let&#8217;s assume we have a reference to the store &#8220;class&#8221; in a variable called
+<code>Store</code>. To register said store, we write the following:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">initializer</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">application</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;store:main&#39;</span><span class="p">,</span> <span class="nx">Store</span><span class="p">,</span> <span class="p">{</span> <span class="nx">singleton</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The container now knows the store by the name <code>store:main</code>. That is the name it
+has to be referred by subsequently. The <code>singleton: true</code> option
+instructs the container not to instantiate a new object each time but use a
+singleton instead.</p>
+
+<h3>Step 2 - Injection</h3>
+
+<p>Once the object/factory is registered, it can be used on other objects in the
+application. As mentioned above, a store is best used from controllers and
+routes. So let&#8217;s inject them there:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">initializer</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;injectStore&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">before</span><span class="o">:</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">application</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">application</span><span class="p">.</span><span class="nx">inject</span><span class="p">(</span><span class="s1">&#39;controller&#39;</span><span class="p">,</span> <span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="s1">&#39;store:main&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">application</span><span class="p">.</span><span class="nx">inject</span><span class="p">(</span><span class="s1">&#39;route&#39;</span><span class="p">,</span> <span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="s1">&#39;store:main&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The main method, <code>application.inject</code> takes as its first argument the object(s)
+where we want the injection to happen, then the injected name and then the name
+of what should be injected. The &#8220;what should be injected&#8221; has to be the same
+name we had registered the object previously with.</p>
+
+<p>The first parameter, <code>controller</code> and <code>route</code> define what is called a type
+injection. This means the injected name will be available on all instances of
+the type, all controllers and routes in this case. The injected name is <code>store</code>
+and it refers to a single instance of the store class since that&#8217;s how we
+defined it at registration time.</p>
+
+<p>We could also just define a simple injection. In a somewhat hypotethical
+example, let&#8217;s assume we only need the store on the artists route.  We write the
+following to achieve that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">initializer</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;injectStore&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">before</span><span class="o">:</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">application</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">application</span><span class="p">.</span><span class="nx">inject</span><span class="p">(</span><span class="s1">&#39;route:artists&#39;</span><span class="p">,</span> <span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="s1">&#39;store:main&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Step 3 - Putting the two pieces together</h3>
+
+<p>Let&#8217;s say we want to create an artist object in a route and that creating
+objects happens through the store (as it does in ember-data, e.g). The following
+snippets set up the injection:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">initializer</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">application</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;store:main&#39;</span><span class="p">,</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Store</span><span class="p">,</span> <span class="p">{</span> <span class="nx">singleton</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">initializer</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;injectStore&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">before</span><span class="o">:</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">application</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">application</span><span class="p">.</span><span class="nx">inject</span><span class="p">(</span><span class="s1">&#39;route&#39;</span><span class="p">,</span> <span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="s1">&#39;store:main&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This makes the singleton instance of the store available on all routes of the
+application so we could, for example, write this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I also <a href="http://emberjs.jsbin.com/tufoy/2/edit?html,js,output">created a jsbin</a> to show this in action, although admittedly there is
+little action at this point.</p>
+
+<h3>Why DI?</h3>
+
+<p>This is all fine and dandy, but what problems does dependency injection solve?
+First and foremost, it decouples the pieces of your application. Dependencies
+are not hardcoded but injected at construction time. This makes your components
+easier to use together since pieces can be swapped in and out as needed.</p>
+
+<p>It is also the de facto way of adding the objects that are not provided by
+Ember.js to your application. The store is an example of such an object but you
+can also add analytics integration, a pool of workers and other fancy things
+easily.</p>
+
+<p>An added benefit is improved unit testing since you can inject mocks as
+cooperators and verify calls made on those.</p>
+
+<p>We are going to look at other aspects of DI in Ember.js in more detail in a next
+post. Stay tuned and prepare your mojitos.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2665,75 +2891,6 @@ but definitely doable.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html">At Your Service: Publicly Available API for the Rock and Roll Ember.js App</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-12-31T09:38:00+01:00" pubdate data-updated="true">Dec 31<span>st</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>So far, if you wanted to code along <a href="http://emberjs.balinterdi.com">my developing an example Ember.js
-application</a>, Rock &amp; Roll, you had to run the server side
-component. That required ruby to be installed on your machine, and you had to
-<a href="https://github.com/balinterdi/rock-and-roll-api">clone the repository</a>, and start the server each time you wanted to
-make some progress with the application.</p>
-
-<p>I realized that might be cumbersome and thus I made the server publicly
-available at http://rock-and-roll-with-emberjs-api.herokuapp.com .</p>
-
-<p>I have also updated <a href="https://github.com/balinterdi/rock-and-roll/commit/remote-api">the client-side component to connect to that remote
-api.</a>. All backend requests now go through App.Adapter.ajax which
-basically just delegates to <code>Ember.$.ajax</code> prefixing urls with the backend host:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">ajax</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;http://rock-and-roll-with-emberjs-api.herokuapp.com&#39;</span> <span class="o">+</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you work with an earlier version of the client app, you might have to
-rewrite urls in multiple places but I figured it is still less work than running
-the server yourself.</p>
-
-<p>I hope that facilitates your working along with the Rock &amp; Roll app and makes
-your journey to Ember.js proficiency smoother. If you want to see the
-screencast series in which I develop said application, you can <a href="http://emberjs.balinterdi.com">sign up to my
-mailing list</a> and have each episode auto-delivered to your inbox.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -2778,6 +2935,10 @@ mailing list</a> and have each episode auto-delivered to your inbox.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/06/05/common-ember-mistakes.html">Common Ember Mistakes</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/02/18/rock-and-roll-with-ember-js-is-live.html">My book, Rock and Roll with Ember.js, is now live!</a>
       </li>
     
@@ -2791,10 +2952,6 @@ mailing list</a> and have each episode auto-delivered to your inbox.</p>
     
       <li class="post">
         <a href="/2014/06/18/indicating-progress-loading-routes-in-ember-dot-js.html">Indicating Progress - Loading Routes in Ember.js</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html">Replacing items in browser history in Ember.js</a>
       </li>
     
   </ul>

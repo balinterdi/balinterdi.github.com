@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-05-22T15:09:33+02:00</updated>
+  <updated>2015-06-05T16:27:50+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,23 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Common Ember Mistakes]]></title>
+    <link href="http://balinterdi.com/2015/06/05/common-ember-mistakes.html"/>
+    <updated>2015-06-05T00:27:00+02:00</updated>
+    <id>http://balinterdi.com/2015/06/05/common-ember-mistakes</id>
+    <content type="html"><![CDATA[<p>I wrote an article called <a href="http://www.toptal.com/emberjs/the-8-most-common-ember-js-developer-mistakes">&#8220;The Top 8 Most Common Ember.js Developer
+Mistakes&#8221;</a> for Toptal that just went live on their blog. As the name
+suggests, it describes the typical pitfalls beginner, and sometimes advanced,
+Ember developers make with a mitigation strategy for each of them. I am quite
+happy about how it turned out and suggest you <a href="http://www.toptal.com/emberjs/the-8-most-common-ember-js-developer-mistakes">give it a read</a>.</p>
+
+<p>Also, it turned out to have more than 2500 words so I thought it might be
+convenient for you to have it as a pdf. It spans 13 pages and you can get it
+right here below:</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[My book, Rock and Roll with Ember.js, is now live!]]></title>
@@ -3901,48 +3918,6 @@ the curtains and see how such a miraculous feature is made possible.</p>
 the solid foundations of Ember.js), which a lot of people have put an enormous
 amount of time into, makes such a killer feature within your reach. Not easy,
 but definitely doable.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[At Your Service: Publicly Available API for the Rock and Roll Ember.js App]]></title>
-    <link href="http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html"/>
-    <updated>2013-12-31T09:38:00+01:00</updated>
-    <id>http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app</id>
-    <content type="html"><![CDATA[<p>So far, if you wanted to code along <a href="http://emberjs.balinterdi.com">my developing an example Ember.js
-application</a>, Rock &amp; Roll, you had to run the server side
-component. That required ruby to be installed on your machine, and you had to
-<a href="https://github.com/balinterdi/rock-and-roll-api">clone the repository</a>, and start the server each time you wanted to
-make some progress with the application.</p>
-
-<p>I realized that might be cumbersome and thus I made the server publicly
-available at http://rock-and-roll-with-emberjs-api.herokuapp.com .</p>
-
-<p>I have also updated <a href="https://github.com/balinterdi/rock-and-roll/commit/remote-api">the client-side component to connect to that remote
-api.</a>. All backend requests now go through App.Adapter.ajax which
-basically just delegates to <code>Ember.$.ajax</code> prefixing urls with the backend host:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">ajax</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;http://rock-and-roll-with-emberjs-api.herokuapp.com&#39;</span> <span class="o">+</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you work with an earlier version of the client app, you might have to
-rewrite urls in multiple places but I figured it is still less work than running
-the server yourself.</p>
-
-<p>I hope that facilitates your working along with the Rock &amp; Roll app and makes
-your journey to Ember.js proficiency smoother. If you want to see the
-screencast series in which I develop said application, you can <a href="http://emberjs.balinterdi.com">sign up to my
-mailing list</a> and have each episode auto-delivered to your inbox.</p>
 ]]></content>
   </entry>
   
