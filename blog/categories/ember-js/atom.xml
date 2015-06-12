@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-06-12T10:25:19+02:00</updated>
+  <updated>2015-06-12T11:38:23+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[Balint Erdi]]></name>
@@ -12,6 +12,23 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Common Ember Mistakes]]></title>
+    <link href="http://balinterdi.com/2015/06/05/common-ember-mistakes.html"/>
+    <updated>2015-06-05T00:27:00+02:00</updated>
+    <id>http://balinterdi.com/2015/06/05/common-ember-mistakes</id>
+    <content type="html"><![CDATA[<p>I wrote an article called <a href="http://www.toptal.com/emberjs/the-8-most-common-ember-js-developer-mistakes">"The Top 8 Most Common Ember.js Developer
+Mistakes"</a> for Toptal that just went live on their blog. As the name
+suggests, it describes the typical pitfalls beginner, and sometimes advanced,
+Ember developers make with a mitigation strategy for each of them. I am quite
+happy about how it turned out and suggest you <a href="http://www.toptal.com/emberjs/the-8-most-common-ember-js-developer-mistakes">give it a read</a>.</p>
+
+<p>Also, it turned out to have more than 2500 words so I thought it might be
+convenient for you to have it as a pdf. It spans 13 pages and you can get it
+right here below:</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[My book, Rock and Roll with Ember.js, is now live!]]></title>
@@ -711,83 +728,6 @@ ways to tweak it, in well-defined ways.</li>
 
 
 <p><em>Note: The latest version of the code that contains these changes is <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/loading-routes">available on Github</a>.</em></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Replacing items in browser history in Ember.js]]></title>
-    <link href="http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html"/>
-    <updated>2014-06-04T07:49:00+02:00</updated>
-    <id>http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js</id>
-    <content type="html"><![CDATA[<p>One of the outstanding features of Ember.js is that all things related to URLs,
-including going back and forth in browser history, just work. This is something
-people got used to with "classical", server-side applications and that several
-other client-side frameworks lack.</p>
-
-<p>In this post, I am going to focus on a browser history feature, replacing
-entries in it as users navigate between routes instead of adding to it.</p>
-
-<h3>Navigating between routes in Ember</h3>
-
-<p>If either the <code>link-to</code> template helper or the route's <code>transitionTo</code> method is
-used to move between routes (and thus URLs), a new entry is going to be added to
-the browser's history. That is fine most of the time but sometimes the desired
-behavior might be replacing the current entry.</p>
-
-<p>Taking the example from the guide, if one is paging through the comments made on
-a photo where each one has its own route, we probably do not want these comment
-URLs to clutter the history. Similarly, we don't want the user to land on these
-URLs when she hits the Back button in the browser.</p>
-
-<h3>Using the link-to helper</h3>
-
-<p>All that needs to be done is adding the <code>replace=true</code> option to the <code>link-to</code> helper.</p>
-
-<p>So if the link that takes you to the next comment is written like this:</p>
-
-<p><div>
-  <pre><code class='html'>{{link-to &#39;Next comment&#39; &#39;photo.comment&#39; nextComment}}</code></pre>
-</div>
-</p>
-
-<p>It should now become:</p>
-
-<p><div>
-  <pre><code class='html'>{{link-to &#39;Next comment&#39; &#39;photo.comment&#39; nextComment replace=true}}</code></pre>
-</div>
-</p>
-
-<h3>Transitioning from inside routes</h3>
-
-<p>The canonical way to go from one route to another is <code>route.transitionTo</code>. If
-flipping between comments of a photo was implemented as an action in the route,
-the action handler would have the following line:</p>
-
-<p><code>js
-this.transitionTo('photo.comment', nextComment);
-</code></p>
-
-<p>To make that replace the current history entry, this becomes:</p>
-
-<p><code>js
-this.replaceWith('photo.comment', nextComment);
-</code></p>
-
-<p><code>replaceWith</code> takes the exact same parameters as <code>transitionTo</code>.</p>
-
-<h3>In the controller</h3>
-
-<p>As <a href="https://twitter.com/jacquescrocker">Jacques Crocker</a> points out <a href="http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html#comment-1452078154">in his comment</a>
-below, I missed the case where we want to transition to another route, replacing
-the current item in the history, from inside a controller.</p>
-
-<p>Here is how to do that:</p>
-
-<p><code>js
-this.replaceRoute('photo.comment', nextComment);
-</code></p>
-
-<p>So thank you, Jacques.</p>
 ]]></content>
   </entry>
   
