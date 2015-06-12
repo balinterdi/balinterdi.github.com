@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: ruby, | Balint Erdi]]></title>
+  <title><![CDATA[Category: ruby, | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ruby-/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-06-12T11:38:23+02:00</updated>
+  <updated>2015-06-12T11:39:39+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
-    <name><![CDATA[Balint Erdi]]></name>
+    <name><![CDATA[I'm all about Ember.js recently]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
