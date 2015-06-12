@@ -3,7 +3,8 @@ layout: post
 title: "Common Ember Mistakes"
 date: 2015-06-05 00:27
 comments: true
-categories:
+description: Common Ember.js Developer Mistakes
+categories: ember.js
 perk: common-ember-mistakes
 ---
 
