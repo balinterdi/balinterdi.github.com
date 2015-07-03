@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>My book, Rock and Roll with Ember.js, is now live! - Balint Erdi's blog about Ember.js</title>
+  <title>Rock and Roll with Ember.js v1.13 is out - Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2015/02/18/rock-and-roll-with-ember-js-is-live.html">
+  <link rel="canonical" href="http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -76,7 +76,7 @@
   
   <header>
     
-      <h1 class="entry-title">My Book, Rock and Roll With Ember.js, Is Now Live!</h1>
+      <h1 class="entry-title">Rock and Roll With Ember.js v1.13 Is Out</h1>
     
     
       <p class="meta">
@@ -92,117 +92,46 @@
   
 
 
-<time datetime="2015-02-18T09:51:00+01:00" pubdate data-updated="true">Feb 18<span>th</span>, 2015</time>
+<time datetime="2015-07-03T15:25:00+02:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2015</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>I started writing my book, Rock &amp; Roll with Ember.js, on July 18, 2014, exactly
-7 months ago (More precisely, I prepared some drafts from early chapters most of
-which I ended up rewriting before that, but who doesn&#8217;t like a good story?).</p>
+<div class="entry-content"><p>Today marks the sixth release of my book, <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js</a>, and
+brings it in sync with Ember 1.13. The book follows along the development from
+scratch of an Ember application, and chapter by chapter and explains concepts in
+the process.</p>
 
-<p>Today, I am extremely happy to announce that <a href="http://rockandrollwithemberjs.com">the book is available for purchase</a>!</p>
+<p>As I have promised, the book is kept up-to-date with the latest stable Ember
+version. That implies both using idiomatic Ember and not using deprecated
+syntaxes or APIs.</p>
 
-<h2>Tame the dreaded Ember.js learning curve</h2>
+<p>Now that the versioning of Ember Data is in lockstep with that of Ember, I
+considered it important to update to the latest Ember Data, too, and will
+strive to do so in future releases, too.</p>
 
-<p>Ember is said to be hard to learn. Developers who are new to the framework hit
-a wall and can&#8217;t easily find out how all the pieces fit together.</p>
+<p>Here are the major things I updated for the 1.13 release:</p>
 
-<p>My own experience tells me that Ember has a small number of core concepts that
-you have to grok to be able to tame the learning curve. Once you understand
-these key ideas behind the framework&#8217;s design, you will fly over that wall and
-see the green meadow filled with flowers and bunnies.</p>
-
-<p>You will build Ember applications with confidence and - if you are like me -
-you will love building them.</p>
-
-<h2>Read it and build it!</h2>
-
-<p>My book also has a concept, and a very pragmatic one at that.</p>
-
-<p>In the book, we are building an application, chapter by chapter. As we
-progress, we are adding new features to the application, introducing new
-Ember concepts that are needed for implementing the feature.</p>
-
-<p>When a list of bands need to be displayed alongside with the songs of the
-selected band, we reach for nested routes.  When we need a widget that displays
-stars for the songs, we introduce components. When we want to show the user
-that loading data from the backend is in progress, we learn about loading
-routes.</p>
-
-<h2>Set List</h2>
-
-<p>The book currently has the following chapters:</p>
-
-<ol>
-<li>Introduction to Ember.js</li>
-<li>Ember CLI</li>
-<li>Templates and data bindings</li>
-<li>Routing</li>
-<li>Nested routes</li>
-<li>Actions</li>
-<li>Components</li>
-<li>Controllers</li>
-<li>Advanced routing</li>
-<li>Talking to a backend - with Ember Data</li>
-<li>Testing</li>
-<li>Sorting and searching with query params</li>
-<li>Loading and error routes</li>
-<li>Helpers</li>
-<li>Getting ready for Ember 2.0</li>
-</ol>
+<ul>
+<li>Use <code>this.route</code> instead of <code>this.resource</code> in the router map as the latter is now deprecated.</li>
+<li>Use <code>Ember.computed</code> and <code>Ember.on</code> instead of the Function prototype
+extensions, <code>property</code> and <code>on</code> as extending the Function prototype is
+consired a poor practice.</li>
+<li>Update the &#8220;Getting ready for Ember 2.0&#8221; chapter as most things are clear now
+for the 2.0 release. As I give particular examples for each deprecation, this
+chapter can also serve as an update guide for 1.x Ember applications.</li>
+<li>Use the new Ember Data find methods, namely <code>store.findAll</code> and
+<code>store.findRecord</code>. Before, both fetching a collection and a single record
+used <code>store.find</code>.</li>
+</ul>
 
 
-<p>I say &#8216;currently&#8217; because I will definitely have to change some chapters as
-Ember evolves (To give an example, Controllers will probably become Routable components).</p>
+<p>As usual, there are also smaller improvements and fixes and you can find the
+whole list in the errata/issues repository for the book, assigned to <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13+is%3Aclosed">the release milestone.</a></p>
 
-<h2>A reference book and a reference application</h2>
-
-<p>Ember moves rapidly towards version 2.0. As each minor version is released, it
-brings new syntaxes and deprecates old ones. Even though the Ember Core team
-takes extreme care to ensure a smooth upgrade process, it is easy for an
-application to lag behind, having a few deprecations here and there and not
-using the shiny new tools.</p>
-
-<p>The motto of the Ember 2.0 roadmap is &#8220;Stability without Stagnation&#8221;, that old
-syntaxes and practices should vanish gradually, giving ample time for developers
-to update their applications. At the same time, Ember should not stagnate, it
-should introduce new features.</p>
-
-<p>I adhere to this motto, but, more importantly, my book does, too.</p>
-
-<p>I want the book and the Rock &amp; Roll application to be up-to-date with the latest
-stable Ember version and not have any of the deprecations. What that means in
-practice is that if you buy one of the packages, you will most likely get book
-updates after each 1.x release. And at no extra cost to you until 2.0 ships!</p>
-
-<h2>A bonus deal you will definitely like</h2>
-
-<p>When you <a href="http://rockandrollwithemberjs.com/#stairway-to-heaven">buy one of the packages</a> you also get access to an awesome deal
-from <a href="https://divshot.com">Divshot</a>, a company that provides static hosting for your Ember apps.</p>
-
-<p>You get 3 months free of <a href="https://divshot.com/pricing">their Fleet plan</a>, a $150 value.</p>
-
-<h2>The &#8220;New Beginning&#8221; tour</h2>
-
-<p><del>Wait, there is more!</del> To celebrate that the book has finally seen the
-light of day, there is a 25% discount <a href="http://rockandrollwithemberjs.com/#pricing">on all packages</a>.</p>
-
-<p>This offer expires on Sunday, February 22, at 23:59 PST, so <a href="http://rockandrollwithemberjs.com">grab yours</a> now!</p>
-
-<h2>Acknowledgements</h2>
-
-<p>I am indebted to all of you who have pushed me through the finish line, either
-by praising my screencasts, blog posts and review copies of my book, retweeting
-my marketing tweets, giving valuable feedback that made the book better or
-simply by pointing out typos in the text.</p>
-
-<p>I would also like to thank you to the Ember Core team whose relentless work
-makes Ember better every day. You are putting so much time in, it&#8217;s almost
-insane. It&#8217;s kinda obvious but without your contributions, this book would not
-exist.</p>
+<p>If you don&#8217;t yet have the book, you can <a href="http://rockandrollwithemberjs.com/#signup">download a sample chapter</a> and see if you like it.</p>
 </div>
 
 
@@ -226,7 +155,7 @@ exist.</p>
   
 
 
-<time datetime="2015-02-18T09:51:00+01:00" pubdate data-updated="true">Feb 18<span>th</span>, 2015</time>
+<time datetime="2015-07-03T15:25:00+02:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2015</time>
       
 
 <span class="categories">
@@ -252,10 +181,8 @@ exist.</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2014/09/05/reminiscing-about-emberfest-2014.html" title="Previous Post: Reminiscing about EmberFest 2014">&laquo; Reminiscing about EmberFest 2014</a>
+        <a class="basic-alignment left" href="/2015/06/05/common-ember-mistakes.html" title="Previous Post: Common Ember Mistakes">&laquo; Common Ember Mistakes</a>
       
-      
-        <a class="basic-alignment right" href="/2015/06/05/common-ember-mistakes.html" title="Next Post: Common Ember Mistakes">Common Ember Mistakes &raquo;</a>
       
     </p>
   </footer>
@@ -360,8 +287,8 @@ exist.</p>
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://balinterdi.com/2015/02/18/rock-and-roll-with-ember-js-is-live.html';
-        var disqus_url = 'http://balinterdi.com/2015/02/18/rock-and-roll-with-ember-js-is-live.html';
+        var disqus_identifier = 'http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html';
+        var disqus_url = 'http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html';
         var disqus_script = 'embed.js';
       
     (function () {

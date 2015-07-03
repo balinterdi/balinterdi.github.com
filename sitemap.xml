@@ -397,12 +397,18 @@
         <lastmod>2015-06-12T10:59:27+02:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html
+        </loc>
+        <lastmod>2015-07-03T14:52:12+02:00</lastmod>
+    </url>
+    <url>
         <loc>http://balinterdi.com/blog/archives/</loc>
-        <lastmod>2015-06-12T10:59:27+02:00</lastmod>
+        <lastmod>2015-07-03T14:52:12+02:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/</loc>
-        <lastmod>2015-06-12T10:59:27+02:00</lastmod>
+        <lastmod>2015-07-03T14:52:12+02:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/robots.txt</loc>
@@ -410,6 +416,6 @@
     </url>
     <url>
         <loc>http://balinterdi.com/rock-and-roll-with-emberjs/</loc>
-        <lastmod>2015-06-12T11:38:23+02:00</lastmod>
+        <lastmod>2015-06-12T12:50:29+02:00</lastmod>
     </url>
 </urlset>
