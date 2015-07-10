@@ -53,7 +53,7 @@ section.comment {
 
 /*********************** picks ***********************/
 
-#stability-without-stagnation:before, #about-the-author:before, #concerns:before {
+#book-testimonials:before, #about-the-author:before, #concerns:before {
   content: '';
   display: inline;
   position: absolute;
@@ -64,15 +64,17 @@ section.comment {
   background-repeat: no-repeat;
 }
 
-#stability-without-stagnation:before {
+#book-testimonials:before {
   background: url("../images/pick-stay.png") no-repeat;
   background-size: 80%;
 }
 
+/*
 #about-the-author:before {
   background: url("../images/pick-born.png") no-repeat;
   background-size: 80%;
 }
+*/
 
 #concerns:before {
   background: url("../images/pick-only.png") no-repeat;
