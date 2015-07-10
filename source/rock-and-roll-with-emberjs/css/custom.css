@@ -69,10 +69,12 @@ section.comment {
   background-size: 80%;
 }
 
+/*
 #about-the-author:before {
   background: url("../images/pick-born.png") no-repeat;
   background-size: 80%;
 }
+*/
 
 #concerns:before {
   background: url("../images/pick-only.png") no-repeat;
