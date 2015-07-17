@@ -4,6 +4,7 @@ title: "Rock and Roll with Ember.js v1.13 is out"
 date: 2015-07-03 15:25
 comments: true
 categories: ember.js
+perk: sample-chapter-download
 ---
 
 Today marks the sixth release of my book, [Rock and Roll with Ember.js][1], and
@@ -34,8 +35,6 @@ Here are the major things I updated for the 1.13 release:
 
 As usual, there are also smaller improvements and fixes and you can find the
 whole list in the errata/issues repository for the book, assigned to [the release milestone.][2]
-
-If you don't yet have the book, you can [download a sample chapter][3] and see if you like it.
 
 [1]: http://rockandrollwithemberjs.com
 [2]: https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13+is%3Aclosed
