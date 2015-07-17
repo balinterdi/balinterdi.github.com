@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Shoulda: setup and should blocks and don't wander off the map - Balint Erdi's blog about Ember.js</title>
+  <title>Rock and Roll with Ember.js v1.13.3 is out - Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2009/01/28/shoulda-blocks-active-record-macros-and-their-order.html">
+  <link rel="canonical" href="http://balinterdi.com/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -76,7 +76,7 @@
   
   <header>
     
-      <h1 class="entry-title">Shoulda: Setup and Should Blocks and Don't Wander Off the Map</h1>
+      <h1 class="entry-title">Rock and Roll With Ember.js v1.13.3 Is Out</h1>
     
     
       <p class="meta">
@@ -92,91 +92,49 @@
   
 
 
-<time datetime="2009-01-28T00:00:00+01:00" pubdate data-updated="true">Jan 28<span>th</span>, 2009</time>
+<time datetime="2015-07-17T10:47:00+02:00" pubdate data-updated="true">Jul 17<span>th</span>, 2015</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>I&#8217;m using <a href="http://www.thoughtbot.com/projects/shoulda/">shoulda</a> for testing in a rails project and I wrote this simple test to see if my update action really updated the object and redirected to the appropriate place:</p>
+<div class="entry-content"><p>It&#8217;s Friday and if it&#8217;s (every 2nd-6th) Friday, it&#8217;s Rock and Roll release day!</p>
 
-<pre lang="ruby">
-context "the update" do
-  setup do     # 1
-    @project = Factory(:project, :director => @user)
-    put :update, :id => @project, :project => { :name => "updated name" }
-  end
-  # 2    
-  updated_project = Project.first(:order => "created_at DESC")
-  # 3
-  should_redirect_to "project_url(updated_project)" # 4
-  should "update the attributes" do
-    assert_equal("updated name", updated_project.name) # 5
-  end  
-end
-</pre>
+<p>Book version 1.13.3 is rolling out as we speak (ok, we don&#8217;t speak and you
+probably read this later, but you get the point) which contains the following
+changes:</p>
 
+<ul>
+<li><strong>Upgrade to Ember version 1.13.3 (the book is in lockstep, too!)</strong></li>
+<li><strong>Update to Ember CLI 1.13.1</strong></li>
+<li><p><strong>Extended the Components chapter with closure actions.</strong></p>
 
-<p>To my surprise, I received an &#8220;undefined local variable or method &#8216;updated_project&#8217; on both tests (#4 and #5). I figured out why and I want to share it with you. In case you are a shoulda expert, you must know the answer already and sorry for wasting your time. On the other hand, if you are new to shoulda like I am, you may find this useful.</p>
+<p><a href="http://emberjs.com/blog/2015/06/12/ember-1-13-0-released.html#toc_closure-actions">Closure actions</a> are an awesome new way to fire/handle actions introduced
+in 1.13 and so it has to be in the book!</p></li>
+<li><p><strong>Extended the Testing chapter with component integration tests.</strong></p>
 
-<p>What shoulda does when running a &#8216;should&#8217; block is that it runs all the &#8216;setup&#8217; blocks of the contexts in which it is nested, from the outside to the inside, so this:</p>
+<p>Integration tests make component tests super simple to set up and so much more
+descriptive than unit tests. Our beloved star-rating component is now tested
+by the shiny new integration tests.</p></li>
+<li><p><strong>Get rid of <code>needs</code> in the controller.</strong></p>
 
-<pre lang="ruby">
-context "alpha" do
-  setup do
-    puts "A"
-  end
-  context "beta" do
-    setup do
-      puts "B"
-    end
-    context "gamma" do
-      setup do
-        puts "C"
-      end
-      should "work" do
-         puts "the only test"
-      end
-    end
-  end
-end
-</pre>
+<p>There was one instance where I used this to get a nice placeholder text. As a
+preparation for Ember 2.0 where <code>needs</code> is going the way of the dodo, I
+removed that nasty <code>needs</code>.</p></li>
+<li><p><strong>Specify the band-songs relationship as sync.</strong></p>
+
+<p>Starting from 2.0, Ember Data relationships are assumed to be asynchronous
+unless otherwise specified. In the Rock &amp; Roll application, we sideload the
+songs with the bands, so adding a <code>{ async: false }</code> option to the
+relationship was in order.</p></li>
+<li><strong>A few CSS fixes, one of them thanks to <a href="https://twitter.com/lonekorean">lonekorean</a></strong></li>
+</ul>
 
 
-<p>Will print</p>
+<p>The whole change list is observable <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13.3+is%3Aclosed">here</a>.</p>
 
-<pre lang="bash">
-A
-B
-C
-the only test
-</pre>
-
-
-<p>Also the area between #2 and #3 in the above test is sort of a no man&#8217;s land, since it is not in a setup block, so assignments that are executed here are completely useless. You can not use it either for side-effects since it will run before the setup block (#1 above). My advice is to simply put everything in a block, be it a &#8216;setup&#8217; or a &#8216;should&#8217; one. (the &#8216;should_redirect_to&#8217; is a macro that&#8217;s part of shoulda, it gets expanded into a block, too).</p>
-
-<p>So here is the same test correctly:</p>
-
-<pre lang="ruby">
-context "the update" do
-  setup do
-    @project = Factory(:project, :director => @user)
-    put :update, :id => @project, :project => { :name => "updated name" }
-  end
-  
-  should_redirect_to "project_url(@project)" 
-  should "update the attributes" do
-    # reload is needed to see the new state
-    @project.reload
-    assert_equal("updated name", @project.name)
-  end
-  
-end
-</pre>
-
-
-<p>Shoulda is a nice tool. There is only one I know and I like a tad better which is quite similar in structure, <a href="http://rspec.info/documentation/">rspec</a>.</p>
+<p>Hoist the sales, Ember 2.0 (and with it, Rock and Roll with Ember 2.0) is on the horizon!</p>
 </div>
 
 
@@ -200,8 +158,14 @@ end
   
 
 
-<time datetime="2009-01-28T00:00:00+01:00" pubdate data-updated="true">Jan 28<span>th</span>, 2009</time>
+<time datetime="2015-07-17T10:47:00+02:00" pubdate data-updated="true">Jul 17<span>th</span>, 2015</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ember-js/'>ember.js</a>
+  
+</span>
 
 
     </p>
@@ -220,14 +184,18 @@ end
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2009/01/25/mysql-table-types-and-foreign-key-constraints.html" title="Previous Post: MySQL table types and foreign key constraints">&laquo; MySQL table types and foreign key constraints</a>
+        <a class="basic-alignment left" href="/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html" title="Previous Post: Rock and Roll with Ember.js v1.13 is out">&laquo; Rock and Roll with Ember.js v1.13 is out</a>
       
-      
-        <a class="basic-alignment right" href="/2009/02/04/strings-as-haml-render-parameters-in-sinatra-do-not-work.html" title="Next Post: strings as haml render parameters in Sinatra do not work">strings as haml render parameters in Sinatra do not work &raquo;</a>
       
     </p>
   </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -315,7 +283,10 @@ end
       var disqus_shortname = 'codigoergosum';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://balinterdi.com/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html';
+        var disqus_url = 'http://balinterdi.com/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

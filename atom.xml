@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-07-10T22:44:44+02:00</updated>
+  <updated>2015-07-17T11:21:53+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,50 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rock and Roll with Ember.js v1.13.3 is out]]></title>
+    <link href="http://balinterdi.com/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html"/>
+    <updated>2015-07-17T10:47:00+02:00</updated>
+    <id>http://balinterdi.com/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out</id>
+    <content type="html"><![CDATA[<p>It&#8217;s Friday and if it&#8217;s (every 2nd-6th) Friday, it&#8217;s Rock and Roll release day!</p>
+
+<p>Book version 1.13.3 is rolling out as we speak (ok, we don&#8217;t speak and you
+probably read this later, but you get the point) which contains the following
+changes:</p>
+
+<ul>
+<li><strong>Upgrade to Ember version 1.13.3 (the book is in lockstep, too!)</strong></li>
+<li><strong>Update to Ember CLI 1.13.1</strong></li>
+<li><p><strong>Extended the Components chapter with closure actions.</strong></p>
+
+<p><a href="http://emberjs.com/blog/2015/06/12/ember-1-13-0-released.html#toc_closure-actions">Closure actions</a> are an awesome new way to fire/handle actions introduced
+in 1.13 and so it has to be in the book!</p></li>
+<li><p><strong>Extended the Testing chapter with component integration tests.</strong></p>
+
+<p>Integration tests make component tests super simple to set up and so much more
+descriptive than unit tests. Our beloved star-rating component is now tested
+by the shiny new integration tests.</p></li>
+<li><p><strong>Get rid of <code>needs</code> in the controller.</strong></p>
+
+<p>There was one instance where I used this to get a nice placeholder text. As a
+preparation for Ember 2.0 where <code>needs</code> is going the way of the dodo, I
+removed that nasty <code>needs</code>.</p></li>
+<li><p><strong>Specify the band-songs relationship as sync.</strong></p>
+
+<p>Starting from 2.0, Ember Data relationships are assumed to be asynchronous
+unless otherwise specified. In the Rock &amp; Roll application, we sideload the
+songs with the bands, so adding a <code>{ async: false }</code> option to the
+relationship was in order.</p></li>
+<li><strong>A few CSS fixes, one of them thanks to <a href="https://twitter.com/lonekorean">lonekorean</a></strong></li>
+</ul>
+
+
+<p>The whole change list is observable <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13.3+is%3Aclosed">here</a>.</p>
+
+<p>Hoist the sales, Ember 2.0 (and with it, Rock and Roll with Ember 2.0) is on the horizon!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js v1.13 is out]]></title>
@@ -3411,258 +3455,6 @@ go all the way and make components general enough to fulfill this promise.</p>
 <p><em>Part 2: <a href="http://balinterdi.com/2014/02/12/making-an-emberjs-component-more-reusable.html">Making an Ember.js Component More Reusable</a></em></p>
 
 <p><em>Part 3: <a href="http://balinterdi.com/2014/02/18/readers-letters-making-an-ember-dot-js-component-even-better.html">Readers&#8217; Letters: Making an Ember.js Component Even Better</a></em></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Promises instead of callbacks]]></title>
-    <link href="http://balinterdi.com/2014/01/21/promises-instead-of-callbacks.html"/>
-    <updated>2014-01-21T23:30:00+01:00</updated>
-    <id>http://balinterdi.com/2014/01/21/promises-instead-of-callbacks</id>
-    <content type="html"><![CDATA[<p>A few weeks ago <a href="http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map.html">I built up a very simple identity map</a> to
-get rid of a bug in highlighting active links. I introduced promises in order to
-leverage the fact that Ember.js blocks in model hooks until the model is
-resolved (or rejected).</p>
-
-<p>In this post, I am taking a step back, and converting all the ajax calls that
-fetch data from and store data to the backend to use promises. I am also going
-to extract the most basic adapter that exists, just to do away with the
-repetition in the XHR calls. Once I have these in place, I will able able to
-build nice features on top of that.</p>
-
-<h3>App.TheMostBasicAdapterThereIs</h3>
-
-<p>All calls go to the same backend and talk in json so these can be trivially
-extracted:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">ajax</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-</span><span class='line'>    <span class="nx">options</span><span class="p">.</span><span class="nx">dataType</span> <span class="o">=</span> <span class="s1">&#39;json&#39;</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;http://rock-and-roll-api.herokuapp.com&#39;</span> <span class="o">+</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>With that out of the way, we can see where these were used, and replace
-<code>Ember.$.ajax</code> with <code>App.Adapter.ajax</code>. In the process we are also going to
-convert the callback-style code to use promises, a worthwhile
-transformation.</p>
-
-<h3>Don&#8217;t call me back, promise me you&#8217;ll be there</h3>
-
-<p>Here is what the code for fetching all the artists from the API looks like after
-applying the adapter change:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">artistObjects</span> <span class="o">=</span> <span class="p">[];</span>
-</span><span class='line'>    <span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;/artists&#39;</span><span class="p">,</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">artists</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">artists</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>          <span class="nx">artistObjects</span><span class="p">.</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
-</span><span class='line'>        <span class="p">});</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">artistObjects</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Notice that the model initially is an empty array and only when the ajax call
-returns successfully does that array get filled up and the template rerendered.
-Not a big deal in itself, but if in a child route we rely on the array
-containing all the artists (e.g when looking up the identity map or using
-<a href="https://github.com/emberjs/ember.js/blob/v1.3.0/packages/ember-routing/lib/system/route.js#L997-1012">modelFor</a>), we can be bitten by the async bug. Promises to the
-rescue.</p>
-
-<p>As I mentioned in the <a href="http://balinterdi.com/2013/12/03/roll-your-own-ember-dot-js-identity-map.html">identity map post</a>, if a promise is
-returned from a model hook, Ember.js will block until the promise is resolved
-(or rejected). Let&#8217;s follow in Ember.js footsteps and convert the above code to
-return a promise:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">RSVP</span><span class="p">.</span><span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;/artists&#39;</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">artists</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="kd">var</span> <span class="nx">artistObjects</span> <span class="o">=</span> <span class="p">[];</span>
-</span><span class='line'>        <span class="nx">artists</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>          <span class="nx">artistObjects</span><span class="p">.</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
-</span><span class='line'>        <span class="p">});</span>
-</span><span class='line'>        <span class="nx">resolve</span><span class="p">(</span><span class="nx">artistObjects</span><span class="p">);</span>
-</span><span class='line'>      <span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">reject</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
-</span><span class='line'>      <span class="p">});</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We wrap the promise returned from the <code>App.Adaptar.ajax</code> call in another promise,
-which resolves with artist objects instead of the raw data that is returned by
-the API. In the rejection handler, we pass along any potential error responses
-by rejecting with the same error that we got.</p>
-
-<p>Next, we do the same thing in the child route. We go from here:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
-</span><span class='line'>    <span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;/artists/&#39;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">,</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">artist</span><span class="p">.</span><span class="nx">setProperties</span><span class="p">({</span>
-</span><span class='line'>          <span class="nx">id</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
-</span><span class='line'>          <span class="nx">name</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-</span><span class='line'>          <span class="nx">songs</span><span class="o">:</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">extractSongs</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">songs</span><span class="p">,</span> <span class="nx">artist</span><span class="p">)</span>
-</span><span class='line'>        <span class="p">});</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">artist</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>To here:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">RSVP</span><span class="p">.</span><span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;/artists/&#39;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">resolve</span><span class="p">(</span><span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
-</span><span class='line'>      <span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">reject</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
-</span><span class='line'>      <span class="p">});</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>To get the &#8220;100% promisified&#8221; seal, we&#8217;ll transform the create calls, too. I&#8217;ll
-only show the one to create an artist since creating a song is the same.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">createArtist</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;controller&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;newName&#39;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;/artists&#39;</span><span class="p">,</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
-</span><span class='line'>    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">name</span> <span class="p">},</span>
-</span><span class='line'>    <span class="nx">context</span><span class="o">:</span> <span class="k">this</span>
-</span><span class='line'>  <span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">modelFor</span><span class="p">(</span><span class="s1">&#39;artists&#39;</span><span class="p">).</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">artist</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;controller&#39;</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;newName&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">transitionTo</span><span class="p">(</span><span class="s1">&#39;artist.songs&#39;</span><span class="p">,</span> <span class="nx">artist</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Failed to save artist&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">});</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Here, there is not that much of a difference, the success and error callbacks
-are replaced by fulfillment and rejection handlers.</p>
-
-<p>The source code with these changes can be got <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/promisified">here</a>.</p>
-
-<h3>Further studies &amp; posts</h3>
-
-<p>You can acquire a deeper knowledge about promises by reading Domenic Denicola&#8217;s
-<a href="http://domenic.me/2012/10/14/youre-missing-the-point-of-promises/">&#8220;You&#8217;re missing the point of promises&#8221;</a> post and using that as a
-base for further exploration. Steven Kane&#8217;s excellent <a href="https://npmjs.org/package/promise-it-wont-hurt">promise-it-wont-hurt package</a>
-makes you solve increasingly difficult challenges with promises, which is the best way to learn.</p>
-
-<p>Promisifying all backend calls sets the stage for other routing-related
-improvements. Stay tuned for more.</p>
 ]]></content>
   </entry>
   
