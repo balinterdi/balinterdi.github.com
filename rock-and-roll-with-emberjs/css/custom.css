@@ -98,6 +98,26 @@ section.comment {
   text-shadow: 0px 2px 1px #fff;
 }
 
+.trusted {
+  font-family: 'Allura', cursive;
+  font-size: 28px;
+  color: #444;
+  text-align: center;
+}
+
+.trusted a {
+  padding-left: 25px;
+}
+
+.trusted a img {
+  opacity: 0.7;
+  height: 35px;
+}
+
+.trusted a:hover img {
+  opacity: 1;
+}
+
 #convinced {
   font-size: 19px !important;
   margin-top: 1em;
