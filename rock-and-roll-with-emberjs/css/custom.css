@@ -53,7 +53,7 @@ section.comment {
 
 /*********************** picks ***********************/
 
-#book-testimonials:before, #about-the-author:before, #concerns:before {
+#screencast-testimonials:before, #about-the-author:before, #concerns:before {
   content: '';
   display: inline;
   position: absolute;
@@ -64,7 +64,7 @@ section.comment {
   background-repeat: no-repeat;
 }
 
-#book-testimonials:before {
+#screencast-testimonials:before {
   background: url("../images/pick-stay.png") no-repeat;
   background-size: 80%;
 }
@@ -139,11 +139,11 @@ section.comment {
 
 /*********************** signup ***********************/
 
-.headcontent .signup {
+.signup {
   margin-top: 1em;
 }
 
-.headcontent .signup .note {
+.signup .note {
   margin-top: 1.5em;
   display: block;
 }
