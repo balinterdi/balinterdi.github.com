@@ -4,6 +4,7 @@ title: "My book, Rock and Roll with Ember.js, is now live!"
 date: 2015-02-18 09:51
 comments: true
 categories: ember.js
+perk: sample-chapter-download
 ---
 
 I started writing my book, Rock & Roll with Ember.js, on July 18, 2014, exactly
