@@ -16,6 +16,6 @@ happy about how it turned out and suggest you [give it a read][1].
 
 Also, it turned out to have more than 2500 words so I thought it might be
 convenient for you to have it as a pdf. It spans 13 pages and you can get it
-right here below:
+right here below by providing your email address to send the paper to:
 
 [1]: http://www.toptal.com/emberjs/the-8-most-common-ember-js-developer-mistakes
