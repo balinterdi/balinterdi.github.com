@@ -57,7 +57,7 @@ section.comment {
 
 /*********************** picks ***********************/
 
-#screencast-testimonials:before, #about-the-author:before, #concerns:before {
+#bonus:before, #about-the-author:before, #concerns:before {
   content: '';
   display: inline;
   position: absolute;
@@ -68,7 +68,7 @@ section.comment {
   background-repeat: no-repeat;
 }
 
-#screencast-testimonials:before {
+#bonus:before {
   background: url("../images/pick-stay.png") no-repeat;
   background-size: 80%;
 }
@@ -81,6 +81,12 @@ section.comment {
 #concerns:before {
   background: url("../images/pick-only.png") no-repeat;
   background-size: 80%;
+}
+
+/*********************** testimonials ***********************/
+
+.testimonials .testi p, .testi-name strong {
+  font-size: 16px !important;
 }
 
 /*********************** headcontent ***********************/
