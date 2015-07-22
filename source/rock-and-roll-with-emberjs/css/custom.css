@@ -304,6 +304,10 @@ section.comment {
   color: #fff
 }
 
+.package-intro img {
+  width: 725px;
+}
+
 /*********************** Announcements ***********************/
 
 .wings-badge-absolute {
