@@ -1,3 +1,7 @@
+img {
+  max-width: 100%;
+}
+
 a {
   font-weight: bold
 }
@@ -14,6 +18,7 @@ section {
   box-shadow: 0px -1px 3px -1px #e5e5e5;
   border-bottom: 1px solid #e5e5e5;
   color: #404040;
+  position: relative;
 }
 
 .package {
@@ -31,7 +36,6 @@ section {
 
 .section-gray + .section-gray {
   margin-top: 30px;
-  position: relative;
 }
 
 section.comment {
@@ -53,7 +57,7 @@ section.comment {
 
 /*********************** picks ***********************/
 
-#book-testimonials:before, #about-the-author:before, #concerns:before {
+#bonus:before, #about-the-author:before, #concerns:before {
   content: '';
   display: inline;
   position: absolute;
@@ -64,21 +68,25 @@ section.comment {
   background-repeat: no-repeat;
 }
 
-#book-testimonials:before {
+#bonus:before {
   background: url("../images/pick-stay.png") no-repeat;
   background-size: 80%;
 }
 
-/*
 #about-the-author:before {
   background: url("../images/pick-born.png") no-repeat;
   background-size: 80%;
 }
-*/
 
 #concerns:before {
   background: url("../images/pick-only.png") no-repeat;
   background-size: 80%;
+}
+
+/*********************** testimonials ***********************/
+
+.testimonials .testi p, .testi-name strong {
+  font-size: 16px !important;
 }
 
 /*********************** headcontent ***********************/
@@ -96,6 +104,26 @@ section.comment {
   font-size: 24px;
   margin-bottom: 25px;
   text-shadow: 0px 2px 1px #fff;
+}
+
+.trusted {
+  font-family: 'Allura', cursive;
+  font-size: 28px;
+  color: #444;
+  text-align: center;
+}
+
+.trusted a {
+  padding-left: 25px;
+}
+
+.trusted a img {
+  opacity: 0.7;
+  height: 35px;
+}
+
+.trusted a:hover img {
+  opacity: 1;
 }
 
 #convinced {
@@ -119,11 +147,11 @@ section.comment {
 
 /*********************** signup ***********************/
 
-.headcontent .signup {
+.signup {
   margin-top: 1em;
 }
 
-.headcontent .signup .note {
+.signup .note {
   margin-top: 1.5em;
   display: block;
 }
@@ -274,6 +302,10 @@ section.comment {
 
 .package-buy a span {
   color: #fff
+}
+
+.package-intro img {
+  width: 725px;
 }
 
 /*********************** Announcements ***********************/
