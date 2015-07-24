@@ -10,13 +10,7 @@
    }
 
   $(function() {
-    $('#top-signup-form *[type=submit]').click(function() {
-      clickedButton('signup-top');
-    });
-    $('#bottom-signup-form *[type=submit]').click(function() {
-      clickedButton('signup-bottom');
-    });
-    $('.signup-form *[type=submit]').click(function() {
+    $('#ck_subscribe_button').click(function() {
       clickedButton('signup');
     });
 
