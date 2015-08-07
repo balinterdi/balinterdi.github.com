@@ -79,6 +79,77 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/2008/09/17/v8-javascript-engine-benchmarks.html">V8 Javascript Engine Benchmarks</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-09-17T00:00:00+02:00" pubdate data-updated="true">Sep 17<span>th</span>, 2008</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A few weeks back when I read about <a href="http://www.google.com/googlebooks/chrome">Chrome</a> I became interested in V8, a javascript engine that Google integrated in their browser and that they claimed to be very fast due to the following reasons:</p>
+
+<ul>
+    <li><strong>Hidden class transitions</strong> that enable dynamic optimizations since objects will use the same (hidden) class</li>
+    <li><strong>generating machine code</strong> instead of interpreting the source code each time</li>
+    <li><strong>incremental garbage collection</strong> which reduces the time needed for the cleanup to milliseconds and eliminates &#8220;second long pauses&#8221;</li>
+</ul>
+
+
+<p>All that sounded very promising but as an engineer by profession it left me with a desire to find out how much faster all these features made V8 (and any browser that might use it). Even more so since I love running benchmarks and compare numbers. Well, maybe Google sensed that since they provided all the necessary tools to run these tests on the <a href="http://code.google.com/apis/v8/benchmarks.html">V8 benchmark page</a> and to run them very easily.</p>
+
+<p>There are 5 different algorithms in the testing suite exercising different qualities of the javascript engine. To be fair I closed all other tabs in browsers during the testing attempting to minimize operations that can have an effect on test performance. Also, the V8 tests were run from the command line so that might skew the results a bit towards V8. Anyyway, here are the results (numbers mean execution time so smaller is better):</p>
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>Richards</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>2072</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:7.33590733590734px;background-color:blue">&nbsp;</div></td><td>152</td></tr><tr><td>Shiretoko</td><td><div style="width:5.5984555984556px;background-color:green">&nbsp;</div></td><td>116</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:4.39189189189189px;background-color:yellow">&nbsp;</div></td><td>91</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>DeltaBlue</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1753</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:9.75470621791215px;background-color:blue">&nbsp;</div></td><td>171</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:7.24472333143183px;background-color:green">&nbsp;</div></td><td>127</td></tr><tr><td>Shiretoko</td><td><div style="width:7.01654306902453px;background-color:yellow">&nbsp;</div></td><td>123</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>Crypto</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1415</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:10.6007067137809px;background-color:blue">&nbsp;</div></td><td>150</td></tr><tr><td>Shiretoko</td><td><div style="width:10.6007067137809px;background-color:green">&nbsp;</div></td><td>150</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:9.54063604240283px;background-color:yellow">&nbsp;</div></td><td>135</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>RayTrace</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1021</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:22.7228207639569px;background-color:blue">&nbsp;</div></td><td>232</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:12.3408423114594px;background-color:green">&nbsp;</div></td><td>126</td></tr><tr><td>Shiretoko</td><td><div style="width:11.1655239960823px;background-color:yellow">&nbsp;</div></td><td>114</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>EarleyBoyer</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1933</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:16.9684428349715px;background-color:blue">&nbsp;</div></td><td>328</td></tr><tr><td>Shiretoko</td><td><div style="width:13.3988618727367px;background-color:green">&nbsp;</div></td><td>259</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:9.72581479565442px;background-color:yellow">&nbsp;</div></td><td>188</td></tr></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5"><caption>Score</caption><tr><td>Google Chrome</td><td><div style="width:100.0px;background-color:red">&nbsp;</div></td><td>1589</td></tr><tr><td>Safari 3.1.2</td><td><div style="width:10.3209565764632px;background-color:blue">&nbsp;</div></td><td>164</td></tr><tr><td>Firefox 3.0.1</td><td><div style="width:9.81749528005034px;background-color:green">&nbsp;</div></td><td>156</td></tr><tr><td>Shiretoko</td><td><div style="width:9.12523599748269px;background-color:yellow">&nbsp;</div></td><td>145</td></tr></table>
+
+
+<p>The superiority of V8 stunned me so much even to push me to ask whether all this is possible. Googe Chrome that uses V8 is on average (see Score) 10 times faster than all the other browsers (that pretty much flock together). I expected to find the speed of Firefox 3.1 (codename Shiretoko) close to that of Chrome but to my surprise it does not even surpass that of the other browsers. That made me a bit disappointed since I am a big Firefox fan.</p>
+
+<p>Can it be that these benchmarks are somehow tailored to show V8&#8217;s dominance? (like some political polls are skewed to give the &#8220;correct&#8221; answer). That this is not such a far-fetched idea is supported by Mozilla&#8217;s announcement that TraceMonkey, <a href="http://www.techcrunch.com/2008/09/03/mozilla-fights-back-with-new-firefox-benchmarks/">Firefox&#8217;s javascript engine will be 16-28% faster than V8</a>. And they have their own benchmarking solution, SunSpider to prove their point.</p>
+
+<p>So the life of javascript engine developers has got a lot harder. Not only they have to implement a fast engine but also a benchmarking system that shows there is nothing as fast as theirs!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2008/09/03/navigator-for-the-google-chrome-comicbook.html">Navigator for the Google Chrome Comicbook</a></h1>
     
     
@@ -603,6 +674,10 @@ end
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/08/07/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-7-is-out.html">Rock and Roll With Ember.js v1.13.7 Is Out</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html">Rock and Roll with Ember.js v1.13.3 is out</a>
       </li>
     
@@ -616,10 +691,6 @@ end
     
       <li class="post">
         <a href="/2015/02/18/rock-and-roll-with-ember-js-is-live.html">My book, Rock and Roll with Ember.js, is now live!</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/09/05/reminiscing-about-emberfest-2014.html">Reminiscing about EmberFest 2014</a>
       </li>
     
   </ul>

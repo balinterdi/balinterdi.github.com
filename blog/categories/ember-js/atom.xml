@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-08-05T09:20:25+02:00</updated>
+  <updated>2015-08-07T12:55:38+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,49 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rock and Roll With Ember.js v1.13.7 Is Out]]></title>
+    <link href="http://balinterdi.com/2015/08/07/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-7-is-out.html"/>
+    <updated>2015-08-07T11:38:00+02:00</updated>
+    <id>http://balinterdi.com/2015/08/07/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-7-is-out</id>
+    <content type="html"><![CDATA[<p>I am happy to announce another update to the Rock and Roll with Ember.js book,
+in line with the latest Ember CLI, 1.13.7. Book customers have already received
+the updated version, here is how it got better:</p>
+
+<ul>
+<li><strong>Update to Ember CLI 1.13.7</strong></li>
+<li><strong>Upgrade to Ember version 1.13.6</strong></li>
+<li>Explain better the difference between sync and async test helpers and how
+these latter work in Ember</li>
+<li>Make the stubs for creating bands and songs not take an id, to be similar to
+how the actual API works</li>
+<li>Update section about Ember Data being in beta</li>
+<li>Show what the custom <code>submit</code> async helper does when it first appears</li>
+<li>Remove unit tests for components as <code>ember generate component-test</code> now
+generates integration-style tests</li>
+<li>Extract the <code>wait</code> helper used across two examples (for showing loading
+routes/templates)</li>
+<li>Update jsbin in the Templates chapter to use the latest Ember version</li>
+<li>Fix importing the capitalizeHelper in the code snippet in the book</li>
+<li><p>Last but not least, the pdf version of the book now has page numbers and a
+nice, expandable table of contents so you can jump to any chapter or section
+from anywhere:</p>
+
+<p><img src="/images/posts/rarwe-1-13-7/preview-toc.png" alt="Collapsable TOC and page numbers" /></p>
+
+<p>I know, it seems extremely simple to have them from the start but the way the
+pdf was generated did not allow for this so we had to find another way. I
+again worked with <a href="http://murtra.net/">Almudena Garcia</a> on these design
+changes and I whole-heartedly recommend her if you have some front-end (HTML &amp;
+CSS) tasks to get done.</p></li>
+</ul>
+
+
+<p>There are a couple of other, smaller changes and you can see the whole list in
+<a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A1.13.7+is%3Aclosed">the issues repo</a>. Or you can buy the book <a href="http://rockandrollwithemberjs.com">here</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js v1.13.3 is out]]></title>
@@ -222,78 +265,6 @@ simply by pointing out typos in the text.</p>
 makes Ember better every day. You are putting so much time in, it's almost
 insane. It's kinda obvious but without your contributions, this book would not
 exist.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Reminiscing about EmberFest 2014]]></title>
-    <link href="http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014.html"/>
-    <updated>2014-09-05T09:55:00+02:00</updated>
-    <id>http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014</id>
-    <content type="html"><![CDATA[<p><a href="https://emberfest.eu">EmberFest 2014</a> ended a week ago and I already feel nostalgic. It
-was a great event with great people and you could feel the excitement about
-Ember in the air and in all conversations. It was almost single-handedly
-organized by <a href="https://haagen-software.no">Joachim Haagen-Skeie</a> for which he deserves huge kudos.</p>
-
-<p>It was really great to associate real people with twitter avatars and have
-fascinating conversations about various topics that included the Ember
-Inspector, the difficulties in building a build tool and even Firefox OS.</p>
-
-<h3>The functional paradigm making a headway into Emberland</h3>
-
-<p>One thing that struck me about Ember initially is that it seems to rely heavily
-on (shared) state. Some (most?) of that is inevitable given Ember being a
-performant framework that runs in the browser and is written in Javascript.
-None of these facilitates ditching (or minimizing) state and go with a
-functional, stateless approach.</p>
-
-<p>On the other hand, I really came to cherish the <a href="http://www.infoq.com/presentations/Simple-Made-Easy">simplicity</a> of the
-functional paradigm and have been gravitating towards languages that allow this
-(Clojure was, and still is, <a href="http://balinterdi.com/2013/06/19/the-appeal-of-one-paradigm-languages.html">my favorite</a>). So I added a mental
-note about my two favorite things being at such a great distance from each other
-and moved on.</p>
-
-<p>One theme of the conference and the hallway talks, however, is how Ember
-embraces the functional, immutable approach where it makes sense to. It might
-have something to do with my confirmation bias, but let me cite the examples
-nevertheless. <a href="https://twitter.com/tchak13">Paul Chavard</a> had a talk on his using immutable data
-structures in Ember. <a href="http://www.solitr.com/blog/">Jo Liss</a> revealed how Broccoli uses a
-"rebuild-from-scratch" approach instead of trying to find out which assets to
-rebuild at each modification. Finally, Alex Matchneer, aka. machty, prolific
-Ember and router.js contributor had <a href="https://docs.google.com/presentation/d/1afMLTCpRxhJpurQ97VBHCZkLbR1TEsRnd3yyxuSQ5YY/edit#slide=id.p">a presentation on React vs.  Ember</a>
-at EmberNYC which you should go read. His <a href="https://docs.google.com/presentation/d/1afMLTCpRxhJpurQ97VBHCZkLbR1TEsRnd3yyxuSQ5YY/edit#slide=id.g380053cce_1786">last slide</a> has a bullet-point
-that states: "Don't be surprised if Ember adopts DOM-diffing".</p>
-
-<p>It would be an understatement if I said I'm happy to see the functional world
-coming to Ember.</p>
-
-<h3>Promises</h3>
-
-<p>I had a talk at the conference called "Don't call me back - How Ember uses
-promises and how you can, too". As it usually happens, in doing research for the
-talk, I learned a lot not just about promises but about other topics, too. This
-time, it was the (in)famous run loop I stumbled across on several
-occasions so I am really happy I know a lot more about that beast now. You can
-find the slides of my presentation below.</p>
-
-<script async class="speakerdeck-embed" data-slide="10"
-data-id="47ee01e011b60132c86e02e2e0c65448" data-ratio="1.33333333333333"
-src="http://balinterdi.com//speakerdeck.com/assets/embed.js"></script>
-
-
-<p>I might even do another talk "How Ember uses the run loop and how you should
-probably not", or something to this effect.</p>
-
-<h3>EmberFest 2015</h3>
-
-<p>The greatest thing about EmberFest was its vibe. I saw the tweets coming
-in from EmberConf this March and <a href="http://reefpoints.dockyard.com/2014/03/17/emberconf-picks-ups-where-the-rails-community-left-off.html">the post-conf blog posts</a>
-about the awesome community and how one could feel the excitement that we are
-building apps with a tool that is new and hot now but is probably going to be
-the framework of choice for many in a few years. It is definitely a fascinating
-world to live in.</p>
-
-<p>I'll certainly be there at EmberFest 2015, so hopefully see you there!</p>
 ]]></content>
   </entry>
   
