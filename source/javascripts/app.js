@@ -1,12 +1,27 @@
 $.domReady(function(){
-  var clickEmailSubscribe = function() {
+  function clickButton(label) {
     ga('send', {
       'hitType': 'event',
       'eventCategory': 'button',
       'eventAction': 'click',
-      'eventLabel': 'post-footer-email-optin'
+      'eventLabel': label
     });
+    return false;
   };
 
-  $('#ck_subscribe_button').on('click', clickEmailSubscribe);
+  function clickEmailSubscribeInPostFooter() {
+    return clickButton('subscribe-from-post-footer');
+  };
+
+  function clickConvertKitModal() {
+    return clickButton('subscribe-modal-open');
+  };
+
+  function clickEmailSubscribeInSidebar() {
+    return clickButton('subscribe-from-sidebar');
+  };
+
+  $('*[role=article] #ck_subscribe_button').on('click', clickEmailSubscribeInPostFooter);
+  $('a[rel=ck_modal]').on('click', clickConvertKitModal);
+  $('.sidebar #ck_subscribe_button').on('click', clickEmailSubscribeInSidebar);
 });
