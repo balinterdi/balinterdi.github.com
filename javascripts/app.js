@@ -10,15 +10,15 @@ $.domReady(function(){
   };
 
   function clickEmailSubscribeInPostFooter() {
-    return clickButton('convertkit-subscribe-post-footer');
+    return clickButton('subscribe-from-post-footer');
   };
 
   function clickConvertKitModal() {
-    return clickButton('convertkit-modal-open');
+    return clickButton('subscribe-modal-open');
   };
 
   function clickEmailSubscribeInSidebar() {
-    return clickButton('convertkit-subscribe-sidebar');
+    return clickButton('subscribe-from-sidebar');
   };
 
   $('*[role=article] #ck_subscribe_button').on('click', clickEmailSubscribeInPostFooter);
