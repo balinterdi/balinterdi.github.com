@@ -6,7 +6,6 @@ $.domReady(function(){
       'eventAction': 'click',
       'eventLabel': label
     });
-    return false;
   };
 
   function clickEmailSubscribeInPostFooter() {
