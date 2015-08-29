@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Ember.run.bind - Balint Erdi's blog about Ember.js</title>
+  <title>Action's value option, event listeners and mut - Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2014/05/09/ember-dot-run-dot-bind.html">
+  <link rel="canonical" href="http://balinterdi.com/2015/08/28/action-value-option-event-listeners-and-mut.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -86,7 +86,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
   <header>
     
-      <h1 class="entry-title">Ember.run.bind</h1>
+      <h1 class="entry-title">Action's Value Option, Event Listeners and Mut</h1>
     
     
       <p class="meta">
@@ -102,37 +102,53 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
 
 
-<time datetime="2014-05-09T23:25:00+02:00" pubdate data-updated="true">May 9<span>th</span>, 2014</time>
+<time datetime="2015-08-28T17:43:00+02:00" pubdate data-updated="true">Aug 28<span>th</span>, 2015</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Ember has several great features that are not widely known, like <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html">its Dependency Injection system</a> I wrote about last week.</p>
+<div class="entry-content"><p>When the select view was about to be removed from Ember, a lot of people
+-myself included- wondered how it was going to be replaced. My bet was on a
+&#8216;select component&#8217;, after all, views should be transformed into components, right?</p>
 
-<p>It has also really handy API methods in hiding. One usually stumbles on them
-while looking for something in the superbly commented source code.</p>
+<p>Then I saw <a href="https://gist.github.com/ef4/8367f996eb7b57d1f7a5">this gist</a> from Edward Faulkner:</p>
 
-<p>I hereby introduce such a handy method and hope to make that into a recurring
-thing. Who knows? Eventually this might also grow into a series.</p>
+<div>
+  <pre><code class='html'>&lt;select onchange={{action (mut vehicle) value=&quot;target.value&quot;}}&gt;
+  {{#each vehicles as |vehicleChoice|}}
+    &lt;option value={{vehicleChoice}} selected={{eq vehicle vehicleChoice}}&gt;{{vehicleChoice}}&lt;/option&gt;
+  {{/each}}
+&lt;/select&gt;</code></pre>
+</div>
 
-<p>If it does, I would have to find a catchy name for it. &#8220;Ember Chispas&#8221; came to
-mind and rings nice but unfortunately <a href="https://www.youtube.com/user/edisonstew">Jeffrey Biles</a> already has a monopoly on it via his
-&#8220;Ember Sparks&#8221; series. (<em>Chispa</em> is Spanish for spark.) We&#8217;ll have to talk, Jeffrey :)</p>
 
-<p>Anyway, let&#8217;s see the first thingie.</p>
+<p>I did not understand half of it, so I dug down to see how the pieces come
+together. In this short post, I want to explain what I have found out.</p>
 
-<h2>&#8230; and in the runloop bind them</h2>
+<h3>Solve a simpler problem</h3>
 
-<p>The run loop in Ember deserves its own blog post series, and I am probably not
-the one who will write it. (<a href="http://emberjs.com/guides/understanding-ember/run-loop/">The official guide on the subject</a> is a good place
-to start, <a href="http://alexmatchneer.com/blog/2013/01/12/everything-you-never-wanted-to-know-about-the-ember-run-loop/">Alex Matchneer&#8217;s &#8220;Everything You Never Wanted to Know About the Ember Run Loop&#8221;</a> is more elaborate).</p>
+<p>A great mathematician, George Polya, wrote a book in 1945 called <a href="http://smile.amazon.com/How-Solve-It-Mathematical-Princeton/dp/069111966X/ref=smi_www_rco2_go_smi_g2147660602?_encoding=UTF8&amp;*Version*=1&amp;*entries*=0&amp;ie=UTF8">&#8220;How to Solve It&#8221;</a>,
+in which he puts down a framework for solving mathematical problems. One
+(probably more) of his recommendations can be applied to software development,
+too: Solve a simpler problem.</p>
 
-<p>For the sake of this chispa, it suffices to state that any async callback from a 3rd
-party javascript library needs to be wrapped into an Ember.run.</p>
+<p>Heeding this advice, we&#8217;ll first tackle a more mundane problem and in the
+second round, we&#8217;ll solve the original riddle.</p>
 
-<p>Blatantly stealing <a href="https://github.com/emberjs/ember.js/blob/24dcb0c566284a7aa926e701d33f40717264b9b1/packages_es6/ember-metal/lib/run_loop.js#L153">the example from the source code</a>, here is how this is done:</p>
+<p>Let&#8217;s assume Edward had written the following:</p>
+
+<div>
+  <pre><code class='html'>&lt;select onchange={{action &quot;selectVehicle&quot; value=&quot;target.value&quot;}}&gt;
+  {{#each vehicles as |vehicleChoice|}}
+    &lt;option value={{vehicleChoice}} selected={{eq vehicle vehicleChoice}}&gt;{{vehicleChoice}}&lt;/option&gt;
+  {{/each}}
+&lt;/select&gt;</code></pre>
+</div>
+
+
+
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -140,24 +156,91 @@ party javascript library needs to be wrapped into an Ember.run.</p>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-</span><span class='line'><span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;resize&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-</span><span class='line'>  <span class="nx">Ember</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-</span><span class='line'>    <span class="nx">that</span><span class="p">.</span><span class="nx">handleResize</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">});</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">vehicle</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">vehicles</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">w</span><span class="p">(</span><span class="s1">&#39;Tesla Chrysler Toyota&#39;</span><span class="p">),</span>
+</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">selectVehicle</span><span class="p">(</span><span class="nx">vehicle</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;vehicle&#39;</span><span class="p">,</span> <span class="nx">vehicle</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
 </span><span class='line'><span class="p">});</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>See that beautiful <code>var that=this;</code>? It can be got ridden of via <code>Ember.run.bind</code>:</p>
+<p>This is easier (as in: more familiar) but there are still a few things that
+might need explanation. First, before 1.13.3, event listeners on browser
+events could not trigger Ember actions like that:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;resize&#39;</span><span class="p">,</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">run</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleResize</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure>
+<div>
+  <pre><code class='html'>&lt;select onchange={{action &quot;selectVehicle&quot; value=&quot;target.value&quot;}}&gt;</code></pre>
+</div>
 
 
-<p>Less code to write and all the mustaches are gone (not that there is anything
-wrong with &#123;&#123;mustaches&#125;&#125;, of course).</p>
+<p>What this does, is that when the selected value of the dropdown changes, it
+fires the onchange listener we added on the <code>&lt;select&gt;</code> which results in calling
+our action handler, <code>selectVehicle</code>. The handler just updates the <code>vehicle</code>
+property of the controller. This will mark as selected the dropdown option the
+user picked due to the <code>selected={{eq vehicle vehicleChoice}}</code> term.</p>
+
+<p>(<code>eq</code> comes from a great little Ember addon called <a href="https://github.com/jmurphyau/ember-truth-helpers">ember-truth-helpers</a>. It
+returns true if the two parameters are equal).</p>
+
+<p>Since there is no two-way binding set up between the selected option of the
+dropdown and the controller property (<code>vehicle</code>), this needs to be done using a
+DOM event listener (<code>onchange</code>) and updating in the action handler. That&#8217;s
+exactly what happens in the <code>selectVehicle</code> action handler.</p>
+
+<p>So far so good, let&#8217;s move on.</p>
+
+<h3>Solve the original one</h3>
+
+<p>Wait a minute. How did <code>selectVehicle</code> receive the selected vehicle choice (e.g
+Toyota) when the <code>{{action}}</code> helper did not specify any parameters?</p>
+
+<p>When the browser calls an event listener, it passes it an event object which
+would become the first parameter of <code>selectVehicle</code>. However, <code>selectVehicle</code>
+does not receive the event but the actual value of the selected option, how does
+that come about? The missing link is a lesser-known option of the <code>action</code>
+helper, <code>value</code>. The property passed to it is read off of the first parameter of
+the handler and then replaces it. In our example, <code>target.value</code> is looked up on
+the event object, which is exactly the value of the select option that triggered
+the <code>onchange</code> event.</p>
+
+<p>Ok, only one thing left.</p>
+
+<p>The original example had this line:</p>
+
+<div>
+  <pre><code class='html'>&lt;select onchange={{action (mut vehicle) value=&quot;target.value&quot;}}&gt;</code></pre>
+</div>
+
+
+<p>instead of the more familiar:</p>
+
+<div>
+  <pre><code class='html'>&lt;select onchange={{action &quot;selectVehicle&quot; value=&quot;target.value&quot;}}&gt;</code></pre>
+</div>
+
+
+<p>What mut does here is that it allows updating the passed property, so when the
+action is called, <code>vehicle</code> is set to the passed value, the value of the
+selected option. That is it, we solved the riddle.</p>
+
+<p>The same implementation pattern can be used to update the properties related to
+checkboxes, input fields and radio buttons. This new way of doing things takes a
+while to get used to, but we&#8217;ll see more and more of it with one-way bindings
+becoming best practice.</p>
+
+<p>(By the way, my PR to add a section about <a href="https://github.com/emberjs/guides/pull/670">the actions helper&#8217;s <code>value</code> option</a> to
+the guides was merged yesterday, so hopefully more people will know about it.)</p>
 </div>
 
 
@@ -181,7 +264,7 @@ wrong with &#123;&#123;mustaches&#125;&#125;, of course).</p>
   
 
 
-<time datetime="2014-05-09T23:25:00+02:00" pubdate data-updated="true">May 9<span>th</span>, 2014</time>
+<time datetime="2015-08-28T17:43:00+02:00" pubdate data-updated="true">Aug 28<span>th</span>, 2015</time>
       
 
 <span class="categories">
@@ -208,10 +291,8 @@ wrong with &#123;&#123;mustaches&#125;&#125;, of course).</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2014/05/01/dependency-injection-in-ember-dot-js.html" title="Previous Post: Dependency injection in Ember.js - First steps">&laquo; Dependency injection in Ember.js - First steps</a>
+        <a class="basic-alignment left" href="/2015/08/07/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-7-is-out.html" title="Previous Post: Rock and Roll With Ember.js v1.13.7 Is Out">&laquo; Rock and Roll With Ember.js v1.13.7 Is Out</a>
       
-      
-        <a class="basic-alignment right" href="/2014/05/16/dependency-injection-in-ember-dot-js-going-deeper.html" title="Next Post: Dependency injection in Ember.js - Going deeper">Dependency injection in Ember.js - Going deeper &raquo;</a>
       
     </p>
   </footer>
@@ -305,8 +386,8 @@ wrong with &#123;&#123;mustaches&#125;&#125;, of course).</p>
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://balinterdi.com/2014/05/09/ember-dot-run-dot-bind.html';
-        var disqus_url = 'http://balinterdi.com/2014/05/09/ember-dot-run-dot-bind.html';
+        var disqus_identifier = 'http://balinterdi.com/2015/08/28/action-value-option-event-listeners-and-mut.html';
+        var disqus_url = 'http://balinterdi.com/2015/08/28/action-value-option-event-listeners-and-mut.html';
         var disqus_script = 'embed.js';
       
     (function () {

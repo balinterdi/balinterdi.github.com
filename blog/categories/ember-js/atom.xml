@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-08-26T14:55:18+02:00</updated>
+  <updated>2015-08-29T21:47:22+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,142 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Action's value option, event listeners and mut]]></title>
+    <link href="http://balinterdi.com/2015/08/28/action-value-option-event-listeners-and-mut.html"/>
+    <updated>2015-08-28T17:43:00+02:00</updated>
+    <id>http://balinterdi.com/2015/08/28/action-value-option-event-listeners-and-mut</id>
+    <content type="html"><![CDATA[<p>When the select view was about to be removed from Ember, a lot of people
+-myself included- wondered how it was going to be replaced. My bet was on a
+'select component', after all, views should be transformed into components, right?</p>
+
+<p>Then I saw <a href="https://gist.github.com/ef4/8367f996eb7b57d1f7a5">this gist</a> from Edward Faulkner:</p>
+
+<p><div>
+  <pre><code class='html'>&lt;select onchange={{action (mut vehicle) value=&quot;target.value&quot;}}&gt;
+  {{#each vehicles as |vehicleChoice|}}&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;option value={{vehicleChoice}} selected={{eq vehicle vehicleChoice}}&amp;gt;{{vehicleChoice}}&amp;lt;/option&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;  {{/each}}
+&lt;/select&gt;</code></pre>
+</div>
+</p>
+
+<p>I did not understand half of it, so I dug down to see how the pieces come
+together. In this short post, I want to explain what I have found out.</p>
+
+<h3>Solve a simpler problem</h3>
+
+<p>A great mathematician, George Polya, wrote a book in 1945 called <a href="http://smile.amazon.com/How-Solve-It-Mathematical-Princeton/dp/069111966X/ref=smi_www_rco2_go_smi_g2147660602?_encoding=UTF8&amp;*Version*=1&amp;*entries*=0&amp;ie=UTF8">"How to Solve It"</a>,
+in which he puts down a framework for solving mathematical problems. One
+(probably more) of his recommendations can be applied to software development,
+too: Solve a simpler problem.</p>
+
+<p>Heeding this advice, we'll first tackle a more mundane problem and in the
+second round, we'll solve the original riddle.</p>
+
+<p>Let's assume Edward had written the following:</p>
+
+<p><div>
+  <pre><code class='html'>&lt;select onchange={{action &quot;selectVehicle&quot; value=&quot;target.value&quot;}}&gt;
+  {{#each vehicles as |vehicleChoice|}}&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;option value={{vehicleChoice}} selected={{eq vehicle vehicleChoice}}&amp;gt;{{vehicleChoice}}&amp;lt;/option&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;  {{/each}}
+&lt;/select&gt;</code></pre>
+</div>
+</p>
+
+<p>```js
+import Ember from 'ember';</p>
+
+<p>export default Ember.Controller.extend({
+  vehicle: null,
+  vehicles: Ember.w('Tesla Chrysler Toyota'),
+  actions: {</p>
+
+<pre><code>selectVehicle(vehicle) {
+  this.set('vehicle', vehicle);
+}
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>This is easier (as in: more familiar) but there are still a few things that
+might need explanation. First, before 1.13.3, event listeners on browser
+events could not trigger Ember actions like that:</p>
+
+<p><div>
+  <pre><code class='html'>&lt;select onchange={{action &quot;selectVehicle&quot; value=&quot;target.value&quot;}}&gt;</code></pre>
+</div>
+</p>
+
+<p>What this does, is that when the selected value of the dropdown changes, it
+fires the onchange listener we added on the <code>&lt;select&gt;</code> which results in calling
+our action handler, <code>selectVehicle</code>. The handler just updates the <code>vehicle</code>
+property of the controller. This will mark as selected the dropdown option the
+user picked due to the <code>selected={{eq vehicle vehicleChoice}}</code> term.</p>
+
+<p>(<code>eq</code> comes from a great little Ember addon called <a href="https://github.com/jmurphyau/ember-truth-helpers">ember-truth-helpers</a>. It
+returns true if the two parameters are equal).</p>
+
+<p>Since there is no two-way binding set up between the selected option of the
+dropdown and the controller property (<code>vehicle</code>), this needs to be done using a
+DOM event listener (<code>onchange</code>) and updating in the action handler. That's
+exactly what happens in the <code>selectVehicle</code> action handler.</p>
+
+<p>So far so good, let's move on.</p>
+
+<h3>Solve the original one</h3>
+
+<p>Wait a minute. How did <code>selectVehicle</code> receive the selected vehicle choice (e.g
+Toyota) when the <code>{{action}}</code> helper did not specify any parameters?</p>
+
+<p>When the browser calls an event listener, it passes it an event object which
+would become the first parameter of <code>selectVehicle</code>. However, <code>selectVehicle</code>
+does not receive the event but the actual value of the selected option, how does
+that come about? The missing link is a lesser-known option of the <code>action</code>
+helper, <code>value</code>. The property passed to it is read off of the first parameter of
+the handler and then replaces it. In our example, <code>target.value</code> is looked up on
+the event object, which is exactly the value of the select option that triggered
+the <code>onchange</code> event.</p>
+
+<p>Ok, only one thing left.</p>
+
+<p>The original example had this line:</p>
+
+<p><div>
+  <pre><code class='html'>&lt;select onchange={{action (mut vehicle) value=&quot;target.value&quot;}}&gt;</code></pre>
+</div>
+</p>
+
+<p>instead of the more familiar:</p>
+
+<p><div>
+  <pre><code class='html'>&lt;select onchange={{action &quot;selectVehicle&quot; value=&quot;target.value&quot;}}&gt;</code></pre>
+</div>
+</p>
+
+<p>What mut does here is that it allows updating the passed property, so when the
+action is called, <code>vehicle</code> is set to the passed value, the value of the
+selected option. That is it, we solved the riddle.</p>
+
+<p>The same implementation pattern can be used to update the properties related to
+checkboxes, input fields and radio buttons. This new way of doing things takes a
+while to get used to, but we'll see more and more of it with one-way bindings
+becoming best practice.</p>
+
+<p>(By the way, my PR to add a section about <a href="https://github.com/emberjs/guides/pull/670">the actions helper's <code>value</code> option</a> to
+the guides was merged yesterday, so hopefully more people will know about it.)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll With Ember.js v1.13.7 Is Out]]></title>
@@ -153,118 +289,6 @@ happy about how it turned out and suggest you <a href="http://www.toptal.com/emb
 <p>Also, it turned out to have more than 2500 words so I thought it might be
 convenient for you to have it as a pdf. It spans 13 pages and you can get it
 right here below by providing your email address to send the paper to:</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[My book, Rock and Roll with Ember.js, is now live!]]></title>
-    <link href="http://balinterdi.com/2015/02/18/rock-and-roll-with-ember-js-is-live.html"/>
-    <updated>2015-02-18T09:51:00+01:00</updated>
-    <id>http://balinterdi.com/2015/02/18/rock-and-roll-with-ember-js-is-live</id>
-    <content type="html"><![CDATA[<p>I started writing my book, Rock &amp; Roll with Ember.js, on July 18, 2014, exactly
-7 months ago (More precisely, I prepared some drafts from early chapters most of
-which I ended up rewriting before that, but who doesn't like a good story?).</p>
-
-<p>Today, I am extremely happy to announce that <a href="http://rockandrollwithemberjs.com">the book is available for purchase</a>!</p>
-
-<h2>Tame the dreaded Ember.js learning curve</h2>
-
-<p>Ember is said to be hard to learn. Developers who are new to the framework hit
-a wall and can't easily find out how all the pieces fit together.</p>
-
-<p>My own experience tells me that Ember has a small number of core concepts that
-you have to grok to be able to tame the learning curve. Once you understand
-these key ideas behind the framework's design, you will fly over that wall and
-see the green meadow filled with flowers and bunnies.</p>
-
-<p>You will build Ember applications with confidence and - if you are like me -
-you will love building them.</p>
-
-<h2>Read it and build it!</h2>
-
-<p>My book also has a concept, and a very pragmatic one at that.</p>
-
-<p>In the book, we are building an application, chapter by chapter. As we
-progress, we are adding new features to the application, introducing new
-Ember concepts that are needed for implementing the feature.</p>
-
-<p>When a list of bands need to be displayed alongside with the songs of the
-selected band, we reach for nested routes.  When we need a widget that displays
-stars for the songs, we introduce components. When we want to show the user
-that loading data from the backend is in progress, we learn about loading
-routes.</p>
-
-<h2>Set List</h2>
-
-<p>The book currently has the following chapters:</p>
-
-<ol>
-<li>Introduction to Ember.js</li>
-<li>Ember CLI</li>
-<li>Templates and data bindings</li>
-<li>Routing</li>
-<li>Nested routes</li>
-<li>Actions</li>
-<li>Components</li>
-<li>Controllers</li>
-<li>Advanced routing</li>
-<li>Talking to a backend - with Ember Data</li>
-<li>Testing</li>
-<li>Sorting and searching with query params</li>
-<li>Loading and error routes</li>
-<li>Helpers</li>
-<li>Getting ready for Ember 2.0</li>
-</ol>
-
-
-<p>I say 'currently' because I will definitely have to change some chapters as
-Ember evolves (To give an example, Controllers will probably become Routable components).</p>
-
-<h2>A reference book and a reference application</h2>
-
-<p>Ember moves rapidly towards version 2.0. As each minor version is released, it
-brings new syntaxes and deprecates old ones. Even though the Ember Core team
-takes extreme care to ensure a smooth upgrade process, it is easy for an
-application to lag behind, having a few deprecations here and there and not
-using the shiny new tools.</p>
-
-<p>The motto of the Ember 2.0 roadmap is "Stability without Stagnation", that old
-syntaxes and practices should vanish gradually, giving ample time for developers
-to update their applications. At the same time, Ember should not stagnate, it
-should introduce new features.</p>
-
-<p>I adhere to this motto, but, more importantly, my book does, too.</p>
-
-<p>I want the book and the Rock &amp; Roll application to be up-to-date with the latest
-stable Ember version and not have any of the deprecations. What that means in
-practice is that if you buy one of the packages, you will most likely get book
-updates after each 1.x release. And at no extra cost to you until 2.0 ships!</p>
-
-<h2>A bonus deal you will definitely like</h2>
-
-<p>When you <a href="http://rockandrollwithemberjs.com/#stairway-to-heaven">buy one of the packages</a> you also get access to an awesome deal
-from <a href="https://divshot.com">Divshot</a>, a company that provides static hosting for your Ember apps.</p>
-
-<p>You get 3 months free of <a href="https://divshot.com/pricing">their Fleet plan</a>, a $150 value.</p>
-
-<h2>The "New Beginning" tour</h2>
-
-<p><del>Wait, there is more!</del> To celebrate that the book has finally seen the
-light of day, there is a 25% discount <a href="http://rockandrollwithemberjs.com/#pricing">on all packages</a>.</p>
-
-<p>This offer expires on Sunday, February 22, at 23:59 PST, so <a href="http://rockandrollwithemberjs.com">grab yours</a> now!</p>
-
-<h2>Acknowledgements</h2>
-
-<p>I am indebted to all of you who have pushed me through the finish line, either
-by praising my screencasts, blog posts and review copies of my book, retweeting
-my marketing tweets, giving valuable feedback that made the book better or
-simply by pointing out typos in the text.</p>
-
-<p>I would also like to thank you to the Ember Core team whose relentless work
-makes Ember better every day. You are putting so much time in, it's almost
-insane. It's kinda obvious but without your contributions, this book would not
-exist.</p>
 ]]></content>
   </entry>
   
