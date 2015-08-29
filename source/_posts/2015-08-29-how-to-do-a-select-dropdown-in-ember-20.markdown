@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Action's value option, event listeners and mut"
-date: 2015-08-28 17:43
+title: "How to do a select (dropdown) in Ember 2.0?"
+date: 2015-08-29 17:43
 comments: true
 categories: ember.js
 ---
