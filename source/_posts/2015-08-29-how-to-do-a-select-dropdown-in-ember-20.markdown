@@ -7,7 +7,7 @@ categories: ember.js
 ---
 <iframe
   width="178" height="24" style="border:0px"
-  src="https://mixonic.github.io/ember-community-versions/2015-08-29-how-to-do-a-select-dropdown-in-ember-2-0.html">
+  src="https://mixonic.github.io/ember-community-versions/2015/08/29/how-to-do-a-select-dropdown-in-ember-2-0.html">
 </iframe>
 
 When the select view was about to be removed from Ember, a lot of people
