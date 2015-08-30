@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-08-29T21:58:09+02:00</updated>
+  <updated>2015-08-30T20:43:48+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -18,7 +18,13 @@
     <link href="http://balinterdi.com/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html"/>
     <updated>2015-08-29T17:43:00+02:00</updated>
     <id>http://balinterdi.com/2015/08/29/how-to-do-a-select-dropdown-in-ember-20</id>
-    <content type="html"><![CDATA[<p>When the select view was about to be removed from Ember, a lot of people
+    <content type="html"><![CDATA[<iframe
+  width="178" height="24" style="border:0px"
+  src="https://mixonic.github.io/ember-community-versions/2015/08/29/how-to-do-a-select-dropdown-in-ember-2-0.html">
+</iframe>
+
+
+<p>When the select view was about to be removed from Ember, a lot of people
 -myself included- wondered how it was going to be replaced. My bet was on a
 'select component', after all, views should be transformed into components, right?</p>
 
