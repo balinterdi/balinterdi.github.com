@@ -5,6 +5,11 @@ date: 2015-08-29 17:43
 comments: true
 categories: ember.js
 ---
+<iframe
+  width="178" height="24" style="border:0px"
+  src="https://mixonic.github.io/ember-community-versions/2015-08-29-how-to-do-a-select-dropdown-in-ember-2-0.html">
+</iframe>
+
 When the select view was about to be removed from Ember, a lot of people
 -myself included- wondered how it was going to be replaced. My bet was on a
 'select component', after all, views should be transformed into components, right?
