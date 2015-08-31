@@ -56,7 +56,7 @@ import Ember from 'ember';
 
 export default Ember.Controller.extend({
   vehicle: null,
-  vehicles: Ember.w('Tesla Chrysler Toyota'),
+  vehicles: Ember.String.w('Tesla Chrysler Toyota'),
   actions: {
     selectVehicle(vehicle) {
       this.set('vehicle', vehicle);
