@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Rock and Roll with Ember.js v1.13 is out - Balint Erdi's blog about Ember.js</title>
+  <title>Complex Component Design in Ember - Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html">
+  <link rel="canonical" href="http://balinterdi.com/2015/09/03/complex-component-design-in-ember.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -87,7 +87,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
   <header>
     
-      <h1 class="entry-title">Rock and Roll With Ember.js v1.13 Is Out</h1>
+      <h1 class="entry-title">Complex Component Design in Ember</h1>
     
     
       <p class="meta">
@@ -103,44 +103,37 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
 
 
-<time datetime="2015-07-03T15:25:00+02:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2015</time>
+<time datetime="2015-09-03T17:41:00+02:00" pubdate data-updated="true">Sep 3<span>rd</span>, 2015</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Today marks the sixth release of my book, <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js</a>, and
-brings it in sync with Ember 1.13. The book follows along the development from
-scratch of an Ember application, and chapter by chapter and explains concepts in
-the process.</p>
+<div class="entry-content"><p>The title would probably better be &#8220;Somewhat Complex Component Design in Ember&#8221;
+but it sounds less pompous so decided to drop &#8220;Somewhat&#8221;. I therefore don&#8217;t
+claim that the series of blog posts I intend to start with this intro post will
+represent the paramount of Ember&#8217;s component design. There definitely are and
+definitely will be more complex component structures and scenarios.</p>
 
-<p>As I have promised, the book is kept up-to-date with the latest stable Ember
-version. That implies both using idiomatic Ember and not using deprecated
-syntaxes or APIs.</p>
+<p>The component developed in the series is one that autocompletes as the user
+starts to write the input and allows selecting from a fixed set of options.
+Nothing too out-of-this-world but I chose it because there are still several
+best practices when that can be applied to developing this component.</p>
 
-<p>Now that the versioning of Ember Data is in lockstep with that of Ember, I
-considered it important to update to the latest Ember Data, too, and will
-strive to do so in future releases, too.</p>
+<p>A very important disclaimer is that I got intrigued to component design by Ryan
+Florence and his talks and learned most of the basics from him. My choice of
+component probably has to do something with Ryan, too. He developed the
+ic-autocomplete component from which I took several ideas, sometimes outright
+the implementation.</p>
 
-<p>Here are the major things I updated for the 1.13 release:</p>
-
-<ul>
-<li>Use <code>this.route</code> instead of <code>this.resource</code> in the router map as the latter is now deprecated.</li>
-<li>Use <code>Ember.computed</code> and <code>Ember.on</code> instead of the Function prototype
-extensions, <code>property</code> and <code>on</code> as extending the Function prototype is
-consired a poor practice.</li>
-<li>Update the &#8220;Getting ready for Ember 2.0&#8221; chapter as most things are clear now
-for the 2.0 release. As I give particular examples for each deprecation, this
-chapter can also serve as an update guide for 1.x Ember applications.</li>
-<li>Use the new Ember Data find methods, namely <code>store.findAll</code> and
-<code>store.findRecord</code>. Before, both fetching a collection and a single record
-used <code>store.find</code>.</li>
-</ul>
-
-
-<p>As usual, there are also smaller improvements and fixes and you can find the
-whole list in the errata/issues repository for the book, assigned to <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13+is%3Aclosed">the release milestone.</a></p>
+<p>So you probably ask: why reinvent the wheel? Why develop something that is
+already done? First of all, I (and science says most of us) learn best by doing.
+I wanted to use an example where I already have a sample implementation but also
+understand why the original implementation did things as it did and see whether
+I can improve on those things. Remember, when Instructure (Ryan) developed their
+autocomplete component, there were no block parameters, no closure actions, no
+direct attribute bindings</p>
 </div>
 
 
@@ -164,7 +157,7 @@ whole list in the errata/issues repository for the book, assigned to <a href="ht
   
 
 
-<time datetime="2015-07-03T15:25:00+02:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2015</time>
+<time datetime="2015-09-03T17:41:00+02:00" pubdate data-updated="true">Sep 3<span>rd</span>, 2015</time>
       
 
 <span class="categories">
@@ -186,17 +179,13 @@ whole list in the errata/issues repository for the book, assigned to <a href="ht
 -->
 
 
-  <script src="https://app.convertkit.com/landing_pages/2664.js"></script>
-
 
     
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2015/06/05/common-ember-mistakes.html" title="Previous Post: Common Ember Mistakes">&laquo; Common Ember Mistakes</a>
+        <a class="basic-alignment left" href="/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html" title="Previous Post: How to do a select (dropdown) in Ember 2.0?">&laquo; How to do a select (dropdown) in Ember 2.0?</a>
       
-      
-        <a class="basic-alignment right" href="/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html" title="Next Post: Rock and Roll with Ember.js v1.13.3 is out">Rock and Roll with Ember.js v1.13.3 is out &raquo;</a>
       
     </p>
   </footer>
@@ -289,8 +278,8 @@ whole list in the errata/issues repository for the book, assigned to <a href="ht
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html';
-        var disqus_url = 'http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html';
+        var disqus_identifier = 'http://balinterdi.com/2015/09/03/complex-component-design-in-ember.html';
+        var disqus_url = 'http://balinterdi.com/2015/09/03/complex-component-design-in-ember.html';
         var disqus_script = 'embed.js';
       
     (function () {

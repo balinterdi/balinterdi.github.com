@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-09-01T15:41:04+02:00</updated>
+  <updated>2015-09-06T10:58:01+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,38 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Complex Component Design in Ember]]></title>
+    <link href="http://balinterdi.com/2015/09/03/complex-component-design-in-ember.html"/>
+    <updated>2015-09-03T17:41:00+02:00</updated>
+    <id>http://balinterdi.com/2015/09/03/complex-component-design-in-ember</id>
+    <content type="html"><![CDATA[<p>The title would probably better be "Somewhat Complex Component Design in Ember"
+but it sounds less pompous so decided to drop "Somewhat". I therefore don't
+claim that the series of blog posts I intend to start with this intro post will
+represent the paramount of Ember's component design. There definitely are and
+definitely will be more complex component structures and scenarios.</p>
+
+<p>The component developed in the series is one that autocompletes as the user
+starts to write the input and allows selecting from a fixed set of options.
+Nothing too out-of-this-world but I chose it because there are still several
+best practices when that can be applied to developing this component.</p>
+
+<p>A very important disclaimer is that I got intrigued to component design by Ryan
+Florence and his talks and learned most of the basics from him. My choice of
+component probably has to do something with Ryan, too. He developed the
+ic-autocomplete component from which I took several ideas, sometimes outright
+the implementation.</p>
+
+<p>So you probably ask: why reinvent the wheel? Why develop something that is
+already done? First of all, I (and science says most of us) learn best by doing.
+I wanted to use an example where I already have a sample implementation but also
+understand why the original implementation did things as it did and see whether
+I can improve on those things. Remember, when Instructure (Ryan) developed their
+autocomplete component, there were no block parameters, no closure actions, no
+direct attribute bindings</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[How to do a select (dropdown) in Ember 2.0?]]></title>
@@ -278,23 +310,6 @@ used <code>store.find</code>.</li>
 
 <p>As usual, there are also smaller improvements and fixes and you can find the
 whole list in the errata/issues repository for the book, assigned to <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13+is%3Aclosed">the release milestone.</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Common Ember Mistakes]]></title>
-    <link href="http://balinterdi.com/2015/06/05/common-ember-mistakes.html"/>
-    <updated>2015-06-05T00:27:00+02:00</updated>
-    <id>http://balinterdi.com/2015/06/05/common-ember-mistakes</id>
-    <content type="html"><![CDATA[<p>I wrote an article called <a href="http://www.toptal.com/emberjs/the-8-most-common-ember-js-developer-mistakes">"The Top 8 Most Common Ember.js Developer
-Mistakes"</a> for Toptal that just went live on their blog. As the name
-suggests, it describes the typical pitfalls beginner, and sometimes advanced,
-Ember developers make with a mitigation strategy for each of them. I am quite
-happy about how it turned out and suggest you <a href="http://www.toptal.com/emberjs/the-8-most-common-ember-js-developer-mistakes">give it a read</a>.</p>
-
-<p>Also, it turned out to have more than 2500 words so I thought it might be
-convenient for you to have it as a pdf. It spans 13 pages and you can get it
-right here below by providing your email address to send the paper to:</p>
 ]]></content>
   </entry>
   

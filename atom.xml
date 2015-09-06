@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-09-01T15:41:04+02:00</updated>
+  <updated>2015-09-06T10:58:01+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,38 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Complex Component Design in Ember]]></title>
+    <link href="http://balinterdi.com/2015/09/03/complex-component-design-in-ember.html"/>
+    <updated>2015-09-03T17:41:00+02:00</updated>
+    <id>http://balinterdi.com/2015/09/03/complex-component-design-in-ember</id>
+    <content type="html"><![CDATA[<p>The title would probably better be &#8220;Somewhat Complex Component Design in Ember&#8221;
+but it sounds less pompous so decided to drop &#8220;Somewhat&#8221;. I therefore don&#8217;t
+claim that the series of blog posts I intend to start with this intro post will
+represent the paramount of Ember&#8217;s component design. There definitely are and
+definitely will be more complex component structures and scenarios.</p>
+
+<p>The component developed in the series is one that autocompletes as the user
+starts to write the input and allows selecting from a fixed set of options.
+Nothing too out-of-this-world but I chose it because there are still several
+best practices when that can be applied to developing this component.</p>
+
+<p>A very important disclaimer is that I got intrigued to component design by Ryan
+Florence and his talks and learned most of the basics from him. My choice of
+component probably has to do something with Ryan, too. He developed the
+ic-autocomplete component from which I took several ideas, sometimes outright
+the implementation.</p>
+
+<p>So you probably ask: why reinvent the wheel? Why develop something that is
+already done? First of all, I (and science says most of us) learn best by doing.
+I wanted to use an example where I already have a sample implementation but also
+understand why the original implementation did things as it did and see whether
+I can improve on those things. Remember, when Instructure (Ryan) developed their
+autocomplete component, there were no block parameters, no closure actions, no
+direct attribute bindings</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[How to do a select (dropdown) in Ember 2.0?]]></title>
@@ -2865,262 +2897,6 @@ template, in our case, the songs, which is exactly what we want.</p>
 
 <p>That wraps up our route sanitizaion. In the next post, we will take advantage of
 the benefit that the <code>songs</code> route now has the artist&#8217;s songs as its model.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Readers' Letters: Making an Ember.js component even better]]></title>
-    <link href="http://balinterdi.com/2014/02/18/readers-letters-making-an-ember-dot-js-component-even-better.html"/>
-    <updated>2014-02-18T19:52:00+01:00</updated>
-    <id>http://balinterdi.com/2014/02/18/readers-letters-making-an-ember-dot-js-component-even-better</id>
-    <content type="html"><![CDATA[<p><em>This is Part 3 of a mini-series on components. Here are the preceding posts:</em></p>
-
-<p><em>Part 1: <a href="http://balinterdi.com/2014/02/05/convert-a-view-into-a-component.html">Convert a view into a component</a></em></p>
-
-<p><em>Part 2: <a href="http://balinterdi.com/2014/02/12/making-an-emberjs-component-more-reusable.html">Making an Ember.js Component More Reusable</a></em></p>
-
-<hr />
-
-<p><a href="http://balinterdi.com/2014/02/12/making-an-emberjs-component-more-reusable.html">Last time</a> I showed a way to make the
-star-rating component more reusable. The solution employed a useful, low-level
-method, <code>Ember.addObserver</code> and its destructive sibling, <code>Ember.removeObserver</code>.</p>
-
-<p>A couple of my readers offered alternative solutions that, I think, make the
-code simpler without harming reusability of the component.</p>
-
-<p>This post is going to be sort of a &#8220;Readers&#8217; Letters&#8221;, showing these solutions
-and explaining how they are better than my original take.</p>
-
-<h2>Ember.defineProperty</h2>
-
-<p><a href="https://twitter.com/darkbaby123">David Chen</a> chimed in <a href="http://balinterdi.com/2014/02/12/making-an-emberjs-component-more-reusable.html#comment-1246422682">in the comments</a> suggesting
-using Ember.defineProperty instead of setting up and tearing down an observer:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">StarRatingComponent</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">classNames</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;rating-panel&#39;</span><span class="p">],</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">numStars</span><span class="o">:</span>  <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;maxRating&#39;</span><span class="p">),</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">defineFullStars</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">Ember</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;fullStars&#39;</span><span class="p">,</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;item.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;ratingProperty&#39;</span><span class="p">)));</span>
-</span><span class='line'>  <span class="p">}.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">),</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>Ember.defineProperty</code> makes a <code>fullStars</code> property on the component which is an
-alias of <code>item.rating</code> (or <code>item.score</code>). We can concatanate &#8216;item.&#8217; with that
-property name in the body of <code>defineFullStars</code>, something I could not get around
-earlier.</p>
-
-<p>Finally, the <code>on</code> function, an extension to the Function prototype sets up a
-listener and gets called when the component&#8217;s <code>init</code> method is executed.</p>
-
-<p>It is better, because there is a lot less code, it is more comprehensible and
-there is no need for a second step, tearing down the observer.</p>
-
-<h2>Passing in the value rating directly</h2>
-
-<p><a href="https://twitter.com/locks">Ricardo Mendes</a> takes my approach one step further
-and shows that it is unnecessary to pass in the name of the ratingProperty.</p>
-
-<p>Passing in the value of the property directly takes separation of concerns to
-the next level. The component does not need to know about the name of the rating
-property, all it needs to know is its value:</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artists/songs&quot;&gt;
-  (...)
-  {{#each songs}}
-    &lt;div class=&quot;list-group-item&quot;&gt;
-      {{title}}
-      {{star-rating item=this rating=rating maxRating=5 setAction=&quot;setRating&quot;}}
-    &lt;/div&gt;
-  (...)
-  {{#each}}
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p>What changed is that instead of ratingProperty=&#8221;rating&#8221; (which could be
-ratingProperty=&#8221;score&#8221;), the value of the rating itself is passed in. Note that
-there are no quotes around <code>rating</code> which establishes a binding.</p>
-
-<p>The definition of the <code>fullStars</code> property now could not be simpler and more
-expressive:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">StarRatingComponent</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">classNames</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;rating-panel&#39;</span><span class="p">],</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">numStars</span><span class="o">:</span>  <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;maxRating&#39;</span><span class="p">),</span>
-</span><span class='line'>  <span class="nx">fullStars</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;rating&#39;</span><span class="p">),</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Since the component does not know about the rating property, it can&#8217;t set the
-item&#8217;s rating which is a good thing since it&#8217;s not its responsiblity. It just
-sends an action to its context with the appropriate parameters:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">StarRatingComponent</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">setRating</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">newRating</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;data-rating&#39;</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">sendAction</span><span class="p">(</span><span class="s1">&#39;setAction&#39;</span><span class="p">,</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">item</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">),</span>
-</span><span class='line'>        <span class="nx">rating</span><span class="o">:</span> <span class="nx">newRating</span>
-</span><span class='line'>      <span class="p">});</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This action is then handled by the controller:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">setRating</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">song</span> <span class="o">=</span> <span class="nx">params</span><span class="p">.</span><span class="nx">item</span><span class="p">,</span>
-</span><span class='line'>          <span class="nx">rating</span> <span class="o">=</span> <span class="nx">params</span><span class="p">.</span><span class="nx">rating</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="nx">song</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="nx">rating</span><span class="p">);</span>
-</span><span class='line'>      <span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;/songs/&#39;</span> <span class="o">+</span> <span class="nx">song</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;PUT&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="nx">context</span><span class="o">:</span> <span class="k">this</span><span class="p">,</span>
-</span><span class='line'>        <span class="nx">data</span><span class="o">:</span> <span class="p">{</span> <span class="nx">rating</span><span class="o">:</span> <span class="nx">rating</span> <span class="p">}</span>
-</span><span class='line'>      <span class="p">})</span>
-</span><span class='line'>      <span class="p">(...)</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Clear separation of concerns, less and more expressive code.</p>
-
-<h2>Replacing data-rating</h2>
-
-<p>A further simplification comes from <a href="https://twitter.com/de_smet_tom">Tom de Smet</a>.</p>
-
-<p>He rightfully pointed out that there is no need to get the rating that was
-clicked on via a data attribute. It is already known at template rendering time
-and can thus be passed to the action helper.</p>
-
-<p>So this:</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;components/star-rating&quot;&gt;
-  {{#each stars}}
-    &lt;span {{bind-attr data-rating=rating}}
-      {{bind-attr class=&quot;:star-rating :glyphicon full:glyphicon-star:glyphicon-star-empty&quot;}}
-      {{action &quot;setRating&quot;}}&gt;
-    &lt;/span&gt;
-  {{/each}}
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p>becomes this:</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;components/star-rating&quot;&gt;
-  {{#each stars}}
-    &lt;span
-      {{bind-attr class=&quot;:star-rating :glyphicon full:glyphicon-star:glyphicon-star-empty&quot;}}
-      {{action &quot;setRating&quot; rating}}&gt;
-    &lt;/span&gt;
-  {{/each}}
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p>And then <code>setRating</code> simply receives the new rating as an argument:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">StarRatingComponent</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">setRating</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newRating</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">sendAction</span><span class="p">(</span><span class="s1">&#39;setAction&#39;</span><span class="p">,</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">item</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">),</span>
-</span><span class='line'>        <span class="nx">rating</span><span class="o">:</span> <span class="nx">newRating</span>
-</span><span class='line'>      <span class="p">});</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Instead of adding an extra data-binding property, we rely on the <code>action</code> helper
-and we do not need the additional fetching (and parsing) of the property.</p>
-
-<h3>Give credit where credit is due</h3>
-
-<p>This week&#8217;s post was made possible by <a href="https://twitter.com/darkbaby123">David</a>, <a href="https://twitter.com/locks">Ricardo</a> and <a href="https://twitter.com/de_smet_tom">Tom</a>.  Their insights made the star-rating component impeccable for which they deserve a huge &#8220;thank
-you!&#8221; from me.</p>
 ]]></content>
   </entry>
   

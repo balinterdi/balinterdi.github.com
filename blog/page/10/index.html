@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Rock and Roll with Ember.js v1.13 is out - Balint Erdi's blog about Ember.js</title>
+  <title>Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html">
+  <link rel="canonical" href="http://balinterdi.com/blog/page/10/index.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -82,12 +82,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </nav>
   <div id="main">
     <div id="content">
-      <div>
-<article class="hentry" role="article">
+      <div class="blog-index">
   
+  
+  
+    <article>
+      
   <header>
     
-      <h1 class="entry-title">Rock and Roll With Ember.js v1.13 Is Out</h1>
+      <h1 class="entry-title"><a href="/2008/04/09/quick-adaptor-my-role-model.html">Quick Adaptor - My Role Model</a></h1>
     
     
       <p class="meta">
@@ -103,113 +106,152 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
 
 
-<time datetime="2015-07-03T15:25:00+02:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2015</time>
+<time datetime="2008-04-09T00:00:00+02:00" pubdate data-updated="true">Apr 9<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Today marks the sixth release of my book, <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js</a>, and
-brings it in sync with Ember 1.13. The book follows along the development from
-scratch of an Ember application, and chapter by chapter and explains concepts in
-the process.</p>
+  <div class="entry-content"><p>I returned two weeks ago from the fantastic <a href="http://www.euruko2008.org/">Euruko 2008 conference</a> in Prague dazzled by the outstanding presentations and the power of Ruby. It is hard to pick a favorite but I especially liked David Black&#8217;s &#8220;Per-Object Behavior in Ruby&#8221; (slides hopefully coming up) mainly because I am a sucker for metaprogramming and the true object-orientedness of Ruby in all its glory.</p>
 
-<p>As I have promised, the book is kept up-to-date with the latest stable Ember
-version. That implies both using idiomatic Ember and not using deprecated
-syntaxes or APIs.</p>
+<p>One fundamental concept was the singleton class which I think I&#8217;ve finally understood from this session. His example was the OpenStruct class whose instances learn to respond to all messages sent to them (this is Smalltalk/Ruby parlance, we could also say they learn to handle method calls) instead of throwing a NoMethodError. So I thought a great way to gain an insight of how this works is to actually code that up myself. Here is what I got:</p>
 
-<p>Now that the versioning of Ember Data is in lockstep with that of Ember, I
-considered it important to update to the latest Ember Data, too, and will
-strive to do so in future releases, too.</p>
+<pre lang="ruby">
+require 'test/unit'
+class QuickAdaptor
+  def method_missing(method_id, *args)
+    method_name = method_id.to_s
+    if method_name =~ /=$/
+      attr = method_name.to_s.chop
+      self.class.class_eval do
+        define_method method_id do |x|
+          instance_variable_set("@#{attr}", x)
+        end
+        method_name.chop!
+        define_method method_name.to_sym do
+          instance_variable_get "@#{attr}"
+        end
+      end
+      instance_variable_set("@#{attr}", args[0])
+    end
+  end
 
-<p>Here are the major things I updated for the 1.13 release:</p>
+end
 
-<ul>
-<li>Use <code>this.route</code> instead of <code>this.resource</code> in the router map as the latter is now deprecated.</li>
-<li>Use <code>Ember.computed</code> and <code>Ember.on</code> instead of the Function prototype
-extensions, <code>property</code> and <code>on</code> as extending the Function prototype is
-consired a poor practice.</li>
-<li>Update the &#8220;Getting ready for Ember 2.0&#8221; chapter as most things are clear now
-for the 2.0 release. As I give particular examples for each deprecation, this
-chapter can also serve as an update guide for 1.x Ember applications.</li>
-<li>Use the new Ember Data find methods, namely <code>store.findAll</code> and
-<code>store.findRecord</code>. Before, both fetching a collection and a single record
-used <code>store.find</code>.</li>
-</ul>
+class QuickSingletonAdaptor
+  # does the same as QuickAdaptor
+  # but only defines methods for singleton
+  # class of object, so it is not the class
+  # that "learns", but the singleton class
+  def method_missing(method_id, *args)
+    method_name = method_id.to_s
+    if method_name =~ /=$/
+      attr = method_name.to_s.chop
+      singleton_class = class << self ; self; end
+      singleton_class.instance_eval do
+        define_method method_id do |x|
+          instance_variable_set("@#{attr}", x)
+        end
+        method_name.chop!
+        define_method method_name.to_sym do
+          instance_variable_get "@#{attr}"
+        end
+      end
+      instance_variable_set("@#{attr}", args[0])
+    end
+  end
+
+end
+
+if __FILE__ == $0
+  class ModuleTester < Test::Unit::TestCase
+
+    def test_quick_adaptor_creates_methods
+      qa = QuickAdaptor.new
+      qa.age = 18
+      assert_equal(18, qa.age)
+      qa.age = 24
+      assert_equal(24, qa.age)
+      assert_equal(nil, qa.name)
+      qa.name = 'joe'
+      assert_equal('joe', qa.name)
+      assert(!qa.respond_to(:nam))
+    end
+
+    def test_quick_adaptor_creates_instance_methods
+      qa1 = QuickAdaptor.new
+      qa1.age = 18
+      qa2 = QuickAdaptor.new
+      assert(qa2.respond_to?(:age=))
+      assert(qa2.respond_to?(:age))
+      assert_equal(nil, qa2.age)
+    end
+
+    def test_quick_singleton_adaptor_creates_singleton_methods
+      qa1 = QuickSingletonAdaptor.new
+      qa1.age = 18
+      qa2 = QuickSingletonAdaptor.new
+      # qa2 at this point should not know anything!
+      assert(!qa2.respond_to?(:age=))
+      assert(!qa2.respond_to?(:age))
+    end
+
+  end
+end
+
+</pre>
 
 
-<p>As usual, there are also smaller improvements and fixes and you can find the
-whole list in the errata/issues repository for the book, assigned to <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13+is%3Aclosed">the release milestone.</a></p>
+<p>As a test enthusiastic I embedded the tests in the same file which also has the advantage of giving a documentation of what the code achieves.</p>
+
+<p>You can see that the real difference between the QuickAdaptor and QuickSingletonAdaptor classes lies in the following lines:</p>
+
+<pre lang="ruby">
+class QuickAdaptor
+  ...
+  self.class.class_eval do
+    define_method method_id do |x|
+      ...
+    end
+  end
+end
+</pre>
+
+
+<pre lang="ruby">
+class QuickSingletonAdaptor
+  ...
+  singleton_class = class << self ; self; end
+  singleton_class.instance_eval do
+    define_method method_id do |x|
+      ...
+    end
+  end
+end
+</pre>
+
+
+<p>You can see from the tests that the QuickAdaptor shares the knowledge it gained with its peers (other QuickAdaptor instances), whereas QuickSingletonAdaptor is an egoist, it keeps it to itself! That&#8217;s why I agree with David Black that the best way to call the class that only one instance can access is singleton class because this has more expressive power than other terms (e.g metaclass, eigenclass, etc.)</p>
+
+<p>My goal is to act like the QuickAdaptor, to suck in all ruby knowledge and learn as fast as QuickAdaptor does while having fun at the same time!</p>
+
+<p>ps. I have also taken a look at how Matz&#8217;s <a href="http://www.ruby-doc.org/stdlib/libdoc/ostruct/rdoc/index.html">OpenStruct class</a> accomplishes the same (well, much more :) ). It uses a table of fields where each new &#8220;member method&#8221; is defined. Nice.</p>
 </div>
-
-
-  <footer>
-    <!--
-    <p class="meta">
-      
   
-
-<span class="byline author vcard">Posted by <span class="fn">I'm all about Ember.js recently</span></span>
-
-      
-
-
-
-
-
-
-
-
   
 
 
-<time datetime="2015-07-03T15:25:00+02:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2015</time>
-      
-
-<span class="categories">
+    </article>
   
-    <a class='category' href='/blog/categories/ember-js/'>ember.js</a>
-  
-</span>
-
-
-    </p>
-    -->
+  <div class="pagination">
     
-      <!--
-<p class="email-optin-box">
-  Liked this post? <a id="post-email-optin" href="https://my.leadpages.net/leadbox/147fb3573f72a2%3A12ccd2806b46dc/5733935958982656/" target="_blank">Sign up here</a>
-  <script type="text/javascript" src="//my.leadpages.net/leadbox-699.js"></script>
-  to receive articles, screencasts and other Ember goodies regularly to your inbox.
-</p>
--->
-
-
-  <script src="https://app.convertkit.com/landing_pages/2664.js"></script>
-
-
+    <a href="/blog/archives">Blog Archives</a>
     
+    <a class="next" href="/blog/page/9/">Newer &rarr;</a>
     
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2015/06/05/common-ember-mistakes.html" title="Previous Post: Common Ember Mistakes">&laquo; Common Ember Mistakes</a>
-      
-      
-        <a class="basic-alignment right" href="/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html" title="Next Post: Rock and Roll with Ember.js v1.13.3 is out">Rock and Roll with Ember.js v1.13.3 is out &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-  <section>
-    <h1>Comments</h1>
-    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
 </div>
-  </section>
-
-</div>
-
 <aside class="sidebar">
   
     <section>
@@ -223,7 +265,7 @@ whole list in the errata/issues repository for the book, assigned to <a href="ht
 <section>
   <h1>Contact</h1>
   <div>
-    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let's start talking.
+    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let&#8217;s start talking.
   </div>
 </section>
 
@@ -273,7 +315,6 @@ whole list in the errata/issues repository for the book, assigned to <a href="ht
   
 </aside>
 
-
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -288,10 +329,7 @@ whole list in the errata/issues repository for the book, assigned to <a href="ht
       var disqus_shortname = 'codigoergosum';
       
         
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html';
-        var disqus_url = 'http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html';
-        var disqus_script = 'embed.js';
+        var disqus_script = 'count.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
