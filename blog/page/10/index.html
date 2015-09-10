@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Thrifty - track your expenses easily - Balint Erdi's blog about Ember.js</title>
+  <title>Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2009/03/17/thrifty-track-your-expenses-easily.html">
+  <link rel="canonical" href="http://balinterdi.com/blog/page/10/index.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -83,12 +83,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </nav>
   <div id="main">
     <div id="content">
-      <div>
-<article class="hentry" role="article">
+      <div class="blog-index">
   
+  
+  
+    <article>
+      
   <header>
     
-      <h1 class="entry-title">Thrifty - Track Your Expenses Easily</h1>
+      <h1 class="entry-title"><a href="/2008/04/09/quick-adaptor-my-role-model.html">Quick Adaptor - My Role Model</a></h1>
     
     
       <p class="meta">
@@ -104,74 +107,152 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
 
 
-<time datetime="2009-03-17T00:00:00+01:00" pubdate data-updated="true">Mar 17<span>th</span>, 2009</time>
+<time datetime="2008-04-09T00:00:00+02:00" pubdate data-updated="true">Apr 9<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Thrifty is a simple application I have written (and am still writing) in Sinatra that tracks your expenses. You can quickly record each spending you make and assign tags to them so you can group your expenditures easily. You can then see how much you spend in different categories (by tags) possibly narrowed down to a given date interval.</p>
+  <div class="entry-content"><p>I returned two weeks ago from the fantastic <a href="http://www.euruko2008.org/">Euruko 2008 conference</a> in Prague dazzled by the outstanding presentations and the power of Ruby. It is hard to pick a favorite but I especially liked David Black&#8217;s &#8220;Per-Object Behavior in Ruby&#8221; (slides hopefully coming up) mainly because I am a sucker for metaprogramming and the true object-orientedness of Ruby in all its glory.</p>
 
-<p>Anyway, a web app is all about interaction so give it a try <a href="http://thrifty.heroku.com">on the test site</a> or download it from <a href="http://github.com/balinterdi/thrifty">its github repo</a> and run it locally. You&#8217;ll also find a somewhat detailed README there.</p>
+<p>One fundamental concept was the singleton class which I think I&#8217;ve finally understood from this session. His example was the OpenStruct class whose instances learn to respond to all messages sent to them (this is Smalltalk/Ruby parlance, we could also say they learn to handle method calls) instead of throwing a NoMethodError. So I thought a great way to gain an insight of how this works is to actually code that up myself. Here is what I got:</p>
 
-<p>This is a very early release so I&#8217;d appreciate any kind of feedback, be it a bug report, a comment on bad UI or anything you might find worthwhile sharing.</p>
+<pre lang="ruby">
+require 'test/unit'
+class QuickAdaptor
+  def method_missing(method_id, *args)
+    method_name = method_id.to_s
+    if method_name =~ /=$/
+      attr = method_name.to_s.chop
+      self.class.class_eval do
+        define_method method_id do |x|
+          instance_variable_set("@#{attr}", x)
+        end
+        method_name.chop!
+        define_method method_name.to_sym do
+          instance_variable_get "@#{attr}"
+        end
+      end
+      instance_variable_set("@#{attr}", args[0])
+    end
+  end
+
+end
+
+class QuickSingletonAdaptor
+  # does the same as QuickAdaptor
+  # but only defines methods for singleton
+  # class of object, so it is not the class
+  # that "learns", but the singleton class
+  def method_missing(method_id, *args)
+    method_name = method_id.to_s
+    if method_name =~ /=$/
+      attr = method_name.to_s.chop
+      singleton_class = class << self ; self; end
+      singleton_class.instance_eval do
+        define_method method_id do |x|
+          instance_variable_set("@#{attr}", x)
+        end
+        method_name.chop!
+        define_method method_name.to_sym do
+          instance_variable_get "@#{attr}"
+        end
+      end
+      instance_variable_set("@#{attr}", args[0])
+    end
+  end
+
+end
+
+if __FILE__ == $0
+  class ModuleTester < Test::Unit::TestCase
+
+    def test_quick_adaptor_creates_methods
+      qa = QuickAdaptor.new
+      qa.age = 18
+      assert_equal(18, qa.age)
+      qa.age = 24
+      assert_equal(24, qa.age)
+      assert_equal(nil, qa.name)
+      qa.name = 'joe'
+      assert_equal('joe', qa.name)
+      assert(!qa.respond_to(:nam))
+    end
+
+    def test_quick_adaptor_creates_instance_methods
+      qa1 = QuickAdaptor.new
+      qa1.age = 18
+      qa2 = QuickAdaptor.new
+      assert(qa2.respond_to?(:age=))
+      assert(qa2.respond_to?(:age))
+      assert_equal(nil, qa2.age)
+    end
+
+    def test_quick_singleton_adaptor_creates_singleton_methods
+      qa1 = QuickSingletonAdaptor.new
+      qa1.age = 18
+      qa2 = QuickSingletonAdaptor.new
+      # qa2 at this point should not know anything!
+      assert(!qa2.respond_to?(:age=))
+      assert(!qa2.respond_to?(:age))
+    end
+
+  end
+end
+
+</pre>
+
+
+<p>As a test enthusiastic I embedded the tests in the same file which also has the advantage of giving a documentation of what the code achieves.</p>
+
+<p>You can see that the real difference between the QuickAdaptor and QuickSingletonAdaptor classes lies in the following lines:</p>
+
+<pre lang="ruby">
+class QuickAdaptor
+  ...
+  self.class.class_eval do
+    define_method method_id do |x|
+      ...
+    end
+  end
+end
+</pre>
+
+
+<pre lang="ruby">
+class QuickSingletonAdaptor
+  ...
+  singleton_class = class << self ; self; end
+  singleton_class.instance_eval do
+    define_method method_id do |x|
+      ...
+    end
+  end
+end
+</pre>
+
+
+<p>You can see from the tests that the QuickAdaptor shares the knowledge it gained with its peers (other QuickAdaptor instances), whereas QuickSingletonAdaptor is an egoist, it keeps it to itself! That&#8217;s why I agree with David Black that the best way to call the class that only one instance can access is singleton class because this has more expressive power than other terms (e.g metaclass, eigenclass, etc.)</p>
+
+<p>My goal is to act like the QuickAdaptor, to suck in all ruby knowledge and learn as fast as QuickAdaptor does while having fun at the same time!</p>
+
+<p>ps. I have also taken a look at how Matz&#8217;s <a href="http://www.ruby-doc.org/stdlib/libdoc/ostruct/rdoc/index.html">OpenStruct class</a> accomplishes the same (well, much more :) ). It uses a table of fields where each new &#8220;member method&#8221; is defined. Nice.</p>
 </div>
-
-
-  <footer>
-    <!--
-    <p class="meta">
-      
+  
   
 
-<span class="byline author vcard">Posted by <span class="fn">I'm all about Ember.js recently</span></span>
 
-      
-
-
-
-
-
-
-
-
+    </article>
   
-
-
-<time datetime="2009-03-17T00:00:00+01:00" pubdate data-updated="true">Mar 17<span>th</span>, 2009</time>
-      
-
-
-    </p>
-    -->
+  <div class="pagination">
     
-      <!--
-<p class="email-optin-box">
-  Liked this post? <a id="post-email-optin" href="https://my.leadpages.net/leadbox/147fb3573f72a2%3A12ccd2806b46dc/5733935958982656/" target="_blank">Sign up here</a>
-  <script type="text/javascript" src="//my.leadpages.net/leadbox-699.js"></script>
-  to receive articles, screencasts and other Ember goodies regularly to your inbox.
-</p>
--->
-
-
-
-
+    <a href="/blog/archives">Blog Archives</a>
     
+    <a class="next" href="/blog/page/9/">Newer &rarr;</a>
     
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2009/03/12/plans-for-2009-contribute-more-to-open-source-projects.html" title="Previous Post: plans for 2009 - contribute (more) to open source projects">&laquo; plans for 2009 - contribute (more) to open source projects</a>
-      
-      
-        <a class="basic-alignment right" href="/2009/03/25/finding-missing-i18n-translations-with-missing_t.html" title="Next Post: finding missing I18n translations with missing_t">finding missing I18n translations with missing_t &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
+  </div>
 </div>
-
 <aside class="sidebar">
   
     <section>
@@ -185,7 +266,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <section>
   <h1>Contact</h1>
   <div>
-    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let's start talking.
+    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let&#8217;s start talking.
   </div>
 </section>
 
@@ -234,7 +315,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   
 </aside>
-
 
     </div>
   </div>
