@@ -90,84 +90,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
-      <h1 class="entry-title"><a href="/2009/10/28/rubygems-under-the-hood-hooking-into-require.html">Rubygems Under the Hood: Hooking Into Require</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-10-28T00:00:00+01:00" pubdate data-updated="true">Oct 28<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>(See <a href="http://bucionrails.com/2009/10/20/rubygems-under-the-hood-introduction/">the introduction</a> to the series.)</p>
-
-<p>When you want to pull in a Ruby library, you require it. The library you require has to be on Ruby&#8217;s load path ($LOAD_PATH) in order to succeed. So let&#8217;s see how Rubygems hooks into this process.</p>
-
-<p>The secret lies in custom_require.rb. You&#8217;ll see a nice comment near the top.</p>
-
-<blockquote>
-When you call &#8220;require &#8216;x&#8217;&#8221;, this is what happens:
-  * If the file can be loaded from the existing Ruby loadpath, it is.
-  * Otherwise, installed gems are searched for a file that matches.
-If it&#8217;s found in gem &#8216;y&#8217;, that gem is activated (added to the loadpath).
-</blockquote>
-
-
-<p>In fact, that explanation looks so straightforward to me that I doubt if I can add more words to precise it, so let&#8217;s look at the code together:</p>
-
-<div>
-  <pre><code class='ruby'>module Kernel
-  alias gem_original_require require
-  (...)
-  def require(path) # :doc:
-    gem_original_require path
-  rescue LoadError =&gt; load_error
-    if load_error.message =~ /#{Regexp.escape path}\z/ and
-       spec = Gem.searcher.find(path) then
-      Gem.activate(spec.name, &quot;= #{spec.version}&quot;)
-      gem_original_require path
-    else
-      raise load_error
-    end
-  end
-(...)
-end</code></pre>
-</div>
-
-
-<p>Aliasing a method, redefining it and calling the original version from the redefined method is a very familiar pattern if you have read Rails source code (called method chaining).</p>
-
-<p>So, just as the above description says, if the file can be loaded &#8220;without Rubygems&#8221; it is and Rubygems never comes into the picture. If not, we make sure that the load error comes from the file not found on the load path and then find the gemspec for that file and activate it.</p>
-
-<p>Activating it adds it to the load path, so we can call the original require safe in the knowledge that it will now succeed and we won&#8217;t get another load error this time around (and go into an infinite loop). Clever, heh?</p>
-
-<p>This is one of the cases when the code is so simple for a moment I think I could have written it myself. With its &lt;10 lines of code Rubygems is empowered to load a myriad of useful Ruby libraries. Isn&#8217;t this wonderful?</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
       <h1 class="entry-title"><a href="/2009/10/20/rubygems-under-the-hood-introduction.html">RubyGems Under the Hood: Introduction</a></h1>
     
     
@@ -757,6 +679,67 @@ In <a title="Computer networking" href="http://en.wikipedia.org/wiki/Computer_ne
 
     </article>
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/03/25/finding-missing-i18n-translations-with-missing_t.html">Finding Missing I18n Translations With Missing_t</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-25T00:00:00+01:00" pubdate data-updated="true">Mar 25<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A recurring problem in an internationalized Rails project is to see which translations are missing. You could go through all the pages looking for &#8220;translation missing: en, user, new&#8221; texts. That, however is very tedious and error prone. There may be some texts you don&#8217;t even see that are missing translation. (like a title of an image).</p>
+
+<p>A better solution is to write a program that finds these. So that&#8217;s what I did. I gave it a very imaginative name: <a href="http://github.com/balinterdi/missing_t/tree/master">missing_t</a>. It&#8217;s darn simple. You first have to install the gem:</p>
+
+<pre lang="bash">
+gem install balinterdi-missing_t  
+</pre>
+
+
+<p>and then from the root of your Rails app you type:</p>
+
+<pre lang="bash">
+missing_t
+</pre>
+
+
+<p>You will see all the I18n strings that do not have translations along with the file they were found in. If you want to restrict your search for a specific language, you provide its language code as the first parameter, like so:</p>
+
+<pre lang="bash">
+missing_t fr
+</pre>
+
+
+<p>For a bit more detailed description, <a href="http://github.com/balinterdi/missing_t/tree/master">see the README</a>.</p>
+
+<p>Go ahead, give it a try, your app has the right to speak all those beautiful languages out there!</p>
+</div>
+  
+  
+
+
+    </article>
+  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/7/">&larr; Older</a>
@@ -789,10 +772,6 @@ In <a title="Computer networking" href="http://en.wikipedia.org/wiki/Computer_ne
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/2015/09/03/complex-component-design-in-ember.html">Complex Component Design in Ember</a>
-      </li>
-    
-      <li class="post">
         <a href="/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">How to do a select (dropdown) in Ember 2.0?</a>
       </li>
     
@@ -806,6 +785,10 @@ In <a title="Computer networking" href="http://en.wikipedia.org/wiki/Computer_ne
     
       <li class="post">
         <a href="/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html">Rock and Roll with Ember.js v1.13 is out</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2015/06/05/common-ember-mistakes.html">Common Ember Mistakes</a>
       </li>
     
   </ul>
