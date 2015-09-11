@@ -91,6 +91,74 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2009/04/27/upstream-or-downstream.html">Upstream or Downstream?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-04-27T00:00:00+02:00" pubdate data-updated="true">Apr 27<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>With the proliferation of <a href="http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html">middleware applications</a> the mentions of upstream and downstream servers has intensified so I decided to get to the end of this and find out what exactly an upstream server is. I first looked up <a href="http://en.wikipedia.org/wiki/Upstream_server">wikipedia</a>:</p>
+
+<blockquote>
+In <a title="Computer networking" href="http://en.wikipedia.org/wiki/Computer_networking">computer networking</a>, <strong>upstream server</strong> refers to a <a title="Server (computing)" href="http://en.wikipedia.org/wiki/Server_(computing)">server</a> that provides service to another server. In other words, upstream server is a server that is located higher in the <a title="Hierarchy" href="http://en.wikipedia.org/wiki/Hierarchy">hierarchy</a> of servers.
+</blockquote>
+
+
+<p>Ok, so based on this simplistic definition, a sketch of a request&#8217;s route to the application server and the response back can be illustrated like this:</p>
+
+<p><img src="http://bucionrails.com/wp-content/uploads/2009/04/request-stack.jpg" border="0" /></p>
+
+<p>In this drawing, the middleware is an upstream server to the underlying application since it provides a service to it (be it caching, url mapping, exception handling and <a href="http://github.com/rack/rack-contrib/tree/master">plenty of others</a>).</p>
+
+<p>So now with my definition established, I was looking for examples in the wild that support it. <a href="http://mwrc2009.confreaks.com/13-mar-2009-11-05-in-a-world-of-middleware-who-needs-monolithic-applications-jon-crosby.html">Jon Crosby&#8217;s excellent presentation</a> at the MountainWest Ruby Conference used upstream in this context as far as I remember. Check one.</p>
+
+<p>Browsing the source code of <a href="http://github.com/rtomayko/rack-cache/tree/master">rack-cache</a> -which, by the way, I strongly encourage you to do if you want to understand caching (better) or just like the look of clean Ruby code- I realized Ryan Tomayko&#8217;s definition of upstream coincides with the above one since he uses downstream in the code to refer to the component/application below the rack-cache component. Check two.</p>
+
+<p>I recently set up an nginx web server as a front end server to a mongrel cluster that runs a Rails application. Ok, so in this case, the nginx server must be the upstream server since requests hit there first and then are passed to the mongrels. One must hear the sound of collapse of cards in my head when I saw the following <a href="http://wiki.nginx.org/NginxHttpUpstreamModule">nginx directive</a>:</p>
+
+<div>
+  <pre><code class='bash'>upstream production_mongrels {
+  server 127.0.0.1:8000;
+  server 127.0.0.1:8001;
+  server 127.0.0.1:8002;
+}</code></pre>
+</div>
+
+
+<p>Hmm, what? Nginx is above the component it provides a load-balancing service to so by any -ok, by my- definition the directive should say &#8220;downstream&#8221; and not &#8220;upstream&#8221;.</p>
+
+<p>I realize that the request arrow on the diagram moving from top to bottom is a matter of convention and that it probably correlates with the fact that most languages write from the top to the bottom. Nevertheless, as far as I know Nginx is made by a Russian guy and Russians write top to bottom, too, so he should still use &#8220;downstream&#8221; for the directive, now shouldn&#8217;t he? Or did he simply start to sketch up boxes and arrows from bottom to top for the sake of it when designing his web server?</p>
+
+<p>Summing up, I think the above described convention is the common one but since it is not standardized there will always be people and software that uses it the other way around. I am not overly confident though, so please tell me about your definition or just point to examples which support or contradict mine.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2009/03/25/finding-missing-i18n-translations-with-missing_t.html">Finding Missing I18n Translations With Missing_t</a></h1>
     
     
@@ -626,130 +694,6 @@ end
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/01/25/mysql-table-types-and-foreign-key-constraints.html">MySQL Table Types and Foreign Key Constraints</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-01-25T00:00:00+01:00" pubdate data-updated="true">Jan 25<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Uff, I have recently spent some time checking foreign key constraints in MySQL and I got a bit upset. The MySQL docs tell you that <a href="http://dev.mysql.com/doc/refman/5.0/en/innodb-foreign-key-constraints.html">InnoDB tables support foreign key constraints</a> but that&#8217;s not the same as saying MyISAM tables do not. More importantly, an error (or at least a warning) should be raised so that I am not relying on something that seems to be there when in fact it is not.</p>
-
-<p>Here is the raw SQL:</p>
-
-<pre lang="sql">
-CREATE TABLE `drivers` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `name` VARCHAR(100)
-);
-
-
-CREATE TABLE `cars` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `plate_number` VARCHAR(12),
-  `driver_id` INT,
-  FOREIGN KEY (`driver_id`) REFERENCES `drivers`(`id`) ON DELETE CASCADE
-);
-
-INSERT INTO drivers(name) VALUES ('bob');
-INSERT INTO drivers(name) VALUES ('alice');
-INSERT INTO cars(plate_number, driver_id) VALUES ('bbb', 1);
-INSERT INTO cars(plate_number, driver_id) VALUES ('ooo', 1);
-INSERT INTO cars(plate_number, driver_id) VALUES ('aaa', 2);
-INSERT INTO cars(plate_number, driver_id) VALUES ('lll', 2);
-</pre>
-
-
-
-
-<pre lang="shell">
-mysql> delete from drivers where id=1;
-Query OK, 1 row affected (0.00 sec)
-
-mysql> select * from cars;
-+----+--------------+-----------+
-| id | plate_number | driver_id |
-+----+--------------+-----------+
-|  1 | bbb          |         1 | 
-|  2 | ooo          |         1 | 
-|  3 | aaa          |         2 | 
-|  4 | lll          |         2 | 
-+----+--------------+-----------+
-4 rows in set (0.00 sec)
-</pre>
-
-
-
-
-<pre lang="sql">
-CREATE TABLE `drivers` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `name` VARCHAR(100)
-) ENGINE=INNODB;
-
-
-CREATE TABLE `cars` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `plate_number` VARCHAR(12),
-  `driver_id` INT,
-  FOREIGN KEY (`driver_id`) REFERENCES `drivers`(`id`) ON DELETE CASCADE
-) ENGINE=INNODB;
-
-INSERT INTO drivers(name) VALUES ('bob');
-INSERT INTO drivers(name) VALUES ('alice');
-INSERT INTO cars(plate_number, driver_id) VALUES ('bbb', 1);
-INSERT INTO cars(plate_number, driver_id) VALUES ('ooo', 1);
-INSERT INTO cars(plate_number, driver_id) VALUES ('aaa', 2);
-INSERT INTO cars(plate_number, driver_id) VALUES ('lll', 2);
-</pre>
-
-
-
-
-<pre lang="shell">
-mysql> delete from drivers where id=1;
-Query OK, 1 row affected (0.00 sec)
-
-mysql> select * from cars;
-+----+--------------+-----------+
-| id | plate_number | driver_id |
-+----+--------------+-----------+
-|  3 | ppp          |         2 | 
-|  4 | eee          |         2 | 
-+----+--------------+-----------+
-2 rows in set (0.00 sec)
-</pre>
-
-
-<p>I know very well one should <a href="http://bucionrails.com/2008/10/22/postgresql-pg_hbaconf-authentication/">read the manual before complaining</a> but I also think software should complain if asked something which it is not capable of doing. -1 for MySQL.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/8/">&larr; Older</a>
@@ -782,6 +726,10 @@ mysql> select * from cars;
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out.html">Rock and Roll With Ember.js v1.13.9 Is Out</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/09/10/complex-component-design-in-ember-intro.html">Complex Component Design in Ember.js - Intro</a>
       </li>
     
@@ -795,10 +743,6 @@ mysql> select * from cars;
     
       <li class="post">
         <a href="/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html">Rock and Roll with Ember.js v1.13.3 is out</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html">Rock and Roll with Ember.js v1.13 is out</a>
       </li>
     
   </ul>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-09-10T16:36:03+02:00</updated>
+  <updated>2015-09-11T11:53:40+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,42 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rock and Roll With Ember.js v1.13.9 Is Out]]></title>
+    <link href="http://balinterdi.com/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out.html"/>
+    <updated>2015-09-11T11:42:00+02:00</updated>
+    <id>http://balinterdi.com/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out</id>
+    <content type="html"><![CDATA[<p>I have just released another update to the Rock and Roll with Ember.js book,
+keeping it in sync with Ember 1.13.9. On top of that (mostly on top of that,
+since there weren't as many things to do for the Ember upgrade), I added some
+content, removed some other ones, fixed a few wrong paths in code comments,
+clarified a few code lines to help people build the app along, and the like. The
+usual stuff, quoi.</p>
+
+<p>Here are the bigger chunks:</p>
+
+<ul>
+<li>Extended the Testing chapter with a (controller) unit test. I removed the
+component's unit test in an earlier update (integration tests are vastly
+superior for components) but now realized unit testing was missing.</li>
+<li>Switched to a dashless helper, <code>capitalize</code> instead of <code>capitalize-words</code>.
+Ember 1.13.0 and up auto-register helpers with and without dashes, so there is
+no need for the more verbose form.</li>
+<li>Fixed a few places where the <code>updateRating</code> action was still in the route.
+When I switched to a closure action, I had to move the action handler to the
+controller but missed a couple of places in the subsequent chapters.</li>
+<li>The epub version had two missing code snippets due to bad formatting (thanks
+to <a href="https://github.com/morganick">@morganick</a>)</li>
+</ul>
+
+
+<p>There are a few other minor fixes, the whole list can be found in the <a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A1.13.9+is%3Aclosed">Github issues repo</a></p>
+
+<p>I want to thank <a href="https://github.com/andrewjdavison">Andrew Davison</a> who did most
+of the error reporting for this update. Thank you, Andrew!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Complex Component Design in Ember.js - Intro]]></title>
@@ -300,45 +336,6 @@ relationship was in order.</p></li>
 <p>The whole change list is observable <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13.3+is%3Aclosed">here</a>.</p>
 
 <p>Hoist the sails, Ember 2.0 (and with it, Rock and Roll with Ember 2.0) is on the horizon!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rock and Roll with Ember.js v1.13 is out]]></title>
-    <link href="http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html"/>
-    <updated>2015-07-03T15:25:00+02:00</updated>
-    <id>http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out</id>
-    <content type="html"><![CDATA[<p>Today marks the sixth release of my book, <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js</a>, and
-brings it in sync with Ember 1.13. The book follows along the development from
-scratch of an Ember application, and chapter by chapter and explains concepts in
-the process.</p>
-
-<p>As I have promised, the book is kept up-to-date with the latest stable Ember
-version. That implies both using idiomatic Ember and not using deprecated
-syntaxes or APIs.</p>
-
-<p>Now that the versioning of Ember Data is in lockstep with that of Ember, I
-considered it important to update to the latest Ember Data, too, and will
-strive to do so in future releases, too.</p>
-
-<p>Here are the major things I updated for the 1.13 release:</p>
-
-<ul>
-<li>Use <code>this.route</code> instead of <code>this.resource</code> in the router map as the latter is now deprecated.</li>
-<li>Use <code>Ember.computed</code> and <code>Ember.on</code> instead of the Function prototype
-extensions, <code>property</code> and <code>on</code> as extending the Function prototype is
-consired a poor practice.</li>
-<li>Update the "Getting ready for Ember 2.0" chapter as most things are clear now
-for the 2.0 release. As I give particular examples for each deprecation, this
-chapter can also serve as an update guide for 1.x Ember applications.</li>
-<li>Use the new Ember Data find methods, namely <code>store.findAll</code> and
-<code>store.findRecord</code>. Before, both fetching a collection and a single record
-used <code>store.find</code>.</li>
-</ul>
-
-
-<p>As usual, there are also smaller improvements and fixes and you can find the
-whole list in the errata/issues repository for the book, assigned to <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13+is%3Aclosed">the release milestone.</a></p>
 ]]></content>
   </entry>
   

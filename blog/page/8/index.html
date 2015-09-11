@@ -91,6 +91,130 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2009/01/25/mysql-table-types-and-foreign-key-constraints.html">MySQL Table Types and Foreign Key Constraints</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-25T00:00:00+01:00" pubdate data-updated="true">Jan 25<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Uff, I have recently spent some time checking foreign key constraints in MySQL and I got a bit upset. The MySQL docs tell you that <a href="http://dev.mysql.com/doc/refman/5.0/en/innodb-foreign-key-constraints.html">InnoDB tables support foreign key constraints</a> but that&#8217;s not the same as saying MyISAM tables do not. More importantly, an error (or at least a warning) should be raised so that I am not relying on something that seems to be there when in fact it is not.</p>
+
+<p>Here is the raw SQL:</p>
+
+<pre lang="sql">
+CREATE TABLE `drivers` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `name` VARCHAR(100)
+);
+
+
+CREATE TABLE `cars` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `plate_number` VARCHAR(12),
+  `driver_id` INT,
+  FOREIGN KEY (`driver_id`) REFERENCES `drivers`(`id`) ON DELETE CASCADE
+);
+
+INSERT INTO drivers(name) VALUES ('bob');
+INSERT INTO drivers(name) VALUES ('alice');
+INSERT INTO cars(plate_number, driver_id) VALUES ('bbb', 1);
+INSERT INTO cars(plate_number, driver_id) VALUES ('ooo', 1);
+INSERT INTO cars(plate_number, driver_id) VALUES ('aaa', 2);
+INSERT INTO cars(plate_number, driver_id) VALUES ('lll', 2);
+</pre>
+
+
+
+
+<pre lang="shell">
+mysql> delete from drivers where id=1;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from cars;
++----+--------------+-----------+
+| id | plate_number | driver_id |
++----+--------------+-----------+
+|  1 | bbb          |         1 | 
+|  2 | ooo          |         1 | 
+|  3 | aaa          |         2 | 
+|  4 | lll          |         2 | 
++----+--------------+-----------+
+4 rows in set (0.00 sec)
+</pre>
+
+
+
+
+<pre lang="sql">
+CREATE TABLE `drivers` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `name` VARCHAR(100)
+) ENGINE=INNODB;
+
+
+CREATE TABLE `cars` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `plate_number` VARCHAR(12),
+  `driver_id` INT,
+  FOREIGN KEY (`driver_id`) REFERENCES `drivers`(`id`) ON DELETE CASCADE
+) ENGINE=INNODB;
+
+INSERT INTO drivers(name) VALUES ('bob');
+INSERT INTO drivers(name) VALUES ('alice');
+INSERT INTO cars(plate_number, driver_id) VALUES ('bbb', 1);
+INSERT INTO cars(plate_number, driver_id) VALUES ('ooo', 1);
+INSERT INTO cars(plate_number, driver_id) VALUES ('aaa', 2);
+INSERT INTO cars(plate_number, driver_id) VALUES ('lll', 2);
+</pre>
+
+
+
+
+<pre lang="shell">
+mysql> delete from drivers where id=1;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from cars;
++----+--------------+-----------+
+| id | plate_number | driver_id |
++----+--------------+-----------+
+|  3 | ppp          |         2 | 
+|  4 | eee          |         2 | 
++----+--------------+-----------+
+2 rows in set (0.00 sec)
+</pre>
+
+
+<p>I know very well one should <a href="http://bucionrails.com/2008/10/22/postgresql-pg_hbaconf-authentication/">read the manual before complaining</a> but I also think software should complain if asked something which it is not capable of doing. -1 for MySQL.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2009/01/17/google-groups-tracker-using-yahoo-pipes.html">Google Groups Tracker Using Yahoo Pipes</a></h1>
     
     
@@ -757,47 +881,6 @@ Successfully installed rmagick-2.7.2
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2008/10/26/blackbird-simple-log-messages-in-javascript.html">Blackbird - Simple Log Messages in Javascript</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-10-26T00:00:00+02:00" pubdate data-updated="true">Oct 26<span>th</span>, 2008</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Using alert() for debugging javascript is a pain. <a href="https://addons.mozilla.org/en-US/firefox/addon/1843" target="_blank">Firebug</a> makes it a lot easier and enables several debug facilities (e.g inserting breakpoints, stepping into methods, adding variable watches) but a painless logging mechanism would still be very useful to supplement Firebug&#8217;s features.</p>
-
-<p>Enter <a title="Blackbird" href="http://bucionrails.com/http://www.gscottolson.com/blackbirdjs/" target="_blank">Blackbird</a>, a simple javascript logging tool which has a very clean, nice API and a cool console. It&#8217;s really worth to check out, you can download the Blackbird files <a href="http://blackbirdjs.googlecode.com/files/blackbirdjs-1.0.zip" target="_self">here</a> and my demo <a href="http://bucionrails.com/wp-content/uploads/2008/10/blackbird_trial.html">here</a> to try out its features. (If you use my demo, you have to save the Blackbird files in a directory named blackbirdjs that is situated in the same directory as the demo page)</p>
-
-<p>Blackbird&#8217;s motto says it all: say &#8220;hello&#8221; to Blackbird and &#8220;goodbye&#8221; to alert().<a href="http://bucionrails.com/wp-content/uploads/2008/10/blackbird_trial.html">
-</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/9/">&larr; Older</a>
@@ -830,6 +913,10 @@ Successfully installed rmagick-2.7.2
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out.html">Rock and Roll With Ember.js v1.13.9 Is Out</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/09/10/complex-component-design-in-ember-intro.html">Complex Component Design in Ember.js - Intro</a>
       </li>
     
@@ -843,10 +930,6 @@ Successfully installed rmagick-2.7.2
     
       <li class="post">
         <a href="/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html">Rock and Roll with Ember.js v1.13.3 is out</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html">Rock and Roll with Ember.js v1.13 is out</a>
       </li>
     
   </ul>

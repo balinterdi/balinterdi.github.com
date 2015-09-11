@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>At Your Service: Publicly Available API for the Rock and Roll Ember.js App - Balint Erdi's blog about Ember.js</title>
+  <title>Rock and Roll With Ember.js v1.13.9 Is Out - Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html">
+  <link rel="canonical" href="http://balinterdi.com/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -88,7 +88,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
   <header>
     
-      <h1 class="entry-title">At Your Service: Publicly Available API for the Rock and Roll Ember.js App</h1>
+      <h1 class="entry-title">Rock and Roll With Ember.js v1.13.9 Is Out</h1>
     
     
       <p class="meta">
@@ -104,47 +104,41 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
 
 
-<time datetime="2013-12-31T09:38:00+01:00" pubdate data-updated="true">Dec 31<span>st</span>, 2013</time>
+<time datetime="2015-09-11T11:42:00+02:00" pubdate data-updated="true">Sep 11<span>th</span>, 2015</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>So far, if you wanted to code along <a href="http://emberjs.balinterdi.com">my developing an example Ember.js
-application</a>, Rock &amp; Roll, you had to run the server side
-component. That required ruby to be installed on your machine, and you had to
-<a href="https://github.com/balinterdi/rock-and-roll-api">clone the repository</a>, and start the server each time you wanted to
-make some progress with the application.</p>
+<div class="entry-content"><p>I have just released another update to the Rock and Roll with Ember.js book,
+keeping it in sync with Ember 1.13.9. On top of that (mostly on top of that,
+since there weren&#8217;t as many things to do for the Ember upgrade), I added some
+content, removed some other ones, fixed a few wrong paths in code comments,
+clarified a few code lines to help people build the app along, and the like. The
+usual stuff, quoi.</p>
 
-<p>I realized that might be cumbersome and thus I made the server publicly
-available at http://rock-and-roll-with-emberjs-api.herokuapp.com .</p>
+<p>Here are the bigger chunks:</p>
 
-<p>I have also updated <a href="https://github.com/balinterdi/rock-and-roll/commit/remote-api">the client-side component to connect to that remote
-api.</a>. All backend requests now go through App.Adapter.ajax which
-basically just delegates to <code>Ember.$.ajax</code> prefixing urls with the backend host:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Adapter</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">ajax</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;http://rock-and-roll-with-emberjs-api.herokuapp.com&#39;</span> <span class="o">+</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<ul>
+<li>Extended the Testing chapter with a (controller) unit test. I removed the
+component&#8217;s unit test in an earlier update (integration tests are vastly
+superior for components) but now realized unit testing was missing.</li>
+<li>Switched to a dashless helper, <code>capitalize</code> instead of <code>capitalize-words</code>.
+Ember 1.13.0 and up auto-register helpers with and without dashes, so there is
+no need for the more verbose form.</li>
+<li>Fixed a few places where the <code>updateRating</code> action was still in the route.
+When I switched to a closure action, I had to move the action handler to the
+controller but missed a couple of places in the subsequent chapters.</li>
+<li>The epub version had two missing code snippets due to bad formatting (thanks
+to <a href="https://github.com/morganick">@morganick</a>)</li>
+</ul>
 
 
-<p>If you work with an earlier version of the client app, you might have to
-rewrite urls in multiple places but I figured it is still less work than running
-the server yourself.</p>
+<p>There are a few other minor fixes, the whole list can be found in the <a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A1.13.9+is%3Aclosed">Github issues repo</a></p>
 
-<p>I hope that facilitates your working along with the Rock &amp; Roll app and makes
-your journey to Ember.js proficiency smoother. If you want to see the
-screencast series in which I develop said application, you can <a href="http://emberjs.balinterdi.com">sign up to my
-mailing list</a> and have each episode auto-delivered to your inbox.</p>
+<p>I want to thank <a href="https://github.com/andrewjdavison">Andrew Davison</a> who did most
+of the error reporting for this update. Thank you, Andrew!</p>
 </div>
 
 
@@ -168,7 +162,7 @@ mailing list</a> and have each episode auto-delivered to your inbox.</p>
   
 
 
-<time datetime="2013-12-31T09:38:00+01:00" pubdate data-updated="true">Dec 31<span>st</span>, 2013</time>
+<time datetime="2015-09-11T11:42:00+02:00" pubdate data-updated="true">Sep 11<span>th</span>, 2015</time>
       
 
 <span class="categories">
@@ -190,16 +184,16 @@ mailing list</a> and have each episode auto-delivered to your inbox.</p>
 -->
 
 
+  <script src="https://app.convertkit.com/landing_pages/2664.js"></script>
+
 
 
     
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2013/12/17/change-the-url-type-of-your-ember-app.html" title="Previous Post: Changing the URL type of your Ember.js app">&laquo; Changing the URL type of your Ember.js app</a>
+        <a class="basic-alignment left" href="/2015/09/10/complex-component-design-in-ember-intro.html" title="Previous Post: Complex Component Design in Ember.js - Intro">&laquo; Complex Component Design in Ember.js - Intro</a>
       
-      
-        <a class="basic-alignment right" href="/2014/01/14/how-real-time-updates-work-in-discourse.html" title="Next Post: How real-time updates work in Discourse">How real-time updates work in Discourse &raquo;</a>
       
     </p>
   </footer>
@@ -292,8 +286,8 @@ mailing list</a> and have each episode auto-delivered to your inbox.</p>
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html';
-        var disqus_url = 'http://balinterdi.com/2013/12/31/at-your-service-publicly-available-api-for-the-rock-and-roll-emberjs-app.html';
+        var disqus_identifier = 'http://balinterdi.com/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out.html';
+        var disqus_url = 'http://balinterdi.com/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out.html';
         var disqus_script = 'embed.js';
       
     (function () {
