@@ -30,5 +30,8 @@ Here are the bigger chunks:
 
 There are a few other minor fixes, the whole list can be found in the [Github issues repo](https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A1.13.9+is%3Aclosed)
 
-I want to thank [Andrew Davison](https://github.com/andrewjdavison) who did most
+I want to thank [Andrew Davison](http://andrew.davison-family.com) who did most
 of the error reporting for this update. Thank you, Andrew!
+
+Stay tuned for more goodies early next week, or sign up below so that you don't
+miss any in the future.
