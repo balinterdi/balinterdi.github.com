@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-09-11T11:53:40+02:00</updated>
+  <updated>2015-09-11T17:12:22+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -44,8 +44,11 @@ to <a href="https://github.com/morganick">@morganick</a>)</li>
 
 <p>There are a few other minor fixes, the whole list can be found in the <a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A1.13.9+is%3Aclosed">Github issues repo</a></p>
 
-<p>I want to thank <a href="https://github.com/andrewjdavison">Andrew Davison</a> who did most
+<p>I want to thank <a href="http://andrew.davison-family.com">Andrew Davison</a> who did most
 of the error reporting for this update. Thank you, Andrew!</p>
+
+<p>Stay tuned for more goodies early next week, or sign up below so that you don&#8217;t
+miss any in the future.</p>
 ]]></content>
   </entry>
   
