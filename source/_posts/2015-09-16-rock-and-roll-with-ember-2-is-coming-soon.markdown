@@ -19,8 +19,9 @@ in about two weeks, at the end of September. Here is what you need to know:
 * There will be a short launch period where the book packages are offered at a
   discount.
 
-To be in-the-loop about the launch and know about the launch discount, sign up
-below, at the end of the post. Read on for more details.
+To be in-the-loop about the launch and know about the launch discount, [sign up
+below](http://balinterdi.com/2015/09/16/rock-and-roll-with-ember-2-is-coming-soon.html#launch-date),
+at the end of the post. Read on for more details.
 
 ### The short past, present and future of Rock and Roll with Ember
 
@@ -68,7 +69,7 @@ already be known about these changes), so the content on launch day will by no
 means be the final content of the book. It will constantly improve and be kept
 in-sync with the latest stable 2.x version of Ember.
 
-### When does it launch?
+<h3 id="launch-date">When does it launch?</h3>
 
 Very soon, probably in two weeks, mark the date (with a pencil, for the moment):
 September 30, 2015.
