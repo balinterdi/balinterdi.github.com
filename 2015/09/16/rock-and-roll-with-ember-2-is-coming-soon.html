@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>MySQL table types and foreign key constraints - Balint Erdi's blog about Ember.js</title>
+  <title>Rock and Roll With Ember 2 is coming soon! - Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2009/01/25/mysql-table-types-and-foreign-key-constraints.html">
+  <link rel="canonical" href="http://balinterdi.com/2015/09/16/rock-and-roll-with-ember-2-is-coming-soon.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -88,7 +88,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
   <header>
     
-      <h1 class="entry-title">MySQL Table Types and Foreign Key Constraints</h1>
+      <h1 class="entry-title">Rock and Roll With Ember 2 Is Coming Soon!</h1>
     
     
       <p class="meta">
@@ -104,102 +104,84 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
 
 
-<time datetime="2009-01-25T00:00:00+01:00" pubdate data-updated="true">Jan 25<span>th</span>, 2009</time>
+<time datetime="2015-09-16T15:54:00+02:00" pubdate data-updated="true">Sep 16<span>th</span>, 2015</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Uff, I have recently spent some time checking foreign key constraints in MySQL and I got a bit upset. The MySQL docs tell you that <a href="http://dev.mysql.com/doc/refman/5.0/en/innodb-foreign-key-constraints.html">InnoDB tables support foreign key constraints</a> but that&#8217;s not the same as saying MyISAM tables do not. More importantly, an error (or at least a warning) should be raised so that I am not relying on something that seems to be there when in fact it is not.</p>
+<div class="entry-content"><h3>tl;dr</h3>
 
-<p>Here is the raw SQL:</p>
+<p>I will publish a second, extended edition of my book, Rock and Roll with Ember
+in about two weeks, at the end of September. Here is what you need to know:</p>
 
-<pre lang="sql">
-CREATE TABLE `drivers` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `name` VARCHAR(100)
-);
-
-
-CREATE TABLE `cars` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `plate_number` VARCHAR(12),
-  `driver_id` INT,
-  FOREIGN KEY (`driver_id`) REFERENCES `drivers`(`id`) ON DELETE CASCADE
-);
-
-INSERT INTO drivers(name) VALUES ('bob');
-INSERT INTO drivers(name) VALUES ('alice');
-INSERT INTO cars(plate_number, driver_id) VALUES ('bbb', 1);
-INSERT INTO cars(plate_number, driver_id) VALUES ('ooo', 1);
-INSERT INTO cars(plate_number, driver_id) VALUES ('aaa', 2);
-INSERT INTO cars(plate_number, driver_id) VALUES ('lll', 2);
-</pre>
+<ul>
+<li>I make the same promise as with the current edition: you buy it once, you get
+all updates for free until 3.0 comes out</li>
+<li>4 extra chapters are added about advanced Ember topics, bringing the number
+of chapters to 18</li>
+<li>There will be a short launch period where the book packages are offered at a
+discount.</li>
+</ul>
 
 
+<p>To be in-the-loop about the launch and know about the launch discount, sign up
+below, at the end of the post. Read on for more details.</p>
 
+<h3>The short past, present and future of Rock and Roll with Ember</h3>
 
-<pre lang="shell">
-mysql> delete from drivers where id=1;
-Query OK, 1 row affected (0.00 sec)
+<p>Almost exactly 7 months ago, I published my book, Rock and Roll with Ember.js,
+that helps people learn the glorious framework. Ember has since went through
+quite some changes and I kept the book up-to-date with roughly an update each
+month.</p>
 
-mysql> select * from cars;
-+----+--------------+-----------+
-| id | plate_number | driver_id |
-+----+--------------+-----------+
-|  1 | bbb          |         1 | 
-|  2 | ooo          |         1 | 
-|  3 | aaa          |         2 | 
-|  4 | lll          |         2 | 
-+----+--------------+-----------+
-4 rows in set (0.00 sec)
-</pre>
+<p>Ember 2 was released about a month ago, on the 13rd of August. True to the
+&#8220;stability without stagnation&#8221; philosophy, the 2.0 release did not contain any
+new features but dropped a lot of deadweight, API methods and syntaxes that had
+been deprecated somewhere along the 1.x process.</p>
 
+<p>Thanks to the transparency of the road ahead through RFCs and discussions on
+other forums, it can already be clearly seen that the 2.x series will bring a
+great deal of new and fascinating features. Routable components, angle-bracket
+components and contextual lookup in components are some of the bigger things
+that we can expect on the road to 3.0. The expected simplifications (for
+example, routable components replacing controllers) will come with major changes
+in how one writes an idiomatic app in Ember 2.</p>
 
+<p>I&#8217;ve been following along the 1.x series with fascination and a keen eye to
+apply the changes to my book and the included application. I want to do the same
+along the Ember 2.x line and thus I hereby announce the second edition of the
+book, Rock and Roll with Ember 2!</p>
 
+<h3>Free updates policy</h3>
 
-<pre lang="sql">
-CREATE TABLE `drivers` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `name` VARCHAR(100)
-) ENGINE=INNODB;
+<p>To clarify, with Rock and Roll with Ember 2,  I intend to follow the &#8220;book
+development and release&#8221; process of the first edition of the book that I&#8217;ve now
+named &#8220;Buy once, get all updates for free (until the next major version)&#8221;. I
+assert that if you buy any of my book packages, you get all subsequent updates
+for free, until 3.0 lands (which is probably 12-18 months away. Geez, do I
+really want to do that? :) ).</p>
 
+<h3>New content</h3>
 
-CREATE TABLE `cars` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `plate_number` VARCHAR(12),
-  `driver_id` INT,
-  FOREIGN KEY (`driver_id`) REFERENCES `drivers`(`id`) ON DELETE CASCADE
-) ENGINE=INNODB;
+<p>Keeping the book&#8217;s current content up-to-date is not all. The second edition
+will contain 4 extra chapters on some advanced topics (Animations, Making an
+Ember CLI addon, Deployment and ES2015 &amp; computed macros) bringing the total
+chapter count to 18 (the Getting ready for Ember 2.0 is retired).</p>
 
-INSERT INTO drivers(name) VALUES ('bob');
-INSERT INTO drivers(name) VALUES ('alice');
-INSERT INTO cars(plate_number, driver_id) VALUES ('bbb', 1);
-INSERT INTO cars(plate_number, driver_id) VALUES ('ooo', 1);
-INSERT INTO cars(plate_number, driver_id) VALUES ('aaa', 2);
-INSERT INTO cars(plate_number, driver_id) VALUES ('lll', 2);
-</pre>
+<p>Further content changes are expected as Ember 2 evolves (see above for what can
+already be known about these changes), so the content on launch day will by no
+means be the final content of the book. It will constantly improve and be kept
+in-sync with the latest stable 2.x version of Ember.</p>
 
+<h3>When does it launch?</h3>
 
+<p>Very soon, probably in two weeks, mark the date (with a pencil, for the moment):
+September 30, 2015.</p>
 
-
-<pre lang="shell">
-mysql> delete from drivers where id=1;
-Query OK, 1 row affected (0.00 sec)
-
-mysql> select * from cars;
-+----+--------------+-----------+
-| id | plate_number | driver_id |
-+----+--------------+-----------+
-|  3 | ppp          |         2 | 
-|  4 | eee          |         2 | 
-+----+--------------+-----------+
-2 rows in set (0.00 sec)
-</pre>
-
-
-<p>I know very well one should <a href="http://bucionrails.com/2008/10/22/postgresql-pg_hbaconf-authentication/">read the manual before complaining</a> but I also think software should complain if asked something which it is not capable of doing. -1 for MySQL.</p>
+<p>Stand ready, Rock and Roll with Ember 2 is coming to a virtual bookstore near
+you!</p>
 </div>
 
 
@@ -223,8 +205,14 @@ mysql> select * from cars;
   
 
 
-<time datetime="2009-01-25T00:00:00+01:00" pubdate data-updated="true">Jan 25<span>th</span>, 2009</time>
+<time datetime="2015-09-16T15:54:00+02:00" pubdate data-updated="true">Sep 16<span>th</span>, 2015</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ember-js/'>ember.js</a>
+  
+</span>
 
 
     </p>
@@ -239,20 +227,26 @@ mysql> select * from cars;
 -->
 
 
+  <script src="https://app.convertkit.com/landing_pages/2664.js"></script>
+
 
 
     
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2009/01/17/google-groups-tracker-using-yahoo-pipes.html" title="Previous Post: Google Groups tracker using Yahoo Pipes">&laquo; Google Groups tracker using Yahoo Pipes</a>
+        <a class="basic-alignment left" href="/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out.html" title="Previous Post: Rock and Roll With Ember.js v1.13.9 Is Out">&laquo; Rock and Roll With Ember.js v1.13.9 Is Out</a>
       
-      
-        <a class="basic-alignment right" href="/2009/01/28/shoulda-blocks-active-record-macros-and-their-order.html" title="Next Post: Shoulda: setup and should blocks and don't wander off the map">Shoulda: setup and should blocks and don't wander off the map &raquo;</a>
       
     </p>
   </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -334,7 +328,10 @@ mysql> select * from cars;
       var disqus_shortname = 'codigoergosum';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://balinterdi.com/2015/09/16/rock-and-roll-with-ember-2-is-coming-soon.html';
+        var disqus_url = 'http://balinterdi.com/2015/09/16/rock-and-roll-with-ember-2-is-coming-soon.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

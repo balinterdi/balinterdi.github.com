@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-09-11T17:12:22+02:00</updated>
+  <updated>2015-09-16T17:30:12+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,85 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rock and Roll With Ember 2 is coming soon!]]></title>
+    <link href="http://balinterdi.com/2015/09/16/rock-and-roll-with-ember-2-is-coming-soon.html"/>
+    <updated>2015-09-16T15:54:00+02:00</updated>
+    <id>http://balinterdi.com/2015/09/16/rock-and-roll-with-ember-2-is-coming-soon</id>
+    <content type="html"><![CDATA[<h3>tl;dr</h3>
+
+<p>I will publish a second, extended edition of my book, Rock and Roll with Ember
+in about two weeks, at the end of September. Here is what you need to know:</p>
+
+<ul>
+<li>I make the same promise as with the current edition: you buy it once, you get
+all updates for free until 3.0 comes out</li>
+<li>4 extra chapters are added about advanced Ember topics, bringing the number
+of chapters to 18</li>
+<li>There will be a short launch period where the book packages are offered at a
+discount.</li>
+</ul>
+
+
+<p>To be in-the-loop about the launch and know about the launch discount, sign up
+below, at the end of the post. Read on for more details.</p>
+
+<h3>The short past, present and future of Rock and Roll with Ember</h3>
+
+<p>Almost exactly 7 months ago, I published my book, Rock and Roll with Ember.js,
+that helps people learn the glorious framework. Ember has since went through
+quite some changes and I kept the book up-to-date with roughly an update each
+month.</p>
+
+<p>Ember 2 was released about a month ago, on the 13rd of August. True to the
+"stability without stagnation" philosophy, the 2.0 release did not contain any
+new features but dropped a lot of deadweight, API methods and syntaxes that had
+been deprecated somewhere along the 1.x process.</p>
+
+<p>Thanks to the transparency of the road ahead through RFCs and discussions on
+other forums, it can already be clearly seen that the 2.x series will bring a
+great deal of new and fascinating features. Routable components, angle-bracket
+components and contextual lookup in components are some of the bigger things
+that we can expect on the road to 3.0. The expected simplifications (for
+example, routable components replacing controllers) will come with major changes
+in how one writes an idiomatic app in Ember 2.</p>
+
+<p>I've been following along the 1.x series with fascination and a keen eye to
+apply the changes to my book and the included application. I want to do the same
+along the Ember 2.x line and thus I hereby announce the second edition of the
+book, Rock and Roll with Ember 2!</p>
+
+<h3>Free updates policy</h3>
+
+<p>To clarify, with Rock and Roll with Ember 2,  I intend to follow the "book
+development and release" process of the first edition of the book that I've now
+named "Buy once, get all updates for free (until the next major version)". I
+assert that if you buy any of my book packages, you get all subsequent updates
+for free, until 3.0 lands (which is probably 12-18 months away. Geez, do I
+really want to do that? :) ).</p>
+
+<h3>New content</h3>
+
+<p>Keeping the book's current content up-to-date is not all. The second edition
+will contain 4 extra chapters on some advanced topics (Animations, Making an
+Ember CLI addon, Deployment and ES2015 &amp; computed macros) bringing the total
+chapter count to 18 (the Getting ready for Ember 2.0 is retired).</p>
+
+<p>Further content changes are expected as Ember 2 evolves (see above for what can
+already be known about these changes), so the content on launch day will by no
+means be the final content of the book. It will constantly improve and be kept
+in-sync with the latest stable 2.x version of Ember.</p>
+
+<h3>When does it launch?</h3>
+
+<p>Very soon, probably in two weeks, mark the date (with a pencil, for the moment):
+September 30, 2015.</p>
+
+<p>Stand ready, Rock and Roll with Ember 2 is coming to a virtual bookstore near
+you!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll With Ember.js v1.13.9 Is Out]]></title>
@@ -295,50 +374,6 @@ CSS) tasks to get done.</p></li>
 
 <p>There are a couple of other, smaller changes and you can see the whole list in
 <a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A1.13.7+is%3Aclosed">the issues repo</a>. Or you can buy the book <a href="http://rockandrollwithemberjs.com">here</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rock and Roll with Ember.js v1.13.3 is out]]></title>
-    <link href="http://balinterdi.com/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html"/>
-    <updated>2015-07-17T10:47:00+02:00</updated>
-    <id>http://balinterdi.com/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out</id>
-    <content type="html"><![CDATA[<p>It's Friday and if it's (every 2nd-6th) Friday, it's Rock and Roll release day!</p>
-
-<p>Book version 1.13.3 is rolling out as we speak (ok, we don't speak and you
-probably read this later, but you get the point) which contains the following
-changes:</p>
-
-<ul>
-<li><strong>Upgrade to Ember version 1.13.3 (the book is in lockstep, too!)</strong></li>
-<li><strong>Update to Ember CLI 1.13.1</strong></li>
-<li><p><strong>Extended the Components chapter with closure actions.</strong></p>
-
-<p><a href="http://emberjs.com/blog/2015/06/12/ember-1-13-0-released.html#toc_closure-actions">Closure actions</a> are an awesome new way to fire/handle actions introduced
-in 1.13 and so it has to be in the book!</p></li>
-<li><p><strong>Extended the Testing chapter with component integration tests.</strong></p>
-
-<p>Integration tests make component tests super simple to set up and so much more
-descriptive than unit tests. Our beloved star-rating component is now tested
-by the shiny new integration tests.</p></li>
-<li><p><strong>Get rid of <code>needs</code> in the controller.</strong></p>
-
-<p>There was one instance where I used this to get a nice placeholder text. As a
-preparation for Ember 2.0 where <code>needs</code> is going the way of the dodo, I
-removed that nasty <code>needs</code>.</p></li>
-<li><p><strong>Specify the band-songs relationship as sync.</strong></p>
-
-<p>Starting from 2.0, Ember Data relationships are assumed to be asynchronous
-unless otherwise specified. In the Rock &amp; Roll application, we sideload the
-songs with the bands, so adding a <code>{ async: false }</code> option to the
-relationship was in order.</p></li>
-<li><strong>A few CSS fixes, one of them thanks to <a href="https://twitter.com/lonekorean">lonekorean</a></strong></li>
-</ul>
-
-
-<p>The whole change list is observable <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13.3+is%3Aclosed">here</a>.</p>
-
-<p>Hoist the sails, Ember 2.0 (and with it, Rock and Roll with Ember 2.0) is on the horizon!</p>
 ]]></content>
   </entry>
   
