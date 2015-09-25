@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-09-25T15:22:32+02:00</updated>
+  <updated>2015-09-25T15:28:51+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -14,10 +14,10 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Select in Ember with multiple selections]]></title>
-    <link href="http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selections.html"/>
+    <title type="html"><![CDATA[Select in Ember with multiple selection]]></title>
+    <link href="http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selection.html"/>
     <updated>2015-09-25T14:24:00+02:00</updated>
-    <id>http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selections</id>
+    <id>http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selection</id>
     <content type="html"><![CDATA[<p>A few weeks ago I wrote a blog post about <a href="http://balinterdi.com/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">how to do a select in Ember 2</a>,
 that seemed to be popular. I also received good comments about advanced versions
 of the same problem, namely how the solution would have to change to deal with
