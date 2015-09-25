@@ -4,6 +4,7 @@ title: "How to do a select (dropdown) in Ember 2.0?"
 date: 2015-08-29 17:43
 comments: true
 categories: ember.js
+perk: general-signup
 ---
 <iframe
   width="178" height="24" style="border:0px"
