@@ -91,6 +91,83 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2009/02/04/strings-as-haml-render-parameters-in-sinatra-do-not-work.html">Strings as Haml Render Parameters in Sinatra Do Not Work</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-02-04T00:00:00+01:00" pubdate data-updated="true">Feb 4<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I was intrigued by the simplicity and elegance of Sinatra as presented by Bence Golda at <a href="http://files.meetup.com/1271139/09-01-22-golda_bence-sinatra.pdf">the last budapest.rb meetup.</a>, so I decided to build a simple application with it (I am planning to talk just a little bit more about that in a later post).</p>
+
+<p>One quick thing I learned the hard way is when generating haml views in Sinatra, you have to use symbols as the name of the view, strings will just be rendered as strings. That was a tough lesson to learn coming from Rails. So while in Rails you can write:</p>
+
+<pre lang="ruby">
+  def index
+    render :action => :index
+  end
+</pre>
+
+
+<p>or</p>
+
+<pre lang="ruby">
+  def index
+    render :action => "index"
+  end
+</pre>
+
+
+<p>In Sinatra, you can only use a symbol to designate the view to be rendered:</p>
+
+<pre lang="ruby">
+get '/' do
+  haml :index
+end
+</pre>
+
+
+<p>Which makes sense, I think, since symbols (unlike strings, see <a href="#strings-symbols">below</a>) with the same name refer to the same entity which is a perfect fit for naming views, now ain&#8217;t they? Plus, I&#8217;ll admit I am in love with them symbols, with their colon in the front and all. And when they are syntax highlighted, I melt.</p>
+
+<div id="strings-symbols">
+<pre lang="bash">
+irb(main):002:0> sym1 = :index; sym2 = :index; sym1.object_id == sym2.object_id
+=> true
+irb(main):003:0> s1 = "index"; s2 = "index"; s1.object_id == s2.object_id
+=> false
+</pre>
+</div>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2009/01/28/shoulda-blocks-active-record-macros-and-their-order.html">Shoulda: Setup and Should Blocks and Don&#8217;t Wander Off the Map</a></h1>
     
     
@@ -920,44 +997,6 @@ Successfully installed rmagick-2.7.2
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2008/11/17/refuting-rails-myths.html">Refuting Rails Myths</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-11-17T00:00:00+01:00" pubdate data-updated="true">Nov 17<span>th</span>, 2008</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>David Heinemeier Hansson, the creator of Rails is doing an <a href="http://loudthinking.com/posts/29-the-rails-myths">outstanding series of blog posts</a> on <a href="http://loudthinking.com/">his blog</a> to derail (pun intended) some common myths that claim Rails does not do this or that and that hinders (or rather, slows down) its widespread acceptance.</p>
-
-<p>I am sure David holds his best for last and will refute the infamous &#8220;Rails does not scale&#8221; in the final episode of the series.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/9/">&larr; Older</a>
@@ -997,6 +1036,10 @@ Successfully installed rmagick-2.7.2
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/09/25/select-in-ember-with-multiple-selections.html">Select in Ember with multiple selections</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/09/16/rock-and-roll-with-ember-2-is-coming-soon.html">Rock and Roll With Ember 2 is coming soon!</a>
       </li>
     
@@ -1010,10 +1053,6 @@ Successfully installed rmagick-2.7.2
     
       <li class="post">
         <a href="/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">How to do a select (dropdown) in Ember 2.0?</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/08/07/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-7-is-out.html">Rock and Roll With Ember.js v1.13.7 Is Out</a>
       </li>
     
   </ul>

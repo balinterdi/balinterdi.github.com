@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-09-24T20:51:57+02:00</updated>
+  <updated>2015-09-25T15:22:32+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,195 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Select in Ember with multiple selections]]></title>
+    <link href="http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selections.html"/>
+    <updated>2015-09-25T14:24:00+02:00</updated>
+    <id>http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selections</id>
+    <content type="html"><![CDATA[<p>A few weeks ago I wrote a blog post about <a href="http://balinterdi.com/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">how to do a select in Ember 2</a>,
+that seemed to be popular. I also received good comments about advanced versions
+of the same problem, namely how the solution would have to change to deal with
+the case if the items to select from are objects and how to tackle multiple
+selections. I thus decided to do a Part 2, showing a solution for these cases.
+Comment are welcome, as always.</p>
+
+<h3>Multiple selection with simple strings as items</h3>
+
+<p>Let&#8217;s tackle the easier problem first, being able to select more than one items,
+but the items are simple string values. The values will serve both as the value
+and the content of the options.</p>
+
+<p>I added some extra Bootstrap markup and a list to see which items are selected:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;container&quot;&gt;
+  &lt;div class=&quot;row&quot;&gt;
+    &lt;div class=&quot;col-sm-8&quot;&gt;
+      &lt;h2&gt;Select some bands&lt;/h2&gt;
+      &lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
+        {{#each bands as |bandChoice|}}
+        &lt;option value={{bandChoice}} selected={{include selectedBands bandChoice}}&gt;{{bandChoice}}&lt;/option&gt;
+        {{/each}}
+      &lt;/select&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;col-sm-4&quot;&gt;
+      {{#if selectedCount}}
+        &lt;h2&gt;Selected bands ({{selectedCount}})&lt;/h2&gt;
+      {{else}}
+        &lt;h2&gt;Selected bands&lt;/h2&gt;
+      {{/if}}
+      &lt;ul class=&quot;list-group&quot;&gt;
+        {{#each selectedBands as |band|}}
+          &lt;li class=&quot;list-group-item&quot;&gt;{{band}}&lt;/li&gt;
+        {{else}}
+          &lt;li class=&quot;list-group-item&quot;&gt;No band selected.&lt;/li&gt;
+        {{/each}}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>I added the <code>multiple</code> attribute to the <code>select</code> tag to allow multiple
+selections. Not much has changed from the earlier example. When the user
+selects an option, whether in a way that clears the earlier selection (simple
+click) or adds to it (ctrl/cmd + click), the <code>onchange</code> event is fired, and our
+<code>selectBand</code> handler will handle it. We expect that handler to set
+<code>selectedBands</code> so that the list of selected bands gets updated correctly. So
+let&#8217;s see the controller:</p>
+
+<div>
+  <pre><code class='html'>export default Ember.Controller.extend({
+  bands: [&#39;Pearl Jam&#39;, &#39;Tool&#39;, &#39;Long Distance Calling&#39;, &#39;Led Zeppelin&#39;],
+
+  selectedBands: [],
+
+  selectedCount: Ember.computed.reads(&#39;selectedBands.length&#39;),
+
+  actions: {
+    selectBand(event) {
+      const selectedBands = Ember.$(event.target).val();
+      this.set(&#39;selectedBands&#39;, selectedBands || []);
+    }
+  }
+});</code></pre>
+</div>
+
+
+<p>For multiple selections, jQuery, aliased as <code>Ember.$</code>, returns an array of the
+selected options values as the select&#8217;s value, so all we have to do is assign
+this to the <code>selectedBands</code> property. In case nothing is selected, <code>val()</code>
+returns <code>null</code>, so we guard against transferring this to <code>selectedBands</code> by
+defaulting to an empty array.</p>
+
+<p>There is one more thing you might have noticed, and that is the <code>include</code> helper
+in the template. We want to mark the option as selected if its value is included
+in the selectedBands:</p>
+
+<div>
+  <pre><code class='html'>&lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
+  {{#each bands as |bandChoice|}}
+  &lt;option value={{bandChoice}} selected={{include selectedBands bandChoice}}&gt;{{bandChoice}}&lt;/option&gt;
+  {{/each}}
+&lt;/select&gt;</code></pre>
+</div>
+
+
+<p>The <code>include</code> helper is not provided by Ember but it is rather easy to write
+ourselves:</p>
+
+<div>
+  <pre><code class='html'>import Ember from &#39;ember&#39;;
+
+export function include(params) {
+  const [items, value] = params;
+  return items.indexOf(value) &gt; -1;
+}
+
+export default Ember.Helper.helper(include);</code></pre>
+</div>
+
+
+<p>That is all there is to it:</p>
+
+<p><img src="http://balinterdi.com/images/posts/select-in-ember-with-multiple-selections/multiple-select-with-ember.gif" alt="Multiple selection" /></p>
+
+<h3>Multiple selection with objects as items</h3>
+
+<p>This is just a tad more difficult, as we cannot directly have objects as options
+values. Let&#8217;s assume that these objects have a property that identifies them
+unambiguously (which is a fair assumption to make), usually referred to as <code>id</code>:</p>
+
+<div>
+  <pre><code class='html'>import Ember from &#39;ember&#39;;
+
+export default Ember.Controller.extend({
+  bands: [
+    Ember.Object.create({ id: &quot;1&quot;, name: &#39;Pearl Jam&#39;, formedIn: 1990 }),
+    Ember.Object.create({ id: &quot;2&quot;, name: &#39;Tool&#39;, formedIn: 1991 }),
+    Ember.Object.create({ id: &quot;3&quot;, name: &#39;Long Distance Calling&#39;, formedIn: 2003 }),
+    Ember.Object.create({ id: &quot;4&quot;, name: &#39;Led Zeppelin&#39;, formedIn: 1970 })
+  ],
+  (...)
+});</code></pre>
+</div>
+
+
+<p>We&#8217;ll use the <code>id</code> as the option value and display the name:</p>
+
+<div>
+  <pre><code class='html'>(...)
+&lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
+  {{#each bands as |bandChoice|}}
+    &lt;option value={{bandChoice.id}} selected={{include selectedBandIds bandChoice.id}}&gt;{{bandChoice.name}}&lt;/option&gt;
+  {{/each}}
+&lt;/select&gt;
+(...)</code></pre>
+</div>
+
+
+<p>On the controller, we collect the id of each selected band, and if we need to
+display their names, we simply make the mapping between these two:</p>
+
+<div>
+  <pre><code class='html'>export default Ember.Controller.extend({
+  (...)
+  selectedBandIds: [],
+
+  selectedBands: Ember.computed(&#39;selectedBandIds.[]&#39;, function() {
+    return this.get(&#39;selectedBandIds&#39;).map((bandId) =&gt; {
+      return this.get(&#39;bands&#39;).findBy(&#39;id&#39;, bandId);
+    });
+  }),
+  (...)
+});</code></pre>
+</div>
+
+
+<p><code>bands.findBy</code> is our makeshift store service, which allows us to find an object
+in a collection by its id. If we used Ember Data, it would become
+<code>store.findRecord('band', bandId)</code> or <code>store.findRecord('band', bandId)</code>. The
+only other difference from before is that we set <code>selectedBandIds</code> instead of
+<code>selectedBands</code> in the action handler:</p>
+
+<div>
+  <pre><code class='html'>export default Ember.Controller.extend({
+  (...)
+  actions: {
+    selectBand(event) {
+      const selectedBandIds = Ember.$(event.target).val();
+      this.set(&#39;selectedBandIds&#39;, selectedBandIds || []);
+    }
+  }
+});</code></pre>
+</div>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll With Ember 2 is coming soon!]]></title>
@@ -2338,309 +2527,6 @@ post to explain property path patterns.</p>
 <p>(The code presented here can be found as <a href="https://gist.github.com/balinterdi/9772966">a gist on Github</a>)</p>
 
 <p>ps. Yes, <a href="https://www.youtube.com/watch?v=RtBbinpK5XI">that Maggie Raindance.</a>)</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Ember.js getters and setters]]></title>
-    <link href="http://balinterdi.com/2014/03/19/ember-dot-js-getters-and-setters.html"/>
-    <updated>2014-03-19T20:53:00+01:00</updated>
-    <id>http://balinterdi.com/2014/03/19/ember-dot-js-getters-and-setters</id>
-    <content type="html"><![CDATA[<p>To make all the magic fairy-dust sprinkling efficient, like auto-updating
-templates and computed properties, Ember uses getters and setters instead of
-accessing properties directly the javascript (and dare I say, the Angular) way. At
-its most simplest form, it is <code>object.get(property)</code> and <code>object.set(property)</code>.</p>
-
-<p>Howevers, it would not be Ember if we were not provided methods on top of these
-primitives to make our hard lives as web developers simpler. In the following
-post, I am going to show (some of) these methods through an example, so let&#8217;s
-go.</p>
-
-<h2>Badges, badges, I want more badges</h2>
-
-<p>I am certainly in favor of having badges in every application. Discourse is
-actively discoursing <a href="https://meta.discourse.org/t/initial-discourse-badge-design-spec">their badge system</a> so I quickly
-sketched out something to get ahead of them.</p>
-
-<p>Let me just paste the code here and then use it to explain what the getter and
-setter methods are good for.</p>
-
-<p>You can quickly scroll through the below templates. They are mostly there so
-that you get the whole picture. The stuff relevant to this discussion is found
-in the javascript code.</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot;&gt;
-  &lt;div class=&quot;container&quot;&gt;
-    &lt;div class=&quot;panel panel-primary&quot;&gt;
-      &lt;div class=&quot;panel-heading&quot;&gt;
-        &lt;h3 class=&quot;panel-title&quot;&gt;Your badges, sir/ma&#39;am.&lt;/h3&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;panel-body&quot;&gt;
-        {{outlet}}
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
- &lt;/script&gt;</code></pre>
-</div>
-
-
-
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;index&quot;&gt;
-  &lt;ul class=&quot;list-group&quot;&gt;
-    {{#each badge in arrangedContent}}
-      &lt;li {{bind-attr class=&quot;:list-group-item badge.unlocked::locked&quot;}}&gt;
-        {{badge.name}}
-        &lt;span class=&quot;badge&quot;&gt;{{badge.score}}&lt;/span&gt;
-      &lt;/li&gt;
-    {{/each}}
-    &lt;li class=&quot;list-group-item&quot;&gt;
-      &lt;em&gt;Total:&lt;/em&gt;
-      &lt;span class=&quot;pull-right&quot;&gt;{{totalScore}}&lt;/span&gt;
-    &lt;/li&gt;
-  &lt;/ul&gt;
-  &lt;div id=&quot;new-badge&quot; class=&quot;row&quot;&gt;
-    &lt;span class=&quot;col-xs-6&quot;&gt;
-      {{input class=&quot;input&quot; type=&quot;text&quot; placeholder=&quot;Badge name&quot; value=name}}
-    &lt;/span&gt;
-    &lt;span class=&quot;col-xs-4&quot;&gt;
-      {{input class=&quot;small-input&quot; type=&quot;text&quot; placeholder=&quot;Score&quot; value=score action=&quot;addBadge&quot;}}
-    &lt;/span&gt;
-    &lt;span class=&quot;col-xs-2&quot;&gt;
-      &lt;button class=&quot;btn btn-primary btn-sm pull-right&quot; type=&quot;button&quot;
-          {{action &quot;addBadge&quot;}}&gt;
-          Add
-      &lt;/button&gt;
-    &lt;/span&gt;
-  &lt;/div&gt;
-  &lt;div id=&quot;unlock-all&quot; class=&quot;row&quot;&gt;
-    &lt;div class=&quot;col-xs-12&quot;&gt;
-      &lt;button class=&quot;btn btn-danger btn-md&quot; type=&quot;button&quot;
-        {{action &quot;unlockAll&quot;}}&gt;
-        Unlock all
-      &lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p>First, the badge class is defined and some badges created so that we have something to work with:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">unlocked</span><span class="o">:</span> <span class="kc">false</span>
-</span><span class='line'><span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">var</span> <span class="nx">rook</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;R00k&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">unlocked</span><span class="o">:</span> <span class="kc">true</span>
-</span><span class='line'><span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">var</span> <span class="nx">talkative</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Talkative&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">10</span>
-</span><span class='line'><span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">var</span> <span class="nx">hemingway</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Hemingway&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">1000</span>
-</span><span class='line'><span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'><span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="nx">rook</span><span class="p">,</span> <span class="nx">talkative</span><span class="p">,</span> <span class="nx">hemingway</span><span class="p">];</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>getProperties and setProperties</h3>
-
-<p>The first couple of methods come handy when working with a single object but
-multiple properties.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">],</span>
-</span><span class='line'>  <span class="nx">sortAscending</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">addBadge</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">newBadgeProperties</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getProperties</span><span class="p">([</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">]);</span>
-</span><span class='line'>      <span class="nx">newBadgeProperties</span><span class="p">.</span><span class="nx">score</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">newBadgeProperties</span><span class="p">.</span><span class="nx">score</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">newBadge</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">newBadgeProperties</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">).</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">newBadge</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">setProperties</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">score</span><span class="o">:</span> <span class="s1">&#39;&#39;</span> <span class="p">});</span>
-</span><span class='line'>    <span class="p">},</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="p">(...)</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>On line 9, we want to create a new object with the values provided in the input
-boxes (addBadge is the action that gets triggered when the Add button is
-clicked, check the template). <code>getProperties</code> will create a javascript object
-creating key-value pairs for the passed properties. So the above might e.g yield
-<code>{ name: "Silent Bob", score: "2" }</code>. That gets directly passed in to create a
-new badge object.</p>
-
-<p>On line 14, we use the mutating pair of <code>getProperties</code> to reset the input
-fields. Pretty straightforward.</p>
-
-<h3>getEach and setEach</h3>
-
-<p>Ember has us covered when we are working with an array and want to get (or set)
-the same property of each item.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">],</span>
-</span><span class='line'>  <span class="nx">sortAscending</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">totalScore</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">sum</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">s1</span> <span class="o">+</span> <span class="nx">s2</span><span class="p">;</span> <span class="p">};</span>
-</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">).</span><span class="nx">getEach</span><span class="p">(</span><span class="s1">&#39;score&#39;</span><span class="p">).</span><span class="nx">reduce</span><span class="p">(</span><span class="nx">sum</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;model.@each.score&#39;</span><span class="p">),</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="p">(...)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nx">unlockAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">).</span><span class="nx">setEach</span><span class="p">(</span><span class="s1">&#39;unlocked&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>When the &#8220;Unlock all&#8221; button launches the <code>unlockAll</code> action, it calls <code>setEach</code>
-on the badges (line 14), making all of them unlocked (you can verify this in the
-demo by seeing the color of the badge names turn darker - their css class has
-been updated). Another advange of <code>setEach</code> is that it guards against calling
-<code>set</code> on null or undefined values.</p>
-
-<p>You might know the reader counterpart, <code>getEach</code> as <code>mapBy</code>. It goes through the
-array and makes another array by getting the passed property on each item. So in
-the above example (line 7), we first collect the score for each badge and then
-sum them up by way of reduction. (A shiny example of a non-distributed
-map-reduce :) ).</p>
-
-<h3>A macro can make nice code nicer</h3>
-
-<p>I <a href="http://balinterdi.com/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria.html">have used a reduce computed macro</a> before to set up sorting.
-I have gotten the hang of it and realized I could use another couple of them
-to make the above code simpler (and more performant):</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">],</span>
-</span><span class='line'>  <span class="nx">sortAscending</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">scores</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">mapBy</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">),</span>
-</span><span class='line'>  <span class="nx">totalScore</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">sum</span><span class="p">(</span><span class="s1">&#39;scores&#39;</span><span class="p">),</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The problem is that the subject under discussion, <code>getEach</code> is gone now, so
-pretend you did not see this.</p>
-
-<p>Finally, here is the jsbin, should you decide to play around with it:</p>
-
-<p><a class="jsbin-embed" href="http://emberjs.jsbin.com/qivah/4/embed?html,js,output">Getter and Setters</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
-
-<p>I hope some of that sticks and you&#8217;ll write less &#8220;bare&#8221; gets and sets.</p>
 ]]></content>
   </entry>
   

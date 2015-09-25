@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Rock and Roll with Ember.js v1.13.3 is out - Balint Erdi's blog about Ember.js</title>
+  <title>Select in Ember with multiple selections - Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html">
+  <link rel="canonical" href="http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selections.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -88,7 +88,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
   <header>
     
-      <h1 class="entry-title">Rock and Roll With Ember.js v1.13.3 Is Out</h1>
+      <h1 class="entry-title">Select in Ember With Multiple Selections</h1>
     
     
       <p class="meta">
@@ -104,49 +104,194 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
 
 
-<time datetime="2015-07-17T10:47:00+02:00" pubdate data-updated="true">Jul 17<span>th</span>, 2015</time>
+<time datetime="2015-09-25T14:24:00+02:00" pubdate data-updated="true">Sep 25<span>th</span>, 2015</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>It&#8217;s Friday and if it&#8217;s (every 2nd-6th) Friday, it&#8217;s Rock and Roll release day!</p>
+<div class="entry-content"><p>A few weeks ago I wrote a blog post about <a href="http://balinterdi.com/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">how to do a select in Ember 2</a>,
+that seemed to be popular. I also received good comments about advanced versions
+of the same problem, namely how the solution would have to change to deal with
+the case if the items to select from are objects and how to tackle multiple
+selections. I thus decided to do a Part 2, showing a solution for these cases.
+Comment are welcome, as always.</p>
 
-<p>Book version 1.13.3 is rolling out as we speak (ok, we don&#8217;t speak and you
-probably read this later, but you get the point) which contains the following
-changes:</p>
+<h3>Multiple selection with simple strings as items</h3>
 
-<ul>
-<li><strong>Upgrade to Ember version 1.13.3 (the book is in lockstep, too!)</strong></li>
-<li><strong>Update to Ember CLI 1.13.1</strong></li>
-<li><p><strong>Extended the Components chapter with closure actions.</strong></p>
+<p>Let&#8217;s tackle the easier problem first, being able to select more than one items,
+but the items are simple string values. The values will serve both as the value
+and the content of the options.</p>
 
-<p><a href="http://emberjs.com/blog/2015/06/12/ember-1-13-0-released.html#toc_closure-actions">Closure actions</a> are an awesome new way to fire/handle actions introduced
-in 1.13 and so it has to be in the book!</p></li>
-<li><p><strong>Extended the Testing chapter with component integration tests.</strong></p>
+<p>I added some extra Bootstrap markup and a list to see which items are selected:</p>
 
-<p>Integration tests make component tests super simple to set up and so much more
-descriptive than unit tests. Our beloved star-rating component is now tested
-by the shiny new integration tests.</p></li>
-<li><p><strong>Get rid of <code>needs</code> in the controller.</strong></p>
+<div>
+  <pre><code class='html'>&lt;div class=&quot;container&quot;&gt;
+  &lt;div class=&quot;row&quot;&gt;
+    &lt;div class=&quot;col-sm-8&quot;&gt;
+      &lt;h2&gt;Select some bands&lt;/h2&gt;
+      &lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
+        {{#each bands as |bandChoice|}}
+        &lt;option value={{bandChoice}} selected={{include selectedBands bandChoice}}&gt;{{bandChoice}}&lt;/option&gt;
+        {{/each}}
+      &lt;/select&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;col-sm-4&quot;&gt;
+      {{#if selectedCount}}
+        &lt;h2&gt;Selected bands ({{selectedCount}})&lt;/h2&gt;
+      {{else}}
+        &lt;h2&gt;Selected bands&lt;/h2&gt;
+      {{/if}}
+      &lt;ul class=&quot;list-group&quot;&gt;
+        {{#each selectedBands as |band|}}
+          &lt;li class=&quot;list-group-item&quot;&gt;{{band}}&lt;/li&gt;
+        {{else}}
+          &lt;li class=&quot;list-group-item&quot;&gt;No band selected.&lt;/li&gt;
+        {{/each}}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</div>
 
-<p>There was one instance where I used this to get a nice placeholder text. As a
-preparation for Ember 2.0 where <code>needs</code> is going the way of the dodo, I
-removed that nasty <code>needs</code>.</p></li>
-<li><p><strong>Specify the band-songs relationship as sync.</strong></p>
 
-<p>Starting from 2.0, Ember Data relationships are assumed to be asynchronous
-unless otherwise specified. In the Rock &amp; Roll application, we sideload the
-songs with the bands, so adding a <code>{ async: false }</code> option to the
-relationship was in order.</p></li>
-<li><strong>A few CSS fixes, one of them thanks to <a href="https://twitter.com/lonekorean">lonekorean</a></strong></li>
-</ul>
+<p>I added the <code>multiple</code> attribute to the <code>select</code> tag to allow multiple
+selections. Not much has changed from the earlier example. When the user
+selects an option, whether in a way that clears the earlier selection (simple
+click) or adds to it (ctrl/cmd + click), the <code>onchange</code> event is fired, and our
+<code>selectBand</code> handler will handle it. We expect that handler to set
+<code>selectedBands</code> so that the list of selected bands gets updated correctly. So
+let&#8217;s see the controller:</p>
+
+<div>
+  <pre><code class='html'>export default Ember.Controller.extend({
+  bands: [&#39;Pearl Jam&#39;, &#39;Tool&#39;, &#39;Long Distance Calling&#39;, &#39;Led Zeppelin&#39;],
+
+  selectedBands: [],
+
+  selectedCount: Ember.computed.reads(&#39;selectedBands.length&#39;),
+
+  actions: {
+    selectBand(event) {
+      const selectedBands = Ember.$(event.target).val();
+      this.set(&#39;selectedBands&#39;, selectedBands || []);
+    }
+  }
+});</code></pre>
+</div>
 
 
-<p>The whole change list is observable <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13.3+is%3Aclosed">here</a>.</p>
+<p>For multiple selections, jQuery, aliased as <code>Ember.$</code>, returns an array of the
+selected options values as the select&#8217;s value, so all we have to do is assign
+this to the <code>selectedBands</code> property. In case nothing is selected, <code>val()</code>
+returns <code>null</code>, so we guard against transferring this to <code>selectedBands</code> by
+defaulting to an empty array.</p>
 
-<p>Hoist the sails, Ember 2.0 (and with it, Rock and Roll with Ember 2.0) is on the horizon!</p>
+<p>There is one more thing you might have noticed, and that is the <code>include</code> helper
+in the template. We want to mark the option as selected if its value is included
+in the selectedBands:</p>
+
+<div>
+  <pre><code class='html'>&lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
+  {{#each bands as |bandChoice|}}
+  &lt;option value={{bandChoice}} selected={{include selectedBands bandChoice}}&gt;{{bandChoice}}&lt;/option&gt;
+  {{/each}}
+&lt;/select&gt;</code></pre>
+</div>
+
+
+<p>The <code>include</code> helper is not provided by Ember but it is rather easy to write
+ourselves:</p>
+
+<div>
+  <pre><code class='html'>import Ember from &#39;ember&#39;;
+
+export function include(params) {
+  const [items, value] = params;
+  return items.indexOf(value) &gt; -1;
+}
+
+export default Ember.Helper.helper(include);</code></pre>
+</div>
+
+
+<p>That is all there is to it:</p>
+
+<p><img src="/images/posts/select-in-ember-with-multiple-selections/multiple-select-with-ember.gif" alt="Multiple selection" /></p>
+
+<h3>Multiple selection with objects as items</h3>
+
+<p>This is just a tad more difficult, as we cannot directly have objects as options
+values. Let&#8217;s assume that these objects have a property that identifies them
+unambiguously (which is a fair assumption to make), usually referred to as <code>id</code>:</p>
+
+<div>
+  <pre><code class='html'>import Ember from &#39;ember&#39;;
+
+export default Ember.Controller.extend({
+  bands: [
+    Ember.Object.create({ id: &quot;1&quot;, name: &#39;Pearl Jam&#39;, formedIn: 1990 }),
+    Ember.Object.create({ id: &quot;2&quot;, name: &#39;Tool&#39;, formedIn: 1991 }),
+    Ember.Object.create({ id: &quot;3&quot;, name: &#39;Long Distance Calling&#39;, formedIn: 2003 }),
+    Ember.Object.create({ id: &quot;4&quot;, name: &#39;Led Zeppelin&#39;, formedIn: 1970 })
+  ],
+  (...)
+});</code></pre>
+</div>
+
+
+<p>We&#8217;ll use the <code>id</code> as the option value and display the name:</p>
+
+<div>
+  <pre><code class='html'>(...)
+&lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
+  {{#each bands as |bandChoice|}}
+    &lt;option value={{bandChoice.id}} selected={{include selectedBandIds bandChoice.id}}&gt;{{bandChoice.name}}&lt;/option&gt;
+  {{/each}}
+&lt;/select&gt;
+(...)</code></pre>
+</div>
+
+
+<p>On the controller, we collect the id of each selected band, and if we need to
+display their names, we simply make the mapping between these two:</p>
+
+<div>
+  <pre><code class='html'>export default Ember.Controller.extend({
+  (...)
+  selectedBandIds: [],
+
+  selectedBands: Ember.computed(&#39;selectedBandIds.[]&#39;, function() {
+    return this.get(&#39;selectedBandIds&#39;).map((bandId) =&gt; {
+      return this.get(&#39;bands&#39;).findBy(&#39;id&#39;, bandId);
+    });
+  }),
+  (...)
+});</code></pre>
+</div>
+
+
+<p><code>bands.findBy</code> is our makeshift store service, which allows us to find an object
+in a collection by its id. If we used Ember Data, it would become
+<code>store.findRecord('band', bandId)</code> or <code>store.findRecord('band', bandId)</code>. The
+only other difference from before is that we set <code>selectedBandIds</code> instead of
+<code>selectedBands</code> in the action handler:</p>
+
+<div>
+  <pre><code class='html'>export default Ember.Controller.extend({
+  (...)
+  actions: {
+    selectBand(event) {
+      const selectedBandIds = Ember.$(event.target).val();
+      this.set(&#39;selectedBandIds&#39;, selectedBandIds || []);
+    }
+  }
+});</code></pre>
+</div>
+
+
+
 </div>
 
 
@@ -170,7 +315,7 @@ relationship was in order.</p></li>
   
 
 
-<time datetime="2015-07-17T10:47:00+02:00" pubdate data-updated="true">Jul 17<span>th</span>, 2015</time>
+<time datetime="2015-09-25T14:24:00+02:00" pubdate data-updated="true">Sep 25<span>th</span>, 2015</time>
       
 
 <span class="categories">
@@ -192,19 +337,17 @@ relationship was in order.</p></li>
 -->
 
 
-  <script src="https://app.convertkit.com/landing_pages/2664.js"></script>
 
 
+  <script src="https://app.convertkit.com/landing_pages/3800.js"></script>
 
 
     
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html" title="Previous Post: Rock and Roll with Ember.js v1.13 is out">&laquo; Rock and Roll with Ember.js v1.13 is out</a>
+        <a class="basic-alignment left" href="/2015/09/16/rock-and-roll-with-ember-2-is-coming-soon.html" title="Previous Post: Rock and Roll With Ember 2 is coming soon!">&laquo; Rock and Roll With Ember 2 is coming soon!</a>
       
-      
-        <a class="basic-alignment right" href="/2015/08/07/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-7-is-out.html" title="Next Post: Rock and Roll With Ember.js v1.13.7 Is Out">Rock and Roll With Ember.js v1.13.7 Is Out &raquo;</a>
       
     </p>
   </footer>
@@ -304,8 +447,8 @@ relationship was in order.</p></li>
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://balinterdi.com/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html';
-        var disqus_url = 'http://balinterdi.com/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html';
+        var disqus_identifier = 'http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selections.html';
+        var disqus_url = 'http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selections.html';
         var disqus_script = 'embed.js';
       
     (function () {

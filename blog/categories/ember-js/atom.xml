@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-09-24T20:51:57+02:00</updated>
+  <updated>2015-09-25T15:22:32+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,213 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Select in Ember with multiple selections]]></title>
+    <link href="http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selections.html"/>
+    <updated>2015-09-25T14:24:00+02:00</updated>
+    <id>http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selections</id>
+    <content type="html"><![CDATA[<p>A few weeks ago I wrote a blog post about <a href="http://balinterdi.com/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">how to do a select in Ember 2</a>,
+that seemed to be popular. I also received good comments about advanced versions
+of the same problem, namely how the solution would have to change to deal with
+the case if the items to select from are objects and how to tackle multiple
+selections. I thus decided to do a Part 2, showing a solution for these cases.
+Comment are welcome, as always.</p>
+
+<h3>Multiple selection with simple strings as items</h3>
+
+<p>Let's tackle the easier problem first, being able to select more than one items,
+but the items are simple string values. The values will serve both as the value
+and the content of the options.</p>
+
+<p>I added some extra Bootstrap markup and a list to see which items are selected:</p>
+
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
+
+&lt;div class=&quot;container&quot;&gt;
+  &lt;div class=&quot;row&quot;&gt;
+    &lt;div class=&quot;col-sm-8&quot;&gt;
+      &lt;h2&gt;Select some bands&lt;/h2&gt;
+      &lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
+        {{#each bands as |bandChoice|}}
+        &lt;option value={{bandChoice}} selected={{include selectedBands bandChoice}}&gt;{{bandChoice}}&lt;/option&gt;
+        {{/each}}
+      &lt;/select&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;col-sm-4&quot;&gt;
+      {{#if selectedCount}}
+        &lt;h2&gt;Selected bands ({{selectedCount}})&lt;/h2&gt;
+      {{else}}
+        &lt;h2&gt;Selected bands&lt;/h2&gt;
+      {{/if}}
+      &lt;ul class=&quot;list-group&quot;&gt;
+        {{#each selectedBands as |band|}}
+          &lt;li class=&quot;list-group-item&quot;&gt;{{band}}&lt;/li&gt;
+        {{else}}
+          &lt;li class=&quot;list-group-item&quot;&gt;No band selected.&lt;/li&gt;
+        {{/each}}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;</code></pre>
+</div>
+</p>
+
+<p>I added the <code>multiple</code> attribute to the <code>select</code> tag to allow multiple
+selections. Not much has changed from the earlier example. When the user
+selects an option, whether in a way that clears the earlier selection (simple
+click) or adds to it (ctrl/cmd + click), the <code>onchange</code> event is fired, and our
+<code>selectBand</code> handler will handle it. We expect that handler to set
+<code>selectedBands</code> so that the list of selected bands gets updated correctly. So
+let's see the controller:</p>
+
+<p><div>
+  <pre><code class='html'>export default Ember.Controller.extend({
+  bands: [&#39;Pearl Jam&#39;, &#39;Tool&#39;, &#39;Long Distance Calling&#39;, &#39;Led Zeppelin&#39;],&lt;/p&gt;
+
+&lt;p&gt;  selectedBands: [],&lt;/p&gt;
+
+&lt;p&gt;  selectedCount: Ember.computed.reads(&#39;selectedBands.length&#39;),&lt;/p&gt;
+
+&lt;p&gt;  actions: {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;selectBand(event) {
+  const selectedBands = Ember.$(event.target).val();
+  this.set(&#39;selectedBands&#39;, selectedBands || []);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;  }
+});</code></pre>
+</div>
+</p>
+
+<p>For multiple selections, jQuery, aliased as <code>Ember.$</code>, returns an array of the
+selected options values as the select's value, so all we have to do is assign
+this to the <code>selectedBands</code> property. In case nothing is selected, <code>val()</code>
+returns <code>null</code>, so we guard against transferring this to <code>selectedBands</code> by
+defaulting to an empty array.</p>
+
+<p>There is one more thing you might have noticed, and that is the <code>include</code> helper
+in the template. We want to mark the option as selected if its value is included
+in the selectedBands:</p>
+
+<p><div>
+  <pre><code class='html'>&lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
+  {{#each bands as |bandChoice|}}
+  &lt;option value={{bandChoice}} selected={{include selectedBands bandChoice}}&gt;{{bandChoice}}&lt;/option&gt;
+  {{/each}}
+&lt;/select&gt;</code></pre>
+</div>
+</p>
+
+<p>The <code>include</code> helper is not provided by Ember but it is rather easy to write
+ourselves:</p>
+
+<p><div>
+  <pre><code class='html'>import Ember from &#39;ember&#39;;&lt;/p&gt;
+
+&lt;p&gt;export function include(params) {
+  const [items, value] = params;
+  return items.indexOf(value) &gt; -1;
+}&lt;/p&gt;
+
+&lt;p&gt;export default Ember.Helper.helper(include);</code></pre>
+</div>
+</p>
+
+<p>That is all there is to it:</p>
+
+<p><img src="/images/posts/select-in-ember-with-multiple-selections/multiple-select-with-ember.gif" alt="Multiple selection" /></p>
+
+<h3>Multiple selection with objects as items</h3>
+
+<p>This is just a tad more difficult, as we cannot directly have objects as options
+values. Let's assume that these objects have a property that identifies them
+unambiguously (which is a fair assumption to make), usually referred to as <code>id</code>:</p>
+
+<p><div>
+  <pre><code class='html'>import Ember from &#39;ember&#39;;&lt;/p&gt;
+
+&lt;p&gt;export default Ember.Controller.extend({
+  bands: [&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Ember.Object.create({ id: &quot;1&quot;, name: &#39;Pearl Jam&#39;, formedIn: 1990 }),
+Ember.Object.create({ id: &quot;2&quot;, name: &#39;Tool&#39;, formedIn: 1991 }),
+Ember.Object.create({ id: &quot;3&quot;, name: &#39;Long Distance Calling&#39;, formedIn: 2003 }),
+Ember.Object.create({ id: &quot;4&quot;, name: &#39;Led Zeppelin&#39;, formedIn: 1970 })
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;  ],
+  (...)
+});</code></pre>
+</div>
+</p>
+
+<p>We'll use the <code>id</code> as the option value and display the name:</p>
+
+<p><div>
+  <pre><code class='html'>(...)
+&lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
+  {{#each bands as |bandChoice|}}&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;option value={{bandChoice.id}} selected={{include selectedBandIds bandChoice.id}}&amp;gt;{{bandChoice.name}}&amp;lt;/option&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;  {{/each}}
+&lt;/select&gt;
+(...)</code></pre>
+</div>
+</p>
+
+<p>On the controller, we collect the id of each selected band, and if we need to
+display their names, we simply make the mapping between these two:</p>
+
+<p><div>
+  <pre><code class='html'>export default Ember.Controller.extend({
+  (...)
+  selectedBandIds: [],&lt;/p&gt;
+
+&lt;p&gt;  selectedBands: Ember.computed(&#39;selectedBandIds.[]&#39;, function() {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;return this.get(&#39;selectedBandIds&#39;).map((bandId) =&amp;gt; {
+  return this.get(&#39;bands&#39;).findBy(&#39;id&#39;, bandId);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;  }),
+  (...)
+});</code></pre>
+</div>
+</p>
+
+<p><code>bands.findBy</code> is our makeshift store service, which allows us to find an object
+in a collection by its id. If we used Ember Data, it would become
+<code>store.findRecord('band', bandId)</code> or <code>store.findRecord('band', bandId)</code>. The
+only other difference from before is that we set <code>selectedBandIds</code> instead of
+<code>selectedBands</code> in the action handler:</p>
+
+<p><div>
+  <pre><code class='html'>export default Ember.Controller.extend({
+  (...)
+  actions: {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;selectBand(event) {
+  const selectedBandIds = Ember.$(event.target).val();
+  this.set(&#39;selectedBandIds&#39;, selectedBandIds || []);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;  }
+});</code></pre>
+</div>
+</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll With Ember 2 is coming soon!]]></title>
@@ -333,49 +540,6 @@ becoming best practice.</p>
 
 <p>(By the way, my PR to add a section about <a href="https://github.com/emberjs/guides/pull/670">the actions helper's <code>value</code> option</a> to
 the guides was merged yesterday, so hopefully more people will know about it.)</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rock and Roll With Ember.js v1.13.7 Is Out]]></title>
-    <link href="http://balinterdi.com/2015/08/07/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-7-is-out.html"/>
-    <updated>2015-08-07T11:38:00+02:00</updated>
-    <id>http://balinterdi.com/2015/08/07/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-7-is-out</id>
-    <content type="html"><![CDATA[<p>I am happy to announce another update to the Rock and Roll with Ember.js book,
-in line with the latest Ember CLI, 1.13.7. Book customers have already received
-the updated version, here is how it got better:</p>
-
-<ul>
-<li><strong>Update to Ember CLI 1.13.7</strong></li>
-<li><strong>Upgrade to Ember version 1.13.6</strong></li>
-<li>Explain better the difference between sync and async test helpers and how
-these latter work in Ember</li>
-<li>Make the stubs for creating bands and songs not take an id, to be similar to
-how the actual API works</li>
-<li>Update section about Ember Data being in beta</li>
-<li>Show what the custom <code>submit</code> async helper does when it first appears</li>
-<li>Remove unit tests for components as <code>ember generate component-test</code> now
-generates integration-style tests</li>
-<li>Extract the <code>wait</code> helper used across two examples (for showing loading
-routes/templates)</li>
-<li>Update jsbin in the Templates chapter to use the latest Ember version</li>
-<li>Fix importing the capitalizeHelper in the code snippet in the book</li>
-<li><p>Last but not least, the pdf version of the book now has page numbers and a
-nice, expandable table of contents so you can jump to any chapter or section
-from anywhere:</p>
-
-<p><img src="/images/posts/rarwe-1-13-7/preview-toc.png" alt="Collapsable TOC and page numbers" /></p>
-
-<p>I know, it seems extremely simple to have them from the start but the way the
-pdf was generated did not allow for this so we had to find another way. I
-again worked with <a href="http://murtra.net/">Almudena Garcia</a> on these design
-changes and I whole-heartedly recommend her if you have some front-end (HTML &amp;
-CSS) tasks to get done.</p></li>
-</ul>
-
-
-<p>There are a couple of other, smaller changes and you can see the whole list in
-<a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A1.13.7+is%3Aclosed">the issues repo</a>. Or you can buy the book <a href="http://rockandrollwithemberjs.com">here</a>.</p>
 ]]></content>
   </entry>
   
