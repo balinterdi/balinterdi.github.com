@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Select in Ember with multiple selections"
+title: "Select in Ember with multiple selection"
 date: 2015-09-25 14:24
 comments: true
 categories: ember.js
