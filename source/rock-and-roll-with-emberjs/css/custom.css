@@ -385,7 +385,7 @@ section.comment {
     text-align: center;
   }
 
-  #stability-without-stagnation:before, #about-the-author:before, #concerns:before {
+  #free-updates:before, #about-the-author:before, #concerns:before {
     left: 43%;
   }
 }
