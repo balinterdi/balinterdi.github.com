@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-09-28T10:47:14+02:00</updated>
+  <updated>2015-09-28T21:55:43+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -204,7 +204,7 @@ display their names, we simply make the mapping between these two:</p>
 
 <p><code>bands.findBy</code> is our makeshift store service, which allows us to find an object
 in a collection by its id. If we used Ember Data, it would become
-<code>store.findRecord('band', bandId)</code> or <code>store.findRecord('band', bandId)</code>. The
+<code>store.findRecord('band', bandId)</code> or <code>store.peekRecord('band', bandId)</code>. The
 only other difference from before is that we set <code>selectedBandIds</code> instead of
 <code>selectedBands</code> in the action handler:</p>
 
