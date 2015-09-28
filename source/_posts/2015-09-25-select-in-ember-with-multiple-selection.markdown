@@ -183,7 +183,7 @@ export default Ember.Controller.extend({
 
 `bands.findBy` is our makeshift store service, which allows us to find an object
 in a collection by its id. If we used Ember Data, it would become
-`store.findRecord('band', bandId)` or `store.findRecord('band', bandId)`. The
+`store.findRecord('band', bandId)` or `store.peekRecord('band', bandId)`. The
 only other difference from before is that we set `selectedBandIds` instead of
 `selectedBands` in the action handler:
 
