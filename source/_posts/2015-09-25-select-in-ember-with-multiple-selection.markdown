@@ -6,6 +6,10 @@ comments: true
 categories: ember.js
 perk: general-signup
 ---
+<iframe
+  width="178" height="24" style="border:0px"
+  src="https://mixonic.github.io/ember-community-versions/2015/09/25/select-in-ember-with-multiple-selection.html">
+</iframe>
 
 A few weeks ago I wrote a blog post about [how to do a select in Ember 2][1],
 that seemed to be popular. I also received good comments about advanced versions
