@@ -101,7 +101,7 @@ google_analytics_tracking_id: UA-12299794-2
 facebook_like: false
 
 # Hellobar
-enable_hellobar: true
+enable_hellobar: false
 
 # Home-made post-footer email optin
 newsletter_optin: true
