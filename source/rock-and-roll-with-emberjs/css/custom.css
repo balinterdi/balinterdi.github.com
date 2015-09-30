@@ -57,7 +57,20 @@ section.comment {
 
 /*********************** picks ***********************/
 
-#bonus:before, #about-the-author:before, #concerns:before {
+body:before {
+  content: '';
+  background: url('../images/pick-cover.png') no-repeat;
+  display: block;
+  height: 118px;
+  width: 101px;
+  background-size: 100%;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 200;
+}
+
+#bonus:before, #about-the-author:before, #new-beginning-tour:before {
   content: '';
   display: inline;
   position: absolute;
@@ -78,7 +91,7 @@ section.comment {
   background-size: 80%;
 }
 
-#concerns:before {
+#new-beginning-tour:before {
   background: url("../images/pick-only.png") no-repeat;
   background-size: 80%;
 }
@@ -308,6 +321,108 @@ section.comment {
   width: 725px;
 }
 
+/*********************** detailed-toc ***********************/
+
+.detailed-toc {
+  margin-top: 1em;
+}
+
+.fadeout {
+    position: relative;
+    bottom: 4em;
+    height: 4em;
+    background: -webkit-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: -moz-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: -o-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: -ms-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+}
+
+
+a {
+    color:#0087f1;
+}
+
+.wrap-container {
+    width:600px;
+    margin:0 auto;
+}
+
+.wrap {
+    position:relative;
+    overflow:hidden;
+    padding:10px;
+}
+
+.gradient {
+    width:100%;
+    height:55px;
+    background: -webkit-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: -moz-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: -o-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: -ms-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    position:absolute;
+    bottom:0;
+    left:0;
+}
+
+.read-more {
+    background:#fff;
+    color:#333;
+    padding:1em 5em;
+}
+
+.read-more a {
+    font-weight:700;
+    text-decoration:none;
+    position:relative;
+    display: inline-block;
+    padding-left: 1em;
+}
+
+.read-more a:before {
+        position:absolute;
+        font-family: FontAwesome;
+        top:0;
+        left:5px;
+        content: "\f0da";
+    }
+
+.read-more a:hover {
+    color:#000;
+}
+
 /*********************** Announcements ***********************/
 
 .wings-badge-absolute {
@@ -324,6 +439,24 @@ section.comment {
 
 .wings-badge img {
   width: 235px;
+}
+
+.wings-badge-offer {
+  width: 235px;
+  height: 154px;
+  background: url("../images/beggining-tour-offer-2.gif") top center no-repeat;
+  background-size: 100%;
+}
+
+.wings-badge-offer div {
+  color: white;
+  font-weight: bold;
+  padding-right: 5px;
+  font-size: 24px;
+  line-height: 100px;
+  -ms-transform: rotate(-20deg);
+  -webkit-transform: rotate(-20deg);
+  transform: rotate(-20deg);
 }
 
 .announcement {
@@ -385,7 +518,7 @@ section.comment {
     text-align: center;
   }
 
-  #free-updates:before, #about-the-author:before, #concerns:before {
+  #stability-without-stagnation:before, #about-the-author:before, #concerns:before {
     left: 43%;
   }
 }
