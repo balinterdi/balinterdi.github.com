@@ -91,6 +91,347 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2014/03/26/property-path-patterns-in-ember-dot-js.html">Observable Path Patterns in Ember</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-26T00:00:00+01:00" pubdate data-updated="true">Mar 26<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Property paths are the heart and soul of Ember.js apps. You use them in
+templates and you define dependencies for computed properties and observers
+through property paths.</p>
+
+<p>In this post, I concentrate on this latter and show you various ways of
+setting up these dependencies through a practical example. There is a <a href="http://emberjs.com/guides/object-model/computed-properties-and-aggregate-data/">pretty good section in the guides</a>
+about one path pattern. Here, I intend to cover more (all?) of them.</p>
+
+<h2>Badges are back</h2>
+
+<p>I am going to build on the badges &#8220;micro-app&#8221; that I had started to develop in
+<a href="http://balinterdi.com/2014/03/19/ember-dot-js-getters-and-setters.html">my previous post about getters in setters</a>.</p>
+
+<p>There are two minimal model classes, User and Badge:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">User</span>  <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">unlocked</span><span class="o">:</span> <span class="kc">false</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We also create a couple of instances to have some data to show and work with:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">cory</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Cory Filibuster&quot;</span> <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">rook</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;R00k&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">unlocked</span><span class="o">:</span> <span class="kc">true</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">taciturn</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Taciturn&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">10</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">talkative</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Talkative&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">100</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">hemingway</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Hemingway&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">1000</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Our application looks like this initally:</p>
+
+<p><img src="/images/posts/ember-property-paths/screenshot-2.png" alt="Initital state" /></p>
+
+<h2>Simple property chain</h2>
+
+<p>The simplest, non-aggregate property path is just a series of names,
+connected by dots. This designates a property that you can arrive at by
+walking the path, segment by segment, where each of them gets you to another
+object until you finally reach the property.</p>
+
+<p>(If a path is very long, you should probably think about the dependencies
+between your objects and the structure of your code.)</p>
+
+<p>You see that the profile panel has the user&#8217;s first name as its header. The
+property that gets displayed there can be defined by such a path:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">firstName</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;user.name&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\s+/</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;user.name&#39;</span><span class="p">),</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This sets up a computed property (CP) that will be recomputed whenever
+<code>user.name</code> changes. The arguments to the <code>property</code> call are called the dependent
+keys of the CP and you can pass as many as you would like (although, thanks to
+the various property path patterns, you will rarely need a lot).</p>
+
+<p>Now, whenever the name property of the <code>user</code> property on the controller
+changes, <code>firstName</code> is recomputed and this change gets propagated to all the
+instances where <code>firstName</code> is used (e.g in the header of the panel).</p>
+
+<p>Above that, the <code>user.name</code> key also triggers a change if the <code>user</code> object
+itself changes. To see that, we turn to the thing you should only ever use for
+demo purposes, the <code>__container__</code> object:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">maggie</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Maggie Raindance&quot;</span> <span class="p">});</span>
+</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">__container__</span><span class="p">.</span><span class="nx">lookup</span><span class="p">(</span><span class="s1">&#39;controller:index&#39;</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="nx">maggie</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can see the name change in the header right away:</p>
+
+<p><img src="/images/posts/ember-property-paths/screenshot-1.png" alt="User name changes" /></p>
+
+<h2>Aggregate property paths</h2>
+
+<p>On other occasions, a CP should depend on an array of items. Whenever something
+gets added to or removed from the array, the property needs to be updated.</p>
+
+<p>One example of that is the number of badges in the profile panel:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">badgeCount</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">).</span><span class="nx">length</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;model.[]&#39;</span><span class="p">),</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The model here is the array of badges so when we add another one through the New
+badge panel, <code>badgeCount</code> gets its new value:</p>
+
+<p><img src="/images/posts/ember-property-paths/screenshot-3.png" alt="Badge count gets updated" /></p>
+
+<p>What I said about the <code>user.name</code> path triggering an update when the user
+changes also holds true here. If the array of badges was swapped out for another
+array, it would trigger the recalculation of <code>badgeCount</code>.</p>
+
+<h2>Aggregate property path with a specified property</h2>
+
+<p>There are cases where the value of the CP becomes stale also when the items in
+the dependent array stay the same, but a certain property of one of them
+changes. Ember has a way to express this very succintly.</p>
+
+<p>The example is the &#8220;Total score&#8221; in the profile panel:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">totalScore</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">sum</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">s1</span> <span class="o">+</span> <span class="nx">s2</span><span class="p">;</span> <span class="p">};</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">).</span><span class="nx">getEach</span><span class="p">(</span><span class="s1">&#39;score&#39;</span><span class="p">).</span><span class="nx">reduce</span><span class="p">(</span><span class="nx">sum</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;model.@each.score&#39;</span><span class="p">),</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is the most inclusive of the patterns we have seen so far. It prompts an
+update if the model changes, if any item is added or removed and also if the score of
+any item changes. If we type this at the console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">__container__</span><span class="p">.</span><span class="nx">lookup</span><span class="p">(</span><span class="s1">&#39;controller:index&#39;</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;model.lastObject.score&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>, then the total score changes accordingly, even though no item was inserted or
+deleted:</p>
+
+<p><img src="/images/posts/ember-property-paths/screenshot-4.png" alt="Total score" /></p>
+
+<h2>Brace yourself</h2>
+
+<p>To present the next pattern, let&#8217;s assume that not all badge scores need to be
+tallied to get the total but only the unlocked ones (which makes total sense).
+So the dependent keys for <code>totalScore</code> needs to account for that. That&#8217;s pretty
+easy:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">totalScore</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">sum</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">s1</span> <span class="o">+</span> <span class="nx">s2</span><span class="p">;</span> <span class="p">};</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">).</span><span class="nx">filterBy</span><span class="p">(</span><span class="s1">&#39;unlocked&#39;</span><span class="p">).</span><span class="nx">getEach</span><span class="p">(</span><span class="s1">&#39;score&#39;</span><span class="p">).</span><span class="nx">reduce</span><span class="p">(</span><span class="nx">sum</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;model.@each.score&#39;</span><span class="p">,</span> <span class="s1">&#39;model.@each.unlocked&#39;</span><span class="p">),</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When the second badge is unlocked, the score jumps from 1 to 11 (and the number
+of badges from 1 to 2), so the dependent keys work fine:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">__container__</span><span class="p">.</span><span class="nx">lookup</span><span class="p">(</span><span class="s1">&#39;controller:index&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">).</span><span class="nx">objectAt</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;unlocked&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="/images/posts/ember-property-paths/screenshot-3.png" alt="Unlocked property change triggers update" /></p>
+
+<p>Starting with Ember 1.4.0, though, there is a more concise way to define the
+same, called &#8220;property brace expansion&#8221;. It works very similar to argument
+expansion in the shell:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">totalScore</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">sum</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">s1</span> <span class="o">+</span> <span class="nx">s2</span><span class="p">;</span> <span class="p">};</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">).</span><span class="nx">filterBy</span><span class="p">(</span><span class="s1">&#39;unlocked&#39;</span><span class="p">).</span><span class="nx">getEach</span><span class="p">(</span><span class="s1">&#39;score&#39;</span><span class="p">).</span><span class="nx">reduce</span><span class="p">(</span><span class="nx">sum</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;model.@each.{score,unlocked}&#39;</span><span class="p">),</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This establishes that totalScore should be recomputed if <em>either</em> the <code>score</code>
+<em>or</em> <code>unlocked</code> properties of any item in the model array changes.</p>
+
+<p>An important restriction of property brace expansion is that the expansion part
+can only be placed at the end of the path, so e.g <code>property('{foo,bar}.baz')</code>
+will not have the desired effect.</p>
+
+<h2>Computed property macros are the bee&#8217;s knees</h2>
+
+<p>Computed property macros have several advantages. They are very expressive, very
+performant and perhaps most importantly more robust than typing out the property
+path patterns by hand where a typo can cause a considerable amount of
+head-scratching.</p>
+
+<p>They are also a joy to work with and compose. In fact, all the CP definitions
+above can be re-defined by using only macros:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">badgeCount</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;unlockedBadges.length&#39;</span><span class="p">),</span>
+</span><span class='line'>  <span class="nx">unlockedBadges</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">filterBy</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="s1">&#39;unlocked&#39;</span><span class="p">),</span>
+</span><span class='line'>  <span class="nx">unlockedScores</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">mapBy</span><span class="p">(</span><span class="s1">&#39;unlockedBadges&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">),</span>
+</span><span class='line'>  <span class="nx">totalScore</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">sum</span><span class="p">(</span><span class="s1">&#39;unlockedScores&#39;</span><span class="p">),</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>They have one big disadvantage, though. It is very hard to use them in a blog
+post to explain property path patterns.</p>
+
+<p>(The code presented here can be found as <a href="https://gist.github.com/balinterdi/9772966">a gist on Github</a>)</p>
+
+<p>ps. Yes, <a href="https://www.youtube.com/watch?v=RtBbinpK5XI">that Maggie Raindance.</a>)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2014/03/19/ember-dot-js-getters-and-setters.html">Ember.js Getters and Setters</a></h1>
     
     
@@ -2404,116 +2745,6 @@ mailing list</a> and have each episode auto-delivered to your inbox.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2013/12/17/change-the-url-type-of-your-ember-app.html">Changing the URL Type of Your Ember.js App</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-12-17T09:32:00+01:00" pubdate data-updated="true">Dec 17<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>By default, Ember.js uses the hashchange event in the browser to change URLs.
-This is the most widely supported way but it feels like a hack and there is a
-better way, introduced in HTML5: <a href="http://diveintohtml5.info/history.html">the History API</a>.</p>
-
-<p>Bear in mind that the <a href="http://caniuse.com/history">History API has a lower browser support
-rate</a> than <a href="http://caniuse.com/hashchange">the hashchange
-event</a> does (~70% vs.  89%), so there is a tradeoff
-involved that you should decide to make or not to make.</p>
-
-<p>Ember.js makes it really easy to change the URL type. All you have to do is
-add the following lines to your client app:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">reopen</span><span class="p">({</span>
-</span><span class='line'> <span class="nx">location</span><span class="o">:</span> <span class="s1">&#39;history&#39;</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Seems too good to be true (that is just the way Ember is), but provided you did
-not assemble any routes manually and only used Ember&#8217;s tools to transition
-between routes (e.g link-to, transitionTo, etc.), that is all the client-side
-code changes you had to make.</p>
-
-<p>The server side needs to be adjusted, too, though, since the server now gets
-sent the client-side routes, too. How to do this can vary depending on the
-application server you use.</p>
-
-<p>In the case of the Rock &amp; Roll app, here is what <code>config.ru</code> looks like:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">run</span> <span class="no">Proc</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
-</span><span class='line'>  <span class="c1"># Extract the requested path from the request</span>
-</span><span class='line'>  <span class="n">path</span> <span class="o">=</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Utils</span><span class="o">.</span><span class="n">unescape</span><span class="p">(</span><span class="n">env</span><span class="o">[</span><span class="s1">&#39;PATH_INFO&#39;</span><span class="o">]</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">start_with?</span><span class="p">(</span><span class="s2">&quot;/artists&quot;</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>  <span class="n">index_file</span> <span class="o">=</span> <span class="vi">@root</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">/index.html&quot;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span> <span class="no">File</span><span class="o">.</span><span class="n">exists?</span><span class="p">(</span><span class="n">index_file</span><span class="p">)</span>
-</span><span class='line'>    <span class="c1"># Return the index</span>
-</span><span class='line'>    <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/html&#39;</span><span class="p">},</span> <span class="o">[</span><span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">index_file</span><span class="p">)</span><span class="o">]]</span>
-</span><span class='line'>  <span class="k">else</span>
-</span><span class='line'>    <span class="c1"># Pass the request to the directory app</span>
-</span><span class='line'>    <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Directory</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="vi">@root</span><span class="p">)</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>I only had to add the <code>path.start_with?</code> condition to make sure the server
-serves the Ember application on that route. It is not an ideal solution because
-anytime you add a top-level route to the Ember app, you would also have to
-modify the server config but this is the bare minimum that got the job done.</p>
-
-<p>Hooray for clean URLs:
-<img src="/images/posts/change-the-url-type/rock-and-roll-history-api-urls.png" alt="History API
-URLs" /></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -2553,6 +2784,10 @@ URLs" /></p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/10/01/rock-and-roll-with-ember-2-just-went-live.html">Rock and Roll with Ember 2 just went live</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/09/25/select-in-ember-with-multiple-selection.html">Select in Ember with multiple selection</a>
       </li>
     
@@ -2566,10 +2801,6 @@ URLs" /></p>
     
       <li class="post">
         <a href="/2015/09/10/complex-component-design-in-ember-intro.html">Complex Component Design in Ember.js - Intro</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">How to do a select (dropdown) in Ember 2.0?</a>
       </li>
     
   </ul>
