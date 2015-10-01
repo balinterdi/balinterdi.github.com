@@ -569,26 +569,3 @@ a {
 
 }
 
-@media screen and (min-width: 1600px) {
-
-  .wings-badge-absolute {
-    visibility: visible;
-  }
-
-  .wings-badge-fixed {
-    visibility: hidden;
-  }
-
-}
-
-@media screen and (max-width: 1600px) {
-
-  .wings-badge-absolute {
-    visibility: visible;
-  }
-
-  .wings-badge-fixed {
-    visibility: hidden;
-  }
-
-}
