@@ -572,11 +572,11 @@ a {
 @media screen and (min-width: 1600px) {
 
   .wings-badge-absolute {
-    visibility: hidden;
+    visibility: visible;
   }
 
   .wings-badge-fixed {
-    visibility: normal;
+    visibility: hidden;
   }
 
 }
@@ -584,7 +584,7 @@ a {
 @media screen and (max-width: 1600px) {
 
   .wings-badge-absolute {
-    visibility: normal;
+    visibility: visible;
   }
 
   .wings-badge-fixed {
