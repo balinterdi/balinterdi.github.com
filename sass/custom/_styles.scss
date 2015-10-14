@@ -10,3 +10,30 @@
 .codementor a {
   text-decoration: none;
 }
+
+a.training {
+  display: block;
+  width: 265px;
+  height: 105px;
+  background-color:#000;
+  background:url('/images/rarwe-training.jpg') no-repeat;
+  color: #fff;
+  text-decoration: none;
+}
+
+.training p {
+  color: #fff;
+  font-weight: normal;
+  font-size: 14px;
+  text-align: center;
+  padding-left: 45px;
+  padding-top: 10px;
+}
+
+.training p strong {
+  font-size: 26px;
+  line-height: 20px;
+  padding-left: 45px;
+  padding-right: 10px;
+}
+
