@@ -28,12 +28,17 @@ a.training {
   text-align: center;
   padding-left: 45px;
   padding-top: 10px;
+  strong {
+    text-transform: uppercase;
+    font-size: 26px;
+    line-height: 20px;
+    padding-left: 45px;
+    padding-right: 10px;
+  }
 }
 
-.training p strong {
-  font-size: 26px;
-  line-height: 20px;
-  padding-left: 45px;
-  padding-right: 10px;
+.training-byline {
+  margin-top: 10px;
 }
+
 
