@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-10-23T11:14:24+02:00</updated>
+  <updated>2015-10-23T11:22:29+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -18,7 +18,13 @@
     <link href="http://balinterdi.com/2015/10/22/the-tale-of-two-bindings.html"/>
     <updated>2015-10-22T16:41:00+02:00</updated>
     <id>http://balinterdi.com/2015/10/22/the-tale-of-two-bindings</id>
-    <content type="html"><![CDATA[<p>Two weeks ago I had a presentation called "Complex component design" at the
+    <content type="html"><![CDATA[<iframe
+  width="178" height="24" style="border:0px"
+  src="https://mixonic.github.io/ember-community-versions/2015/10/22/the-tale-of-two-bindings.html">
+</iframe>
+
+
+<p>Two weeks ago I had a presentation called "Complex component design" at the
 Global Ember Meetup.</p>
 
 <p>When I had given the title and abstract of this presentation, I had wanted to
