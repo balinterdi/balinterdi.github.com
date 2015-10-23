@@ -4,7 +4,13 @@ title: "The tale of two bindings"
 date: 2015-10-22 16:41
 comments: true
 categories: ember.js
+perk: general-signup
 ---
+
+<iframe
+  width="178" height="24" style="border:0px"
+  src="https://mixonic.github.io/ember-community-versions/2015/10/22/the-tale-of-two-bindings.html">
+</iframe>
 
 Two weeks ago I had a presentation called "Complex component design" at the
 Global Ember Meetup.
