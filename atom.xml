@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-10-23T11:22:29+02:00</updated>
+  <updated>2015-10-23T16:57:16+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -444,6 +444,8 @@ component if the save operation fails on the controller:</p>
 said in my presentation, we&#8217;re (but surely: I am) only figuring out both the
 possibilities &#8220;managed&#8221; one-way bindings open up and the best way to work with
 them. So if you have thoughts or insights, please do share them in the comments.</p>
+
+<p>NOTE: I published <a href="https://github.com/balinterdi/tale-of-two-bindings">the demo app of this post on Github.</a></p>
 ]]></content>
   </entry>
   
