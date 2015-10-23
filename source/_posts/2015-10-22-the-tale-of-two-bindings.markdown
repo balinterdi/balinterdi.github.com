@@ -445,6 +445,8 @@ said in my presentation, we're (but surely: I am) only figuring out both the
 possibilities "managed" one-way bindings open up and the best way to work with
 them. So if you have thoughts or insights, please do share them in the comments.
 
+NOTE: I published [the demo app of this post on Github.](https://github.com/balinterdi/tale-of-two-bindings)
+
 [1]: http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html
 [2]: https://github.com/emberjs/rfcs/pull/38
 [3]: http://rockandrollwithemberjs.com
