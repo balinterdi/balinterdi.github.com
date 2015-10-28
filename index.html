@@ -534,6 +534,55 @@ component if the save operation fails on the controller:</p>
 </div>
 
 
+<p><strong>UPDATE</strong></p>
+
+<h3>Take 4: 1WAY Deluxe&#8482; without input cursor wackiness</h3>
+
+<p>The above 1WAY Deluxe&#8482; has a bug that <a href="https://twitter.com/rwjblue">Robert Jackson</a> pointed out and that
+I did not realize while building the demo app. The cursor in the text field
+always jumps back at the end of the text after each change:</p>
+
+<p><img src="/images/posts/tale-of-two-bindings/1way-deluxe-input-wackiness.gif" alt="1WAY Deluxe input wackiness" /></p>
+
+<p>During the Glimmer rewrite he spend a lot of time tracking down that bug, the
+result of which is the <a href="https://github.com/dockyard/ember-one-way-input"><code>ember-one-way-input</code> Ember addon</a>.</p>
+
+<p>So that&#8217;s what we should use instead of regular input tags. We first install the
+addon with <code>ember install ember-one-way-input</code>. That gives us a <code>one-way-input</code>
+component that takes an <code>update</code> action which will be triggered at each change
+of the input&#8217;s value (more precisely, on both <code>change</code> and <code>input</code> events).</p>
+
+<p>Let&#8217;s replace the input tags in the component&#8217;s template:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class={{if errors.name &quot;form-group has-error&quot; &quot;form-group&quot;}}&gt;
+  &lt;label for=&quot;band-name&quot;&gt;Name&lt;/label&gt;
+  {{one-way-input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-name&quot; value=name
+    update=(action &quot;nameDidChange&quot;)}}
+&lt;/div&gt;
+&lt;div class=&quot;form-group&quot;&gt;
+  &lt;label for=&quot;band-year&quot;&gt;Formed in&lt;/label&gt;
+  {{one-way-input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-year&quot; value=year
+    update=(action &quot;yearDidChange&quot;)}}
+&lt;/div&gt;
+&lt;div class=&quot;form-group&quot;&gt;
+  &lt;label for=&quot;band-rating&quot;&gt;Rating&lt;/label&gt;
+  {{star-rating id=&quot;band-rating&quot; item=band rating=rating on-click=(action &quot;ratingDidChange&quot;)}}
+&lt;/div&gt;
+&lt;div class=&quot;form-group button-panel&quot;&gt;
+  &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary pull-right&quot; {{action &quot;saveBand&quot;}}&gt;Submit&lt;/button&gt;
+  &lt;button type=&quot;button&quot; class=&quot;btn btn-danger pull-right&quot; {{action &quot;reset&quot;}}&gt;Reset&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>Nothing else needs to change for the cursor position weirdness to go away:</p>
+
+<p><img src="/images/posts/tale-of-two-bindings/1way-deluxe-with-one-way-input.gif" alt="1WAY Deluxe input without cursor wackiness" /></p>
+
+<p>Thank you to <a href="https://twitter.com/rwjblue">Robert Jackson</a> and <a href="https://twitter.com/toranb">Toran Billups</a> for spotting this and pointing me
+to the solution.</p>
+
 <h3>Conclusion</h3>
 
 <p>I&#8217;m really excited and curious about how many things this makes possible. As I
