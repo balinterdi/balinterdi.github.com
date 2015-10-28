@@ -438,6 +438,56 @@ export default Ember.Component.extend({
 {% endraw %}
 {% endhighlight %}
 
+**UPDATE**
+
+### Take 4: 1WAY Deluxe&#8482; without input cursor wackiness
+
+The above 1WAY Deluxe&#8482; has a bug that [Robert Jackson][7] pointed out and that
+I did not realize while building the demo app. The cursor in the text field
+always jumps back at the end of the text after each change:
+
+![1WAY Deluxe input wackiness](/images/posts/tale-of-two-bindings/1way-deluxe-input-wackiness.gif)
+
+During the Glimmer rewrite he spend a lot of time tracking down that bug, the
+result of which is the [`ember-one-way-input` Ember addon][6].
+
+So that's what we should use instead of regular input tags. We first install the
+addon with `ember install ember-one-way-input`. That gives us a `one-way-input`
+component that takes an `update` action which will be triggered at each change
+of the input's value (more precisely, on both `change` and `input` events).
+
+Let's replace the input tags in the component's template:
+
+{% highlight html %}
+{% raw %}
+<div class={{if errors.name "form-group has-error" "form-group"}}>
+  <label for="band-name">Name</label>
+  {{one-way-input type="text" class="form-control" id="band-name" value=name
+    update=(action "nameDidChange")}}
+</div>
+<div class="form-group">
+  <label for="band-year">Formed in</label>
+  {{one-way-input type="text" class="form-control" id="band-year" value=year
+    update=(action "yearDidChange")}}
+</div>
+<div class="form-group">
+  <label for="band-rating">Rating</label>
+  {{star-rating id="band-rating" item=band rating=rating on-click=(action "ratingDidChange")}}
+</div>
+<div class="form-group button-panel">
+  <button type="submit" class="btn btn-primary pull-right" {{action "saveBand"}}>Submit</button>
+  <button type="button" class="btn btn-danger pull-right" {{action "reset"}}>Reset</button>
+</div>
+{% endraw %}
+{% endhighlight %}
+
+Nothing else needs to change for the cursor position weirdness to go away:
+
+![1WAY Deluxe input without cursor wackiness](/images/posts/tale-of-two-bindings/1way-deluxe-with-one-way-input.gif)
+
+Thank you to [Robert Jackson][7] and [Toran Billups][8] for spotting this and pointing me
+to the solution.
+
 ### Conclusion
 
 I'm really excited and curious about how many things this makes possible. As I
@@ -452,3 +502,6 @@ NOTE: I published [the demo app of this post on Github.](https://github.com/bali
 [3]: http://rockandrollwithemberjs.com
 [4]: https://github.com/yapplabs/ember-buffered-proxy
 [5]: http://balinterdi.com/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html
+[6]: https://github.com/dockyard/ember-one-way-input
+[7]: https://twitter.com/rwjblue
+[8]: https://twitter.com/toranb
