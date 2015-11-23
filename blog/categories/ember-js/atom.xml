@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-11-15T12:34:06+01:00</updated>
+  <updated>2015-11-23T21:09:06+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,23 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rock and Roll with Ember.js updated to Ember 2.2.0]]></title>
+    <link href="http://balinterdi.com/2015/11/23/rock-and-roll-with-ember-dot-js-updated-to-ember-2-dot-2-0.html"/>
+    <updated>2015-11-23T20:59:00+01:00</updated>
+    <id>http://balinterdi.com/2015/11/23/rock-and-roll-with-ember-dot-js-updated-to-ember-2-dot-2-0</id>
+    <content type="html"><![CDATA[<p>I have updated the app developed in the <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js book</a> to
+Ember 2.2 and Ember CLI 1.13.12. I also replaced the now defunct Divshot
+deployment section with another great &amp; simple deployment option,
+<a href="https://www.pagefronthq.com/">PageFront</a>.</p>
+
+<p>Above that, there is a great deal of "bug fixes and stability improvements" in
+this release, the list of which can be viewed on <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A2.2.0">Github</a>.</p>
+
+<p>Thank you to everybody who reported issues and helped to improve the book.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[The tale of two bindings]]></title>
@@ -918,45 +935,6 @@ September 30, 2015.</p>
 
 <p>Stand ready, Rock and Roll with Ember 2 is coming to a virtual bookstore near
 you!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rock and Roll With Ember.js v1.13.9 Is Out]]></title>
-    <link href="http://balinterdi.com/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out.html"/>
-    <updated>2015-09-11T11:42:00+02:00</updated>
-    <id>http://balinterdi.com/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out</id>
-    <content type="html"><![CDATA[<p>I have just released another update to the Rock and Roll with Ember.js book,
-keeping it in sync with Ember 1.13.9. On top of that (mostly on top of that,
-since there weren't as many things to do for the Ember upgrade), I added some
-content, removed some other ones, fixed a few wrong paths in code comments,
-clarified a few code lines to help people build the app along, and the like. The
-usual stuff, quoi.</p>
-
-<p>Here are the bigger chunks:</p>
-
-<ul>
-<li>Extended the Testing chapter with a (controller) unit test. I removed the
-component's unit test in an earlier update (integration tests are vastly
-superior for components) but now realized unit testing was missing.</li>
-<li>Switched to a dashless helper, <code>capitalize</code> instead of <code>capitalize-words</code>.
-Ember 1.13.0 and up auto-register helpers with and without dashes, so there is
-no need for the more verbose form.</li>
-<li>Fixed a few places where the <code>updateRating</code> action was still in the route.
-When I switched to a closure action, I had to move the action handler to the
-controller but missed a couple of places in the subsequent chapters.</li>
-<li>The epub version had two missing code snippets due to bad formatting (thanks
-to <a href="https://github.com/morganick">@morganick</a>)</li>
-</ul>
-
-
-<p>There are a few other minor fixes, the whole list can be found in the <a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A1.13.9+is%3Aclosed">Github issues repo</a></p>
-
-<p>I want to thank <a href="http://andrew.davison-family.com">Andrew Davison</a> who did most
-of the error reporting for this update. Thank you, Andrew!</p>
-
-<p>Stay tuned for more goodies early next week, or sign up below so that you don't
-miss any in the future.</p>
 ]]></content>
   </entry>
   

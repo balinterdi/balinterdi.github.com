@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-11-15T12:34:06+01:00</updated>
+  <updated>2015-11-23T21:09:06+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,23 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rock and Roll with Ember.js updated to Ember 2.2.0]]></title>
+    <link href="http://balinterdi.com/2015/11/23/rock-and-roll-with-ember-dot-js-updated-to-ember-2-dot-2-0.html"/>
+    <updated>2015-11-23T20:59:00+01:00</updated>
+    <id>http://balinterdi.com/2015/11/23/rock-and-roll-with-ember-dot-js-updated-to-ember-2-dot-2-0</id>
+    <content type="html"><![CDATA[<p>I have updated the app developed in the <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js book</a> to
+Ember 2.2 and Ember CLI 1.13.12. I also replaced the now defunct Divshot
+deployment section with another great &amp; simple deployment option,
+<a href="https://www.pagefronthq.com/">PageFront</a>.</p>
+
+<p>Above that, there is a great deal of &#8220;bug fixes and stability improvements&#8221; in
+this release, the list of which can be viewed on <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A2.2.0">Github</a>.</p>
+
+<p>Thank you to everybody who reported issues and helped to improve the book.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[The tale of two bindings]]></title>
@@ -2494,63 +2511,6 @@ has the right syntax, that is it has a type and a name part joined together by
 a <code>:</code>.</p>
 
 <p>And that&#8217;s where everything comes together.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Ember.run.bind]]></title>
-    <link href="http://balinterdi.com/2014/05/09/ember-dot-run-dot-bind.html"/>
-    <updated>2014-05-09T23:25:00+02:00</updated>
-    <id>http://balinterdi.com/2014/05/09/ember-dot-run-dot-bind</id>
-    <content type="html"><![CDATA[<p>Ember has several great features that are not widely known, like <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html">its Dependency Injection system</a> I wrote about last week.</p>
-
-<p>It has also really handy API methods in hiding. One usually stumbles on them
-while looking for something in the superbly commented source code.</p>
-
-<p>I hereby introduce such a handy method and hope to make that into a recurring
-thing. Who knows? Eventually this might also grow into a series.</p>
-
-<p>If it does, I would have to find a catchy name for it. &#8220;Ember Chispas&#8221; came to
-mind and rings nice but unfortunately <a href="https://www.youtube.com/user/edisonstew">Jeffrey Biles</a> already has a monopoly on it via his
-&#8220;Ember Sparks&#8221; series. (<em>Chispa</em> is Spanish for spark.) We&#8217;ll have to talk, Jeffrey :)</p>
-
-<p>Anyway, let&#8217;s see the first thingie.</p>
-
-<h2>&#8230; and in the runloop bind them</h2>
-
-<p>The run loop in Ember deserves its own blog post series, and I am probably not
-the one who will write it. (<a href="http://emberjs.com/guides/understanding-ember/run-loop/">The official guide on the subject</a> is a good place
-to start, <a href="http://alexmatchneer.com/blog/2013/01/12/everything-you-never-wanted-to-know-about-the-ember-run-loop/">Alex Matchneer&#8217;s &#8220;Everything You Never Wanted to Know About the Ember Run Loop&#8221;</a> is more elaborate).</p>
-
-<p>For the sake of this chispa, it suffices to state that any async callback from a 3rd
-party javascript library needs to be wrapped into an Ember.run.</p>
-
-<p>Blatantly stealing <a href="https://github.com/emberjs/ember.js/blob/24dcb0c566284a7aa926e701d33f40717264b9b1/packages_es6/ember-metal/lib/run_loop.js#L153">the example from the source code</a>, here is how this is done:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-</span><span class='line'><span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;resize&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-</span><span class='line'>  <span class="nx">Ember</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-</span><span class='line'>    <span class="nx">that</span><span class="p">.</span><span class="nx">handleResize</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">});</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>See that beautiful <code>var that=this;</code>? It can be got ridden of via <code>Ember.run.bind</code>:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;resize&#39;</span><span class="p">,</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">run</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleResize</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Less code to write and all the mustaches are gone (not that there is anything
-wrong with &#123;&#123;mustaches&#125;&#125;, of course).</p>
 ]]></content>
   </entry>
   
