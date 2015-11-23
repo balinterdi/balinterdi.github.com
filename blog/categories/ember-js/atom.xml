@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-11-23T21:09:06+01:00</updated>
+  <updated>2015-11-23T21:27:00+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -26,7 +26,7 @@ deployment section with another great &amp; simple deployment option,
 <p>Above that, there is a great deal of "bug fixes and stability improvements" in
 this release, the list of which can be viewed on <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A2.2.0">Github</a>.</p>
 
-<p>Thank you to everybody who reported issues and helped to improve the book.</p>
+<p>Thank you to everybody who reported issues and helped to improve <a href="http://rockandrollwithemberjs.com">the book</a>.</p>
 ]]></content>
   </entry>
   
