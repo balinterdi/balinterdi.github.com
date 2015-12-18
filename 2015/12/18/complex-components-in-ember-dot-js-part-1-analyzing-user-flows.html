@@ -1,0 +1,789 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Complex Components in Ember.js - Part 1 - Analyzing user flows - Balint Erdi's blog about Ember.js</title>
+  <meta name="author" content="Balint Erdi">
+
+  
+  <meta name="description" content="Ember.js screencasts, articles, best practice tips and more. Check out my blog and stay up-to-date on Ember.js">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html">
+  <link href="/favicon.ico" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/balinterdi" rel="alternate" title="Balint Erdi's blog about Ember.js" type="application/atom+xml">
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<script src="//load.sumome.com/" data-sumo-site-id="2f7f42a353353cbb47533e4a22a64e9c3ec9211f92d2320ff1130ad6c622ee03" async></script>
+<!-- exit intent for convertkit -->
+<script src="https://app.convertkit.com/landing_pages/3388.js"></script>
+
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-12299794-2', 'balinterdi.com');
+    ga('send', 'pageview');
+  </script>
+
+
+</head>
+
+<body   >
+  <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NNRW2Q"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NNRW2Q');</script>
+<!-- End Google Tag Manager -->
+
+  <header role="banner"><hgroup>
+  <h1><a href="/">I'm all about Ember.js recently</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/balinterdi" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:balinterdi.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul role=main-navigation>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Complex Components in Ember.js - Part 1 - Analyzing User Flows</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-12-18T10:25:00+01:00" pubdate data-updated="true">Dec 18<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>In this post I continue the <a href="./2015/09/10/complex-component-design-in-ember-intro.html">Complex Component Design series</a> I started back in
+September. I slightly renamed the series title as the original idea was to
+design and develop the component in the parts of the series but since the
+component is mostly &#8220;done&#8221;, I prefer to show how it works and how the different
+pieces fit together. I think this way of presenting things is still (perhaps
+equally) valuable and we&#8217;ll have a few open issues to work on &#8220;together&#8221; to
+further improve the component.</p>
+
+<p>The component I described in <a href="./2015/09/10/complex-component-design-in-ember-intro.html">the intro post</a> serves to select an item from a
+list of items, either via a dropdown or by starting to type its name and then
+selecting it. Here is a very short demo about how that looks in practice:</p>
+
+<p><img src="/images/posts/complex-component-design-ember/ember-autocomplete-demo.gif" alt="Selecting an artist" /></p>
+
+<p>We&#8217;ll go through the main UI flows and see how they are implemented via
+communication of the different layers of the component.</p>
+
+<h2>Getting familiar with the component</h2>
+
+<p>The template we&#8217;ll use (and which the above demo uses) to understand the
+functioning of the component looks like this:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  &lt;label&gt;Choose an artist&lt;/label&gt;
+  {{#auto-complete
+        on-select=(action &quot;selectArtist&quot;)
+        on-input=(action &quot;filterArtists&quot;)
+        class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
+                                           toggleDropdown onSelect onInput|}}
+    &lt;div class=&quot;input-group&quot;&gt;
+      {{auto-complete-input
+          autocomplete=autocomplete
+          value=inputValue
+          on-change=onInput
+          type=&quot;text&quot;
+          class=&quot;combobox input-large form-control&quot;
+          placeholder=&quot;Select an artist&quot;}}
+      {{#auto-complete-list autocomplete=autocomplete isVisible=isDropdownOpen
+              class=&quot;typeahead typeahead-long dropdown-menu&quot; as |list|}}
+        {{#each matchingArtists as |artist|}}
+          {{#auto-complete-option
+              id=artist.id
+              label=artist.name
+              item=artist
+              list=list
+              on-click=onSelect
+              activeId=selectedArtist.id}}
+            &lt;a href=&quot;#&quot;&gt;{{artist.name}}&lt;/a&gt;
+          {{/auto-complete-option}}
+        {{else}}
+          &lt;li&gt;&lt;a href=&quot;#&quot;&gt;No results.&lt;/a&gt;&lt;/li&gt;
+        {{/each}}
+      {{/auto-complete-list}}
+      {{#auto-complete-dropdown-toggle on-click=toggleDropdown
+              class=&quot;input-group-addon dropdown-toggle&quot;}}
+        &lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;
+      {{/auto-complete-dropdown-toggle}}
+    &lt;/div&gt;
+  {{/auto-complete}}
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>This might seem somewhat daunting at first but as we grow acquainted with its
+details, our intimidation will subside.</p>
+
+<p>The top-level component is <code>auto-complete</code>. This is the &#8220;command center&#8221;, the
+piece that manages the &#8220;global&#8221; state of the whole widget, like whether the
+dropdown is visible and what the current value of the input field is.</p>
+
+<p>You might, with good reason, wonder why these are not handled by the
+sub-component where it&#8217;d feel more appropriate: the current value of the input
+field by <code>auto-complete-input</code> and the opened/closed state of the dropdown by
+<code>auto-complete-dropdown-toggle</code>.</p>
+
+<p>The answer is that a change in these states can be triggered from multiple
+places and that several child components might need to know about them. The
+dropdown can be closed by the user clicking on one of the items in the dropdown
+(not on the little arrow of the toggle), while the current text in the input can
+be modified by inferring the item when the user starts to type (not just by
+actually typing out the whole text).</p>
+
+<h3>Data down, actions up - all the way down (and up)</h3>
+
+<p>That slight violation of separation of concerns (or is it at all?) fits
+perfectly with the most important component communication paradigm: Data down,
+actions up.</p>
+
+<p>The input, when its value changes, sends an action up to its parent, notifying
+it of the change. The parent can then react to this, and communicate any data
+(state) changes via the attribute bindings it has to the input. This is why
+<code>auto-complete</code> needs to handle, or at least access, state that is used
+downstream by its sub-components.</p>
+
+<p>The classical way of passing down data (and establishing a binding) from the
+parent to the child is through block parameters of the parent component. The
+<code>auto-complete</code> component has quite some:</p>
+
+<div>
+  <pre><code class='html'>{{#auto-complete
+        on-select=(action &quot;selectArtist&quot;)
+        on-input=(action &quot;filterArtists&quot;)
+        class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
+                                           toggleDropdown onSelect onInput|}}
+    (...)
+  {{/auto-complete}}</code></pre>
+</div>
+
+
+<p>The block parameters are those found between the pipes, after the <code>as</code> keyword.
+You have to look into the component&#8217;s own template to see where they come from:</p>
+
+<div>
+  <pre><code class='html'>&lt;!-- addon/templates/components/auto-complete --&gt;
+{{yield this isDropdownOpen inputValue
+        (action &quot;toggleDropdown&quot;) (action &quot;selectItem&quot;) (action &quot;inputDidChange&quot;)}}</code></pre>
+</div>
+
+
+<p>Parameters are matched by position, so what is yielded in the first position
+becomes the first block parameter. In this case, we yield the component itself
+as the first parameter, the aforementioned component states as the 2nd and 3rd
+and then (closure) actions that will trigger functions in the <code>auto-complete</code>
+component when called in one of the child components. These serve as &#8220;remote
+controls&#8221; (a term used by <a href="https://twitter.com/miguelcamba">Miguel Camba</a> in his <a href="https://www.youtube.com/watch?v=6N4qsO22fmw">awesome presentation at
+EmberCamp</a>) for child components to control their parent.</p>
+
+<p>The way of upward communication from child components is calling these actions
+when appropriate.</p>
+
+<p>We now have sufficient knowledge to follow the implemention of basic user flows,
+so let&#8217;s get into it.</p>
+
+<h2>Understanding UX flows</h2>
+
+<h3>Manual selection from the dropdown</h3>
+
+<p>The most basic thing one can do with the widget is to pop open the list of
+options.</p>
+
+<p>I discarded the parts that are not relevant to understand this, so we&#8217;re left
+with the following:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  &lt;label&gt;Choose an artist&lt;/label&gt;
+  {{#auto-complete
+        on-select=(action &quot;selectArtist&quot;)
+        on-input=(action &quot;filterArtists&quot;)
+        class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
+                                           toggleDropdown onSelect onInput|}}
+    &lt;div class=&quot;input-group&quot;&gt;
+      {{#auto-complete-list autocomplete=autocomplete isVisible=isDropdownOpen
+              class=&quot;typeahead typeahead-long dropdown-menu&quot; as |list|}}
+        (...)
+      {{/auto-complete-list}}
+      {{#auto-complete-dropdown-toggle on-click=toggleDropdown
+              class=&quot;input-group-addon dropdown-toggle&quot;}}
+        &lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;
+      {{/auto-complete-dropdown-toggle}}
+    &lt;/div&gt;
+  {{/auto-complete}}
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>The <code>auto-complete-dropdown-toggle</code> is the component that can be clicked to open
+or close the list of items. At a glance it seems like its <code>on-click</code> attribute
+is the action that will be triggered when the user clicks it but let&#8217;s see for
+sure:</p>
+
+<div>
+  <pre><code class='javascript'>// addon/components/auto-complete-dropdown-toggle.js
+import Ember from &#39;ember&#39;;
+
+export default Ember.Component.extend({
+  tagName: &#39;span&#39;,
+  classNames: &#39;ember-autocomplete-toggle&#39;,
+  &#39;data-dropdown&#39;: &#39;dropdown&#39;,
+  &#39;on-click&#39;: null,
+
+  toggleDropdown: Ember.on(&#39;click&#39;, function() {
+    this.get(&#39;on-click&#39;)();
+  })
+});</code></pre>
+</div>
+
+
+<p>Indeed, it just calls the action that was passed into it, which is
+the <code>toggleDropdown</code> action of the topmost <code>auto-complete</code> component:</p>
+
+<div>
+  <pre><code class='javascript'>// addon/components/auto-complete-dropdown-toggle.js
+import Ember from &#39;ember&#39;;
+
+export default Ember.Component.extend({
+  (...)
+  actions: {
+    toggleDropdown() {
+      this.toggleProperty(&#39;isDropdownOpen&#39;);
+    },
+  }
+});</code></pre>
+</div>
+
+
+<p>The <code>toggleProperty</code> method flips the value of its parameter, so if it was false
+it now becomes true. <code>isDropdownOpen</code> is yielded as a block parameter so when it
+becomes true, <code>auto-complete-list</code> will rerender as one of its attributes,
+<code>isVisible</code> has changed. That will then open the dropdown:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  &lt;label&gt;Choose an artist&lt;/label&gt;
+  {{#auto-complete
+      (...)
+      class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
+                                           toggleDropdown onSelect onInput|}}
+    &lt;div class=&quot;input-group&quot;&gt;
+      {{#auto-complete-list autocomplete=autocomplete isVisible=isDropdownOpen
+              class=&quot;typeahead typeahead-long dropdown-menu&quot; as |list|}}
+        (...)
+      {{/auto-complete-list}}
+    &lt;/div&gt;
+  {{/auto-complete}}
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>The same process is triggered when the toggle is clicked again, only this time
+<code>isDropdownOpen</code> goes back to false and thus the dropdown is closed.</p>
+
+<h3>Picking an item</h3>
+
+<p>The second feature we&#8217;ll look at is more like the second half of the first one:
+selecting an item by clicking (tapping) on it.</p>
+
+<p>I have again restrained the template to the relevant bits, throwing away the
+input and the toggle:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  &lt;label&gt;Choose an artist&lt;/label&gt;
+  {{#auto-complete
+        on-select=(action &quot;selectArtist&quot;)
+        on-input=(action &quot;filterArtists&quot;)
+        class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
+                                           toggleDropdown onSelect onInput|}}
+    &lt;div class=&quot;input-group&quot;&gt;
+      (...)
+      {{#auto-complete-list autocomplete=autocomplete isVisible=isDropdownOpen
+              class=&quot;typeahead typeahead-long dropdown-menu&quot; as |list|}}
+        {{#each matchingArtists as |artist|}}
+          {{#auto-complete-option
+              id=artist.id
+              label=artist.name
+              item=artist
+              list=list
+              on-click=onSelect
+              activeId=selectedArtist.id}}
+            &lt;a href=&quot;#&quot;&gt;{{artist.name}}&lt;/a&gt;
+          {{/auto-complete-option}}
+        {{else}}
+          &lt;li&gt;&lt;a href=&quot;#&quot;&gt;No results.&lt;/a&gt;&lt;/li&gt;
+        {{/each}}
+      {{/auto-complete-list}}
+      (...)
+    &lt;/div&gt;
+  {{/auto-complete}}
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>When one of the items is clicked, the <code>on-click</code> attribute (which is the
+<code>onSelect</code> closure action provided by <code>auto-complete</code>) is called in the
+<code>auto-complete-option</code> component:</p>
+
+<div>
+  <pre><code class='javascript'>// addon/components/auto-complete-option.js
+import Ember from &#39;ember&#39;;
+
+export default Ember.Component.extend({
+  (...)
+  selectOption: Ember.on(&#39;click&#39;, function() {
+    this.get(&#39;on-click&#39;)(this.get(&#39;item&#39;), this.get(&#39;label&#39;));
+  }),
+});</code></pre>
+</div>
+
+
+<p>So where is <code>onSelect</code> defined? It is one of the block parameters yielded by
+<code>auto-complete</code>, more precisely the <code>(action "selectItem")</code> action:</p>
+
+<div>
+  <pre><code class='html'>&lt;!-- addon/templates/components/auto-complete.hbs --&gt;
+{{yield this isDropdownOpen inputValue
+        (action &quot;toggleDropdown&quot;) (action &quot;selectItem&quot;) (action &quot;inputDidChange&quot;)}}</code></pre>
+</div>
+
+
+<p><code>selectItem</code> is quite straightforward:</p>
+
+<div>
+  <pre><code class='javascript'>// addon/components/auto-complete-option.js
+import Ember from &#39;ember&#39;;
+
+export default Ember.Component.extend({
+  (...)
+  actions: {
+    selectItem(item, value) {
+      this.get(&#39;on-select&#39;)(item);
+      this.set(&#39;isDropdownOpen&#39;, false);
+      this.set(&#39;inputValue&#39;, value);
+    },
+    (...)
+  }
+});</code></pre>
+</div>
+
+
+<p>It first calls the <code>on-select</code> action that was passed into it from the &#8220;outside&#8221;
+(the controller), which just sets <code>selectedArtist</code> to the artist object
+encapsulated in the list item. It then sets the <code>isDropdownOpen</code> flag to false
+(which, by the mechanism seen in the previous point, closes the list) and sets
+the text in the input to the item&#8217;s label (the artist&#8217;s name).</p>
+
+<h3>Auto-completing an item</h3>
+
+<p>As the final example, let&#8217;s see a more complicated use case. When the user
+starts to type, the items that do not match the typed string will not be shown
+as options. Also, the first matching item will be auto-completed and selected,
+and the dropdown will be closed.</p>
+
+<p>No surprises here, the same design principle will be applied as before. Pass
+down an action that should be called from a child, then change some property
+in the parent component that trickles down to the child which then rerenders
+itself because of the changed attribute.</p>
+
+<p>Let&#8217;s see the relevants parts of the template:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  &lt;label&gt;Choose an artist&lt;/label&gt;
+  {{#auto-complete
+        on-select=(action &quot;selectArtist&quot;)
+        on-input=(action &quot;filterArtists&quot;)
+        class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
+                                           toggleDropdown onSelect onInput|}}
+    &lt;div class=&quot;input-group&quot;&gt;
+      {{auto-complete-input
+          autocomplete=autocomplete
+          value=inputValue
+          on-change=onInput
+          type=&quot;text&quot;
+          class=&quot;combobox input-large form-control&quot;
+          placeholder=&quot;Select an artist&quot;}}
+      {{#auto-complete-list autocomplete=autocomplete isVisible=isDropdownOpen
+              class=&quot;typeahead typeahead-long dropdown-menu&quot; as |list|}}
+        {{#each matchingArtists as |artist|}}
+          {{#auto-complete-option
+              (...)
+          {{/auto-complete-option}}
+        {{else}}
+          &lt;li&gt;&lt;a href=&quot;#&quot;&gt;No results.&lt;/a&gt;&lt;/li&gt;
+        {{/each}}
+      {{/auto-complete-list}}
+      (...)
+    &lt;/div&gt;
+  {{/auto-complete}}
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>We&#8217;ll start by the <code>auto-complete-input</code> this time where the <code>input</code> event,
+triggered by the user&#8217;s typing, is handled:</p>
+
+<div>
+  <pre><code class='html'>// addon/components/auto-complete-input.js
+import Ember from &#39;ember&#39;;
+
+export default Ember.TextField.extend({
+  (...)
+  valueDidChange: Ember.on(&#39;input&#39;, function() {
+    const value = this.$().val();
+    this.get(&#39;on-change&#39;)(value);
+  })
+});</code></pre>
+</div>
+
+
+<p>This is almost the exact copy of calling the <code>on-select</code> action we saw before
+from <code>auto-complete-option</code>. Here, the <code>on-change</code> function is called that was
+passed down from the block param of <code>auto-complete</code>.</p>
+
+<p>If we take a look in the template of <code>auto-complete</code> we see it creates a
+<code>(action 'inputDidChange')</code> closure action and yield that, so that should be the
+next thing to look at. Here is where most of the stuff happens:</p>
+
+<div>
+  <pre><code class='html'>// addon/components/auto-complete.js
+import Ember from &#39;ember&#39;;
+
+export default Ember.Component.extend({
+  (...)
+  actions: {
+    inputDidChange(value) {
+      this.get(&#39;on-input&#39;)(value);
+      this.set(&#39;isDropdownOpen&#39;, true);
+      const firstOption = this.get(&#39;list.firstOption&#39;);
+      if (firstOption) {
+        const autocompletedLabel = firstOption.get(&#39;label&#39;);
+        this.get(&#39;on-select&#39;)(firstOption.get(&#39;item&#39;));
+        this.set(&#39;inputValue&#39;, autocompletedLabel);
+        this.get(&#39;input.element&#39;).setSelectionRange(value.length, autocompletedLabel.length);
+      }
+    }
+  }
+});</code></pre>
+</div>
+
+
+<p>We first call the <code>on-input</code> action which filters out the artists that do not
+match the typed prefix. The result of that is that <code>matchingArtists</code> will only
+contain the artists that do match. The dropdown is then opened to display these
+items (or an explanatory blurb if none matches). If there is at least one
+matching item, the first one is selected (and becomes <code>selectedArtist</code>).</p>
+
+<p>As an UX improvement, the &#8220;inferred&#8221; range from the label in the input is
+selected, so that the user can continue typing and thus select another artist if
+the first one was not what they meant. (See when I type &#8220;J&#8221; in the demo).</p>
+
+<h3>Design concepts</h3>
+
+<p>I&#8217;m not totally happy with the current state of the component because of the
+following:</p>
+
+<p>1) The <code>auto-complete</code> component reaches inside the <code>auto-complete-input</code> one
+(set in its <code>input</code> property) to call <code>setSelectionRange</code> on it (see the last
+code snippet).</p>
+
+<p>2) The same component retrieves the options from the list and gets its <code>item</code>
+to select it. Again, this is quite intrusive and will break if the internals of
+<code>auto-complete-option</code> change.</p>
+
+<p>3) Still the <code>auto-complete</code> component yields an instance of itself as a block
+parameter. This enables &#8220;downstream consumers&#8221; to access any of its properties
+and methods, breaking its encapsulation.</p>
+
+<p>In presenting about these concepts at the <a href="https://www.bigmarker.com/global-ember-meetup/Inside-Ember-Mirage-and-Complex-Component-Design">Global Ember Meetup</a> and at
+<a href="http://www.meetup.com/Ember-js-Belgium/events/226904768/">Ember.js Belgium</a>, I said that I like to think about components as the
+objects of the UI.  Thinking about them as objects helps to deliver the point
+that some (most?) object oriented practices should be applied to components,
+too. If this assumption is correct, we can leverage OOP design concepts and
+guidelines that we&#8217;ve been developing for decades, giving us a headstart on how
+to design (and what to watch out for) complex component hierarchies.</p>
+
+<p>For example, I consider the set of block parameters yielded by a component as
+its public API. This means that yielding <code>this</code> from a component&#8217;s template is
+considered bad practice as it breaks encapsulation. In some cases, it&#8217;s
+relatively easy to find a way around it, in others it&#8217;s much more difficult.
+We&#8217;ll see if I can pull it off in the above case.</p>
+
+<p>As a closing thought, notice how 95% of the feature&#8217;s implementation relied on
+block parameters and closure actions. They are fantastic tools to work with and
+I don&#8217;t know how anything could be achieved without them before they existed.</p>
+
+<h2>Pointers</h2>
+
+<p>Incidentally, <a href="https://twitter.com/miguelcamba">Miguel Camba</a> seems to think about components lately, too. I
+already mentioned his fantastic talk at EmberCamp this year called <a href="https://www.youtube.com/watch?v=6N4qsO22fmw">&#8220;Composable
+components&#8221;</a>, but above that he has released <a href="http://www.ember-power-select.com">ember-power-select</a>, which
+serves the same purpose as the <code>auto-complete</code> component in my blog post series.</p>
+
+<p>However, it&#8217;s much more mature and flexible so if you need a select dropdown in
+your app, use <code>ember-power-select</code>, as my component is for learning and
+demonstration purposes only. That said, I published it on Github under
+<a href="https://github.com/balinterdi/ember-cli-autocomplete">balinterdi/ember-cli-autocomplete</a> if you want to take a look or follow
+along the blog posts while looking at its source code. I put a tag called
+<code>ccd-part-one</code> on the repo for this blog post.</p>
+
+<h2>In the next episode&#8230;</h2>
+
+<p>&#8230; of the series, I&#8217;d like to address (some of) my concerns I mentioned above
+and see how to fix them. Stay tuned!</p>
+</div>
+
+
+  <footer>
+    <!--
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">I'm all about Ember.js recently</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-12-18T10:25:00+01:00" pubdate data-updated="true">Dec 18<span>th</span>, 2015</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ember-js/'>ember.js</a>
+  
+</span>
+
+
+    </p>
+    -->
+    
+      <!--
+<p class="email-optin-box">
+  Liked this post? <a id="post-email-optin" href="https://my.leadpages.net/leadbox/147fb3573f72a2%3A12ccd2806b46dc/5733935958982656/" target="_blank">Sign up here</a>
+  <script type="text/javascript" src="//my.leadpages.net/leadbox-699.js"></script>
+  to receive articles, screencasts and other Ember goodies regularly to your inbox.
+</p>
+-->
+
+
+
+
+
+    
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2015/11/23/rock-and-roll-with-ember-dot-js-updated-to-ember-2-dot-2-0.html" title="Previous Post: Rock and Roll with Ember.js updated to Ember 2.2.0">&laquo; Rock and Roll with Ember.js updated to Ember 2.2.0</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Read my book to vanquish the dreaded learning curve (runs Ember 2)</h1>
+  <div>
+    <a href="http://rockandrollwithemberjs.com/?utm_source=my-blog&utm_medium=sidebar&utm_campaign=rarwe-book" style="text-decoration:none">
+      <img src="/images/rarwe-book.jpg" alt="Rock and Roll with Ember.js" title="Rock and Roll with Ember.js" />
+    </a>
+  </div>
+</section>
+<section>
+  <h1>Contact</h1>
+  <div style="margin-top:10px">
+    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let's start talking.
+  </div>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html">Complex Components in Ember.js - Part 1 - Analyzing user flows</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2015/11/23/rock-and-roll-with-ember-dot-js-updated-to-ember-2-dot-2-0.html">Rock and Roll with Ember.js updated to Ember 2.2.0</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2015/10/22/the-tale-of-two-bindings.html">The tale of two bindings</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2015/10/01/rock-and-roll-with-ember-2-just-went-live.html">Rock and Roll with Ember 2 just went live</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2015/09/25/select-in-ember-with-multiple-selection.html">Select in Ember with multiple selection</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="codementor">
+  <script data-codementor="balint" data-style="button" data-theme="dark" src="https://cdn.codementor.io/d/badge.js"></script>
+</section>
+
+
+<section>
+  
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-show-count="false">Follow @baaz</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Balint Erdi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'codigoergosum';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html';
+        var disqus_url = 'http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+<script src="/javascripts/app.js"></script>
+
+
+
+
+</body>
+</html>

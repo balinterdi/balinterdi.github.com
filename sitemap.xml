@@ -420,7 +420,7 @@
     </url>
     <url>
         <loc>http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html</loc>
-        <lastmod>2015-11-26T18:31:13+01:00</lastmod>
+        <lastmod>2015-12-18T10:15:15+01:00</lastmod>
     </url>
     <url>
         <loc>
@@ -451,12 +451,18 @@
         <lastmod>2015-11-26T18:31:13+01:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html
+        </loc>
+        <lastmod>2015-12-18T15:01:52+01:00</lastmod>
+    </url>
+    <url>
         <loc>http://balinterdi.com/blog/archives/</loc>
-        <lastmod>2015-11-26T18:31:13+01:00</lastmod>
+        <lastmod>2015-12-18T15:01:52+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/</loc>
-        <lastmod>2015-11-26T18:31:14+01:00</lastmod>
+        <lastmod>2015-12-18T15:01:52+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/privacy-policy/</loc>

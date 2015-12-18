@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-12-01T09:25:58+01:00</updated>
+  <updated>2015-12-18T15:02:39+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,499 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Complex Components in Ember.js - Part 1 - Analyzing user flows]]></title>
+    <link href="http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html"/>
+    <updated>2015-12-18T10:25:00+01:00</updated>
+    <id>http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows</id>
+    <content type="html"><![CDATA[<p>In this post I continue the <a href="./2015/09/10/complex-component-design-in-ember-intro.html">Complex Component Design series</a> I started back in
+September. I slightly renamed the series title as the original idea was to
+design and develop the component in the parts of the series but since the
+component is mostly &#8220;done&#8221;, I prefer to show how it works and how the different
+pieces fit together. I think this way of presenting things is still (perhaps
+equally) valuable and we&#8217;ll have a few open issues to work on &#8220;together&#8221; to
+further improve the component.</p>
+
+<p>The component I described in <a href="./2015/09/10/complex-component-design-in-ember-intro.html">the intro post</a> serves to select an item from a
+list of items, either via a dropdown or by starting to type its name and then
+selecting it. Here is a very short demo about how that looks in practice:</p>
+
+<p><img src="http://balinterdi.com/images/posts/complex-component-design-ember/ember-autocomplete-demo.gif" alt="Selecting an artist" /></p>
+
+<p>We&#8217;ll go through the main UI flows and see how they are implemented via
+communication of the different layers of the component.</p>
+
+<h2>Getting familiar with the component</h2>
+
+<p>The template we&#8217;ll use (and which the above demo uses) to understand the
+functioning of the component looks like this:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  &lt;label&gt;Choose an artist&lt;/label&gt;
+  {{#auto-complete
+        on-select=(action &quot;selectArtist&quot;)
+        on-input=(action &quot;filterArtists&quot;)
+        class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
+                                           toggleDropdown onSelect onInput|}}
+    &lt;div class=&quot;input-group&quot;&gt;
+      {{auto-complete-input
+          autocomplete=autocomplete
+          value=inputValue
+          on-change=onInput
+          type=&quot;text&quot;
+          class=&quot;combobox input-large form-control&quot;
+          placeholder=&quot;Select an artist&quot;}}
+      {{#auto-complete-list autocomplete=autocomplete isVisible=isDropdownOpen
+              class=&quot;typeahead typeahead-long dropdown-menu&quot; as |list|}}
+        {{#each matchingArtists as |artist|}}
+          {{#auto-complete-option
+              id=artist.id
+              label=artist.name
+              item=artist
+              list=list
+              on-click=onSelect
+              activeId=selectedArtist.id}}
+            &lt;a href=&quot;#&quot;&gt;{{artist.name}}&lt;/a&gt;
+          {{/auto-complete-option}}
+        {{else}}
+          &lt;li&gt;&lt;a href=&quot;#&quot;&gt;No results.&lt;/a&gt;&lt;/li&gt;
+        {{/each}}
+      {{/auto-complete-list}}
+      {{#auto-complete-dropdown-toggle on-click=toggleDropdown
+              class=&quot;input-group-addon dropdown-toggle&quot;}}
+        &lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;
+      {{/auto-complete-dropdown-toggle}}
+    &lt;/div&gt;
+  {{/auto-complete}}
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>This might seem somewhat daunting at first but as we grow acquainted with its
+details, our intimidation will subside.</p>
+
+<p>The top-level component is <code>auto-complete</code>. This is the &#8220;command center&#8221;, the
+piece that manages the &#8220;global&#8221; state of the whole widget, like whether the
+dropdown is visible and what the current value of the input field is.</p>
+
+<p>You might, with good reason, wonder why these are not handled by the
+sub-component where it&#8217;d feel more appropriate: the current value of the input
+field by <code>auto-complete-input</code> and the opened/closed state of the dropdown by
+<code>auto-complete-dropdown-toggle</code>.</p>
+
+<p>The answer is that a change in these states can be triggered from multiple
+places and that several child components might need to know about them. The
+dropdown can be closed by the user clicking on one of the items in the dropdown
+(not on the little arrow of the toggle), while the current text in the input can
+be modified by inferring the item when the user starts to type (not just by
+actually typing out the whole text).</p>
+
+<h3>Data down, actions up - all the way down (and up)</h3>
+
+<p>That slight violation of separation of concerns (or is it at all?) fits
+perfectly with the most important component communication paradigm: Data down,
+actions up.</p>
+
+<p>The input, when its value changes, sends an action up to its parent, notifying
+it of the change. The parent can then react to this, and communicate any data
+(state) changes via the attribute bindings it has to the input. This is why
+<code>auto-complete</code> needs to handle, or at least access, state that is used
+downstream by its sub-components.</p>
+
+<p>The classical way of passing down data (and establishing a binding) from the
+parent to the child is through block parameters of the parent component. The
+<code>auto-complete</code> component has quite some:</p>
+
+<div>
+  <pre><code class='html'>{{#auto-complete
+        on-select=(action &quot;selectArtist&quot;)
+        on-input=(action &quot;filterArtists&quot;)
+        class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
+                                           toggleDropdown onSelect onInput|}}
+    (...)
+  {{/auto-complete}}</code></pre>
+</div>
+
+
+<p>The block parameters are those found between the pipes, after the <code>as</code> keyword.
+You have to look into the component&#8217;s own template to see where they come from:</p>
+
+<div>
+  <pre><code class='html'>&lt;!-- addon/templates/components/auto-complete --&gt;
+{{yield this isDropdownOpen inputValue
+        (action &quot;toggleDropdown&quot;) (action &quot;selectItem&quot;) (action &quot;inputDidChange&quot;)}}</code></pre>
+</div>
+
+
+<p>Parameters are matched by position, so what is yielded in the first position
+becomes the first block parameter. In this case, we yield the component itself
+as the first parameter, the aforementioned component states as the 2nd and 3rd
+and then (closure) actions that will trigger functions in the <code>auto-complete</code>
+component when called in one of the child components. These serve as &#8220;remote
+controls&#8221; (a term used by <a href="https://twitter.com/miguelcamba">Miguel Camba</a> in his <a href="https://www.youtube.com/watch?v=6N4qsO22fmw">awesome presentation at
+EmberCamp</a>) for child components to control their parent.</p>
+
+<p>The way of upward communication from child components is calling these actions
+when appropriate.</p>
+
+<p>We now have sufficient knowledge to follow the implemention of basic user flows,
+so let&#8217;s get into it.</p>
+
+<h2>Understanding UX flows</h2>
+
+<h3>Manual selection from the dropdown</h3>
+
+<p>The most basic thing one can do with the widget is to pop open the list of
+options.</p>
+
+<p>I discarded the parts that are not relevant to understand this, so we&#8217;re left
+with the following:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  &lt;label&gt;Choose an artist&lt;/label&gt;
+  {{#auto-complete
+        on-select=(action &quot;selectArtist&quot;)
+        on-input=(action &quot;filterArtists&quot;)
+        class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
+                                           toggleDropdown onSelect onInput|}}
+    &lt;div class=&quot;input-group&quot;&gt;
+      {{#auto-complete-list autocomplete=autocomplete isVisible=isDropdownOpen
+              class=&quot;typeahead typeahead-long dropdown-menu&quot; as |list|}}
+        (...)
+      {{/auto-complete-list}}
+      {{#auto-complete-dropdown-toggle on-click=toggleDropdown
+              class=&quot;input-group-addon dropdown-toggle&quot;}}
+        &lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;
+      {{/auto-complete-dropdown-toggle}}
+    &lt;/div&gt;
+  {{/auto-complete}}
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>The <code>auto-complete-dropdown-toggle</code> is the component that can be clicked to open
+or close the list of items. At a glance it seems like its <code>on-click</code> attribute
+is the action that will be triggered when the user clicks it but let&#8217;s see for
+sure:</p>
+
+<div>
+  <pre><code class='javascript'>// addon/components/auto-complete-dropdown-toggle.js
+import Ember from &#39;ember&#39;;
+
+export default Ember.Component.extend({
+  tagName: &#39;span&#39;,
+  classNames: &#39;ember-autocomplete-toggle&#39;,
+  &#39;data-dropdown&#39;: &#39;dropdown&#39;,
+  &#39;on-click&#39;: null,
+
+  toggleDropdown: Ember.on(&#39;click&#39;, function() {
+    this.get(&#39;on-click&#39;)();
+  })
+});</code></pre>
+</div>
+
+
+<p>Indeed, it just calls the action that was passed into it, which is
+the <code>toggleDropdown</code> action of the topmost <code>auto-complete</code> component:</p>
+
+<div>
+  <pre><code class='javascript'>// addon/components/auto-complete-dropdown-toggle.js
+import Ember from &#39;ember&#39;;
+
+export default Ember.Component.extend({
+  (...)
+  actions: {
+    toggleDropdown() {
+      this.toggleProperty(&#39;isDropdownOpen&#39;);
+    },
+  }
+});</code></pre>
+</div>
+
+
+<p>The <code>toggleProperty</code> method flips the value of its parameter, so if it was false
+it now becomes true. <code>isDropdownOpen</code> is yielded as a block parameter so when it
+becomes true, <code>auto-complete-list</code> will rerender as one of its attributes,
+<code>isVisible</code> has changed. That will then open the dropdown:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  &lt;label&gt;Choose an artist&lt;/label&gt;
+  {{#auto-complete
+      (...)
+      class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
+                                           toggleDropdown onSelect onInput|}}
+    &lt;div class=&quot;input-group&quot;&gt;
+      {{#auto-complete-list autocomplete=autocomplete isVisible=isDropdownOpen
+              class=&quot;typeahead typeahead-long dropdown-menu&quot; as |list|}}
+        (...)
+      {{/auto-complete-list}}
+    &lt;/div&gt;
+  {{/auto-complete}}
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>The same process is triggered when the toggle is clicked again, only this time
+<code>isDropdownOpen</code> goes back to false and thus the dropdown is closed.</p>
+
+<h3>Picking an item</h3>
+
+<p>The second feature we&#8217;ll look at is more like the second half of the first one:
+selecting an item by clicking (tapping) on it.</p>
+
+<p>I have again restrained the template to the relevant bits, throwing away the
+input and the toggle:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  &lt;label&gt;Choose an artist&lt;/label&gt;
+  {{#auto-complete
+        on-select=(action &quot;selectArtist&quot;)
+        on-input=(action &quot;filterArtists&quot;)
+        class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
+                                           toggleDropdown onSelect onInput|}}
+    &lt;div class=&quot;input-group&quot;&gt;
+      (...)
+      {{#auto-complete-list autocomplete=autocomplete isVisible=isDropdownOpen
+              class=&quot;typeahead typeahead-long dropdown-menu&quot; as |list|}}
+        {{#each matchingArtists as |artist|}}
+          {{#auto-complete-option
+              id=artist.id
+              label=artist.name
+              item=artist
+              list=list
+              on-click=onSelect
+              activeId=selectedArtist.id}}
+            &lt;a href=&quot;#&quot;&gt;{{artist.name}}&lt;/a&gt;
+          {{/auto-complete-option}}
+        {{else}}
+          &lt;li&gt;&lt;a href=&quot;#&quot;&gt;No results.&lt;/a&gt;&lt;/li&gt;
+        {{/each}}
+      {{/auto-complete-list}}
+      (...)
+    &lt;/div&gt;
+  {{/auto-complete}}
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>When one of the items is clicked, the <code>on-click</code> attribute (which is the
+<code>onSelect</code> closure action provided by <code>auto-complete</code>) is called in the
+<code>auto-complete-option</code> component:</p>
+
+<div>
+  <pre><code class='javascript'>// addon/components/auto-complete-option.js
+import Ember from &#39;ember&#39;;
+
+export default Ember.Component.extend({
+  (...)
+  selectOption: Ember.on(&#39;click&#39;, function() {
+    this.get(&#39;on-click&#39;)(this.get(&#39;item&#39;), this.get(&#39;label&#39;));
+  }),
+});</code></pre>
+</div>
+
+
+<p>So where is <code>onSelect</code> defined? It is one of the block parameters yielded by
+<code>auto-complete</code>, more precisely the <code>(action "selectItem")</code> action:</p>
+
+<div>
+  <pre><code class='html'>&lt;!-- addon/templates/components/auto-complete.hbs --&gt;
+{{yield this isDropdownOpen inputValue
+        (action &quot;toggleDropdown&quot;) (action &quot;selectItem&quot;) (action &quot;inputDidChange&quot;)}}</code></pre>
+</div>
+
+
+<p><code>selectItem</code> is quite straightforward:</p>
+
+<div>
+  <pre><code class='javascript'>// addon/components/auto-complete-option.js
+import Ember from &#39;ember&#39;;
+
+export default Ember.Component.extend({
+  (...)
+  actions: {
+    selectItem(item, value) {
+      this.get(&#39;on-select&#39;)(item);
+      this.set(&#39;isDropdownOpen&#39;, false);
+      this.set(&#39;inputValue&#39;, value);
+    },
+    (...)
+  }
+});</code></pre>
+</div>
+
+
+<p>It first calls the <code>on-select</code> action that was passed into it from the &#8220;outside&#8221;
+(the controller), which just sets <code>selectedArtist</code> to the artist object
+encapsulated in the list item. It then sets the <code>isDropdownOpen</code> flag to false
+(which, by the mechanism seen in the previous point, closes the list) and sets
+the text in the input to the item&#8217;s label (the artist&#8217;s name).</p>
+
+<h3>Auto-completing an item</h3>
+
+<p>As the final example, let&#8217;s see a more complicated use case. When the user
+starts to type, the items that do not match the typed string will not be shown
+as options. Also, the first matching item will be auto-completed and selected,
+and the dropdown will be closed.</p>
+
+<p>No surprises here, the same design principle will be applied as before. Pass
+down an action that should be called from a child, then change some property
+in the parent component that trickles down to the child which then rerenders
+itself because of the changed attribute.</p>
+
+<p>Let&#8217;s see the relevants parts of the template:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  &lt;label&gt;Choose an artist&lt;/label&gt;
+  {{#auto-complete
+        on-select=(action &quot;selectArtist&quot;)
+        on-input=(action &quot;filterArtists&quot;)
+        class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
+                                           toggleDropdown onSelect onInput|}}
+    &lt;div class=&quot;input-group&quot;&gt;
+      {{auto-complete-input
+          autocomplete=autocomplete
+          value=inputValue
+          on-change=onInput
+          type=&quot;text&quot;
+          class=&quot;combobox input-large form-control&quot;
+          placeholder=&quot;Select an artist&quot;}}
+      {{#auto-complete-list autocomplete=autocomplete isVisible=isDropdownOpen
+              class=&quot;typeahead typeahead-long dropdown-menu&quot; as |list|}}
+        {{#each matchingArtists as |artist|}}
+          {{#auto-complete-option
+              (...)
+          {{/auto-complete-option}}
+        {{else}}
+          &lt;li&gt;&lt;a href=&quot;#&quot;&gt;No results.&lt;/a&gt;&lt;/li&gt;
+        {{/each}}
+      {{/auto-complete-list}}
+      (...)
+    &lt;/div&gt;
+  {{/auto-complete}}
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>We&#8217;ll start by the <code>auto-complete-input</code> this time where the <code>input</code> event,
+triggered by the user&#8217;s typing, is handled:</p>
+
+<div>
+  <pre><code class='html'>// addon/components/auto-complete-input.js
+import Ember from &#39;ember&#39;;
+
+export default Ember.TextField.extend({
+  (...)
+  valueDidChange: Ember.on(&#39;input&#39;, function() {
+    const value = this.$().val();
+    this.get(&#39;on-change&#39;)(value);
+  })
+});</code></pre>
+</div>
+
+
+<p>This is almost the exact copy of calling the <code>on-select</code> action we saw before
+from <code>auto-complete-option</code>. Here, the <code>on-change</code> function is called that was
+passed down from the block param of <code>auto-complete</code>.</p>
+
+<p>If we take a look in the template of <code>auto-complete</code> we see it creates a
+<code>(action 'inputDidChange')</code> closure action and yield that, so that should be the
+next thing to look at. Here is where most of the stuff happens:</p>
+
+<div>
+  <pre><code class='html'>// addon/components/auto-complete.js
+import Ember from &#39;ember&#39;;
+
+export default Ember.Component.extend({
+  (...)
+  actions: {
+    inputDidChange(value) {
+      this.get(&#39;on-input&#39;)(value);
+      this.set(&#39;isDropdownOpen&#39;, true);
+      const firstOption = this.get(&#39;list.firstOption&#39;);
+      if (firstOption) {
+        const autocompletedLabel = firstOption.get(&#39;label&#39;);
+        this.get(&#39;on-select&#39;)(firstOption.get(&#39;item&#39;));
+        this.set(&#39;inputValue&#39;, autocompletedLabel);
+        this.get(&#39;input.element&#39;).setSelectionRange(value.length, autocompletedLabel.length);
+      }
+    }
+  }
+});</code></pre>
+</div>
+
+
+<p>We first call the <code>on-input</code> action which filters out the artists that do not
+match the typed prefix. The result of that is that <code>matchingArtists</code> will only
+contain the artists that do match. The dropdown is then opened to display these
+items (or an explanatory blurb if none matches). If there is at least one
+matching item, the first one is selected (and becomes <code>selectedArtist</code>).</p>
+
+<p>As an UX improvement, the &#8220;inferred&#8221; range from the label in the input is
+selected, so that the user can continue typing and thus select another artist if
+the first one was not what they meant. (See when I type &#8220;J&#8221; in the demo).</p>
+
+<h3>Design concepts</h3>
+
+<p>I&#8217;m not totally happy with the current state of the component because of the
+following:</p>
+
+<p>1) The <code>auto-complete</code> component reaches inside the <code>auto-complete-input</code> one
+(set in its <code>input</code> property) to call <code>setSelectionRange</code> on it (see the last
+code snippet).</p>
+
+<p>2) The same component retrieves the options from the list and gets its <code>item</code>
+to select it. Again, this is quite intrusive and will break if the internals of
+<code>auto-complete-option</code> change.</p>
+
+<p>3) Still the <code>auto-complete</code> component yields an instance of itself as a block
+parameter. This enables &#8220;downstream consumers&#8221; to access any of its properties
+and methods, breaking its encapsulation.</p>
+
+<p>In presenting about these concepts at the <a href="https://www.bigmarker.com/global-ember-meetup/Inside-Ember-Mirage-and-Complex-Component-Design">Global Ember Meetup</a> and at
+<a href="http://www.meetup.com/Ember-js-Belgium/events/226904768/">Ember.js Belgium</a>, I said that I like to think about components as the
+objects of the UI.  Thinking about them as objects helps to deliver the point
+that some (most?) object oriented practices should be applied to components,
+too. If this assumption is correct, we can leverage OOP design concepts and
+guidelines that we&#8217;ve been developing for decades, giving us a headstart on how
+to design (and what to watch out for) complex component hierarchies.</p>
+
+<p>For example, I consider the set of block parameters yielded by a component as
+its public API. This means that yielding <code>this</code> from a component&#8217;s template is
+considered bad practice as it breaks encapsulation. In some cases, it&#8217;s
+relatively easy to find a way around it, in others it&#8217;s much more difficult.
+We&#8217;ll see if I can pull it off in the above case.</p>
+
+<p>As a closing thought, notice how 95% of the feature&#8217;s implementation relied on
+block parameters and closure actions. They are fantastic tools to work with and
+I don&#8217;t know how anything could be achieved without them before they existed.</p>
+
+<h2>Pointers</h2>
+
+<p>Incidentally, <a href="https://twitter.com/miguelcamba">Miguel Camba</a> seems to think about components lately, too. I
+already mentioned his fantastic talk at EmberCamp this year called <a href="https://www.youtube.com/watch?v=6N4qsO22fmw">&#8220;Composable
+components&#8221;</a>, but above that he has released <a href="http://www.ember-power-select.com">ember-power-select</a>, which
+serves the same purpose as the <code>auto-complete</code> component in my blog post series.</p>
+
+<p>However, it&#8217;s much more mature and flexible so if you need a select dropdown in
+your app, use <code>ember-power-select</code>, as my component is for learning and
+demonstration purposes only. That said, I published it on Github under
+<a href="https://github.com/balinterdi/ember-cli-autocomplete">balinterdi/ember-cli-autocomplete</a> if you want to take a look or follow
+along the blog posts while looking at its source code. I put a tag called
+<code>ccd-part-one</code> on the repo for this blog post.</p>
+
+<h2>In the next episode&#8230;</h2>
+
+<p>&#8230; of the series, I&#8217;d like to address (some of) my concerns I mentioned above
+and see how to fix them. Stay tuned!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js updated to Ember 2.2.0]]></title>
@@ -884,7 +1377,7 @@ miss any in the future.</p>
     <content type="html"><![CDATA[<p>The title would probably better be &#8220;Somewhat Complex Component Design in Ember.js&#8221;
 but any title including &#8216;Somewhat&#8217; rules out pompousness. I therefore don&#8217;t
 claim that the series of blog posts I intend to start here will represent the
-paramount of component design in Ember. There definitely are and definitely will
+pinnacle of component design in Ember. There definitely are and definitely will
 be more complex component structures and scenarios.</p>
 
 <p>The component developed in the series is one that autocompletes as the user
@@ -2200,317 +2693,6 @@ recurringly find yourself in need of a certain logic in computed properties.</p>
 
 <p>If you still haven&#8217;t found what you&#8217;re looking for, this post hopefully sets you
 on your way to define your own ones.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Dependency injection in Ember.js - Going deeper]]></title>
-    <link href="http://balinterdi.com/2014/05/16/dependency-injection-in-ember-dot-js-going-deeper.html"/>
-    <updated>2014-05-16T11:55:00+02:00</updated>
-    <id>http://balinterdi.com/2014/05/16/dependency-injection-in-ember-dot-js-going-deeper</id>
-    <content type="html"><![CDATA[<p>In a previous post <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html">I introduced the basic elements of Dependency Injection in
-Ember</a> and showed how to set up a dependency on the objects it is needed on.
-I also mentioned the framework itself uses this same mechanism to establish its
-dependencies.</p>
-
-<p>In this post, I&#8217;ll expand on this latter. I&#8217;ll point at where these dependencies are
-set up which gives me the possibility to introduce the options of the
-basic parts, <code>register</code> and <code>inject</code>.</p>
-
-<p>I&#8217;ll also share a couple of tricks to prevent using the abominable
-<code>this.__container__</code> and finish by showing how these pieces fit together in the
-main method of the container, <code>container.lookup</code>.</p>
-
-<h3>How does Ember do it?</h3>
-
-<p>When an Ember app is created, the first thing it does is creating a container it
-uses internally:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">Application</span> <span class="o">=</span> <span class="nx">Namespace</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">DeferredMixin</span><span class="p">,</span> <span class="p">{</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>  <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">$</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">__container__</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">buildContainer</span><span class="p">();</span>
-</span><span class='line'>    <span class="p">(...)</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>  <span class="nx">buildContainer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">container</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__container__</span> <span class="o">=</span> <span class="nx">Application</span><span class="p">.</span><span class="nx">buildContainer</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">container</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>(<a href="https://github.com/emberjs/ember.js/blob/v1.6.0-beta.4/packages_es6/ember-application/lib/system/application.js#L263">link to soure code</a>)</p>
-
-<p>(Note: Here is where <code>App.__container__</code> gets set and thus you, as an application
-developer has access to the underlying container. Notice the double underscores,
-though. It tells you that you should not ever use that in &#8220;real&#8221; apps. There are
-officially supported ways, public API methods to achieve whatever you strive to
-achieve the forbidden way. It is sometimes enough <a href="https://twitter.com/mixonic/status/461595081607503872">to ask on Twitter.</a>)</p>
-
-<p>Let&#8217;s see how the container is built up (as usual, I cut out the parts that are
-not relevant to the current subject):</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'>  <span class="nx">buildContainer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">namespace</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Container</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="p">(...)</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">optionsForType</span><span class="p">(</span><span class="s1">&#39;component&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">singleton</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">optionsForType</span><span class="p">(</span><span class="s1">&#39;view&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">singleton</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">optionsForType</span><span class="p">(</span><span class="s1">&#39;template&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">optionsForType</span><span class="p">(</span><span class="s1">&#39;helper&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;application:main&#39;</span><span class="p">,</span> <span class="nx">namespace</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;controller:basic&#39;</span><span class="p">,</span> <span class="nx">Controller</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;controller:object&#39;</span><span class="p">,</span> <span class="nx">ObjectController</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;controller:array&#39;</span><span class="p">,</span> <span class="nx">ArrayController</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;route:basic&#39;</span><span class="p">,</span> <span class="nx">Route</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;router:main&#39;</span><span class="p">,</span>  <span class="nx">Router</span><span class="p">);</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">injection</span><span class="p">(</span><span class="s1">&#39;router:main&#39;</span><span class="p">,</span> <span class="s1">&#39;namespace&#39;</span><span class="p">,</span> <span class="s1">&#39;application:main&#39;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="p">(...)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">injection</span><span class="p">(</span><span class="s1">&#39;controller&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;router:main&#39;</span><span class="p">);</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">injection</span><span class="p">(</span><span class="s1">&#39;controller&#39;</span><span class="p">,</span> <span class="s1">&#39;namespace&#39;</span><span class="p">,</span> <span class="s1">&#39;application:main&#39;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">injection</span><span class="p">(</span><span class="s1">&#39;route&#39;</span><span class="p">,</span> <span class="s1">&#39;router&#39;</span><span class="p">,</span> <span class="s1">&#39;router:main&#39;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="p">(...)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">container</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>(<a href="https://github.com/emberjs/ember.js/blob/v1.6.0-beta.4/packages_es6/ember-application/lib/system/application.js#L826">link to source code</a>)</p>
-
-<p>The faithful reader knows from the <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html">first part in the DI series</a> that the
-above makes it so that e.g <code>this.namespace</code> points to the application in all controllers
-or that <code>this.router</code> refers to the router in all routes.</p>
-
-<p>Let&#8217;s now turn out attention to the first definition block to learn new things.</p>
-
-<h3>optionsForType</h3>
-
-<p><code>optionsForType</code> is a comfortable way to define options that should be used when
-looking up any instance of a particular type from the container.</p>
-
-<p>It can be seen above that components and views are defined as non-singletons
-which mean that any time a component or view is looked up on the container, a
-new instance is created and returned.</p>
-
-<p>I got me some code to prove it:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">var</span> <span class="nx">Artist</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">initializer</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;setup&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">application</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">optionsForType</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">singleton</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;model:artist&#39;</span><span class="p">,</span> <span class="nx">Artist</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">artist1</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">container</span><span class="p">.</span><span class="nx">lookup</span><span class="p">(</span><span class="s1">&#39;model:artist&#39;</span><span class="p">);</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">artist2</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">container</span><span class="p">.</span><span class="nx">lookup</span><span class="p">(</span><span class="s1">&#39;model:artist&#39;</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="nx">artist1</span><span class="p">,</span> <span class="nx">artist2</span><span class="p">];</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">equal</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstObject&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;lastObject&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;model.{firstObject, lastObject}&#39;</span><span class="p">)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you then write a template for the index route that just displays the <code>equal</code>
-property you&#8217;ll see that its value is false, thus a new object is in fact
-instantiated each time.</p>
-
-<p>Here is <a href="http://emberjs.jsbin.com/zefuk/2/edit">a link to the jsbin</a> if you would like to see it.</p>
-
-<p>If you replace <code>{ singleton: false }</code> with <code>{ singleton: true }</code> the equal
-property is going to be true, the model object is going to be a true singleton.</p>
-
-<h4>Singletons are the default</h4>
-
-<p>As Ember core team meber <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html#comment-1386980817">Stefan Penner points out</a>, the <code>{ singleton: true
-}</code> option is the default, so there is no need to explicitly state it.</p>
-
-<p>As a consequence, <code>container.register('store:main', Store, { singleton: true })</code>
-is exactly the same as <code>application.register('store', Store)</code>.</p>
-
-<h4>Objects that come from the container can access it</h4>
-
-<p>I learned this from <a href="http://madhatted.com/">Matthew Beale</a>, a prolific Ember contributor and presenter.
-It&#8217;s well worth your time <a href="https://www.youtube.com/watch?v=6FlWyOoo6hQ">to watch his presentation</a> on &#8220;Containers and
-Dependency Injection&#8221; he gave at an Ember NYC meetup.</p>
-
-<p>Amongst other useful stuff, he also reveals that all objects that come from the
-container have access to it via a <code>container</code> property on them.</p>
-
-<p>That allowed me to write <code>this.container.lookup</code> in the route above since routes
-are created by the container, too.</p>
-
-<p>This also does away with the need to use the private <code>__container__</code> in most
-cases.</p>
-
-<h3>To instantiate or not to instantiate</h3>
-
-<p>Above, in the code for <code>buildContainer</code> you can see another option,
-<code>instantiate</code>, which is false for templates and helpers. To save you from
-scrolling all the way up, here are the relevant lines:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'>  <span class="nx">container</span><span class="p">.</span><span class="nx">optionsForType</span><span class="p">(</span><span class="s1">&#39;template&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
-</span><span class='line'>  <span class="nx">container</span><span class="p">.</span><span class="nx">optionsForType</span><span class="p">(</span><span class="s1">&#39;helper&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">instantiate</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This option permits the registration of entities (yeah, stuff) that do not need
-to be instantiated (or cannot be). Templates and helpers fit the bill since
-they are functions and thus cannot be instantiated.</p>
-
-<h3>container.lookup</h3>
-
-<p>The lookup method in the container is a great summary for all the things discussed here.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">lookup</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">fullName</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">container</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">fullName</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">singleton</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 1</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">container</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">fullName</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">instantiate</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">fullName</span><span class="p">);</span> <span class="c1">// 2</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">value</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">isSingleton</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">fullName</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">singleton</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">fullName</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span> <span class="c1">// 3</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">return</span> <span class="nx">value</span><span class="p">;</span> <span class="c1">// 4</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>First, if a singleton is needed and the object has already been looked up, we
-just return the object saved in the cache. (see 1 above)</p>
-
-<p>Next, we instantiate an object for the fullName (e.g &#8216;controller:artists&#8217; or
-&#8216;route:index&#8217;). The instantiate method takes care of just returning the value if
-the <code>instantiate</code> option is set to false. (see 2 above)</p>
-
-<p>If the instantiation was successful (the factory was found) and a singletion was
-demanded, we set this value in the cache so that we can return it the next time
-it is looked up. (see 3 above)</p>
-
-<p>Finally, we return what was looked up. (see 4 above)</p>
-
-<p><code>container.lookup</code> just calls the above function after verifying the fullName
-has the right syntax, that is it has a type and a name part joined together by
-a <code>:</code>.</p>
-
-<p>And that&#8217;s where everything comes together.</p>
 ]]></content>
   </entry>
   
