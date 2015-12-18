@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2015-12-18T15:02:39+01:00</updated>
+  <updated>2015-12-18T15:05:58+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -18,7 +18,7 @@
     <link href="http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html"/>
     <updated>2015-12-18T10:25:00+01:00</updated>
     <id>http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows</id>
-    <content type="html"><![CDATA[<p>In this post I continue the <a href="./2015/09/10/complex-component-design-in-ember-intro.html">Complex Component Design series</a> I started back in
+    <content type="html"><![CDATA[<p>In this post I continue the <a href="http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html">Complex Component Design series</a> I started back in
 September. I slightly renamed the series title as the original idea was to
 design and develop the component in the parts of the series but since the
 component is mostly &#8220;done&#8221;, I prefer to show how it works and how the different
@@ -26,7 +26,7 @@ pieces fit together. I think this way of presenting things is still (perhaps
 equally) valuable and we&#8217;ll have a few open issues to work on &#8220;together&#8221; to
 further improve the component.</p>
 
-<p>The component I described in <a href="./2015/09/10/complex-component-design-in-ember-intro.html">the intro post</a> serves to select an item from a
+<p>The component I described in <a href="http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html">the intro post</a> serves to select an item from a
 list of items, either via a dropdown or by starting to type its name and then
 selecting it. Here is a very short demo about how that looks in practice:</p>
 
