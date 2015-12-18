@@ -10,7 +10,7 @@ perk: complex-component-design
 The title would probably better be "Somewhat Complex Component Design in Ember.js"
 but any title including 'Somewhat' rules out pompousness. I therefore don't
 claim that the series of blog posts I intend to start here will represent the
-paramount of component design in Ember. There definitely are and definitely will
+pinnacle of component design in Ember. There definitely are and definitely will
 be more complex component structures and scenarios.
 
 The component developed in the series is one that autocompletes as the user
