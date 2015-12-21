@@ -4,6 +4,7 @@ title: "Complex Components in Ember.js - Part 1 - Analyzing user flows"
 date: 2015-12-18 10:25
 comments: true
 categories: ember.js
+perk: complex-component-design
 ---
 In this post I continue the [Complex Component Design series][1] I started back in
 September. I slightly renamed the series title as the original idea was to
@@ -506,7 +507,7 @@ along the blog posts while looking at its source code. I put a tag called
 ... of the series, I'd like to address (some of) my concerns I mentioned above
 and see how to fix them. Stay tuned!
 
-[1]: ./2015/09/10/complex-component-design-in-ember-intro.html
+[1]: /2015/09/10/complex-component-design-in-ember-intro.html
 [2]: https://twitter.com/miguelcamba
 [3]: https://www.youtube.com/watch?v=6N4qsO22fmw
 [4]: http://www.ember-power-select.com
