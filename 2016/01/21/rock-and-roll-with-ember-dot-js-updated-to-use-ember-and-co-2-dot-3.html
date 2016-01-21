@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Switch to Command Line Vim on iTerm - Balint Erdi's blog about Ember.js</title>
+  <title>Rock and Roll with Ember.js updated to use Ember &amp; Co 2.3 - Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2012/03/30/switch-to-command-line-vim-on-iterm.html">
+  <link rel="canonical" href="http://balinterdi.com/2016/01/21/rock-and-roll-with-ember-dot-js-updated-to-use-ember-and-co-2-dot-3.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -88,7 +88,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
   <header>
     
-      <h1 class="entry-title">Switch to Command Line Vim on iTerm</h1>
+      <h1 class="entry-title">Rock and Roll With Ember.js Updated to Use Ember &amp; Co 2.3</h1>
     
     
       <p class="meta">
@@ -104,54 +104,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
 
 
-<time datetime="2012-03-30T12:04:00+02:00" pubdate data-updated="true">Mar 30<span>th</span>, 2012</time>
+<time datetime="2016-01-21T14:50:00+01:00" pubdate data-updated="true">Jan 21<span>st</span>, 2016</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Switching between applications is more of a mental context switch than just switching between the panes in the same window. Or at least that&#8217;s what I told myself when I decided I switch from using macvim to the simple command line version. It also brings me pretty close to using tmux which I would primarily use to send commands between panes. Most of the posts about using tmux only briefly touch on switching to command line vim so I thought I&#8217;d fill in the gap somewhat.</p>
+<div class="entry-content"><p>I have just released a new update to <a href="http://rockandrollwithemberjs.com">the Rock and Roll Ember.js book</a>,
+which brings it up to Ember 2.3.0, ED 2.3.2 and Ember CLI 2.3.0-beta.1.</p>
 
-<p>I use iTerm2 on a MacBook Pro and run 10.6.8 (Snow Leopard), although I think it should run
-fine under Lion, too.</p>
+<p>Other improvements made in this release are:</p>
 
-<p>First, you&#8217;ll have to install a fairly recent vim. Homebrew has a policy of not having packages which the operating system already provides, but fortunately there is a <a href="https://github.com/Homebrew/homebrew-dupes">homebrew-dupes</a> repository that has vim:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew install --HEAD https://raw.github.com/Homebrew/homebrew-dupes/master/vim.rb</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This will configure, make and install vim.</p>
-
-<p>Next, I looked for a theme that looks good on both a light and a dark background and has iTerm support (a colorscheme for the terminal emulator). I&#8217;ve found <a href="http://ethanschoonover.com/solarized">Ethan Schoonover&#8217;s solarized theme</a> really cool. Just follow the steps in the <a href="https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized">README of the repository</a> to download both the vim and the iTerm colorscheme.</p>
-
-<p>To install the iTerm colorscheme, go to Preferences -> Profiles to select your
-profile and then click the Colors tab. There is a &#8220;Load Presets&#8221; dropdown from
-which you have to choose Import and find the solarized itermcolors file.</p>
-
-<p>To use the vim colorscheme you have to add the colors file to somewhere where
-vim finds it. There are many ways to do this, so check out the <a href="https://github.com/altercation/ethanschoonover.com/tree/master/projects/solarized">README</a> to
-find the method that suits you.</p>
-
-<p>Once, done you have to set the colorscheme in your vimrc:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>colorscheme solarized</span></code></pre></td></tr></table></div></figure>
+<ul>
+<li>Update the PageFront section as it has now become even simpler to deploy apps to PageFront</li>
+<li>Reset the song creation process when switching bands</li>
+<li>Use ember-bootstrap and remove the section on manually adding assets to the build</li>
+<li>Use consistent quoting in snippets and include <code>import Ember from 'ember'</code> wherever needed.</li>
+<li>Remove a few paragraphs that talk about how things were in the past (like <code>bind-attr</code>)</li>
+</ul>
 
 
-<p>(vim finds out the appropriate background automatically, so you don&#8217;t have to
-explicitly set the background)</p>
-
-<p>I was all set up and most things worked just like in the GUI version. One thing that bugged me was that my cursor keys stopped working. I don&#8217;t use them for moving and text input but I do for cycling in the command history or flipping between file matches for Command-T. It took me a while to find out that iTerm sends a wrong escape sequence for the arrow keys. I could fix that by selecting another set of key presets for the terminal&#8217;s profile. In iTerm, go to Preferences -> Profiles and select your profile. Select Keys, then Load Preset and select xTerm with Numeric Keypad.</p>
-
-<p>There is one more trick I find handy. If you set</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>set clipboard=unnamed</span></code></pre></td></tr></table></div></figure>
-
-
-<p>in your config, then anything you copy from vim by the usual vim commands (y, d, x, etc.) will be available on your system clipboard and thus pastable.</p>
+<p>Happy reading!</p>
 </div>
 
 
@@ -175,8 +149,14 @@ explicitly set the background)</p>
   
 
 
-<time datetime="2012-03-30T12:04:00+02:00" pubdate data-updated="true">Mar 30<span>th</span>, 2012</time>
+<time datetime="2016-01-21T14:50:00+01:00" pubdate data-updated="true">Jan 21<span>st</span>, 2016</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ember-js/'>ember.js</a>
+  
+</span>
 
 
     </p>
@@ -191,6 +171,8 @@ explicitly set the background)</p>
 -->
 
 
+  <script src="https://app.convertkit.com/landing_pages/2664.js"></script>
+
 
 
 
@@ -198,10 +180,8 @@ explicitly set the background)</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2011/11/30/an-annotated-assortment-on-mockist-testing.html" title="Previous Post: An Annotated Assortment on Mockist Testing">&laquo; An Annotated Assortment on Mockist Testing</a>
+        <a class="basic-alignment left" href="/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html" title="Previous Post: Complex Components in Ember.js - Part 1 - Analyzing user flows">&laquo; Complex Components in Ember.js - Part 1 - Analyzing user flows</a>
       
-      
-        <a class="basic-alignment right" href="/2012/12/29/lessons-learned-from-solving-4clojure-problems.html" title="Next Post: Lessons learned from solving 4Clojure problems">Lessons learned from solving 4Clojure problems &raquo;</a>
       
     </p>
   </footer>
@@ -294,8 +274,8 @@ explicitly set the background)</p>
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://balinterdi.com/2012/03/30/switch-to-command-line-vim-on-iterm.html';
-        var disqus_url = 'http://balinterdi.com/2012/03/30/switch-to-command-line-vim-on-iterm.html';
+        var disqus_identifier = 'http://balinterdi.com/2016/01/21/rock-and-roll-with-ember-dot-js-updated-to-use-ember-and-co-2-dot-3.html';
+        var disqus_url = 'http://balinterdi.com/2016/01/21/rock-and-roll-with-ember-dot-js-updated-to-use-ember-and-co-2-dot-3.html';
         var disqus_script = 'embed.js';
       
     (function () {
