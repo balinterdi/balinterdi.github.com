@@ -123,6 +123,7 @@ the <code>style</code> attribute of a DOM element, like this:</p>
 
 <div>
   <pre><code class='javascript'>export default Ember.Controller.extend({
+  progress: 0,
   barWidth: Ember.computed(&#39;progress&#39;, {
     return &#39;width:&#39; + this.get(&#39;progress&#39;) + &#39;%&#39;;
   });
@@ -140,6 +141,7 @@ user. <a href="http://emberjs.com/deprecations/v1.x/#toc_binding-style-attribute
 
 <div>
   <pre><code class='javascript'>export default Ember.Controller.extend({
+  progress: 0,
   barWidth: Ember.computed(&#39;progress&#39;, {
     return Ember.Handlebars.SafeString(&#39;width:&#39; + this.get(&#39;progress&#39;) + &#39;%&#39;);
   });
