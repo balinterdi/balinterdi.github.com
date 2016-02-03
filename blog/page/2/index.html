@@ -91,6 +91,179 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">How to Do a Select (Dropdown) in Ember 2.0?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-08-29T17:43:00+02:00" pubdate data-updated="true">Aug 29<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><iframe
+  width="178" height="24" style="border:0px"
+  src="https://mixonic.github.io/ember-community-versions/2015/08/29/how-to-do-a-select-dropdown-in-ember-2-0.html">
+</iframe>
+
+
+<p>When the select view was about to be removed from Ember, a lot of people
+-myself included- wondered how it was going to be replaced. My bet was on a
+&#8216;select component&#8217;, after all, views should be transformed into components, right?</p>
+
+<p>Then I saw <a href="https://gist.github.com/ef4/8367f996eb7b57d1f7a5">this gist</a> from Edward Faulkner:</p>
+
+<div>
+  <pre><code class='html'>&lt;select onchange={{action (mut vehicle) value=&quot;target.value&quot;}}&gt;
+  {{#each vehicles as |vehicleChoice|}}
+    &lt;option value={{vehicleChoice}} selected={{eq vehicle vehicleChoice}}&gt;{{vehicleChoice}}&lt;/option&gt;
+  {{/each}}
+&lt;/select&gt;</code></pre>
+</div>
+
+
+<p>I did not understand half of it, so I dug down to see how the pieces come
+together. In this short post, I want to explain what I have found out.</p>
+
+<h3>Solve a simpler problem</h3>
+
+<p>A great mathematician, George Polya, wrote a book in 1945 called <a href="http://smile.amazon.com/How-Solve-It-Mathematical-Princeton/dp/069111966X/ref=smi_www_rco2_go_smi_g2147660602?_encoding=UTF8&amp;*Version*=1&amp;*entries*=0&amp;ie=UTF8">&#8220;How to Solve It&#8221;</a>,
+in which he puts down a framework for solving mathematical problems. One
+(probably more) of his recommendations can be applied to software development,
+too: Solve a simpler problem.</p>
+
+<p>Heeding this advice, we&#8217;ll first tackle a more mundane problem and in the
+second round, we&#8217;ll solve the original riddle.</p>
+
+<p>Let&#8217;s assume Edward had written the following:</p>
+
+<div>
+  <pre><code class='html'>&lt;select onchange={{action &quot;selectVehicle&quot; value=&quot;target.value&quot;}}&gt;
+  {{#each vehicles as |vehicleChoice|}}
+    &lt;option value={{vehicleChoice}} selected={{eq vehicle vehicleChoice}}&gt;{{vehicleChoice}}&lt;/option&gt;
+  {{/each}}
+&lt;/select&gt;</code></pre>
+</div>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">vehicle</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">vehicles</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">String</span><span class="p">.</span><span class="nx">w</span><span class="p">(</span><span class="s1">&#39;Tesla Chrysler Toyota&#39;</span><span class="p">),</span>
+</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">selectVehicle</span><span class="p">(</span><span class="nx">vehicle</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;vehicle&#39;</span><span class="p">,</span> <span class="nx">vehicle</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is easier (as in: more familiar) but there are still a few things that
+might need explanation. First, before 1.13.3, event listeners on browser
+events could not trigger Ember actions like that:</p>
+
+<div>
+  <pre><code class='html'>&lt;select onchange={{action &quot;selectVehicle&quot; value=&quot;target.value&quot;}}&gt;</code></pre>
+</div>
+
+
+<p>What this does, is that when the selected value of the dropdown changes, it
+fires the onchange listener we added on the <code>&lt;select&gt;</code> which results in calling
+our action handler, <code>selectVehicle</code>. The handler just updates the <code>vehicle</code>
+property of the controller. This will mark as selected the dropdown option the
+user picked due to the <code>selected={{eq vehicle vehicleChoice}}</code> term.</p>
+
+<p>(<code>eq</code> comes from a great little Ember addon called <a href="https://github.com/jmurphyau/ember-truth-helpers">ember-truth-helpers</a>. It
+returns true if the two parameters are equal).</p>
+
+<p>Since there is no two-way binding set up between the selected option of the
+dropdown and the controller property (<code>vehicle</code>), this needs to be done using a
+DOM event listener (<code>onchange</code>) and updating in the action handler. That&#8217;s
+exactly what happens in the <code>selectVehicle</code> action handler.</p>
+
+<p>So far so good, let&#8217;s move on.</p>
+
+<h3>Solve the original one</h3>
+
+<p>Wait a minute. How did <code>selectVehicle</code> receive the selected vehicle choice (e.g
+Toyota) when the <code>{{action}}</code> helper did not specify any parameters?</p>
+
+<p>When the browser calls an event listener, it passes it an event object which
+would become the first parameter of <code>selectVehicle</code>. However, <code>selectVehicle</code>
+does not receive the event but the actual value of the selected option, how does
+that come about? The missing link is a lesser-known option of the <code>action</code>
+helper, <code>value</code>. The property passed to it is read off of the first parameter of
+the handler and then replaces it. In our example, <code>target.value</code> is looked up on
+the event object, which is exactly the value of the select option that triggered
+the <code>onchange</code> event.</p>
+
+<p>Ok, only one thing left.</p>
+
+<p>The original example had this line:</p>
+
+<div>
+  <pre><code class='html'>&lt;select onchange={{action (mut vehicle) value=&quot;target.value&quot;}}&gt;</code></pre>
+</div>
+
+
+<p>instead of the more familiar:</p>
+
+<div>
+  <pre><code class='html'>&lt;select onchange={{action &quot;selectVehicle&quot; value=&quot;target.value&quot;}}&gt;</code></pre>
+</div>
+
+
+<p>What mut does here is that it allows updating the passed property, so when the
+action is called, <code>vehicle</code> is set to the passed value, the value of the
+selected option. That is it, we solved the riddle.</p>
+
+<p>The same implementation pattern can be used to update the properties related to
+checkboxes, input fields and radio buttons. This new way of doing things takes a
+while to get used to, but we&#8217;ll see more and more of it with one-way bindings
+becoming best practice.</p>
+
+<p>(By the way, my PR to add a section about <a href="https://github.com/emberjs/guides/pull/670">the actions helper&#8217;s <code>value</code> option</a> to
+the guides was merged yesterday, so hopefully more people will know about it.)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2015/08/07/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-7-is-out.html">Rock and Roll With Ember.js v1.13.7 Is Out</a></h1>
     
     
@@ -1253,119 +1426,6 @@ the current item in the history, from inside a controller.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/05/28/setting-the-document-title-in-ember-apps.html">Setting the Document Title in Ember Apps</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-05-28T07:27:00+02:00" pubdate data-updated="true">May 28<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>The document title serves as a quick and concise way to identify web pages. It
-gets displayed in search results and bookmarks and allows the user to see at a
-glance what content she has open in each tab.</p>
-
-<p>Therefore it is important to have descriptive document titles in our web
-applications, whether they get rendered on the backend or set in the client app.</p>
-
-<p>In the following short post, I&#8217;ll focus on showing how to do that with Ember.</p>
-
-<h3>Setting the title property</h3>
-
-<p>The way to set the document title from the browser is to just assign a
-value to the <code>title</code> property of the document:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nb">document</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="s2">&quot;1 mind-blowing way to set the title for your html document&quot;</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Or, from jQuery:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span><span class="s2">&quot;1 mind-blowing way to set the title for your html document&quot;</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>Having context-aware titles</h3>
-
-<p>For our document titles to be really useful, it would be great to have some
-kind of information from the page&#8217;s content be reflected in them.</p>
-
-<p>To use <a href="https://github.com/balinterdi/rock-and-rol://github.com/balinterdi/rock-and-roll">my favorite example app, Rock &amp; Roll</a>, I expect the page that
-displays songs from a certain artist to have a segment that is common across all
-pages in the app and another segment that uniquely identifies that page. For
-songs of Led Zeppelin, this could be <code>Led Zeppelin songs - Rock &amp; Roll with
-Ember.js</code>.</p>
-
-<p>I choose to put the unique part first so it can be clearly seen in a tab even if
-its width is limited.</p>
-
-<h3>Finding the best place for setting the title</h3>
-
-<p>When considering where to implement setting the title, we have to keep in mind
-that the code has to run at each route transition so that the title for the new
-page is correctly set. Also, the context of the page (in the above example, the
-artist Led Zeppelin) already has to be known.</p>
-
-<p>Considering these constraints, the title could be set either in the
-<code>afterModel</code> or in the <code>setupController</code> hook. The controller instance is not
-needed for setting the title so I&#8217;ll go with the <code>afterModel</code> hook.</p>
-
-<p>For the <code>artists</code> route, we content ourselves with setting a static title and we
-can thus focus on the <code>artist.songs</code> route:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>  <span class="nx">afterModel</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">artistName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">modelFor</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
-</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="nx">artistName</span> <span class="o">+</span> <span class="s1">&#39; songs - Rock &amp; Roll&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If we now navigate to the songs page for any artist, we can see the name of the
-artist reflected in the tab title:</p>
-
-<p><img src="/images/posts/set-document-title-in-ember/see-artist-in-tab-title.png" alt="Artist name in tab title" /></p>
-
-<p><em>NOTE: Jonathan Evans has <a href="http://www.jrhe.co.uk/setting-the-document-title-in-ember-js-apps/">a great post</a> in which he uses the <code>didTransition</code>
-action in routes to set the document title. I recommend you to read it.</em></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1398,6 +1458,10 @@ action in routes to set the document title. I recommend you to read it.</em></p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/02/03/binding-style-attributes-warning-in-ember.html">Binding style attributes warning in Ember</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/01/21/rock-and-roll-with-ember-dot-js-updated-to-use-ember-and-co-2-dot-3.html">Rock and Roll with Ember.js updated to use Ember &amp; Co 2.3</a>
       </li>
     
@@ -1411,10 +1475,6 @@ action in routes to set the document title. I recommend you to read it.</em></p>
     
       <li class="post">
         <a href="/2015/10/22/the-tale-of-two-bindings.html">The tale of two bindings</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/01/rock-and-roll-with-ember-2-just-went-live.html">Rock and Roll with Ember 2 just went live</a>
       </li>
     
   </ul>

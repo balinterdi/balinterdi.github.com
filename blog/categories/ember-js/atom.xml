@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-01-21T15:01:05+01:00</updated>
+  <updated>2016-02-03T09:59:05+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,96 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Binding style attributes warning in Ember]]></title>
+    <link href="http://balinterdi.com/2016/02/03/binding-style-attributes-warning-in-ember.html"/>
+    <updated>2016-02-03T09:33:00+01:00</updated>
+    <id>http://balinterdi.com/2016/02/03/binding-style-attributes-warning-in-ember</id>
+    <content type="html"><![CDATA[<p>One warning Ember might print in your console concerns binding a property to
+the <code>style</code> attribute of a DOM element, like this:</p>
+
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
+
+&lt;div class=&quot;progress-bar&quot; style=&quot;{{barWidth}}&quot;&gt;...&lt;/div&gt;
+
+
+&lt;p&gt;</code></pre>
+</div>
+</p>
+
+<p><div>
+  <pre><code class='javascript'>export default Ember.Controller.extend({
+  barWidth: Ember.computed(&#39;progress&#39;, {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;return &#39;width:&#39; + this.get(&#39;progress&#39;) + &#39;%&#39;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;  });
+});</code></pre>
+</div>
+</p>
+
+<p>Handlebars escapes all html content put in double curlies but it does not do
+that with CSS, and thus the above makes possible a cross-site scripting attack.
+That is the reason for the warning and the fix for that is to convert the
+property (in the above case, <code>barWidth</code>) to a <code>SafeString</code>, which tells Ember
+that the content is safe to display. You should only do that after you have
+verified that the content you mark as safe cannot be injected by a malicious
+user. <a href="http://emberjs.com/deprecations/v1.x/#toc_binding-style-attributes">The guide</a> describes how to do that:</p>
+
+<p><div>
+  <pre><code class='javascript'>export default Ember.Controller.extend({
+  barWidth: Ember.computed(&#39;progress&#39;, {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;return Ember.Handlebars.SafeString(&#39;width:&#39; + this.get(&#39;progress&#39;) + &#39;%&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;  });
+});</code></pre>
+</div>
+</p>
+
+<p>(Alternatively, you can call <code>Ember.String.htmlSafe</code> with the string you want to
+mark as safe, to the same effect.)</p>
+
+<p>When I did this conversion in a recent project, though, the warning persisted.
+After spending a substantial amount of time pouring over the docs and even
+stepping through the warning stacktrace, I still could not find out what was
+wrong. What helped (as so many times already) was a good night sleep and taking
+another look at it in the morning.</p>
+
+<p>Marking the string as safe was done correctly, but when binding it to the
+<code>style</code> attribute, I used double quotes around it, probably inhibiting Ember
+from seeing it as a SafeString:</p>
+
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
+
+&lt;div class=&quot;progress-bar&quot; style=&quot;{{barWidth}}&quot;&gt;...&lt;/div&gt;
+
+
+&lt;p&gt;</code></pre>
+</div>
+</p>
+
+<p>So all I had to do to make the warning go away was to remove the quotes:</p>
+
+<p><div>
+  <pre><code class='html'>&lt;/p&gt;
+
+&lt;div class=&quot;progress-bar&quot; style={{barWidth}}&gt;...&lt;/div&gt;
+
+
+&lt;p&gt;</code></pre>
+</div>
+</p>
+
+<p>I hope this saves you some time if you come across a similar situation in your
+work.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js updated to use Ember &amp; Co 2.3]]></title>
@@ -1173,52 +1263,6 @@ possibilities "managed" one-way bindings open up and the best way to work with
 them. So if you have thoughts or insights, please do share them in the comments.</p>
 
 <p>NOTE: I published <a href="https://github.com/balinterdi/tale-of-two-bindings">the demo app of this post on Github.</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rock and Roll with Ember 2 just went live]]></title>
-    <link href="http://balinterdi.com/2015/10/01/rock-and-roll-with-ember-2-just-went-live.html"/>
-    <updated>2015-10-01T09:48:00+02:00</updated>
-    <id>http://balinterdi.com/2015/10/01/rock-and-roll-with-ember-2-just-went-live</id>
-    <content type="html"><![CDATA[<p>The 2nd edition of my critically acclaimed book, <a href="http://rockandrollwithemberjs.com">Rock and Roll with
-Ember.js</a>, has just been published. The number 2 does not only denote the 2nd
-edition but also the fact that it runs on Ember (and Ember Data) 2.0 and that it
-will follow the 2.x development path of the framework.</p>
-
-<p>The 2nd edition adds 4 new chapters: Animations, Making an Ember
-addon, Writing modern JavaScript (ES2015) and Deployment. Here is the complete
-set list:</p>
-
-<ol>
-<li>Introduction to Ember.js</li>
-<li>Ember CLI</li>
-<li>Templates and data bindings</li>
-<li>Routing</li>
-<li>Nested routes</li>
-<li>Actions</li>
-<li>Components</li>
-<li>Controllers</li>
-<li>Advanced routing</li>
-<li>Talking to a backend - with Ember Data</li>
-<li>Testing</li>
-<li>Sorting and searching with query params</li>
-<li>Loading and error routes</li>
-<li>Helpers</li>
-<li>Animations</li>
-<li>Making an Ember addon</li>
-<li>ES2015 - Writing modern JavaScript</li>
-<li>Deployment</li>
-</ol>
-
-
-<p>As many readers have said, keeping the book up-to-date with the latest stable
-Ember release also makes it a great reference book on current Ember idioms and
-features.</p>
-
-<p>Oh, and did I mention I am running a 20% discount on all packages until Monday,
-10/05, 23:59 PST?  There are also a few other goodies in the bag, so I encourage
-you to <a href="http://rockandrollwithemberjs.com">check out the book now</a> before prices revert to their normal level.</p>
 ]]></content>
   </entry>
   

@@ -91,6 +91,46 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2009/03/17/thrifty-track-your-expenses-easily.html">Thrifty - Track Your Expenses Easily</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-17T00:00:00+01:00" pubdate data-updated="true">Mar 17<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Thrifty is a simple application I have written (and am still writing) in Sinatra that tracks your expenses. You can quickly record each spending you make and assign tags to them so you can group your expenditures easily. You can then see how much you spend in different categories (by tags) possibly narrowed down to a given date interval.</p>
+
+<p>Anyway, a web app is all about interaction so give it a try <a href="http://thrifty.heroku.com">on the test site</a> or download it from <a href="http://github.com/balinterdi/thrifty">its github repo</a> and run it locally. You&#8217;ll also find a somewhat detailed README there.</p>
+
+<p>This is a very early release so I&#8217;d appreciate any kind of feedback, be it a bug report, a comment on bad UI or anything you might find worthwhile sharing.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2009/03/12/plans-for-2009-contribute-more-to-open-source-projects.html">Plans for 2009 - Contribute (More) to Open Source Projects</a></h1>
     
     
@@ -701,149 +741,6 @@ mysql> select * from cars;
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/01/17/a-ruby-style-currency-converter.html">A Ruby-style Currency Converter</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-01-17T00:00:00+01:00" pubdate data-updated="true">Jan 17<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Though it is said that we live in a highly-globalized world, all countries still have their own proper currency (with one exception that I know of, the euro) so we still need to convert between them. If one is used to shop online (and one is) the need to get the price in the <a href="http://en.wikipedia.org/wiki/Hungarian_forint" target="_blank">national currency</a> occurs quite often. Going to a currency converter page is not much of a hassle but it still takes too much time and it seemed an overshoot to use a browser for this task. Inspired by Rails&#8217;s date calculations extensions (where you could write 3.days.ago), I decided to create something similar and see how much flying to <a href="http://euruko2009.org/">Barcelona</a> or buying a <a href="http://pragprog.com/">PragProg</a> book costs from the command line.</p>
-
-<pre lang="ruby">
-
-require "net/http"
-require "open-uri"
-require "hpricot"
-
-# makes 1284.eur.to.usd types of queries possible
-class CurrencyConverter
- 
-  Currencies = { :huf => "HUF", :eur => "EUR", :usd => "USD", :gbp => "GBP", :chf => "CHF" }
- 
-  # these methods "close" the quote.
-  # when they are called, it means all data is ready
-  # the quote can be sent.
-  class_eval do
-    Currencies.each_key do |curr|
-      define_method curr do
-        @to = curr
-        calculate
-      end
-    end
-  end
- 
-  def initialize(amount, from=nil, to=nil)
-    @amount = amount
-    @from = from
-    @to = to
-  end
- 
-  def send_request_for_quote
-   from_as_param = @from.to_s.upcase
-   to_as_param = @to.to_s.upcase
-   url = "http://xurrency.com/#{[@amount, @from, @to].join('/')}/feed"
-   doc = Hpricot(open(url).read)
-   (doc/'dc:value').inner_html
-  end
- 
-  def calculate
-    send_request_for_quote
-  end
-
-  def to
-    self
-  end
- 
-end
-
-class Fixnum 
-  def method_missing(name)
-    CurrencyConverter.new(self, name)   
-  end
-end
-</pre>
-
-
-<p>Thanks to ruby&#8217;s open classes, the code is quite terse (you can also see and download the raw script from <a href="http://www.pastie.org/362737">here</a>). Now you can fire up irb and do all the conversions you want:</p>
-
-<pre lang="shell">
-$ irb -r currency_converter.rb 
-irb(main):001:0> 23.eur.to.huf
-=> "6473.3500"
-irb(main):002:0> 1.usd.to.eur
-=> "0.7642"
-</pre>
-
-
-<p>Or do it through the ruby interpreter:</p>
-
-<pre lang="shell">
-$ ruby -r rubygems -r currency_converter.rb -e "puts 1.eur.to.usd"
-1.3085
-</pre>
-
-
-<p>I find it very pleasing to be able to write &#8220;10.eur.to.usd&#8221; since it is so close to our spoken, human language. One of ruby&#8217;s numerous charms.</p>
-
-<p>My friend, <a href="http://www.rubyrailways.com/">Peter</a> sent a more general solution that uses html scraping with <a href="http://scrubyt.org/">Scrubyt</a> and the conversion capabilities of Google search:</p>
-
-<pre lang="ruby">
-require 'rubygems'
-require 'cgi'
-require 'scrubyt'
-
-begin
-google_converter = Scrubyt::Extractor.define do
-  fetch "http://www.google.com/search?q=#{CGI::escape(ARGV[0])}+#{CGI::escape(ARGV[1])}+to+#{CGI::escape(ARGV[2])}"
-  
-  google_result "//td[@dir='ltr']" do
-    final_result(/= (.+) /)
-  end
-end
-  puts google_converter.to_hash[0][:final_result]
-rescue
-  puts "Sorry, even *google* can't translate that!"
-end
-</pre>
-
-
-<p>Using this you can convert amounts between any two currencies (distances, weights, etc., everything that Google search can handle):</p>
-
-<pre lang="shell">
-$ ruby conv.rb 30 EUR HUF
-</pre>
-
-
-<p>It may be swimming against the current but I like solutions that do not need the browser for simple problems like this one. I scratched my itch and hopefully scratched yours, too.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/9/">&larr; Older</a>
@@ -876,6 +773,10 @@ $ ruby conv.rb 30 EUR HUF
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/02/03/binding-style-attributes-warning-in-ember.html">Binding style attributes warning in Ember</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/01/21/rock-and-roll-with-ember-dot-js-updated-to-use-ember-and-co-2-dot-3.html">Rock and Roll with Ember.js updated to use Ember &amp; Co 2.3</a>
       </li>
     
@@ -889,10 +790,6 @@ $ ruby conv.rb 30 EUR HUF
     
       <li class="post">
         <a href="/2015/10/22/the-tale-of-two-bindings.html">The tale of two bindings</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/01/rock-and-roll-with-ember-2-just-went-live.html">Rock and Roll with Ember 2 just went live</a>
       </li>
     
   </ul>

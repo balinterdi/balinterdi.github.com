@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Rubygems under the hood: hooking into require - Balint Erdi's blog about Ember.js</title>
+  <title>Binding style attributes warning in Ember - Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2009/10/28/rubygems-under-the-hood-hooking-into-require.html">
+  <link rel="canonical" href="http://balinterdi.com/2016/02/03/binding-style-attributes-warning-in-ember.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -88,7 +88,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
   <header>
     
-      <h1 class="entry-title">Rubygems Under the Hood: Hooking Into Require</h1>
+      <h1 class="entry-title">Binding Style Attributes Warning in Ember</h1>
     
     
       <p class="meta">
@@ -104,56 +104,76 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
 
 
-<time datetime="2009-10-28T00:00:00+01:00" pubdate data-updated="true">Oct 28<span>th</span>, 2009</time>
+<time datetime="2016-02-03T09:33:00+01:00" pubdate data-updated="true">Feb 3<span>rd</span>, 2016</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>(See <a href="http://bucionrails.com/2009/10/20/rubygems-under-the-hood-introduction/">the introduction</a> to the series.)</p>
-
-<p>When you want to pull in a Ruby library, you require it. The library you require has to be on Ruby&#8217;s load path ($LOAD_PATH) in order to succeed. So let&#8217;s see how Rubygems hooks into this process.</p>
-
-<p>The secret lies in custom_require.rb. You&#8217;ll see a nice comment near the top.</p>
-
-<blockquote>
-When you call &#8220;require &#8216;x&#8217;&#8221;, this is what happens:
-  * If the file can be loaded from the existing Ruby loadpath, it is.
-  * Otherwise, installed gems are searched for a file that matches.
-If it&#8217;s found in gem &#8216;y&#8217;, that gem is activated (added to the loadpath).
-</blockquote>
-
-
-<p>In fact, that explanation looks so straightforward to me that I doubt if I can add more words to precise it, so let&#8217;s look at the code together:</p>
+<div class="entry-content"><p>One warning Ember might print in your console concerns binding a property to
+the <code>style</code> attribute of a DOM element, like this:</p>
 
 <div>
-  <pre><code class='ruby'>module Kernel
-  alias gem_original_require require
-  (...)
-  def require(path) # :doc:
-    gem_original_require path
-  rescue LoadError =&gt; load_error
-    if load_error.message =~ /#{Regexp.escape path}\z/ and
-       spec = Gem.searcher.find(path) then
-      Gem.activate(spec.name, &quot;= #{spec.version}&quot;)
-      gem_original_require path
-    else
-      raise load_error
-    end
-  end
-(...)
-end</code></pre>
+  <pre><code class='html'>&lt;div class=&quot;progress-bar&quot; style=&quot;{{barWidth}}&quot;&gt;...&lt;/div&gt;</code></pre>
 </div>
 
 
-<p>Aliasing a method, redefining it and calling the original version from the redefined method is a very familiar pattern if you have read Rails source code (called method chaining).</p>
 
-<p>So, just as the above description says, if the file can be loaded &#8220;without Rubygems&#8221; it is and Rubygems never comes into the picture. If not, we make sure that the load error comes from the file not found on the load path and then find the gemspec for that file and activate it.</p>
 
-<p>Activating it adds it to the load path, so we can call the original require safe in the knowledge that it will now succeed and we won&#8217;t get another load error this time around (and go into an infinite loop). Clever, heh?</p>
+<div>
+  <pre><code class='javascript'>export default Ember.Controller.extend({
+  barWidth: Ember.computed(&#39;progress&#39;, {
+    return &#39;width:&#39; + this.get(&#39;progress&#39;) + &#39;%&#39;;
+  });
+});</code></pre>
+</div>
 
-<p>This is one of the cases when the code is so simple for a moment I think I could have written it myself. With its &lt;10 lines of code Rubygems is empowered to load a myriad of useful Ruby libraries. Isn&#8217;t this wonderful?</p>
+
+<p>Handlebars escapes all html content put in double curlies but it does not do
+that with CSS, and thus the above makes possible a cross-site scripting attack.
+That is the reason for the warning and the fix for that is to convert the
+property (in the above case, <code>barWidth</code>) to a <code>SafeString</code>, which tells Ember
+that the content is safe to display. You should only do that after you have
+verified that the content you mark as safe cannot be injected by a malicious
+user. <a href="http://emberjs.com/deprecations/v1.x/#toc_binding-style-attributes">The guide</a> describes how to do that:</p>
+
+<div>
+  <pre><code class='javascript'>export default Ember.Controller.extend({
+  barWidth: Ember.computed(&#39;progress&#39;, {
+    return Ember.Handlebars.SafeString(&#39;width:&#39; + this.get(&#39;progress&#39;) + &#39;%&#39;);
+  });
+});</code></pre>
+</div>
+
+
+<p>(Alternatively, you can call <code>Ember.String.htmlSafe</code> with the string you want to
+mark as safe, to the same effect.)</p>
+
+<p>When I did this conversion in a recent project, though, the warning persisted.
+After spending a substantial amount of time pouring over the docs and even
+stepping through the warning stacktrace, I still could not find out what was
+wrong. What helped (as so many times already) was a good night sleep and taking
+another look at it in the morning.</p>
+
+<p>Marking the string as safe was done correctly, but when binding it to the
+<code>style</code> attribute, I used double quotes around it, probably inhibiting Ember
+from seeing it as a SafeString:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;progress-bar&quot; style=&quot;{{barWidth}}&quot;&gt;...&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>So all I had to do to make the warning go away was to remove the quotes:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;progress-bar&quot; style={{barWidth}}&gt;...&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>I hope this saves you some time if you come across a similar situation in your
+work.</p>
 </div>
 
 
@@ -177,8 +197,14 @@ end</code></pre>
   
 
 
-<time datetime="2009-10-28T00:00:00+01:00" pubdate data-updated="true">Oct 28<span>th</span>, 2009</time>
+<time datetime="2016-02-03T09:33:00+01:00" pubdate data-updated="true">Feb 3<span>rd</span>, 2016</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ember-js/'>ember.js</a>
+  
+</span>
 
 
     </p>
@@ -195,19 +221,25 @@ end</code></pre>
 
 
 
+  <script src="https://app.convertkit.com/landing_pages/3800.js"></script>
+
 
     
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2009/10/20/rubygems-under-the-hood-introduction.html" title="Previous Post: RubyGems under the hood: Introduction">&laquo; RubyGems under the hood: Introduction</a>
+        <a class="basic-alignment left" href="/2016/01/21/rock-and-roll-with-ember-dot-js-updated-to-use-ember-and-co-2-dot-3.html" title="Previous Post: Rock and Roll with Ember.js updated to use Ember &amp; Co 2.3">&laquo; Rock and Roll with Ember.js updated to use Ember &amp; Co 2.3</a>
       
-      
-        <a class="basic-alignment right" href="/2009/12/14/i15r-031-is-out-now-with-haml-matchers.html" title="Next Post: i15r 0.3.1 is out - now with haml matchers!">i15r 0.3.1 is out - now with haml matchers! &raquo;</a>
       
     </p>
   </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -289,7 +321,10 @@ end</code></pre>
       var disqus_shortname = 'codigoergosum';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://balinterdi.com/2016/02/03/binding-style-attributes-warning-in-ember.html';
+        var disqus_url = 'http://balinterdi.com/2016/02/03/binding-style-attributes-warning-in-ember.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
