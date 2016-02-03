@@ -19,6 +19,7 @@ the `style` attribute of a DOM element, like this:
 {% highlight javascript %}
 {% raw %}
 export default Ember.Controller.extend({
+  progress: 0,
   barWidth: Ember.computed('progress', {
     return 'width:' + this.get('progress') + '%';
   });
@@ -37,6 +38,7 @@ user. [The guide][1] describes how to do that:
 {% highlight javascript %}
 {% raw %}
 export default Ember.Controller.extend({
+  progress: 0,
   barWidth: Ember.computed('progress', {
     return Ember.Handlebars.SafeString('width:' + this.get('progress') + '%');
   });
