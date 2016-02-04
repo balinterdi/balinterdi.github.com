@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-02-04T11:31:10+01:00</updated>
+  <updated>2016-02-04T12:07:14+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -906,7 +906,8 @@ communication of the different layers of the component.</p>
 functioning of the component looks like this:</p>
 
 <div>
-  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  <pre><code class='html'>&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
+&lt;div class=&quot;form-group&quot;&gt;
   &lt;label&gt;Choose an artist&lt;/label&gt;
   {{#auto-complete
         on-select=(action &quot;selectArtist&quot;)
@@ -983,13 +984,14 @@ parent to the child is through block parameters of the parent component. The
 <code>auto-complete</code> component has quite some:</p>
 
 <div>
-  <pre><code class='html'>{{#auto-complete
-        on-select=(action &quot;selectArtist&quot;)
-        on-input=(action &quot;filterArtists&quot;)
-        class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
-                                           toggleDropdown onSelect onInput|}}
-    (...)
-  {{/auto-complete}}</code></pre>
+  <pre><code class='html'>&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
+{{#auto-complete
+      on-select=(action &quot;selectArtist&quot;)
+      on-input=(action &quot;filterArtists&quot;)
+      class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
+                                         toggleDropdown onSelect onInput|}}
+  (...)
+{{/auto-complete}}</code></pre>
 </div>
 
 
@@ -997,7 +999,7 @@ parent to the child is through block parameters of the parent component. The
 You have to look into the component&#8217;s own template to see where they come from:</p>
 
 <div>
-  <pre><code class='html'>&lt;!-- addon/templates/components/auto-complete --&gt;
+  <pre><code class='html'>&lt;!-- addon/templates/components/auto-complete.hbs --&gt;
 {{yield this isDropdownOpen inputValue
         (action &quot;toggleDropdown&quot;) (action &quot;selectItem&quot;) (action &quot;inputDidChange&quot;)}}</code></pre>
 </div>
@@ -1028,7 +1030,8 @@ options.</p>
 with the following:</p>
 
 <div>
-  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  <pre><code class='html'>&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
+&lt;div class=&quot;form-group&quot;&gt;
   &lt;label&gt;Choose an artist&lt;/label&gt;
   {{#auto-complete
         on-select=(action &quot;selectArtist&quot;)
@@ -1118,7 +1121,8 @@ becomes true, <code>auto-complete-list</code> will rerender as one of its attrib
 <code>isVisible</code> has changed. That will then open the dropdown:</p>
 
 <div>
-  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  <pre><code class='html'>&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
+&lt;div class=&quot;form-group&quot;&gt;
   &lt;label&gt;Choose an artist&lt;/label&gt;
   {{#auto-complete
       (...)
@@ -1147,7 +1151,8 @@ selecting an item by clicking (tapping) on it.</p>
 input and the toggle:</p>
 
 <div>
-  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  <pre><code class='html'>&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
+&lt;div class=&quot;form-group&quot;&gt;
   &lt;label&gt;Choose an artist&lt;/label&gt;
   {{#auto-complete
         on-select=(action &quot;selectArtist&quot;)
@@ -1268,7 +1273,8 @@ itself because of the changed attribute.</p>
 <p>Let&#8217;s see the relevants parts of the template:</p>
 
 <div>
-  <pre><code class='html'>&lt;div class=&quot;form-group&quot;&gt;
+  <pre><code class='html'>&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
+&lt;div class=&quot;form-group&quot;&gt;
   &lt;label&gt;Choose an artist&lt;/label&gt;
   {{#auto-complete
         on-select=(action &quot;selectArtist&quot;)
