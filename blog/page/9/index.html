@@ -91,6 +91,58 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2009/01/17/google-groups-tracker-using-yahoo-pipes.html">Google Groups Tracker Using Yahoo Pipes</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-17T00:00:00+01:00" pubdate data-updated="true">Jan 17<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I -and I suppose most of my developer mates- am subscribed to many Google Groups. When there is a topic I am interested in or a problem I posted or replied to it would be cool to get notified of changes to it. Instead of checking it five times a day to see if someone has commented on it which also slices up the big, continuous chunks of time we programmers need. Also, some groups are littered by spam topics so it would be nice to filter out all the things you are not particularly fascinated about and be left with the things you are.</p>
+
+<p>Unfortunately, Google Groups does not offer us the possibility of following certain topics (e.g by sending you an email whenever someone added his comment, a la Lighthouse). But there is a solution although I&#8217;ll admit the one I am describing below is not a particularly cunning or elegant one. If you felt the same pain and found a remedy, I am curious to know what it is, so please leave a comment.</p>
+
+<p>So, as we all know, the Internet is just a <a href="http://en.wikipedia.org/wiki/Series_of_tubes">series of tubes</a>, so the idea to use Yahoo Pipes to cobble together something came quite naturally. Ladies and gentlement, I created the <a href="http://pipes.yahoo.com/balinterdi/google_groups_issue_tracker">Googe Groups issue tracker</a>. It is capable of tracking two Google groups. You can pass three strings for each one and it generates an RSS of the items whose title have any of the strings you provide.</p>
+
+<p>I know it has many shortcomings (to say the least). What if you want to track issues for 3 groups or more? More than 3 issues per group? My puny tracker can&#8217;t do that right now since its &#8220;legoed&#8221; together from <a href="http://pipes.yahoo.com/pipes/">Yahoo Pipes</a> building blocks and so it&#8217;s not programmable. You can, however, clone my pipe, expand it to handle more groups or more expressions, enter the groups you want to track and subscribe to the resulting RSS with your reader of choice.</p>
+
+<p>It may still feel clumsy, since you have to regularly update your strings based on the issues you are interested in. I know a more general solution would be to hack together something that is more manageable and expandable which I might do soon. But it still feels so good from time to time to leave the serious, hard-thinking adult world and build Lego castles. So go ahead, don&#8217;t be shy, build your own castle and let me know about it! :)</p>
+
+<p><strong>UPDATE:</strong> Thanks to Bob, I realized Google has the very option I missed and constructed the pipe for :) However, there can still be some valid scenarios where it can be of service. As per <a href="http://jaimeiniesta.com">Jaime&#8217;s</a> comment I realized I did not really explain how to run the pipe, so let me do it through an example that is not too contrived:</p>
+
+<p>Let&#8217;s suppose you are a <a href="http://datamapper.org">DataMapper</a> expert and you want to help those newbies/impatient people who put &#8216;help&#8217; in the title of their post. In that case, you would input http://groups.google.com/group/datamapper in the &#8220;Group1 URL&#8221; box and &#8220;help&#8221; in the &#8220;Group1 - Title 1&#8221; field. At the pipe output you&#8217;d only see those posts which have help in their title, then.</p>
+
+<p>If you want to also see announcements and the convention would be to have [DM] in the title of those posts, you would then enter &#8220;[DM]&#8221; in the &#8220;Group1 - Title 2&#8221; field.</p>
+
+<p>To construct a filter which only lists ruby-quiz related posts on <a href="http://groups.google.com/group/ruby-talk-google">http://groups.google.com/group/ruby-talk-google</a> is left as an exercise to the reader :).</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2009/01/17/a-ruby-style-currency-converter.html">A Ruby-style Currency Converter</a></h1>
     
     
@@ -746,123 +798,6 @@ Successfully installed rmagick-2.7.2
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2008/10/09/javascript-method-chain.html">Javascript Method Chain</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-10-09T00:00:00+02:00" pubdate data-updated="true">Oct 9<span>th</span>, 2008</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>John Resig has an extraordinary advanced javascript tutorial on his <a href="http://ejohn.org/apps/learn/" target="_blank">blog</a> that he presented on <a href="http://en.oreilly.com/webexny2008/public/content/home" target="_blank">a web conference</a>. It is definitely worth a walk-through since it expands one&#8217;s javascript horizon unless one has not written a javascript framework himself.</p>
-
-<p>I played around with several of his slides learning a lot. My favorite was probably <a href="http://ejohn.org/apps/learn/#90">the last slide</a> which explains how method overloading works using the fact that <em>methodname</em>.length in javascript gives back the number of expected arguments of that function.</p>
-
-<pre lang="javascript">
-function addMethod(object, name, fn){ 
-  // Save a reference to the old method 
-  var old = object[ name ];
- 
-  // Overwrite the method with our new one 
-  object[ name ] = function(){ 
-    // Check the number of incoming arguments, 
-    // compared to our overloaded function 
-    if ( fn.length == arguments.length ) 
-      // If there was a match, run the function 
-      return fn.apply( this, arguments ); 
- 
-    // Otherwise, fallback to the old method 
-    else if ( typeof old === "function" ) 
-      return old.apply( this, arguments ); 
-  }; 
-} 
- 
-function Ninjas(){ 
-  var ninjas = [ "Dean Edwards", "Sam Stephenson", "Alex Russell" ]; 
-  addMethod(this, "find", function(){ 
-    return ninjas; 
-  }); 
-  addMethod(this, "find", function(name){ 
-    var ret = []; 
-    for ( var i = 0; i < ninjas.length; i++ ) 
-      if ( ninjas[i].indexOf(name) == 0 ) 
-        ret.push( ninjas[i] ); 
-    return ret; 
-  }); 
-  addMethod(this, "find", function(first, last){ 
-    var ret = []; 
-    for ( var i = 0; i < ninjas.length; i++ ) 
-      if ( ninjas[i] == (first + " " + last) ) 
-        ret.push( ninjas[i] ); 
-    return ret; 
-  }); 
-} 
- 
-var ninjas = new Ninjas(); 
-assert( ninjas.find().length == 3, "Finds all ninjas" ); 
-assert( ninjas.find("Sam").length == 1, "Finds ninjas by first name" ); 
-assert( ninjas.find("Dean", "Edwards").length == 1, "Finds ninjas by first and last name" ); 
-assert( ninjas.find("Alex", "X", "Russell") == null, "Does nothing" );
-</pre>
-
-
-<p>It took me some time to figure out how exactly the method calls are routed but it was an interesting process nevertheless. I guess the one tricky part to interpret is the following bit:</p>
-
-<pre lang="javascript">
-if ( fn.length == arguments.length ) 
-  // If there was a match, run the function 
-  return fn.apply( this, arguments ); 
- 
-  // Otherwise, fallback to the old method 
-  else if ( typeof old === "function" ) 
-    return old.apply( this, arguments ); 
-  }; 
-</pre>
-
-
-<p>This makes a method chain and allows for method overloading. With the three addMethod calls in the above example a chained method is built up.</p>
-
-<p>After the call to addMethod with no arguments (the first one), the find method of the Ninjas &#8220;class&#8221; will return all ninjas if called with no arguments and do nothing if called with any number of arguments. After the call to addMethod with one single name argument the find method will return the ninjas whose first name matches the passed argument if there is only one argument, return all ninjas if it has been called with no arguments and do nothing otherwise.</p>
-
-<p>I could go on but the pattern is probably clear now. At each call of the find method, the lastly added method is matched for the number of arguments (so in the above example, it will match if the caller passed two arguments) and the method called if the match is successful. Otherwise, it will try to match the number of arguments with the method that was added before the last one, and so on.</p>
-
-<p>I am elaborating this in so much detail because</p>
-
-<ol>
-    <li>it was such a &#8220;Eureka!&#8221; moment for me when I got it. </li>
-    <li>it is an incredibly ingenious way to flex the possibilites of javascript and introduce an OOP concept into an originally non-OOP language.</li>
-
-</ol>
-
-
-<p>I think John Resig made javascript lovable again which is why he deserves my total gratitude.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/10/">&larr; Older</a>
@@ -895,6 +830,10 @@ if ( fn.length == arguments.length )
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html">Complex Components in Ember.js - Part 2 - Towards a more reactive component</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/02/03/binding-style-attributes-warning-in-ember.html">Binding style attributes warning in Ember</a>
       </li>
     
@@ -908,10 +847,6 @@ if ( fn.length == arguments.length )
     
       <li class="post">
         <a href="/2015/11/23/rock-and-roll-with-ember-dot-js-updated-to-ember-2-dot-2-0.html">Rock and Roll with Ember.js updated to Ember 2.2.0</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/22/the-tale-of-two-bindings.html">The tale of two bindings</a>
       </li>
     
   </ul>

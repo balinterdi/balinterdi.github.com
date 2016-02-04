@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Exploring Ruby metaprogramming: call counter - Balint Erdi's blog about Ember.js</title>
+  <title>Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2008/12/06/exploring-ruby-metaprogramming-call-counter.html">
+  <link rel="canonical" href="http://balinterdi.com/blog/page/11/index.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -83,12 +83,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </nav>
   <div id="main">
     <div id="content">
-      <div>
-<article class="hentry" role="article">
+      <div class="blog-index">
   
+  
+  
+    <article>
+      
   <header>
     
-      <h1 class="entry-title">Exploring Ruby Metaprogramming: Call Counter</h1>
+      <h1 class="entry-title"><a href="/2008/04/09/quick-adaptor-my-role-model.html">Quick Adaptor - My Role Model</a></h1>
     
     
       <p class="meta">
@@ -104,144 +107,152 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
 
 
-<time datetime="2008-12-06T00:00:00+01:00" pubdate data-updated="true">Dec 6<span>th</span>, 2008</time>
+<time datetime="2008-04-09T00:00:00+02:00" pubdate data-updated="true">Apr 9<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>A few days ago I purchased a <a href="http://www.pragprog.com/screencasts/v-dtrubyom/the-ruby-object-model-and-metaprogramming">screencast by Dave Thomas on Ruby metaprogramming</a>. (I do not receive any affiliation fees :)). The part I bought presents a problem and describes nine different ways of solving it in ascending order of beauty and code clarity.</p>
+  <div class="entry-content"><p>I returned two weeks ago from the fantastic <a href="http://www.euruko2008.org/">Euruko 2008 conference</a> in Prague dazzled by the outstanding presentations and the power of Ruby. It is hard to pick a favorite but I especially liked David Black&#8217;s &#8220;Per-Object Behavior in Ruby&#8221; (slides hopefully coming up) mainly because I am a sucker for metaprogramming and the true object-orientedness of Ruby in all its glory.</p>
 
-<p>I was stunned by its beauty so I came up with another -though similar- problem and put together a simple solution for it. I present it for the Rubyists to silently smile in the knowledge of its elegance and power and for non-Ruby programmers to be -hopefully :)- amazed by it.</p>
+<p>One fundamental concept was the singleton class which I think I&#8217;ve finally understood from this session. His example was the OpenStruct class whose instances learn to respond to all messages sent to them (this is Smalltalk/Ruby parlance, we could also say they learn to handle method calls) instead of throwing a NoMethodError. So I thought a great way to gain an insight of how this works is to actually code that up myself. Here is what I got:</p>
 
-<p>The task is to count the calls to a certain method of all instances of a class.</p>
+<pre lang="ruby">
+require 'test/unit'
+class QuickAdaptor
+  def method_missing(method_id, *args)
+    method_name = method_id.to_s
+    if method_name =~ /=$/
+      attr = method_name.to_s.chop
+      self.class.class_eval do
+        define_method method_id do |x|
+          instance_variable_set("@#{attr}", x)
+        end
+        method_name.chop!
+        define_method method_name.to_sym do
+          instance_variable_get "@#{attr}"
+        end
+      end
+      instance_variable_set("@#{attr}", args[0])
+    end
+  end
 
-<p>call_counter.rb:</p>
+end
 
-<div>
-  <pre><code class='ruby'>module CallCounter
-  def count_calls_to(method_name)
-    original_method = instance_method(method_name)
-    
-    call_counter = 0
-    define_method(method_name) do |*args|
-        call_counter += 1
-        bound_original_method = original_method.bind(self)
-        bound_original_method.call(*args)
+class QuickSingletonAdaptor
+  # does the same as QuickAdaptor
+  # but only defines methods for singleton
+  # class of object, so it is not the class
+  # that "learns", but the singleton class
+  def method_missing(method_id, *args)
+    method_name = method_id.to_s
+    if method_name =~ /=$/
+      attr = method_name.to_s.chop
+      singleton_class = class << self ; self; end
+      singleton_class.instance_eval do
+        define_method method_id do |x|
+          instance_variable_set("@#{attr}", x)
+        end
+        method_name.chop!
+        define_method method_name.to_sym do
+          instance_variable_get "@#{attr}"
+        end
+      end
+      instance_variable_set("@#{attr}", args[0])
+    end
+  end
+
+end
+
+if __FILE__ == $0
+  class ModuleTester < Test::Unit::TestCase
+
+    def test_quick_adaptor_creates_methods
+      qa = QuickAdaptor.new
+      qa.age = 18
+      assert_equal(18, qa.age)
+      qa.age = 24
+      assert_equal(24, qa.age)
+      assert_equal(nil, qa.name)
+      qa.name = 'joe'
+      assert_equal('joe', qa.name)
+      assert(!qa.respond_to(:nam))
     end
 
-    define_method &quot;calls_to_#{method_name}&quot; do
-        call_counter
-    end     
+    def test_quick_adaptor_creates_instance_methods
+      qa1 = QuickAdaptor.new
+      qa1.age = 18
+      qa2 = QuickAdaptor.new
+      assert(qa2.respond_to?(:age=))
+      assert(qa2.respond_to?(:age))
+      assert_equal(nil, qa2.age)
+    end
+
+    def test_quick_singleton_adaptor_creates_singleton_methods
+      qa1 = QuickSingletonAdaptor.new
+      qa1.age = 18
+      qa2 = QuickSingletonAdaptor.new
+      # qa2 at this point should not know anything!
+      assert(!qa2.respond_to?(:age=))
+      assert(!qa2.respond_to?(:age))
+    end
+
   end
-end</code></pre>
+end
+
+</pre>
+
+
+<p>As a test enthusiastic I embedded the tests in the same file which also has the advantage of giving a documentation of what the code achieves.</p>
+
+<p>You can see that the real difference between the QuickAdaptor and QuickSingletonAdaptor classes lies in the following lines:</p>
+
+<pre lang="ruby">
+class QuickAdaptor
+  ...
+  self.class.class_eval do
+    define_method method_id do |x|
+      ...
+    end
+  end
+end
+</pre>
+
+
+<pre lang="ruby">
+class QuickSingletonAdaptor
+  ...
+  singleton_class = class << self ; self; end
+  singleton_class.instance_eval do
+    define_method method_id do |x|
+      ...
+    end
+  end
+end
+</pre>
+
+
+<p>You can see from the tests that the QuickAdaptor shares the knowledge it gained with its peers (other QuickAdaptor instances), whereas QuickSingletonAdaptor is an egoist, it keeps it to itself! That&#8217;s why I agree with David Black that the best way to call the class that only one instance can access is singleton class because this has more expressive power than other terms (e.g metaclass, eigenclass, etc.)</p>
+
+<p>My goal is to act like the QuickAdaptor, to suck in all ruby knowledge and learn as fast as QuickAdaptor does while having fun at the same time!</p>
+
+<p>ps. I have also taken a look at how Matz&#8217;s <a href="http://www.ruby-doc.org/stdlib/libdoc/ostruct/rdoc/index.html">OpenStruct class</a> accomplishes the same (well, much more :) ). It uses a table of fields where each new &#8220;member method&#8221; is defined. Nice.</p>
 </div>
-
-
-<p>call_foo.rb:</p>
-
-<div>
-  <pre><code class='ruby'>require &quot;call_counter&quot;
-
-class CallFoo
-    
-    extend CallCounter
-
-    def foo; end
-    count_calls_to :foo
-
-end</code></pre>
-</div>
-
-
-<p>After calling &#8220;count_calls_to :foo&#8221; in the CallFoo class definition, calls to the &#8220;foo&#8221; method of CallFoo instances will be counted. A &#8220;calls_to_foo&#8221; method is available to get this count.</p>
-
-<p>I first created an UnboundMethod with &#8220;instance_method&#8221; and then used the bind method to attach it to an instance of ClassFoo. All this is to prevent aliasing method names, not because it is necessarily evil but because I agree with Dave Thomas about &#8220;bind&#8221; being a nicer solution. The define_method acts as a closure and saves its context so there is no need to use an instance variable for call_counter.</p>
-
-<p>You can use the counter like this:</p>
-
-<div>
-  <pre><code class='ruby'>irb(main):003:0&gt; cf = CallFoo.new
-=&gt; #&lt;CallFoo:0x608100&gt;
-irb(main):004:0&gt; cf.calls_to_foo
-=&gt; 0
-irb(main):005:0&gt; 4.times { cf.foo }
-=&gt; 4
-irb(main):006:0&gt; cf.calls_to_foo
-=&gt; 4</code></pre>
-</div>
-
-
-<p>Once again, what I love about Ruby is that in ~ 20 lines we have laid the base of a benchmarking tool (adding the possibility of measuring time spent in the method would not be hard). Also, the original class is not sullied by the call counting code intrinsic details. That functionality is stashed in a module, eager to be reused again.</p>
-
-<p>You may note there is something not quite nice about this. The method calls are counted per class, which makes sense since we usually want to know how many times the method in question was called in all instances, not per instance. However, the calls_to_foo is called on the instance which is confusing. It should be called on the class object, like this:</p>
-
-<div>
-  <pre><code class='ruby'>4.times { cf.foo }
-  CallFoo.calls_to_foo
-  =&gt; 4</code></pre>
-</div>
-
-
-<p>I may get back to this later.</p>
-</div>
-
-
-  <footer>
-    <!--
-    <p class="meta">
-      
   
-
-<span class="byline author vcard">Posted by <span class="fn">I'm all about Ember.js recently</span></span>
-
-      
-
-
-
-
-
-
-
-
   
 
 
-<time datetime="2008-12-06T00:00:00+01:00" pubdate data-updated="true">Dec 6<span>th</span>, 2008</time>
-      
-
-
-    </p>
-    -->
+    </article>
+  
+  <div class="pagination">
     
-      <!--
-<p class="email-optin-box">
-  Liked this post? <a id="post-email-optin" href="https://my.leadpages.net/leadbox/147fb3573f72a2%3A12ccd2806b46dc/5733935958982656/" target="_blank">Sign up here</a>
-  <script type="text/javascript" src="//my.leadpages.net/leadbox-699.js"></script>
-  to receive articles, screencasts and other Ember goodies regularly to your inbox.
-</p>
--->
-
-
-
-
-
+    <a href="/blog/archives">Blog Archives</a>
     
+    <a class="next" href="/blog/page/10/">Newer &rarr;</a>
     
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2008/12/04/a-git-guide-that-emboldens.html" title="Previous Post: A Git guide that emboldens">&laquo; A Git guide that emboldens</a>
-      
-      
-        <a class="basic-alignment right" href="/2008/12/15/ruby-metaprogramming-call-counter-take-2.html" title="Next Post: Ruby metaprogramming: Call counter - Take 2">Ruby metaprogramming: Call counter - Take 2 &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
+  </div>
 </div>
-
 <aside class="sidebar">
   
     <section>
@@ -255,7 +266,7 @@ irb(main):006:0&gt; cf.calls_to_foo
 <section>
   <h1>Contact</h1>
   <div style="margin-top:10px">
-    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let's start talking.
+    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let&#8217;s start talking.
   </div>
 </section>
 
@@ -304,7 +315,6 @@ irb(main):006:0&gt; cf.calls_to_foo
 
   
 </aside>
-
 
     </div>
   </div>

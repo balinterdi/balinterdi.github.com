@@ -91,6 +91,67 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2013/08/23/find-and-replace-in-all-files.html">Find and Replace in All Files</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-23T22:01:00+02:00" pubdate data-updated="true">Aug 23<span>rd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>You want to change a string with another one in some directory in your project.</p>
+
+<p>Here is a one liner to do that:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>for spec_file in $(ag -g _spec.rb spec/); do sed -i.bak 's/john/jane/g' $spec_file; done</span></code></pre></td></tr></table></div></figure>
+
+
+<p>A few caveats:</p>
+
+<ul>
+<li>The match should be case-insensitive. Unfortunately, <code>s/john/jane/gI</code> does not
+work under OSX.</li>
+<li>The -i tells sed to do an in-place replacement. Again, under OSX, however, you
+must give an extension for the backup files. A <code>git clean -f</code> can get rid of
+these in one fell swoop.</li>
+<li>You can use <code>find spec/ -name '_spec.rb'</code> instead of the ag command. <a href="http://geoff.greer.fm/2011/12/27/the-silver-searcher-better-than-ack/">But why
+would you?</a></li>
+</ul>
+
+
+<p>(If you know how to do the replacement with awk, or something similar, please
+tell me in the comments.)</p>
+
+<p>Your text editor might already have a <code>Find &amp; Replace in project</code> functionality.
+But maybe it does not. And surely, the command line version is most flexible.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2013/06/19/the-appeal-of-one-paradigm-languages.html">The Appeal of One Paradigm Languages</a></h1>
     
     
@@ -896,127 +957,6 @@ join <a href="https://github.com/imathis/octopress/wiki/Octopress-Sites">the squ
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/07/19/git-rebase-to-fix-your-local-commits.html">Git Rebase to Fix Your Local Commits</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-07-19T00:00:00+02:00" pubdate data-updated="true">Jul 19<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Let&#8217;s say you have the following three commits in your local repository:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>% git log -3 --oneline
-</span><span class='line'>b648f1a Fix propagating errors in findOrInitialize. (28 seconds ago)
-</span><span class='line'>8789cd1 Non-destructive filtering for bumblebees. (12 hours ago)
-</span><span class='line'>1a35285 Propagate errors the node.js way. (14 hours ago)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The last commit, b648f1a conceptually belongs to the first one, 1a35285.
-It only came later because say you haven&#8217;t run the tests before
-committing it and only realized later you introduced a bug. Or some
-other misdemeanor. Whatever the background is, it would be great if
-there was a way to squash the two related commits together. Turns out
-there is: interactive rebase.</p>
-
-<p>The syntax of the git-rebase is the following:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>git rebase [-i | --interactive] [options] [--onto &lt;newbase>]
-</span><span class='line'>             &lt;upstream> [&lt;branch>]</span></code></pre></td></tr></table></div></figure>
-
-
-<p>What happens when you do git rebase is that the commits that are on the current
-branch but are not in upstream are saved. The current branch is reset to
-upstream and then the saved commits are replayed on top of this.</p>
-
-<p>It&#8217;s worth to mention that you should only do this if you have not
-pushed out these changesets to a remote where others might have pulled
-from it. Rebase creates new commits and if your collaborators pull the
-new commits, chaos can ensue. (See &#8220;Perils of Rebase&#8221; in the <a href="http://progit.org/book/ch3-6.html">ProGit
-book</a>)</p>
-
-<p>This can be used to achieve what we want:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>% git rebase -i HEAD~3</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Since the commits that are on the current branch but not on the commit
-three commits from here are the last three commits, here is what we get:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>pick 1a35285 Propagate errors the node.js way.
-</span><span class='line'>pick 8789cd1 Non-destructive filtering for bumblebees.
-</span><span class='line'>pick b648f1a Fix propagating errors in findOrInitialize.</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We want to meld the &#8220;fix&#8221; commit into the &#8220;propagate&#8221; commit since
-that&#8217;s how it should have been in the first place. So we move b648f1a up and
-squash it into the previous commit:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>pick 1a35285 Propagate errors the node.js way.
-</span><span class='line'>squash b648f1a Fix propagating errors in findOrInitialize.
-</span><span class='line'>pick 8789cd1 Non-destructive filtering for scales.</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After a successful rebase this is how the new log looks like:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>% git log -3 --oneline
-</span><span class='line'>73eed18 Non-destructive filtering for bumblebees. (9 seconds ago)
-</span><span class='line'>1e63d17 Propagate errors the node.js way. (39 seconds ago)
-</span><span class='line'>1b24891 Minor fixes in Bumblebee buzzing. (16 hours ago)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Note that the three commits we had before have now been nicely compacted
-into two, and the propagation commit is now consistent and fixed. It can
-now be pushed.</p>
-
-<p>ps. You might wonder what we use bumblebees for in our project. Actually
-they are faux. They serve to obfuscate real names in propietary code.
-I hope I can one day write code where bumblebees will be first-class
-citizens, though.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/6/">&larr; Older</a>
@@ -1049,6 +989,10 @@ citizens, though.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html">Complex Components in Ember.js - Part 2 - Towards a more reactive component</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/02/03/binding-style-attributes-warning-in-ember.html">Binding style attributes warning in Ember</a>
       </li>
     
@@ -1062,10 +1006,6 @@ citizens, though.</p>
     
       <li class="post">
         <a href="/2015/11/23/rock-and-roll-with-ember-dot-js-updated-to-ember-2-dot-2-0.html">Rock and Roll with Ember.js updated to Ember 2.2.0</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/22/the-tale-of-two-bindings.html">The tale of two bindings</a>
       </li>
     
   </ul>

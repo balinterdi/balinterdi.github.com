@@ -283,39 +283,61 @@ or close the list of items. At a glance it seems like its <code>on-click</code> 
 is the action that will be triggered when the user clicks it but let&#8217;s see for
 sure:</p>
 
-<div>
-  <pre><code class='javascript'>// addon/components/auto-complete-dropdown-toggle.js
-import Ember from &#39;ember&#39;;
-
-export default Ember.Component.extend({
-  tagName: &#39;span&#39;,
-  classNames: &#39;ember-autocomplete-toggle&#39;,
-  &#39;data-dropdown&#39;: &#39;dropdown&#39;,
-  &#39;on-click&#39;: null,
-
-  toggleDropdown: Ember.on(&#39;click&#39;, function() {
-    this.get(&#39;on-click&#39;)();
-  })
-});</code></pre>
-</div>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// addon/components/auto-complete-dropdown-toggle.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;span&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">classNames</span><span class="o">:</span> <span class="s1">&#39;ember-autocomplete-toggle&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="s1">&#39;data-dropdown&#39;</span><span class="o">:</span> <span class="s1">&#39;dropdown&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="s1">&#39;on-click&#39;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">toggleDropdown</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;on-click&#39;</span><span class="p">)();</span>
+</span><span class='line'>  <span class="p">})</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Indeed, it just calls the action that was passed into it, which is
 the <code>toggleDropdown</code> action of the topmost <code>auto-complete</code> component:</p>
 
-<div>
-  <pre><code class='javascript'>// addon/components/auto-complete-dropdown-toggle.js
-import Ember from &#39;ember&#39;;
-
-export default Ember.Component.extend({
-  (...)
-  actions: {
-    toggleDropdown() {
-      this.toggleProperty(&#39;isDropdownOpen&#39;);
-    },
-  }
-});</code></pre>
-</div>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// addon/components/auto-complete-dropdown-toggle.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">toggleDropdown</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">toggleProperty</span><span class="p">(</span><span class="s1">&#39;isDropdownOpen&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>The <code>toggleProperty</code> method flips the value of its parameter, so if it was false
@@ -389,17 +411,25 @@ input and the toggle:</p>
 <code>onSelect</code> closure action provided by <code>auto-complete</code>) is called in the
 <code>auto-complete-option</code> component:</p>
 
-<div>
-  <pre><code class='javascript'>// addon/components/auto-complete-option.js
-import Ember from &#39;ember&#39;;
-
-export default Ember.Component.extend({
-  (...)
-  selectOption: Ember.on(&#39;click&#39;, function() {
-    this.get(&#39;on-click&#39;)(this.get(&#39;item&#39;), this.get(&#39;label&#39;));
-  }),
-});</code></pre>
-</div>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// addon/components/auto-complete-option.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">selectOption</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;on-click&#39;</span><span class="p">)(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">),</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">));</span>
+</span><span class='line'>  <span class="p">}),</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>So where is <code>onSelect</code> defined? It is one of the block parameters yielded by
@@ -414,22 +444,35 @@ export default Ember.Component.extend({
 
 <p><code>selectItem</code> is quite straightforward:</p>
 
-<div>
-  <pre><code class='javascript'>// addon/components/auto-complete-option.js
-import Ember from &#39;ember&#39;;
-
-export default Ember.Component.extend({
-  (...)
-  actions: {
-    selectItem(item, value) {
-      this.get(&#39;on-select&#39;)(item);
-      this.set(&#39;isDropdownOpen&#39;, false);
-      this.set(&#39;inputValue&#39;, value);
-    },
-    (...)
-  }
-});</code></pre>
-</div>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// addon/components/auto-complete-option.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">selectItem</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;on-select&#39;</span><span class="p">)(</span><span class="nx">item</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;isDropdownOpen&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;inputValue&#39;</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="p">(...)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>It first calls the <code>on-select</code> action that was passed into it from the &#8220;outside&#8221;
@@ -488,18 +531,27 @@ itself because of the changed attribute.</p>
 <p>We&#8217;ll start by the <code>auto-complete-input</code> this time where the <code>input</code> event,
 triggered by the user&#8217;s typing, is handled:</p>
 
-<div>
-  <pre><code class='html'>// addon/components/auto-complete-input.js
-import Ember from &#39;ember&#39;;
-
-export default Ember.TextField.extend({
-  (...)
-  valueDidChange: Ember.on(&#39;input&#39;, function() {
-    const value = this.$().val();
-    this.get(&#39;on-change&#39;)(value);
-  })
-});</code></pre>
-</div>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// addon/components/auto-complete-input.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">TextField</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">valueDidChange</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="nx">value</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">().</span><span class="nx">val</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;on-change&#39;</span><span class="p">)(</span><span class="nx">value</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">})</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>This is almost the exact copy of calling the <code>on-select</code> action we saw before
@@ -510,27 +562,45 @@ passed down from the block param of <code>auto-complete</code>.</p>
 <code>(action 'inputDidChange')</code> closure action and yield that, so that should be the
 next thing to look at. Here is where most of the stuff happens:</p>
 
-<div>
-  <pre><code class='html'>// addon/components/auto-complete.js
-import Ember from &#39;ember&#39;;
-
-export default Ember.Component.extend({
-  (...)
-  actions: {
-    inputDidChange(value) {
-      this.get(&#39;on-input&#39;)(value);
-      this.set(&#39;isDropdownOpen&#39;, true);
-      const firstOption = this.get(&#39;list.firstOption&#39;);
-      if (firstOption) {
-        const autocompletedLabel = firstOption.get(&#39;label&#39;);
-        this.get(&#39;on-select&#39;)(firstOption.get(&#39;item&#39;));
-        this.set(&#39;inputValue&#39;, autocompletedLabel);
-        this.get(&#39;input.element&#39;).setSelectionRange(value.length, autocompletedLabel.length);
-      }
-    }
-  }
-});</code></pre>
-</div>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// addon/components/auto-complete.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">inputDidChange</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;on-input&#39;</span><span class="p">)(</span><span class="nx">value</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;isDropdownOpen&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span><span class='line'>      <span class="kr">const</span> <span class="nx">firstOption</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;list.firstOption&#39;</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="nx">firstOption</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kr">const</span> <span class="nx">autocompletedLabel</span> <span class="o">=</span> <span class="nx">firstOption</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;on-select&#39;</span><span class="p">)(</span><span class="nx">firstOption</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">));</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;inputValue&#39;</span><span class="p">,</span> <span class="nx">autocompletedLabel</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;input.element&#39;</span><span class="p">).</span><span class="nx">setSelectionRange</span><span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">autocompletedLabel</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>We first call the <code>on-input</code> action which filters out the artists that do not
@@ -689,6 +759,10 @@ and see how to fix them. Stay tuned!</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html">Complex Components in Ember.js - Part 2 - Towards a more reactive component</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/02/03/binding-style-attributes-warning-in-ember.html">Binding style attributes warning in Ember</a>
       </li>
     
@@ -702,10 +776,6 @@ and see how to fix them. Stay tuned!</p>
     
       <li class="post">
         <a href="/2015/11/23/rock-and-roll-with-ember-dot-js-updated-to-ember-2-dot-2-0.html">Rock and Roll with Ember.js updated to Ember 2.2.0</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/22/the-tale-of-two-bindings.html">The tale of two bindings</a>
       </li>
     
   </ul>

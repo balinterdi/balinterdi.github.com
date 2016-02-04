@@ -91,6 +91,94 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2015/09/10/complex-component-design-in-ember-intro.html">Complex Component Design in Ember.js - Intro</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-09-10T11:07:00+02:00" pubdate data-updated="true">Sep 10<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The title would probably better be &#8220;Somewhat Complex Component Design in Ember.js&#8221;
+but any title including &#8216;Somewhat&#8217; rules out pompousness. I therefore don&#8217;t
+claim that the series of blog posts I intend to start here will represent the
+pinnacle of component design in Ember. There definitely are and definitely will
+be more complex component structures and scenarios.</p>
+
+<p>The component developed in the series is one that autocompletes as the user
+starts to write the input and allows selecting from a fixed set of options.
+Nothing extraordinary but complex enough so that the design/interaction
+principles can be applied and explained while developing the component.</p>
+
+<p>Important disclaimer: I am not an expert on component design (which, it seems
+to me, is quite a complex topic). I got intrigued by it thanks to <a href="https://twitter.com/ryanflorence">Ryan Florence</a>
+and his talks and learned most of the basics from him. My choice of component
+probably also has to do something with Ryan. He developed the ic-autocomplete
+component from which I took several ideas, sometimes simply copying the
+implementation.</p>
+
+<h3>Rationale</h3>
+
+<p>So you probably ask: why reinvent the wheel? Why develop something that is
+already done and not something new?</p>
+
+<p>First of all, I (and science says most of us) learn best by doing. I wanted to
+use an example where I already have a sample implementation but also understand
+why the original implementation did things as it did and see whether I can make
+the component simpler or more robust. I wanted to face the problems, to feel
+the pain of doing things a certain way, and find solutions for typical,
+recurring problems.</p>
+
+<p>It&#8217;s also important to remember that when Ryan developed their autocomplete
+component, there were no block parameters, no closure actions and no direct
+attribute bindings. One still had to resort to observers in several cases.
+Two-way bindings were still in, and the de-facto way of communication between
+pieces of a component structure.</p>
+
+<p>Ember has come a long way since then and its components converged toward those
+of React in its reactive, &#8220;rerender everything&#8221; approach. Potentially some of
+the ideas explained in the series can be applied to React and other libraries,
+too, and thus might prove useful to more people.</p>
+
+<h3>So many words, so little code</h3>
+
+<p>To have something (almost) tangible in this first intro post, too, let me show
+you how one would interact with the finished(?) component. If you have read my
+<a href="/2014/06/26/ember-gotcha-controllers-are-singletons.html">earlier</a> <a href="/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria.html">posts</a> or <a href="http://rockandrollwithemberjs.com">my book</a>, it will come as no surprise that I use it here to
+select a great musician from a defined set of them:</p>
+
+<p><img src="/images/posts/complex-component-design-ember/ember-autocomplete-demo.gif" alt="Selecting an
+artist" /></p>
+
+<p>This short intro and the demo have hopefully whetted your appetite and you&#8217;ll
+join me for the next part of the series:</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">How to Do a Select (Dropdown) in Ember 2.0?</a></h1>
     
     
@@ -1319,113 +1407,6 @@ ways to tweak it, in well-defined ways.</li>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html">Replacing Items in Browser History in Ember.js</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-06-04T07:49:00+02:00" pubdate data-updated="true">Jun 4<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>One of the outstanding features of Ember.js is that all things related to URLs,
-including going back and forth in browser history, just work. This is something
-people got used to with &#8220;classical&#8221;, server-side applications and that several
-other client-side frameworks lack.</p>
-
-<p>In this post, I am going to focus on a browser history feature, replacing
-entries in it as users navigate between routes instead of adding to it.</p>
-
-<h3>Navigating between routes in Ember</h3>
-
-<p>If either the <code>link-to</code> template helper or the route&#8217;s <code>transitionTo</code> method is
-used to move between routes (and thus URLs), a new entry is going to be added to
-the browser&#8217;s history. That is fine most of the time but sometimes the desired
-behavior might be replacing the current entry.</p>
-
-<p>Taking the example from the guide, if one is paging through the comments made on
-a photo where each one has its own route, we probably do not want these comment
-URLs to clutter the history. Similarly, we don&#8217;t want the user to land on these
-URLs when she hits the Back button in the browser.</p>
-
-<h3>Using the link-to helper</h3>
-
-<p>All that needs to be done is adding the <code>replace=true</code> option to the <code>link-to</code> helper.</p>
-
-<p>So if the link that takes you to the next comment is written like this:</p>
-
-<div>
-  <pre><code class='html'>{{link-to &#39;Next comment&#39; &#39;photo.comment&#39; nextComment}}</code></pre>
-</div>
-
-
-<p>It should now become:</p>
-
-<div>
-  <pre><code class='html'>{{link-to &#39;Next comment&#39; &#39;photo.comment&#39; nextComment replace=true}}</code></pre>
-</div>
-
-
-<h3>Transitioning from inside routes</h3>
-
-<p>The canonical way to go from one route to another is <code>route.transitionTo</code>. If
-flipping between comments of a photo was implemented as an action in the route,
-the action handler would have the following line:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">transitionTo</span><span class="p">(</span><span class="s1">&#39;photo.comment&#39;</span><span class="p">,</span> <span class="nx">nextComment</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>To make that replace the current history entry, this becomes:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">replaceWith</span><span class="p">(</span><span class="s1">&#39;photo.comment&#39;</span><span class="p">,</span> <span class="nx">nextComment</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>replaceWith</code> takes the exact same parameters as <code>transitionTo</code>.</p>
-
-<h3>In the controller</h3>
-
-<p>As <a href="https://twitter.com/jacquescrocker">Jacques Crocker</a> points out <a href="http://balinterdi.com/2014/06/04/replacing-items-in-browser-history-in-ember-dot-js.html#comment-1452078154">in his comment</a>
-below, I missed the case where we want to transition to another route, replacing
-the current item in the history, from inside a controller.</p>
-
-<p>Here is how to do that:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">replaceRoute</span><span class="p">(</span><span class="s1">&#39;photo.comment&#39;</span><span class="p">,</span> <span class="nx">nextComment</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So thank you, Jacques.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1458,6 +1439,10 @@ the current item in the history, from inside a controller.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html">Complex Components in Ember.js - Part 2 - Towards a more reactive component</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/02/03/binding-style-attributes-warning-in-ember.html">Binding style attributes warning in Ember</a>
       </li>
     
@@ -1471,10 +1456,6 @@ the current item in the history, from inside a controller.</p>
     
       <li class="post">
         <a href="/2015/11/23/rock-and-roll-with-ember-dot-js-updated-to-ember-2-dot-2-0.html">Rock and Roll with Ember.js updated to Ember 2.2.0</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/22/the-tale-of-two-bindings.html">The tale of two bindings</a>
       </li>
     
   </ul>
