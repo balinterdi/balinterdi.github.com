@@ -30,6 +30,7 @@ functioning of the component looks like this:
 
 {% highlight html %}
 {% raw %}
+<!-- tests/dummy/app/templates/index.hbs -->
 <div class="form-group">
   <label>Choose an artist</label>
   {{#auto-complete
@@ -108,13 +109,14 @@ parent to the child is through block parameters of the parent component. The
 
 {% highlight html %}
 {% raw %}
-  {{#auto-complete
-        on-select=(action "selectArtist")
-        on-input=(action "filterArtists")
-        class="autocomplete-container" as |autocomplete isDropdownOpen inputValue
-                                           toggleDropdown onSelect onInput|}}
-    (...)
-  {{/auto-complete}}
+<!-- tests/dummy/app/templates/index.hbs -->
+{{#auto-complete
+      on-select=(action "selectArtist")
+      on-input=(action "filterArtists")
+      class="autocomplete-container" as |autocomplete isDropdownOpen inputValue
+                                         toggleDropdown onSelect onInput|}}
+  (...)
+{{/auto-complete}}
 {% endraw %}
 {% endhighlight %}
 
@@ -123,7 +125,7 @@ You have to look into the component's own template to see where they come from:
 
 {% highlight html %}
 {% raw %}
-<!-- addon/templates/components/auto-complete -->
+<!-- addon/templates/components/auto-complete.hbs -->
 {{yield this isDropdownOpen inputValue
         (action "toggleDropdown") (action "selectItem") (action "inputDidChange")}}
 {% endraw %}
@@ -155,6 +157,7 @@ with the following:
 
 {% highlight html %}
 {% raw %}
+<!-- tests/dummy/app/templates/index.hbs -->
 <div class="form-group">
   <label>Choose an artist</label>
   {{#auto-complete
@@ -182,8 +185,7 @@ or close the list of items. At a glance it seems like its `on-click` attribute
 is the action that will be triggered when the user clicks it but let's see for
 sure:
 
-{% highlight javascript %}
-{% raw %}
+```js
 // addon/components/auto-complete-dropdown-toggle.js
 import Ember from 'ember';
 
@@ -197,14 +199,12 @@ export default Ember.Component.extend({
     this.get('on-click')();
   })
 });
-{% endraw %}
-{% endhighlight %}
+```
 
 Indeed, it just calls the action that was passed into it, which is
 the `toggleDropdown` action of the topmost `auto-complete` component:
 
-{% highlight javascript %}
-{% raw %}
+```js
 // addon/components/auto-complete-dropdown-toggle.js
 import Ember from 'ember';
 
@@ -216,8 +216,7 @@ export default Ember.Component.extend({
     },
   }
 });
-{% endraw %}
-{% endhighlight %}
+```
 
 The `toggleProperty` method flips the value of its parameter, so if it was false
 it now becomes true. `isDropdownOpen` is yielded as a block parameter so when it
@@ -226,6 +225,7 @@ becomes true, `auto-complete-list` will rerender as one of its attributes,
 
 {% highlight html %}
 {% raw %}
+<!-- tests/dummy/app/templates/index.hbs -->
 <div class="form-group">
   <label>Choose an artist</label>
   {{#auto-complete
@@ -256,6 +256,7 @@ input and the toggle:
 
 {% highlight html %}
 {% raw %}
+<!-- tests/dummy/app/templates/index.hbs -->
 <div class="form-group">
   <label>Choose an artist</label>
   {{#auto-complete
@@ -292,8 +293,7 @@ When one of the items is clicked, the `on-click` attribute (which is the
 `onSelect` closure action provided by `auto-complete`) is called in the
 `auto-complete-option` component:
 
-{% highlight javascript %}
-{% raw %}
+```js
 // addon/components/auto-complete-option.js
 import Ember from 'ember';
 
@@ -303,8 +303,7 @@ export default Ember.Component.extend({
     this.get('on-click')(this.get('item'), this.get('label'));
   }),
 });
-{% endraw %}
-{% endhighlight %}
+```
 
 So where is `onSelect` defined? It is one of the block parameters yielded by
 `auto-complete`, more precisely the `(action "selectItem")` action:
@@ -319,8 +318,7 @@ So where is `onSelect` defined? It is one of the block parameters yielded by
 
 `selectItem` is quite straightforward:
 
-{% highlight javascript %}
-{% raw %}
+```js
 // addon/components/auto-complete-option.js
 import Ember from 'ember';
 
@@ -335,8 +333,7 @@ export default Ember.Component.extend({
     (...)
   }
 });
-{% endraw %}
-{% endhighlight %}
+```
 
 It first calls the `on-select` action that was passed into it from the "outside"
 (the controller), which just sets `selectedArtist` to the artist object
@@ -360,6 +357,7 @@ Let's see the relevants parts of the template:
 
 {% highlight html %}
 {% raw %}
+<!-- tests/dummy/app/templates/index.hbs -->
 <div class="form-group">
   <label>Choose an artist</label>
   {{#auto-complete
@@ -396,8 +394,7 @@ Let's see the relevants parts of the template:
 We'll start by the `auto-complete-input` this time where the `input` event,
 triggered by the user's typing, is handled:
 
-{% highlight html %}
-{% raw %}
+```js
 // addon/components/auto-complete-input.js
 import Ember from 'ember';
 
@@ -408,8 +405,7 @@ export default Ember.TextField.extend({
     this.get('on-change')(value);
   })
 });
-{% endraw %}
-{% endhighlight %}
+```
 
 This is almost the exact copy of calling the `on-select` action we saw before
 from `auto-complete-option`. Here, the `on-change` function is called that was
@@ -419,8 +415,7 @@ If we take a look in the template of `auto-complete` we see it creates a
 `(action 'inputDidChange')` closure action and yield that, so that should be the
 next thing to look at. Here is where most of the stuff happens:
 
-{% highlight html %}
-{% raw %}
+```js
 // addon/components/auto-complete.js
 import Ember from 'ember';
 
@@ -440,8 +435,7 @@ export default Ember.Component.extend({
     }
   }
 });
-{% endraw %}
-{% endhighlight %}
+```
 
 We first call the `on-input` action which filters out the artists that do not
 match the typed prefix. The result of that is that `matchingArtists` will only
