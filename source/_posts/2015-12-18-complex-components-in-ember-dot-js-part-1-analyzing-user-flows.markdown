@@ -205,7 +205,7 @@ Indeed, it just calls the action that was passed into it, which is
 the `toggleDropdown` action of the topmost `auto-complete` component:
 
 ```js
-// addon/components/auto-complete-dropdown-toggle.js
+// addon/components/auto-complete-dropdown.js
 import Ember from 'ember';
 
 export default Ember.Component.extend({
@@ -319,7 +319,7 @@ So where is `onSelect` defined? It is one of the block parameters yielded by
 `selectItem` is quite straightforward:
 
 ```js
-// addon/components/auto-complete-option.js
+// addon/components/auto-complete.js
 import Ember from 'ember';
 
 export default Ember.Component.extend({
