@@ -205,7 +205,7 @@ Indeed, it just calls the action that was passed into it, which is
 the `toggleDropdown` action of the topmost `auto-complete` component:
 
 ```js
-// addon/components/auto-complete-dropdown.js
+// addon/components/auto-complete.js
 import Ember from 'ember';
 
 export default Ember.Component.extend({
