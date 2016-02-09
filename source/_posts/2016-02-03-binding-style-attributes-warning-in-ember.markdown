@@ -40,7 +40,7 @@ user. [The guide][1] describes how to do that:
 export default Ember.Controller.extend({
   progress: 0,
   barWidth: Ember.computed('progress', {
-    return Ember.Handlebars.SafeString('width:' + this.get('progress') + '%');
+    return new Ember.Handlebars.SafeString('width:' + this.get('progress') + '%');
   });
 });
 {% endraw %}
