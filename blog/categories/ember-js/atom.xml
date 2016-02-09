@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-02-05T21:17:58+01:00</updated>
+  <updated>2016-02-09T13:29:14+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -680,7 +680,7 @@ user. <a href="http://emberjs.com/deprecations/v1.x/#toc_binding-style-attribute
   progress: 0,
   barWidth: Ember.computed(&#39;progress&#39;, {&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;return Ember.Handlebars.SafeString(&#39;width:&#39; + this.get(&#39;progress&#39;) + &#39;%&#39;);
+&lt;pre&gt;&lt;code&gt;return new Ember.Handlebars.SafeString(&#39;width:&#39; + this.get(&#39;progress&#39;) + &#39;%&#39;);
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;  });

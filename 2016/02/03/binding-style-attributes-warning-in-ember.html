@@ -143,7 +143,7 @@ user. <a href="http://emberjs.com/deprecations/v1.x/#toc_binding-style-attribute
   <pre><code class='javascript'>export default Ember.Controller.extend({
   progress: 0,
   barWidth: Ember.computed(&#39;progress&#39;, {
-    return Ember.Handlebars.SafeString(&#39;width:&#39; + this.get(&#39;progress&#39;) + &#39;%&#39;);
+    return new Ember.Handlebars.SafeString(&#39;width:&#39; + this.get(&#39;progress&#39;) + &#39;%&#39;);
   });
 });</code></pre>
 </div>
