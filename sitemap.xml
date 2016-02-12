@@ -473,12 +473,18 @@
         <lastmod>2016-02-04T11:30:50+01:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://balinterdi.com/2016/02/12/how-to-make-an-ember-module-resolve-as-another-one.html
+        </loc>
+        <lastmod>2016-02-12T11:40:17+01:00</lastmod>
+    </url>
+    <url>
         <loc>http://balinterdi.com/blog/archives/</loc>
-        <lastmod>2016-02-09T13:27:30+01:00</lastmod>
+        <lastmod>2016-02-12T11:40:17+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/</loc>
-        <lastmod>2016-02-09T13:27:30+01:00</lastmod>
+        <lastmod>2016-02-12T11:40:17+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/privacy-policy/</loc>
