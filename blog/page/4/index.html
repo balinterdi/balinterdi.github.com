@@ -91,6 +91,196 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria.html">Sorting Arrays in Ember.js by Various Criteria</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-05T08:02:00+01:00" pubdate data-updated="true">Mar 5<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I concluded <a href="http://balinterdi.com/2014/02/26/a-common-resource-route-pattern-in-ember-dot-js.html">the previous post on route refactoring</a> by saying
+that the fact that the <code>artists.songs</code> route now has the songs as its model will
+pay dividends in the future.</p>
+
+<p>I will show one thing that becomes really easy this way and also one
+less-known Ember feature that builds on top of that.</p>
+
+<h2>Showing list items in a certain order</h2>
+
+<p>Even with our superb routing, songs for an artist appear in random order,
+differently at each load of the application. This is confusing and it is now
+easy to remedy.</p>
+
+<p>The controller backing the <code>artist.songs</code> template is now an ArrayController so
+establishing a sort order is a piece of cake:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">sortAscending</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">],</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What I say with these sorting-related definitions is that I want songs to be
+shown in descending order of first their ratings and then -should the rating be
+the same- by title. That&#8217;s all there is to it, those tunes are now aptly sorted:</p>
+
+<p><img src="http://f.cl.ly/items/1v3C3Q241g1w3k1X2c04/Screen%20Shot%202014-03-03%20at%2019.39.01.png" alt="Ascending ordering" /></p>
+
+<h2>Sorting by multiple properties, in different directions</h2>
+
+<p>There is a slight deficiency in the above sorting API. It cannot sort multiple
+properties if the sorting is to be done ascending for some properties and
+descending for others. The <code>sortAscending</code> flag is &#8220;global&#8221; for the
+whole <code>sortProperties</code> array.</p>
+
+<p>Taking the above example, it is a perfectly valid request to have songs first
+ordered in descending order of their rating and then in ascending order of their
+title. But how can we do that?</p>
+
+<h2>Reduce computed macros</h2>
+
+<p>The <code>Ember.computed.sort</code> macro in the <a href="https://github.com/emberjs/ember.js/blob/v1.4.0/packages/ember-runtime/lib/computed/reduce_computed_macros.js"><code>reduce_computed_macros</code> package</a> provides
+a clean way to do exactly that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;rating:desc&#39;</span><span class="p">,</span> <span class="s1">&#39;title:asc&#39;</span><span class="p">],</span>
+</span><span class='line'>  <span class="nx">sortedSongs</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="s1">&#39;sortProperties&#39;</span><span class="p">),</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The API is so explicit it does not need any explanation. In order for the songs
+to appear in the specified order, we now need to iterate through <code>sortedSongs</code>
+so the <code>#each</code> in the template becomes <code>#each sortedSongs</code>.</p>
+
+<p>Let&#8217;s take a look at how it has changed the order of the songs:</p>
+
+<p><img src="http://f.cl.ly/items/1D1R183h0h103O0p421O/Screen%20Shot%202014-03-03%20at%2019.58.24.png" alt="Perfect ordering" /></p>
+
+<p>Perfect, I would say that is the ordering that makes most sense.</p>
+
+<h2>Wait, it gets better still</h2>
+
+<p>When first playing with <code>Ember.computed.sort</code>, my initial try was to set up
+<code>sortedSongs</code> like that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'>  <span class="nx">sortedSongs</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;rating:desc&#39;</span><span class="p">,</span> <span class="s1">&#39;title:asc&#39;</span><span class="p">]),</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That, however, throws an error. Taking a look at the code and the tests, I
+realized that the second argument needs to be a property on the same object the
+sorting is defined on. This seems &#8220;over-engineered&#8221; at first but in fact opens
+up further possibilities.</p>
+
+<p>Under the hood, <code>Ember.computed.sort</code> sets up an observer not only to the array
+being sorted but also to the sort properties. That way, when the sorting
+criteria changes, the list is reordered and rerendered automatically. This makes
+it possible for the criteria to be easily modified via user action.</p>
+
+<p>To give you an example, I&#8217;ll make a button set the rating to happen only by title,
+in ascending alphabetical order:</p>
+
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/songs&quot;&gt;
+  {{#if canCreateSong}}
+    &lt;div class=&quot;list-group-item&quot;&gt;
+      (...)
+      &lt;button class=&quot;btn btn-link pull-right&quot; {{action &quot;sortBy&quot; &quot;title:asc&quot;}}&gt;Sort by title&lt;/button&gt;
+    &lt;/div&gt;
+  {{/if}}
+  (...)
+&lt;/script&gt;</code></pre>
+</div>
+
+
+<p>The <code>sortBy</code> action handler sets the passed string as the value
+for the <code>sortProperties</code> which will rearrange the list:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;rating:desc&#39;</span><span class="p">,</span> <span class="s1">&#39;title:asc&#39;</span><span class="p">],</span>
+</span><span class='line'>  <span class="nx">sortedSongs</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="s1">&#39;sortProperties&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">sortBy</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sortProperties</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;sortProperties&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nx">sortProperties</span><span class="p">]);</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="p">(...)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Indeed when the link is clicked, the songs become ordered by title only:</p>
+
+<p><img src="http://f.cl.ly/items/1H0v0w3C0u0Q2A2j451Z/Screen%20Shot%202014-03-03%20at%2021.12.00.png" alt="Ordering by only title" /></p>
+
+<h2>Declarative sorting</h2>
+
+<p>Let me finish by pointing out that this arrangment makes it possible to have
+several actions that set (or modify) the ordering criteria, without having to
+write a single line of code to implement the sorting itself.</p>
+
+<p>You gotta love this.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2014/02/26/a-common-resource-route-pattern-in-ember-dot-js.html">A Common Resource Route Pattern in Ember.js</a></h1>
     
     
@@ -2274,350 +2464,6 @@ to do so.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2013/12/03/roll-your-own-ember-dot-js-identity-map.html">Roll Your Own Ember.js Identity Map</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-12-03T11:41:00+01:00" pubdate data-updated="true">Dec 3<span>rd</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>If you followed along my <a href="http://emberjs.balinterdi.com">Build an Ember app screencast series</a> and maybe
-played around <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/episode-7">with the app</a> on your own, you might have
-noticed a subtle bug in the application.</p>
-
-<p>When you load the application on the <code>/artists/</code> route and then choose one of
-the artists, the artist link gets highlighted correctly:</p>
-
-<p><img src="/images/posts/roll-your-own-store/active-highlight-works.png" alt="Correct active highlight" /></p>
-
-<p>However, when you reload the app on one of these artists routes (e.g
-<code>/artists/pearl-jam</code>), the artist link does not get the active highlight:</p>
-
-<p><img src="/images/posts/roll-your-own-store/active-highlight-does-not-work.png" alt="Incorrect active highlight" /></p>
-
-<h3>Understanding what is wrong</h3>
-
-<p>The first step of any debugging process is to understand where the bug lies. In
-order to do that we have to understand how highlighting a link as active works
-in Ember.js.</p>
-
-<p>I wrote about this topic in detail in <a href="http://blog.safaribooksonline.com/2013/10/29/marking-links-as-active-in-ember-js-markdown/">a guest post</a> so let
-me just quickly summarize it here.</p>
-
-<p>The artist links are rendered using the <code>link-to</code> helper. When active routes
-change (that includes the moment when the app is loaded from scratch) the
-<code>isActive</code> property for each link is recomputed. If it is found to be
-active, the activeClass is added to the view&#8217;s tag and that enables it to be
-displayed differently.</p>
-
-<p>When is a link-to active? When its route name matches one of the current route
-names. This is pretty straightforward for static links but what about dynamic ones
-with context objects? In those cases, all the context objects have to match in
-order for the link to be considered active.</p>
-
-<p>Let&#8217;s see our particular case. We have the following routes:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">resource</span><span class="p">(</span><span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">(</span><span class="s1">&#39;songs&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;:slug&#39;</span> <span class="p">});</span>
-</span><span class='line'>  <span class="p">});</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And the following template that renders each artist link:</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artists&quot;&gt;
-  (...)
-  {{#each model}}
-    {{#link-to &quot;artists.songs&quot; this class=&quot;list-group-item artist-link&quot;}}
-      {{name}}
-      (...)
-    {{/link-to}}
-  {{/each}}
-  (...)
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p>Each link is rendered with an artist object that comes from the model hook of
-the <code>ArtistsRoute</code>:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">artistObjects</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">A</span><span class="p">();</span>
-</span><span class='line'>    <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s1">&#39;http://localhost:9393/artists&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">artists</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">artists</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">artistObjects</span><span class="p">.</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
-</span><span class='line'>      <span class="p">});</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">artistObjects</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So the artist object that serves as the context for the <code>artists.songs</code> link has
-to be the exact same object as the one returned from the model hook of the
-<code>ArtistsSongsRoute</code>:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;http://localhost:9393/artists/&#39;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">artist</span><span class="p">.</span><span class="nx">setProperties</span><span class="p">({</span>
-</span><span class='line'>        <span class="nx">id</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
-</span><span class='line'>        <span class="nx">name</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-</span><span class='line'>        <span class="nx">songs</span><span class="o">:</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">extractSongs</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">songs</span><span class="p">,</span> <span class="nx">artist</span><span class="p">)</span>
-</span><span class='line'>      <span class="p">});</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">artist</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Are they identical? Well, intuitively they are but Ember.js does not care about
-our intuition and so we should not, either. They are different objects since
-both were created by calls to <code>App.Artist.create</code> (<code>App.Artist.createRecord</code>
-calls <code>App.Artist.create</code> under the hood) which returns a new object
-every time. Bummer.</p>
-
-<h3>Replacing intuition with reality</h3>
-
-<p>Don&#8217;t be sad, it&#8217;s not bad.</p>
-
-<p>What we need is to have the same model object to be returned for the same
-identifier. In the matter at hand, given an artist slug (that serves as an
-identifier) we want to get back the same <code>App.Artist</code> object every time we use it.</p>
-
-<p>If you think about it, that&#8217;s what identity maps are for.</p>
-
-<h3>Wiring it up with promises</h3>
-
-<p>The identity map needs to be able to retrieve objects and also store them. Most
-importantly, it has to return the object from its map if it has already created
-it with the passed in id.</p>
-
-<p>I will dump the code below and then explain what it does:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IdentityMap</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">map</span><span class="o">:</span> <span class="p">{},</span>
-</span><span class='line'>  <span class="nx">findAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">identityMap</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">RSVP</span><span class="p">.</span><span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s1">&#39;http://localhost:9393/artists&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">artists</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="kd">var</span> <span class="nx">artistObjects</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">A</span><span class="p">();</span>
-</span><span class='line'>        <span class="nx">artists</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>          <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">createRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-</span><span class='line'>          <span class="nx">identityMap</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="nx">artist</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;slug&#39;</span><span class="p">),</span> <span class="nx">artist</span><span class="p">);</span>
-</span><span class='line'>          <span class="nx">artistObjects</span><span class="p">.</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">artist</span><span class="p">);</span>
-</span><span class='line'>        <span class="p">});</span>
-</span><span class='line'>        <span class="nx">resolve</span><span class="p">(</span><span class="nx">artistObjects</span><span class="p">);</span>
-</span><span class='line'>      <span class="p">});</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">find</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">identityMap</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">RSVP</span><span class="p">.</span><span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">identityMap</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">identityMap</span><span class="p">.</span><span class="nx">_key</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">id</span><span class="p">)];</span>
-</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="nx">artist</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">resolve</span><span class="p">(</span><span class="nx">artist</span><span class="p">);</span>
-</span><span class='line'>      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>        <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;http://localhost:9393/artists/&#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">;</span>
-</span><span class='line'>        <span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>          <span class="kd">var</span> <span class="nx">artist</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
-</span><span class='line'>          <span class="nx">artist</span><span class="p">.</span><span class="nx">setProperties</span><span class="p">({</span>
-</span><span class='line'>            <span class="nx">id</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
-</span><span class='line'>            <span class="nx">name</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-</span><span class='line'>            <span class="nx">songs</span><span class="o">:</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Artist</span><span class="p">.</span><span class="nx">extractSongs</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">songs</span><span class="p">,</span> <span class="nx">artist</span><span class="p">)</span>
-</span><span class='line'>          <span class="p">});</span>
-</span><span class='line'>          <span class="nx">identityMap</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">artist</span><span class="p">);</span>
-</span><span class='line'>          <span class="nx">resolve</span><span class="p">(</span><span class="nx">artist</span><span class="p">);</span>
-</span><span class='line'>        <span class="p">});</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>As you can see, I used promises for the retrieval methods of the API.</p>
-
-<p>Promises are a huge improvement over callbacks and deserve their own
-<del>article</del> book. They represent eventual values that are going to be
-either resolved (meaning success) or rejected (meaning failure) and can be
-passed around freely.</p>
-
-<p>Ember.js relies on promises heavily in its <a href="http://emberjs.com/guides/routing/asynchronous-routing/#toc_a-word-on-promises">routing API</a> and uses
-<a href="https://github.com/tildeio/rsvp.js">the rsvp promise library</a>. If a promise is returned from any <code>model</code> hook,
-the route transition does not begin until <a href="http://emberjs.com/guides/routing/asynchronous-routing/#toc_the-router-pauses-for-promises">the promise is resolved</a>.</p>
-
-<p>Leveraging that property of Ember routing I return promises from both the
-<code>findAll</code> and <code>find</code> methods and then use them from the model hooks of
-the appropriate routes:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">App</span><span class="p">.</span><span class="nx">IdentityMap</span><span class="p">.</span><span class="nx">findAll</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistsSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">App</span><span class="p">.</span><span class="nx">IdentityMap</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>When I call <code>App.IdentityMap.findAll</code> from the <code>ArtistsRoute</code> the rendering of
-the <code>artists</code> template is stopped until the promise is resolved. That happens
-when the AJAX call has returned with the data for all artists and I call
-<code>resolve(artistObjects)</code>.</p>
-
-<p>Next, the model hook for the <code>ArtistsSongsRoute</code> is evaluated. It returns a
-promise that has to be resolved in order for the template to be rendered.</p>
-
-<p>The artist is found in the identityMap because it has just been stored there
-during the findAll in the previous model hook resolution (see the
-<code>identityMap.store('artist', artist.get('slug'), artist);</code> line). Since it is
-the same object that was used as the context for the artist link, the bug is
-squashed.</p>
-
-<p>The link now gets correctly highlighted as active:</p>
-
-<p><img src="/images/posts/roll-your-own-store/active-highlight-fixed.png" alt="Active highlight fixed" /></p>
-
-<p>Notice we achieved something else, too. Instead of firing two AJAX calls, one
-to fetch all artists and then one to fetch the one serialized in the URL we now
-only have one call. We eliminated the second one by returning the object from
-the identity map.</p>
-
-<p>Furthermore, I also think our code has become better organized. The models for
-our routes have now become one-liners and can quickly be read and understood at
-a casual glance instead of being buried under the minutiae of AJAX calls.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/5/">&larr; Older</a>
@@ -2650,6 +2496,10 @@ a casual glance instead of being buried under the minutiae of AJAX calls.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/02/26/rock-and-roll-with-ember-dot-js-demo-a-public-ember-dot-js-example-project.html">Rock and Roll with Ember.js demo - A public Ember.js example project</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/02/12/how-to-make-an-ember-module-resolve-as-another-one.html">How to make an Ember module resolve as another one</a>
       </li>
     
@@ -2663,10 +2513,6 @@ a casual glance instead of being buried under the minutiae of AJAX calls.</p>
     
       <li class="post">
         <a href="/2016/01/21/rock-and-roll-with-ember-dot-js-updated-to-use-ember-and-co-2-dot-3.html">Rock and Roll with Ember.js updated to use Ember &amp; Co 2.3</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html">Complex Components in Ember.js - Part 1 - Analyzing user flows</a>
       </li>
     
   </ul>

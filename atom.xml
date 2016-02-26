@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-02-12T11:41:49+01:00</updated>
+  <updated>2016-02-26T15:55:56+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,56 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rock and Roll with Ember.js demo - A public Ember.js example project]]></title>
+    <link href="http://balinterdi.com/2016/02/26/rock-and-roll-with-ember-dot-js-demo-a-public-ember-dot-js-example-project.html"/>
+    <updated>2016-02-26T11:04:00+01:00</updated>
+    <id>http://balinterdi.com/2016/02/26/rock-and-roll-with-ember-dot-js-demo-a-public-ember-dot-js-example-project</id>
+    <content type="html"><![CDATA[<p>I have a book called Rock and Roll with Ember.js that has an accompanying
+application we develop throughout the book. I also maintain a demo version of
+the same app which has been open-source since its inception. However, that demo app
+has not received updates for a while now so I decided to do something about
+this and spent some time this week on making it a state-of-the-art Ember 2 application.</p>
+
+<p>Here are the main developments I have made:</p>
+
+<ul>
+<li><strong>Upgraded it to use the latest Ember, Ember Data and Ember CLI versions, 2.3.0.</strong></li>
+<li><strong>Used <a href="http://www.ember-cli-mirage.com/">ember-cli-mirage</a> to seed the app with data and handle &#8220;backend&#8221; requests.</strong>
+(Look, ma&#8217;, no backend!)
+<a href="http://www.ember-cli-mirage.com/">ember-cli-mirage</a> is fantastic addon that lets you set up route handlers,
+fixtures, factories and many more to manage your seed data and mock your server
+responses, both in development and tests. This was the first time I seriously
+used it and I have grown to like it a ton! The author, <a href="https://twitter.com/samselikoff">Sam Selikoff</a>, helped
+out tremendously and had an amazing turnaround on a few questions/issues.
+I used the latest beta version, 0.2.0-beta.7, which you should definitely
+check out and give feedback to Sam.</li>
+<li><strong>Made it a modern, idiomatic Ember app.</strong>
+It&#8217;s not just Ember, but also Javascript that evolves at a neck-breaking space
+(although to a lesser extent). I used the not-at-all elementary
+<a href="https://github.com/abuiles/ember-watson">ember-watson</a> to modernize the Ember app and applied a few manual tweaks
+for some of the Javascript parts, like using destructuring and <code>let</code> and <code>const</code>
+instead of <code>var</code>.</li>
+<li><strong>Deployed it to be publicly accessible.</strong>
+Leveraging the most excellent <a href="https://www.pagefronthq.com/">PageFront</a>, the app is now deployed to their
+platform. You can see it in action at <a href="https://rarwe-demo.pagefrontapp.com/">https://rarwe-demo.pagefrontapp.com</a>.
+This was not even a task, I only needed to issue two commands, one to install
+the add-on and one to deploy it.</li>
+</ul>
+
+
+<p>The source lives on Github, at <a href="https://github.com/balinterdi/rarwe-demo">balinterdi/rarwe-demo</a>.</p>
+
+<p>As Mirage can also be used in production (although it&#8217;s probably not common to
+do that), you can check out <a href="https://rarwe-demo.pagefrontapp.com/">the &#8220;production&#8221; app</a>, with the same seed data I
+used in development, and play around with it.</p>
+
+<p>As I mentioned in the introduction, the full version of the app is developed
+chapter by chapter in <a href="http://rockandrollwithemberjs.com">the Rock and Roll with Ember book</a>. You can download a
+sample chapter below:</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[How to make an Ember module resolve as another one]]></title>
@@ -2911,217 +2961,6 @@ the framework of choice for many in a few years. It is definitely a fascinating
 world to live in.</p>
 
 <p>I&#8217;ll certainly be there at EmberFest 2015, so hopefully see you there!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Ember gotcha: Controllers are singletons]]></title>
-    <link href="http://balinterdi.com/2014/06/26/ember-gotcha-controllers-are-singletons.html"/>
-    <updated>2014-06-26T08:25:00+02:00</updated>
-    <id>http://balinterdi.com/2014/06/26/ember-gotcha-controllers-are-singletons</id>
-    <content type="html"><![CDATA[<p>There is a somewhat subtle bug in the current version of the Rock &amp; Roll with
-Ember app. If you start to create a song for an artist that does not have one
-and then switch to another one, the song creation process does not need to be
-restarted by clicking on the &#8220;Why don&#8217;t you create one?&#8221; link. Also, if you&#8217;ve
-already partially inputted the name of the song for the first one, it stays
-there for the second artist:</p>
-
-<p><img src="http://balinterdi.com/images/posts/singleton-controllers/start-song-creation-for-radiohead.png" alt="Start creating a song for Radiohead" />
-<img src="http://balinterdi.com/images/posts/singleton-controllers/new-song-for-radiohead.png" alt="Input Karma for Radiohead" />
-<img src="http://balinterdi.com/images/posts/singleton-controllers/new-song-for-rhcp.png" alt="Observe song title stays for Red Hot Chili Peppers" /></p>
-
-<p>The above behavior was brought to my attention by <a href="https://twitter.com/davidlormor">David</a>
-<a href="http://davidlormor.com">Lormor</a>, an astute reader and watcher of my screencasts.</p>
-
-<p>In some circumstances it is desirable for the result of some user interaction to
-linger between route transitions but in other cases it is not. I put the
-current example firmly in the latter camp and thus consider the above a bug.</p>
-
-<p>Let me explain what causes this behavior and then provide a simple solution to fix it.</p>
-
-<h3>Repeat after me: controllers are singletons</h3>
-
-<p>Controllers in Ember are singletons. Controllers in Ember are singletons.
-Controllers in Ember are singletons.</p>
-
-<p>When the user leaves a page and goes to another one, the controller is not
-torn down. It lives on, keeping its properties.</p>
-
-<p>This makes total sense for a framework that aims to be a tool for creating
-long-lived, rich-client side applications but is something to watch out for
-when you develop Ember applications.</p>
-
-<p>If you have a long background in back-end development, like yours truly,
-it is especially easy to fall prey to this, as you could see.</p>
-
-<h3>Same controller, different model</h3>
-
-<p>Initially, when the applicaiton is loaded, the <code>songCreationStarted</code> property
-of the controller is set to false. When the user clicks the &#8220;create one&#8221; in the
-&#8220;Why don&#8217;t you create one?&#8221; blurb, it is set to true and thus the text input
-field appears to allow adding a new song.</p>
-
-<p>Now comes the tricky part. If the user then decides to go to a different artist,
-she clicks the name of another artist in the sidebar. What happens? A transition
-is made from one <code>ArtistSongsRoute</code> to another <code>ArtistSongsRoute</code>. The artist
-is going to be different but the same <code>ArtistSongsController</code> is used.</p>
-
-<p>To prove my point, here are two screenshots of the Ember Inspector&#8217;s sidebar.
-The first one is before, the second one is after the transition between
-<code>/artists/radiohead/songs</code> and <code>/artists/red-hot-chili-peppers/songs</code>:</p>
-
-<p><img src="http://balinterdi.com/images/posts/singleton-controllers/ember-inspector-radiohead-songs.png" alt="Ember Inspector - Radiohead songs" />
-<img src="http://balinterdi.com/images/posts/singleton-controllers/ember-inspector-rhcp-songs.png" alt="Ember Inspector - RHCP songs" /></p>
-
-<p>You can see that the controller is the same Ember object but the value of the <code>artist</code> property changes.</p>
-
-<h3>Understanding the problem</h3>
-
-<p>When the transition is made between the two artists, the artist object is
-changed and consequently any data bound to the artist (and the <code>artist</code> property
-of the <code>ArtistSongs</code> controller) is going to be rerendered but, since the
-controller instance is not changed, unrelated data will stay unchanged on
-screen.</p>
-
-<p>What happens in the code? If you take a look at the template, you see that the
-text input field is shown if <code>canCreateSong</code> is true:</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artist/songs&quot;&gt;
-  {{#if canCreateSong}}
-    &lt;div class=&quot;list-group-item&quot;&gt;
-      {{input type=&quot;text&quot; class=&quot;new-artist&quot; placeholder=newSongPlaceholder value=newTitle insert-newline=&quot;createSong&quot; }}
-      &lt;button class=&quot;btn btn-primary btn-sm new-song-button&quot; {{action &quot;createSong&quot;}}&gt;Add&lt;/button&gt;
-      (...)
-    &lt;/div&gt;
-  {{/if}}
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p><code>canCreateSong</code> is defined in the controller and is true if either
-<code>songCreationStarted</code> is true or if there are already songs. Since
-<code>songCreationStarted</code> has just been set to true by the <code>enabledSongCreation</code>
-action (and the controller instance is not changed) when the user clicked the
-&#8220;create one&#8221; link for the first artist, <code>canCreateSong</code> stays true and the
-text field stays visible:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>  <span class="nx">songCreationStarted</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">canCreateSong</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">),</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">enableSongCreation</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>A simple fix</h3>
-
-<p>To fix this, the simplest solution is to manually reset the properties that we
-do not want to persist.</p>
-
-<p>One solution is to do this in the <code>setupController</code> of the route since that
-always gets called when transitioning to a new route:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>  <span class="nx">setupController</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">controller</span><span class="p">,</span> <span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">(</span><span class="nx">controller</span><span class="p">,</span> <span class="nx">model</span><span class="p">);</span>
-</span><span class='line'>    <span class="nx">controller</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">modelFor</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">));</span>
-</span><span class='line'>    <span class="nx">controller</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;newTitle&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-</span><span class='line'>    <span class="nx">controller</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And that totally works. However, I prefer placing this &#8220;resetting&#8221; code in the
-controller, probably because it is strictly controller-related and also because
-I can make the code really telling there:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>  <span class="nx">songCreationStarted</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">canCreateSong</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">),</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">artistDidChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;newTitle&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;songCreationStarted&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}.</span><span class="nx">observes</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">),</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The <code>observes</code> function property extension will run the <code>artistDidChange</code> code
-every time the <code>artist</code> property of the controller changes and that is exactly
-when we need to clear the title and allow the song creation process to be
-restarted. Nice, clean and does exactly one thing.</p>
-
-<p><em>Note: The latest version of the code that contains these changes is <a href="https://github.com/balinterdi/rock-and-roll/releases/tag/fix-start-song-creation-bug">available on Github</a>.</em></p>
-
-<h3>Model Dependent State - UPDATE</h3>
-
-<p>It turns out I stumbled into something substantial. As <a href="http://localhost:4000/2014/06/26/ember-gotcha-controllers-are-singletons.html#comment-1461013970">Luke Melia points out</a> below in the comments (thank you, Luke!),
-the above problem has been under consideration for a while.</p>
-
-<p>Alex Matchneer, a member of the Ember core team gave <a href="http://youtu.be/Syv_OTzHOr0">a presentation at EmberConf</a> in which he explains that there is a missing
-primitive.</p>
-
-<p>He calls it &#8220;Model Dependent State&#8221; and it is what would decide under what
-conditions a certain controller property is &#8220;sticky&#8221; (whether it retains its
-value when you change the model of a certain controller or not).</p>
-
-<p><a href="http://youtu.be/Syv_OTzHOr0?t=14m18s">Here</a> is the part where he begins to talk about Model
-Dependent State.</p>
 ]]></content>
   </entry>
   
