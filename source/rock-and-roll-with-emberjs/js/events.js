@@ -26,4 +26,18 @@
       clickedButton('buy', price);
     });
   });
+
+  // Fire an event so that GA doesn't count it as a "bounce"
+  // http://blog.popcornmetrics.com/why-your-google-analytics-bounce-rate-is-wrong-and-how-to-fix-it/
+  function readPage() {
+     ga('send', {
+       'hitType': 'event',
+       'eventCategory': 'engagement',
+       'eventAction': 'read'
+     });
+  }
+
+  var readPageTime = 20 * 1000;
+  setTimeout(readPage, readPageTime);
+
 }(jQuery));

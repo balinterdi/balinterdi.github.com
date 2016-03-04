@@ -30,4 +30,17 @@ $.domReady(function(){
   $('.sidebar #ck_subscribe_button').on('click', clickEmailSubscribeInSidebar);
   $('.ck_modal .ck_subscribe_button').on('click', clickEmailSubscribeInModal);
 
+  // Fire an event so that GA doesn't count it as a "bounce"
+  // http://blog.popcornmetrics.com/why-your-google-analytics-bounce-rate-is-wrong-and-how-to-fix-it/
+  function readPage() {
+     ga('send', {
+       'hitType': 'event',
+       'eventCategory': 'engagement',
+       'eventAction': 'read'
+     });
+  }
+
+  var readPageTime = 60 * 1000;
+  setTimeout(readPage, readPageTime);
+
 });
