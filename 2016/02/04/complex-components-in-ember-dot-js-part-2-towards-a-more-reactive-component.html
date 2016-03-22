@@ -44,11 +44,6 @@
   </script>
 
 
-  <!-- start Mixpanel --><script type="text/javascript">(function(e,b){if(!b.__SV){var a,f,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
-for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=e.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";f=e.getElementsByTagName("script")[0];f.parentNode.insertBefore(a,f)}})(document,window.mixpanel||[]);
-mixpanel.init("021efc77b7348a86d4e79b3a6e70c6af");</script><!-- end Mixpanel -->
-
-
 </head>
 
 <body   >
@@ -953,7 +948,7 @@ bug by replacing the observer and make other worthy improvements. Stay tuned!</p
     <section>
   <h1>My Ember 2 book</h1>
   <div>
-    <a class="book-cover-link" href="http://rockandrollwithemberjs.com/?utm_source=my-blog&utm_medium=sidebar&utm_campaign=rarwe-book" style="text-decoration:none">
+    <a href="http://rockandrollwithemberjs.com/?utm_source=my-blog&utm_medium=sidebar&utm_campaign=rarwe-book" style="text-decoration:none">
       <img src="/images/rarwe-book.jpg" alt="Rock and Roll with Ember.js" title="Rock and Roll with Ember.js" />
     </a>
   </div>
@@ -1068,14 +1063,6 @@ bug by replacing the observer and make other worthy improvements. Stay tuned!</p
 <script src="/javascripts/app.js"></script>
 
 
-
-<script type="text/javascript">
-  $.domReady(function() {
-    $('.book-cover-link').on('click', function() {
-      window.mixpanel.track('Clicked book in sidebar');
-    });
-  });
-</script>
 
 
 </body>
