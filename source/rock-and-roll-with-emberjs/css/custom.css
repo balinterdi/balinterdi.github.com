@@ -361,11 +361,11 @@ a {
 }
 
 .wrap-container {
-    margin:0 auto;
-}
+  margin:0 auto;
 
-@media(min-width: 768px) {
-  width: 600px;
+  @media(min-width: 768px) {
+    width: 600px;
+  }
 }
 
 .wrap {
