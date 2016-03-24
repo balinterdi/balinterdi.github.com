@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-03-23T11:19:44+01:00</updated>
+  <updated>2016-03-24T15:30:29+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,28 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rock and Roll with Ember.js - Now on 2.4 and with code diffs]]></title>
+    <link href="http://balinterdi.com/2016/03/24/rock-and-roll-with-ember-dot-js-now-on-2-dot-4-and-with-code-diffs.html"/>
+    <updated>2016-03-24T15:12:00+01:00</updated>
+    <id>http://balinterdi.com/2016/03/24/rock-and-roll-with-ember-dot-js-now-on-2-dot-4-and-with-code-diffs</id>
+    <content type="html"><![CDATA[<p>I have just sent an updated version of Rock and Roll with Ember.js to my
+readers. <a href="http://rockandrollwithemberjs.com">The app</a> now runs on Ember 2.4.3.</p>
+
+<p>The biggest change in this release is that I now leverage code diffs in code
+snippets, where this makes understanding changes easier. It looks like this in
+the pdf version:</p>
+
+<p><img src="/images/posts/rarwe-2-4-released/code-diff-example.png" alt="Colored code diffs" /></p>
+
+<p>Since the last release was more than two months ago and I constantly improve
+things, there is a whole slew of other changes that you can see <a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A2.4+is%3Aclosed">here</a>.</p>
+
+<p>If you are not yet a reader yet and want to have an always up-to-date Ember
+guide book, sign up below to get a sample chapter:</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js demo - A public Ember.js example project]]></title>
@@ -835,29 +857,6 @@ from seeing it as a SafeString:</p>
 
 <p>I hope this saves you some time if you come across a similar situation in your
 work.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rock and Roll with Ember.js updated to use Ember &amp; Co 2.3]]></title>
-    <link href="http://balinterdi.com/2016/01/21/rock-and-roll-with-ember-dot-js-updated-to-use-ember-and-co-2-dot-3.html"/>
-    <updated>2016-01-21T14:50:00+01:00</updated>
-    <id>http://balinterdi.com/2016/01/21/rock-and-roll-with-ember-dot-js-updated-to-use-ember-and-co-2-dot-3</id>
-    <content type="html"><![CDATA[<p>I have just released a new update to <a href="http://rockandrollwithemberjs.com">the Rock and Roll Ember.js book</a>,
-which brings it up to Ember 2.3.0, ED 2.3.2 and Ember CLI 2.3.0-beta.1.</p>
-
-<p>Other improvements made in this release are:</p>
-
-<ul>
-<li>Update the PageFront section as it has now become even simpler to deploy apps to PageFront</li>
-<li>Reset the song creation process when switching bands</li>
-<li>Use ember-bootstrap and remove the section on manually adding assets to the build</li>
-<li>Use consistent quoting in snippets and include <code>import Ember from 'ember'</code> wherever needed.</li>
-<li>Remove a few paragraphs that talk about how things were in the past (like <code>bind-attr</code>)</li>
-</ul>
-
-
-<p>Happy reading!</p>
 ]]></content>
   </entry>
   

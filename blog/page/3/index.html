@@ -91,6 +91,105 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2014/09/05/reminiscing-about-emberfest-2014.html">Reminiscing About EmberFest 2014</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-09-05T09:55:00+02:00" pubdate data-updated="true">Sep 5<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="https://emberfest.eu">EmberFest 2014</a> ended a week ago and I already feel nostalgic. It
+was a great event with great people and you could feel the excitement about
+Ember in the air and in all conversations. It was almost single-handedly
+organized by <a href="https://haagen-software.no">Joachim Haagen-Skeie</a> for which he deserves huge kudos.</p>
+
+<p>It was really great to associate real people with twitter avatars and have
+fascinating conversations about various topics that included the Ember
+Inspector, the difficulties in building a build tool and even Firefox OS.</p>
+
+<h3>The functional paradigm making a headway into Emberland</h3>
+
+<p>One thing that struck me about Ember initially is that it seems to rely heavily
+on (shared) state. Some (most?) of that is inevitable given Ember being a
+performant framework that runs in the browser and is written in Javascript.
+None of these facilitates ditching (or minimizing) state and go with a
+functional, stateless approach.</p>
+
+<p>On the other hand, I really came to cherish the <a href="http://www.infoq.com/presentations/Simple-Made-Easy">simplicity</a> of the
+functional paradigm and have been gravitating towards languages that allow this
+(Clojure was, and still is, <a href="http://balinterdi.com/2013/06/19/the-appeal-of-one-paradigm-languages.html">my favorite</a>). So I added a mental
+note about my two favorite things being at such a great distance from each other
+and moved on.</p>
+
+<p>One theme of the conference and the hallway talks, however, is how Ember
+embraces the functional, immutable approach where it makes sense to. It might
+have something to do with my confirmation bias, but let me cite the examples
+nevertheless. <a href="https://twitter.com/tchak13">Paul Chavard</a> had a talk on his using immutable data
+structures in Ember. <a href="http://www.solitr.com/blog/">Jo Liss</a> revealed how Broccoli uses a
+&#8220;rebuild-from-scratch&#8221; approach instead of trying to find out which assets to
+rebuild at each modification. Finally, Alex Matchneer, aka. machty, prolific
+Ember and router.js contributor had <a href="https://docs.google.com/presentation/d/1afMLTCpRxhJpurQ97VBHCZkLbR1TEsRnd3yyxuSQ5YY/edit#slide=id.p">a presentation on React vs.  Ember</a>
+at EmberNYC which you should go read. His <a href="https://docs.google.com/presentation/d/1afMLTCpRxhJpurQ97VBHCZkLbR1TEsRnd3yyxuSQ5YY/edit#slide=id.g380053cce_1786">last slide</a> has a bullet-point
+that states: &#8220;Don&#8217;t be surprised if Ember adopts DOM-diffing&#8221;.</p>
+
+<p>It would be an understatement if I said I&#8217;m happy to see the functional world
+coming to Ember.</p>
+
+<h3>Promises</h3>
+
+<p>I had a talk at the conference called &#8220;Don&#8217;t call me back - How Ember uses
+promises and how you can, too&#8221;. As it usually happens, in doing research for the
+talk, I learned a lot not just about promises but about other topics, too. This
+time, it was the (in)famous run loop I stumbled across on several
+occasions so I am really happy I know a lot more about that beast now. You can
+find the slides of my presentation below.</p>
+
+<script async class="speakerdeck-embed" data-slide="10"
+data-id="47ee01e011b60132c86e02e2e0c65448" data-ratio="1.33333333333333"
+src="//speakerdeck.com/assets/embed.js"></script>
+
+
+<p>I might even do another talk &#8220;How Ember uses the run loop and how you should
+probably not&#8221;, or something to this effect.</p>
+
+<h3>EmberFest 2015</h3>
+
+<p>The greatest thing about EmberFest was its vibe. I saw the tweets coming
+in from EmberConf this March and <a href="http://reefpoints.dockyard.com/2014/03/17/emberconf-picks-ups-where-the-rails-community-left-off.html">the post-conf blog posts</a>
+about the awesome community and how one could feel the excitement that we are
+building apps with a tool that is new and hot now but is probably going to be
+the framework of choice for many in a few years. It is definitely a fascinating
+world to live in.</p>
+
+<p>I&#8217;ll certainly be there at EmberFest 2015, so hopefully see you there!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2014/06/26/ember-gotcha-controllers-are-singletons.html">Ember Gotcha: Controllers Are Singletons</a></h1>
     
     
@@ -2003,336 +2102,6 @@ post to explain property path patterns.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/03/19/ember-dot-js-getters-and-setters.html">Ember.js Getters and Setters</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-03-19T20:53:00+01:00" pubdate data-updated="true">Mar 19<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>To make all the magic fairy-dust sprinkling efficient, like auto-updating
-templates and computed properties, Ember uses getters and setters instead of
-accessing properties directly the javascript (and dare I say, the Angular) way. At
-its most simplest form, it is <code>object.get(property)</code> and <code>object.set(property)</code>.</p>
-
-<p>Howevers, it would not be Ember if we were not provided methods on top of these
-primitives to make our hard lives as web developers simpler. In the following
-post, I am going to show (some of) these methods through an example, so let&#8217;s
-go.</p>
-
-<h2>Badges, badges, I want more badges</h2>
-
-<p>I am certainly in favor of having badges in every application. Discourse is
-actively discoursing <a href="https://meta.discourse.org/t/initial-discourse-badge-design-spec">their badge system</a> so I quickly
-sketched out something to get ahead of them.</p>
-
-<p>Let me just paste the code here and then use it to explain what the getter and
-setter methods are good for.</p>
-
-<p>You can quickly scroll through the below templates. They are mostly there so
-that you get the whole picture. The stuff relevant to this discussion is found
-in the javascript code.</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot;&gt;
-  &lt;div class=&quot;container&quot;&gt;
-    &lt;div class=&quot;panel panel-primary&quot;&gt;
-      &lt;div class=&quot;panel-heading&quot;&gt;
-        &lt;h3 class=&quot;panel-title&quot;&gt;Your badges, sir/ma&#39;am.&lt;/h3&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;panel-body&quot;&gt;
-        {{outlet}}
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
- &lt;/script&gt;</code></pre>
-</div>
-
-
-
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;index&quot;&gt;
-  &lt;ul class=&quot;list-group&quot;&gt;
-    {{#each badge in arrangedContent}}
-      &lt;li {{bind-attr class=&quot;:list-group-item badge.unlocked::locked&quot;}}&gt;
-        {{badge.name}}
-        &lt;span class=&quot;badge&quot;&gt;{{badge.score}}&lt;/span&gt;
-      &lt;/li&gt;
-    {{/each}}
-    &lt;li class=&quot;list-group-item&quot;&gt;
-      &lt;em&gt;Total:&lt;/em&gt;
-      &lt;span class=&quot;pull-right&quot;&gt;{{totalScore}}&lt;/span&gt;
-    &lt;/li&gt;
-  &lt;/ul&gt;
-  &lt;div id=&quot;new-badge&quot; class=&quot;row&quot;&gt;
-    &lt;span class=&quot;col-xs-6&quot;&gt;
-      {{input class=&quot;input&quot; type=&quot;text&quot; placeholder=&quot;Badge name&quot; value=name}}
-    &lt;/span&gt;
-    &lt;span class=&quot;col-xs-4&quot;&gt;
-      {{input class=&quot;small-input&quot; type=&quot;text&quot; placeholder=&quot;Score&quot; value=score action=&quot;addBadge&quot;}}
-    &lt;/span&gt;
-    &lt;span class=&quot;col-xs-2&quot;&gt;
-      &lt;button class=&quot;btn btn-primary btn-sm pull-right&quot; type=&quot;button&quot;
-          {{action &quot;addBadge&quot;}}&gt;
-          Add
-      &lt;/button&gt;
-    &lt;/span&gt;
-  &lt;/div&gt;
-  &lt;div id=&quot;unlock-all&quot; class=&quot;row&quot;&gt;
-    &lt;div class=&quot;col-xs-12&quot;&gt;
-      &lt;button class=&quot;btn btn-danger btn-md&quot; type=&quot;button&quot;
-        {{action &quot;unlockAll&quot;}}&gt;
-        Unlock all
-      &lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p>First, the badge class is defined and some badges created so that we have something to work with:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">unlocked</span><span class="o">:</span> <span class="kc">false</span>
-</span><span class='line'><span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">var</span> <span class="nx">rook</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;R00k&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">unlocked</span><span class="o">:</span> <span class="kc">true</span>
-</span><span class='line'><span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">var</span> <span class="nx">talkative</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Talkative&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">10</span>
-</span><span class='line'><span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">var</span> <span class="nx">hemingway</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Hemingway&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">1000</span>
-</span><span class='line'><span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'><span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="nx">rook</span><span class="p">,</span> <span class="nx">talkative</span><span class="p">,</span> <span class="nx">hemingway</span><span class="p">];</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>getProperties and setProperties</h3>
-
-<p>The first couple of methods come handy when working with a single object but
-multiple properties.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">],</span>
-</span><span class='line'>  <span class="nx">sortAscending</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">addBadge</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">newBadgeProperties</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getProperties</span><span class="p">([</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">]);</span>
-</span><span class='line'>      <span class="nx">newBadgeProperties</span><span class="p">.</span><span class="nx">score</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">newBadgeProperties</span><span class="p">.</span><span class="nx">score</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">newBadge</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">newBadgeProperties</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">).</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">newBadge</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">setProperties</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">score</span><span class="o">:</span> <span class="s1">&#39;&#39;</span> <span class="p">});</span>
-</span><span class='line'>    <span class="p">},</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="p">(...)</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>On line 9, we want to create a new object with the values provided in the input
-boxes (addBadge is the action that gets triggered when the Add button is
-clicked, check the template). <code>getProperties</code> will create a javascript object
-creating key-value pairs for the passed properties. So the above might e.g yield
-<code>{ name: "Silent Bob", score: "2" }</code>. That gets directly passed in to create a
-new badge object.</p>
-
-<p>On line 14, we use the mutating pair of <code>getProperties</code> to reset the input
-fields. Pretty straightforward.</p>
-
-<h3>getEach and setEach</h3>
-
-<p>Ember has us covered when we are working with an array and want to get (or set)
-the same property of each item.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">],</span>
-</span><span class='line'>  <span class="nx">sortAscending</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">totalScore</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">sum</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">s1</span> <span class="o">+</span> <span class="nx">s2</span><span class="p">;</span> <span class="p">};</span>
-</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">).</span><span class="nx">getEach</span><span class="p">(</span><span class="s1">&#39;score&#39;</span><span class="p">).</span><span class="nx">reduce</span><span class="p">(</span><span class="nx">sum</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;model.@each.score&#39;</span><span class="p">),</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="p">(...)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nx">unlockAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">).</span><span class="nx">setEach</span><span class="p">(</span><span class="s1">&#39;unlocked&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>When the &#8220;Unlock all&#8221; button launches the <code>unlockAll</code> action, it calls <code>setEach</code>
-on the badges (line 14), making all of them unlocked (you can verify this in the
-demo by seeing the color of the badge names turn darker - their css class has
-been updated). Another advange of <code>setEach</code> is that it guards against calling
-<code>set</code> on null or undefined values.</p>
-
-<p>You might know the reader counterpart, <code>getEach</code> as <code>mapBy</code>. It goes through the
-array and makes another array by getting the passed property on each item. So in
-the above example (line 7), we first collect the score for each badge and then
-sum them up by way of reduction. (A shiny example of a non-distributed
-map-reduce :) ).</p>
-
-<h3>A macro can make nice code nicer</h3>
-
-<p>I <a href="http://balinterdi.com/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria.html">have used a reduce computed macro</a> before to set up sorting.
-I have gotten the hang of it and realized I could use another couple of them
-to make the above code simpler (and more performant):</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">],</span>
-</span><span class='line'>  <span class="nx">sortAscending</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">scores</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">mapBy</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">),</span>
-</span><span class='line'>  <span class="nx">totalScore</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">sum</span><span class="p">(</span><span class="s1">&#39;scores&#39;</span><span class="p">),</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The problem is that the subject under discussion, <code>getEach</code> is gone now, so
-pretend you did not see this.</p>
-
-<p>Finally, here is the jsbin, should you decide to play around with it:</p>
-
-<p><a class="jsbin-embed" href="http://emberjs.jsbin.com/qivah/4/embed?html,js,output">Getter and Setters</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
-
-<p>I hope some of that sticks and you&#8217;ll write less &#8220;bare&#8221; gets and sets.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -2365,6 +2134,10 @@ pretend you did not see this.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/03/24/rock-and-roll-with-ember-dot-js-now-on-2-dot-4-and-with-code-diffs.html">Rock and Roll with Ember.js - Now on 2.4 and with code diffs</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/02/26/rock-and-roll-with-ember-dot-js-demo-a-public-ember-dot-js-example-project.html">Rock and Roll with Ember.js demo - A public Ember.js example project</a>
       </li>
     
@@ -2378,10 +2151,6 @@ pretend you did not see this.</p>
     
       <li class="post">
         <a href="/2016/02/03/binding-style-attributes-warning-in-ember.html">Binding style attributes warning in Ember</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/01/21/rock-and-roll-with-ember-dot-js-updated-to-use-ember-and-co-2-dot-3.html">Rock and Roll with Ember.js updated to use Ember &amp; Co 2.3</a>
       </li>
     
   </ul>
