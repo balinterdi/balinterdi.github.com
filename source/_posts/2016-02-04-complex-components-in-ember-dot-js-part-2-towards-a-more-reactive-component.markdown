@@ -351,7 +351,7 @@ maintaining and yielding a `focusedIndex` in the "control center", the
 `autocomplete` component, `autocomplete-option` components can bind to it and
 know whether they are focused or not.
 
-Here is how code the templates need to change:
+Here is how the templates need to change:
 
 {% highlight html %}
 {% raw %}
@@ -524,7 +524,7 @@ registrations and direct property access and method calling. Even though we're
 ### In the next episode...
 
 One of these things is the observer. [Observers fell out of favor][4] some time
-ago, and for a good reason. They can be over eager and lead to scenarios where
+ago, and for a good reason. They can be over-eager and lead to scenarios where
 it is hard to see what's going on. To prove my point, let me show you a bug I've
 just accidentally introduced. I call it the "JPJ is too good to be replaced" bug:
 
