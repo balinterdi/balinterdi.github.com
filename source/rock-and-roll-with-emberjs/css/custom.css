@@ -21,6 +21,10 @@ section {
   position: relative;
 }
 
+#pricing-table-testimonials {
+  box-shadow: none;
+}
+
 .package {
   padding: 5px 0 10px;
 }
@@ -317,6 +321,16 @@ body:before {
 
 .package-buy a span {
   color: #fff
+}
+
+.team-licenses-pointer {
+  text-align: center;
+}
+
+#team-licenses .license-conditions {
+  font-size: 16px;
+  text-align: center;
+  margin: 20px auto;
 }
 
 .package-intro img {
