@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-03-24T15:47:37+01:00</updated>
+  <updated>2016-03-29T07:10:04-07:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js - Now on 2.4 and with code diffs]]></title>
     <link href="http://balinterdi.com/2016/03/24/rock-and-roll-with-ember-dot-js-now-on-2-dot-4-and-with-code-diffs.html"/>
-    <updated>2016-03-24T15:12:00+01:00</updated>
+    <updated>2016-03-24T15:12:00-07:00</updated>
     <id>http://balinterdi.com/2016/03/24/rock-and-roll-with-ember-dot-js-now-on-2-dot-4-and-with-code-diffs</id>
     <content type="html"><![CDATA[<p>I have just sent an updated version of Rock and Roll with Ember.js to my
 readers. <a href="http://rockandrollwithemberjs.com">The app</a> now runs on Ember 2.4.3.</p>
@@ -38,7 +38,7 @@ guide book, sign up below to get a sample chapter:</p>
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js demo - A public Ember.js example project]]></title>
     <link href="http://balinterdi.com/2016/02/26/rock-and-roll-with-ember-dot-js-demo-a-public-ember-dot-js-example-project.html"/>
-    <updated>2016-02-26T11:04:00+01:00</updated>
+    <updated>2016-02-26T11:04:00-08:00</updated>
     <id>http://balinterdi.com/2016/02/26/rock-and-roll-with-ember-dot-js-demo-a-public-ember-dot-js-example-project</id>
     <content type="html"><![CDATA[<p>I have a book called Rock and Roll with Ember.js that has an accompanying
 application we develop throughout the book. I also maintain a demo version of
@@ -88,7 +88,7 @@ sample chapter below:</p>
   <entry>
     <title type="html"><![CDATA[How to make an Ember module resolve as another one]]></title>
     <link href="http://balinterdi.com/2016/02/12/how-to-make-an-ember-module-resolve-as-another-one.html"/>
-    <updated>2016-02-12T11:12:00+01:00</updated>
+    <updated>2016-02-12T11:12:00-08:00</updated>
     <id>http://balinterdi.com/2016/02/12/how-to-make-an-ember-module-resolve-as-another-one</id>
     <content type="html"><![CDATA[<p>I wanted to write another short, and hopefully useful, post just as I did
 recently for <a href="/2016/02/03/binding-style-attributes-warning-in-ember.html">binding the style attribute</a>.</p>
@@ -148,7 +148,7 @@ export default Ember.Object.extend({
   <entry>
     <title type="html"><![CDATA[Complex Components in Ember.js - Part 2 - Towards a more reactive component]]></title>
     <link href="http://balinterdi.com/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html"/>
-    <updated>2016-02-04T08:11:00+01:00</updated>
+    <updated>2016-02-04T08:11:00-08:00</updated>
     <id>http://balinterdi.com/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component</id>
     <content type="html"><![CDATA[<p><em>This is part 2 of my Complex Component Design series. Here are the preceding posts:</em></p>
 
@@ -547,7 +547,7 @@ maintaining and yielding a <code>focusedIndex</code> in the "control center", th
 <code>autocomplete</code> component, <code>autocomplete-option</code> components can bind to it and
 know whether they are focused or not.</p>
 
-<p>Here is how code the templates need to change:</p>
+<p>Here is how the templates need to change:</p>
 
 <p><div>
   <pre><code class='html'>&lt;/p&gt;
@@ -754,7 +754,7 @@ registrations and direct property access and method calling. Even though we're
 <h3>In the next episode...</h3>
 
 <p>One of these things is the observer. <a href="https://www.youtube.com/watch?v=7PUX27RKCq0">Observers fell out of favor</a> some time
-ago, and for a good reason. They can be over eager and lead to scenarios where
+ago, and for a good reason. They can be over-eager and lead to scenarios where
 it is hard to see what's going on. To prove my point, let me show you a bug I've
 just accidentally introduced. I call it the "JPJ is too good to be replaced" bug:</p>
 
@@ -771,7 +771,7 @@ bug by replacing the observer and make other worthy improvements. Stay tuned!</p
   <entry>
     <title type="html"><![CDATA[Binding style attributes warning in Ember]]></title>
     <link href="http://balinterdi.com/2016/02/03/binding-style-attributes-warning-in-ember.html"/>
-    <updated>2016-02-03T09:33:00+01:00</updated>
+    <updated>2016-02-03T09:33:00-08:00</updated>
     <id>http://balinterdi.com/2016/02/03/binding-style-attributes-warning-in-ember</id>
     <content type="html"><![CDATA[<p>One warning Ember might print in your console concerns binding a property to
 the <code>style</code> attribute of a DOM element, like this:</p>
