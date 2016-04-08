@@ -253,7 +253,7 @@ last code snippet).
 Just as you wouldn't have a method with 7 or 8 positional parameters, you don't
 want a component that yields that many properties matched by position. So in the
 next installment of this series, we'll use the `hash` helper to transform that
-long list into params.
+long list into keyed parameters.
 
 [1]: /2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html
 [2]: /2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html
