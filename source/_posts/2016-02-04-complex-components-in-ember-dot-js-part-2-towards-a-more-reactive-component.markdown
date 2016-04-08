@@ -471,7 +471,7 @@ words, for the `selectItem` to be triggered). Before, it was done by sending
 the `selectItem` action with the focused option's item and label (see line 9 in
 the last snippet of the previous section) but we can no longer indulge in
 accessing the options directly. Consequently, it was replaced by setting the
-`selectedIndex` to the `focusedIndex` (see line 39 above).
+`selectedIndex` to the `focusedIndex` (see line 40 above).
 
 The problem now is that `selectItem` needs to be called with the item and the
 label (the name of the selected artist to be set as the input's value) and only
