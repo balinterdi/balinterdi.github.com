@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-04-01T20:54:00-07:00</updated>
+  <updated>2016-04-08T13:59:36+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -14,9 +14,352 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Complex Component Design in Ember - Part 3 - Replace the observer]]></title>
+    <link href="http://balinterdi.com/2016/04/08/complex-component-design-in-ember-replace-the-observer.html"/>
+    <updated>2016-04-08T09:54:00+02:00</updated>
+    <id>http://balinterdi.com/2016/04/08/complex-component-design-in-ember-replace-the-observer</id>
+    <content type="html"><![CDATA[<p><em>This is part 3 of my Complex Component Design series. Here are the preceding posts:</em></p>
+
+<ul>
+<li><a href="http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html"><strong>Intro</strong></a></li>
+<li><a href="http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html"><strong>Analyzing User Flows</strong></a></li>
+<li><a href="http://balinterdi.com/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html"><strong>Towards a more reactive component</strong></a></li>
+</ul>
+
+
+<p>You can find the code for this post <a href="https://github.com/balinterdi/ember-cli-autocomplete/releases/tag/ccd-part-three">on Github.</a></p>
+
+<hr />
+
+<p>In the last post, we refactored towards a more reactive component and got
+pretty far. However, we established that we&#8217;d still have to remove the observer
+that was also causing a weird bug:</p>
+
+<p><img src="http://balinterdi.com/images/posts/complex-component-design-ember/jpj-too-good-bug.gif" alt="JPJ is too good to be replaced" /></p>
+
+<h3>Event origin and data owner components are different</h3>
+
+<p>The reason we introduced an observer was that we wanted to trigger an action
+when one of the options was selected via cycling through them and hitting the
+return key on the focused option. Since the necessary data for that event was
+contained in the <code>auto-complete-option</code> component but the source of the keyboard
+event was the <code>auto-complete</code> component, we couldn&#8217;t simply trigger the action
+with the right data from the event source.</p>
+
+<p>We fixed this by using an observer so that even though the event that
+should trigger the action was fired &#8220;upstream&#8221;, in the <code>auto-complete</code>
+component, we could react to this change &#8220;downstream&#8221;, in the appropriate
+<code>auto-complete-option</code> whose <code>isSelected</code> property became true:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// addon/components/auto-complete-option.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">didBecomeSelected</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">observer</span><span class="p">(</span><span class="s1">&#39;isSelected&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">let</span> <span class="nx">isSelected</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;isSelected&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">isSelected</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">_selectItem</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nx">_selectItem</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">let</span> <span class="nx">item</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;on-click&#39;</span><span class="p">)(</span><span class="nx">item</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">));</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Our analysis of the cause already hints at the solution. We could move the
+knowledge of which option is selected up to the <code>auto-complete</code> component and
+then, when the user hits the return key to select the focused option, trigger
+the action with the data that we have at our disposal.</p>
+
+<h3>Centralized power in auto-complete</h3>
+
+<h4>Changes in components</h4>
+
+<p>We will maintain the selected option in <code>auto-complete</code> and trigger the
+<code>selectItem</code> action when one of them is selected via a return key event (I
+skipped the code snippet that calls <code>selectOption</code> for return):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// addon/components/auto-complete.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">selectOption</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="nx">focusedIndex</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;focusedIndex&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">Ember</span><span class="p">.</span><span class="nx">isPresent</span><span class="p">(</span><span class="nx">focusedIndex</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;selectedIndex&#39;</span><span class="p">,</span> <span class="nx">focusedIndex</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;selectOption&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;selectedOption&#39;</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;isDropdownOpen&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">selectedOption</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">(</span><span class="s1">&#39;selectedIndex&#39;</span><span class="p">,</span> <span class="s1">&#39;options.[]&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;options&#39;</span><span class="p">).</span><span class="nx">objectAt</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;selectedIndex&#39;</span><span class="p">));</span>
+</span><span class='line'>  <span class="p">}),</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>On line 11, we call the <code>selectOption</code> action (renamed from <code>selectItem</code>) with
+the (new) selected option. <code>selectedOption</code> is simply the option that has the
+<code>selectedIndex</code>.</p>
+
+<p>Independently of the current <code>selectOption</code> refactor, let&#8217;s fix a nasty
+bug by making sure to reset the <code>focusedIndex</code> when the input changes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// addon/components/auto-complete.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">inputDidChange</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;on-input&#39;</span><span class="p">)(</span><span class="nx">value</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;focusedIndex&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">(...)</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Next, let&#8217;s look at how the <code>selectOption</code> action needs to change:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// addon/components/auto-complete.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">_displayForOption</span><span class="p">(</span><span class="nx">option</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="nx">displayProperty</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;displayProperty&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">option</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">displayProperty</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">selectOption</span><span class="p">(</span><span class="nx">option</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kd">let</span> <span class="nx">inputValue</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_displayForOption</span><span class="p">(</span><span class="nx">option</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;on-select&#39;</span><span class="p">)(</span><span class="nx">option</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;isDropdownOpen&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;inputValue&#39;</span><span class="p">,</span> <span class="nx">inputValue</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="p">(...)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>One of the things that has changed is that it now only receives one argument,
+<code>option</code> as the label of the option can now be computed internally, from within
+the component.</p>
+
+<p>That means that the label now does not need to be passed to the
+<code>auto-complete-option</code> components and that its action that gets triggered when
+the user clicks on it needs to be adjusted:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// addon/components/auto-complete-option.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;li&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">classNames</span><span class="o">:</span> <span class="s1">&#39;ember-autocomplete-option&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">classNameBindings</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">String</span><span class="p">.</span><span class="nx">w</span><span class="p">(</span><span class="s1">&#39;isSelected:active isFocused:focused&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">item</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>  <span class="s1">&#39;on-click&#39;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">isFocused</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">isSelected</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">click</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;on-click&#39;</span><span class="p">)(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">));</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can see I removed the observer and that I only send the item (not the label,
+see the very first code example) in the action handler to comply with the new
+API of the <code>selectOption</code> action.</p>
+
+<h4>Changes in templates</h4>
+
+<p>Let&#8217;s see how the templates need to change to accommodate that change.</p>
+
+<p>First of all, the template of the <code>auto-complete</code> component needs to yield the
+<code>options</code> to be consumed downstream. Let&#8217;s also not forget to rename
+<code>selectItem</code> to <code>selectOption</code>:</p>
+
+<div>
+  <pre><code class='html'>&lt;!-- addon/templates/components/auto-complete.hbs --&gt;
+{{yield isDropdownOpen
+        inputValue
+        options
+        focusedIndex
+        selectedIndex
+        (action &quot;toggleDropdown&quot;)
+        (action &quot;selectOption&quot;)
+        (action &quot;inputDidChange&quot;)}}</code></pre>
+</div>
+
+
+<p>Then, the <code>each</code> loop should iterate through <code>options</code>, and not through
+<code>matchingArtists</code> as before:</p>
+
+<div>
+  <pre><code class='html'>&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
+{{#auto-complete
+      on-select=(action &quot;selectArtist&quot;)
+      on-input=(action &quot;filterArtists&quot;)
+      options=matchingArtists
+      displayProperty=&quot;name&quot;
+      class=&quot;autocomplete-container&quot; as |isDropdownOpen inputValue options
+                                         focusedIndex selectedIndex
+                                         toggleDropdown onSelect onInput|}}
+  &lt;div class=&quot;input-group&quot;&gt;
+    {{auto-complete-input
+        value=inputValue
+        on-change=onInput
+        type=&quot;text&quot;
+        class=&quot;combobox input-large form-control&quot;
+        placeholder=&quot;Select an artist&quot;}}
+    {{#auto-complete-list
+        isVisible=isDropdownOpen
+        class=&quot;typeahead typeahead-long dropdown-menu&quot;}}
+      {{#each options as |option index|}}
+        {{#auto-complete-option
+            item=option
+            on-click=onSelect
+            isFocused=(eq focusedIndex index)
+            isSelected=(eq selectedIndex index)}}
+          &lt;a href=&quot;#&quot;&gt;{{option.name}}&lt;/a&gt;
+        {{/auto-complete-option}}
+      {{else}}
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;No results.&lt;/a&gt;&lt;/li&gt;
+      {{/each}}
+    {{/auto-complete-list}}
+    {{#auto-complete-dropdown-toggle on-click=toggleDropdown class=&quot;input-group-addon dropdown-toggle&quot;}}
+      &lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;
+    {{/auto-complete-dropdown-toggle}}
+  &lt;/div&gt;
+{{/auto-complete}}</code></pre>
+</div>
+
+
+<p>The bug at the beginning of the post is now gone:</p>
+
+<p><img src="http://balinterdi.com/images/posts/complex-component-design-ember/jpj-too-good-to-go-fixed.gif" alt="JPG too-good-to-go bug fixed" /></p>
+
+<h3>In the next episode&#8230;</h3>
+
+<p>We now have a working, state-of-the-art component design with no coupling
+between the sub-components and no observers. One thing that is not ideal,
+though, is the number of parameters the <code>auto-complete</code> components yields (see
+last code snippet).</p>
+
+<p>Just as you wouldn&#8217;t have a method with 7 or 8 positional parameters, you don&#8217;t
+want a component that yields that many properties matched by position. So in the
+next installment of this series, we&#8217;ll use the <code>hash</code> helper to transform that
+long list into keyed parameters.</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js - Now on 2.4 and with code diffs]]></title>
     <link href="http://balinterdi.com/2016/03/24/rock-and-roll-with-ember-dot-js-now-on-2-dot-4-and-with-code-diffs.html"/>
-    <updated>2016-03-24T15:12:00-07:00</updated>
+    <updated>2016-03-24T15:12:00+01:00</updated>
     <id>http://balinterdi.com/2016/03/24/rock-and-roll-with-ember-dot-js-now-on-2-dot-4-and-with-code-diffs</id>
     <content type="html"><![CDATA[<p>I have just sent an updated version of Rock and Roll with Ember.js to my
 readers. <a href="http://rockandrollwithemberjs.com">The app</a> now runs on Ember 2.4.3.</p>
@@ -38,7 +381,7 @@ guide book, sign up below to get a sample chapter:</p>
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js demo - A public Ember.js example project]]></title>
     <link href="http://balinterdi.com/2016/02/26/rock-and-roll-with-ember-dot-js-demo-a-public-ember-dot-js-example-project.html"/>
-    <updated>2016-02-26T11:04:00-08:00</updated>
+    <updated>2016-02-26T11:04:00+01:00</updated>
     <id>http://balinterdi.com/2016/02/26/rock-and-roll-with-ember-dot-js-demo-a-public-ember-dot-js-example-project</id>
     <content type="html"><![CDATA[<p>I have a book called Rock and Roll with Ember.js that has an accompanying
 application we develop throughout the book. I also maintain a demo version of
@@ -88,7 +431,7 @@ sample chapter below:</p>
   <entry>
     <title type="html"><![CDATA[How to make an Ember module resolve as another one]]></title>
     <link href="http://balinterdi.com/2016/02/12/how-to-make-an-ember-module-resolve-as-another-one.html"/>
-    <updated>2016-02-12T11:12:00-08:00</updated>
+    <updated>2016-02-12T11:12:00+01:00</updated>
     <id>http://balinterdi.com/2016/02/12/how-to-make-an-ember-module-resolve-as-another-one</id>
     <content type="html"><![CDATA[<p>I wanted to write another short, and hopefully useful, post just as I did
 recently for <a href="http://balinterdi.com/2016/02/03/binding-style-attributes-warning-in-ember.html">binding the style attribute</a>.</p>
@@ -158,7 +501,7 @@ took me a few attempts to arrive at this.</p>
   <entry>
     <title type="html"><![CDATA[Complex Components in Ember.js - Part 2 - Towards a more reactive component]]></title>
     <link href="http://balinterdi.com/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html"/>
-    <updated>2016-02-04T08:11:00-08:00</updated>
+    <updated>2016-02-04T08:11:00+01:00</updated>
     <id>http://balinterdi.com/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component</id>
     <content type="html"><![CDATA[<p><em>This is part 2 of my Complex Component Design series. Here are the preceding posts:</em></p>
 
@@ -827,7 +1170,7 @@ words, for the <code>selectItem</code> to be triggered). Before, it was done by 
 the <code>selectItem</code> action with the focused option&#8217;s item and label (see line 9 in
 the last snippet of the previous section) but we can no longer indulge in
 accessing the options directly. Consequently, it was replaced by setting the
-<code>selectedIndex</code> to the <code>focusedIndex</code> (see line 39 above).</p>
+<code>selectedIndex</code> to the <code>focusedIndex</code> (see line 40 above).</p>
 
 <p>The problem now is that <code>selectItem</code> needs to be called with the item and the
 label (the name of the selected artist to be set as the input&#8217;s value) and only
@@ -927,7 +1270,7 @@ bug by replacing the observer and make other worthy improvements. Stay tuned!</p
   <entry>
     <title type="html"><![CDATA[Binding style attributes warning in Ember]]></title>
     <link href="http://balinterdi.com/2016/02/03/binding-style-attributes-warning-in-ember.html"/>
-    <updated>2016-02-03T09:33:00-08:00</updated>
+    <updated>2016-02-03T09:33:00+01:00</updated>
     <id>http://balinterdi.com/2016/02/03/binding-style-attributes-warning-in-ember</id>
     <content type="html"><![CDATA[<p>One warning Ember might print in your console concerns binding a property to
 the <code>style</code> attribute of a DOM element, like this:</p>
@@ -1000,7 +1343,7 @@ work.</p>
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js updated to use Ember &amp; Co 2.3]]></title>
     <link href="http://balinterdi.com/2016/01/21/rock-and-roll-with-ember-dot-js-updated-to-use-ember-and-co-2-dot-3.html"/>
-    <updated>2016-01-21T14:50:00-08:00</updated>
+    <updated>2016-01-21T14:50:00+01:00</updated>
     <id>http://balinterdi.com/2016/01/21/rock-and-roll-with-ember-dot-js-updated-to-use-ember-and-co-2-dot-3</id>
     <content type="html"><![CDATA[<p>I have just released a new update to <a href="http://rockandrollwithemberjs.com">the Rock and Roll Ember.js book</a>,
 which brings it up to Ember 2.3.0, ED 2.3.2 and Ember CLI 2.3.0-beta.1.</p>
@@ -1023,7 +1366,7 @@ which brings it up to Ember 2.3.0, ED 2.3.2 and Ember CLI 2.3.0-beta.1.</p>
   <entry>
     <title type="html"><![CDATA[Complex Components in Ember.js - Part 1 - Analyzing user flows]]></title>
     <link href="http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html"/>
-    <updated>2015-12-18T10:25:00-08:00</updated>
+    <updated>2015-12-18T10:25:00+01:00</updated>
     <id>http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows</id>
     <content type="html"><![CDATA[<p>In this post I continue the <a href="http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html">Complex Component Design series</a> I started back in
 September. I slightly renamed the series title as the original idea was to
@@ -1592,7 +1935,7 @@ and see how to fix them. Stay tuned!</p>
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js updated to Ember 2.2.0]]></title>
     <link href="http://balinterdi.com/2015/11/23/rock-and-roll-with-ember-dot-js-updated-to-ember-2-dot-2-0.html"/>
-    <updated>2015-11-23T20:59:00-08:00</updated>
+    <updated>2015-11-23T20:59:00+01:00</updated>
     <id>http://balinterdi.com/2015/11/23/rock-and-roll-with-ember-dot-js-updated-to-ember-2-dot-2-0</id>
     <content type="html"><![CDATA[<p>I have updated the app developed in the <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js book</a> to
 Ember 2.2 and Ember CLI 1.13.12. I also replaced the now defunct Divshot
@@ -1609,7 +1952,7 @@ this release, the list of which can be viewed on <a href="https://github.com/bal
   <entry>
     <title type="html"><![CDATA[The tale of two bindings]]></title>
     <link href="http://balinterdi.com/2015/10/22/the-tale-of-two-bindings.html"/>
-    <updated>2015-10-22T16:41:00-07:00</updated>
+    <updated>2015-10-22T16:41:00+02:00</updated>
     <id>http://balinterdi.com/2015/10/22/the-tale-of-two-bindings</id>
     <content type="html"><![CDATA[<iframe
   width="178" height="24" style="border:0px"
@@ -2094,7 +2437,7 @@ them. So if you have thoughts or insights, please do share them in the comments.
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember 2 just went live]]></title>
     <link href="http://balinterdi.com/2015/10/01/rock-and-roll-with-ember-2-just-went-live.html"/>
-    <updated>2015-10-01T09:48:00-07:00</updated>
+    <updated>2015-10-01T09:48:00+02:00</updated>
     <id>http://balinterdi.com/2015/10/01/rock-and-roll-with-ember-2-just-went-live</id>
     <content type="html"><![CDATA[<p>The 2nd edition of my critically acclaimed book, <a href="http://rockandrollwithemberjs.com">Rock and Roll with
 Ember.js</a>, has just been published. The number 2 does not only denote the 2nd
@@ -2140,7 +2483,7 @@ you to <a href="http://rockandrollwithemberjs.com">check out the book now</a> be
   <entry>
     <title type="html"><![CDATA[Select in Ember with multiple selection]]></title>
     <link href="http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selection.html"/>
-    <updated>2015-09-25T14:24:00-07:00</updated>
+    <updated>2015-09-25T14:24:00+02:00</updated>
     <id>http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selection</id>
     <content type="html"><![CDATA[<iframe
   width="178" height="24" style="border:0px"
@@ -2335,7 +2678,7 @@ only other difference from before is that we set <code>selectedBandIds</code> in
   <entry>
     <title type="html"><![CDATA[Rock and Roll With Ember 2 is coming soon!]]></title>
     <link href="http://balinterdi.com/2015/09/16/rock-and-roll-with-ember-2-is-coming-soon.html"/>
-    <updated>2015-09-16T15:54:00-07:00</updated>
+    <updated>2015-09-16T15:54:00+02:00</updated>
     <id>http://balinterdi.com/2015/09/16/rock-and-roll-with-ember-2-is-coming-soon</id>
     <content type="html"><![CDATA[<h3>tl;dr</h3>
 
@@ -2416,7 +2759,7 @@ you!</p>
   <entry>
     <title type="html"><![CDATA[Rock and Roll With Ember.js v1.13.9 Is Out]]></title>
     <link href="http://balinterdi.com/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out.html"/>
-    <updated>2015-09-11T11:42:00-07:00</updated>
+    <updated>2015-09-11T11:42:00+02:00</updated>
     <id>http://balinterdi.com/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out</id>
     <content type="html"><![CDATA[<p>I have just released another update to the Rock and Roll with Ember.js book,
 keeping it in sync with Ember 1.13.9. On top of that (mostly on top of that,
@@ -2455,7 +2798,7 @@ miss any in the future.</p>
   <entry>
     <title type="html"><![CDATA[Complex Component Design in Ember.js - Intro]]></title>
     <link href="http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html"/>
-    <updated>2015-09-10T11:07:00-07:00</updated>
+    <updated>2015-09-10T11:07:00+02:00</updated>
     <id>http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro</id>
     <content type="html"><![CDATA[<p>The title would probably better be &#8220;Somewhat Complex Component Design in Ember.js&#8221;
 but any title including &#8216;Somewhat&#8217; rules out pompousness. I therefore don&#8217;t
@@ -2516,7 +2859,7 @@ join me for the next part of the series:</p>
   <entry>
     <title type="html"><![CDATA[How to do a select (dropdown) in Ember 2.0?]]></title>
     <link href="http://balinterdi.com/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html"/>
-    <updated>2015-08-29T17:43:00-07:00</updated>
+    <updated>2015-08-29T17:43:00+02:00</updated>
     <id>http://balinterdi.com/2015/08/29/how-to-do-a-select-dropdown-in-ember-20</id>
     <content type="html"><![CDATA[<iframe
   width="178" height="24" style="border:0px"
@@ -2662,7 +3005,7 @@ the guides was merged yesterday, so hopefully more people will know about it.)</
   <entry>
     <title type="html"><![CDATA[Rock and Roll With Ember.js v1.13.7 Is Out]]></title>
     <link href="http://balinterdi.com/2015/08/07/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-7-is-out.html"/>
-    <updated>2015-08-07T11:38:00-07:00</updated>
+    <updated>2015-08-07T11:38:00+02:00</updated>
     <id>http://balinterdi.com/2015/08/07/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-7-is-out</id>
     <content type="html"><![CDATA[<p>I am happy to announce another update to the Rock and Roll with Ember.js book,
 in line with the latest Ember CLI, 1.13.7. Book customers have already received
@@ -2705,7 +3048,7 @@ CSS) tasks to get done.</p></li>
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js v1.13.3 is out]]></title>
     <link href="http://balinterdi.com/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html"/>
-    <updated>2015-07-17T10:47:00-07:00</updated>
+    <updated>2015-07-17T10:47:00+02:00</updated>
     <id>http://balinterdi.com/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out</id>
     <content type="html"><![CDATA[<p>It&#8217;s Friday and if it&#8217;s (every 2nd-6th) Friday, it&#8217;s Rock and Roll release day!</p>
 
@@ -2749,7 +3092,7 @@ relationship was in order.</p></li>
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js v1.13 is out]]></title>
     <link href="http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html"/>
-    <updated>2015-07-03T15:25:00-07:00</updated>
+    <updated>2015-07-03T15:25:00+02:00</updated>
     <id>http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out</id>
     <content type="html"><![CDATA[<p>Today marks the sixth release of my book, <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js</a>, and
 brings it in sync with Ember 1.13. The book follows along the development from
@@ -2788,7 +3131,7 @@ whole list in the errata/issues repository for the book, assigned to <a href="ht
   <entry>
     <title type="html"><![CDATA[Common Ember Mistakes]]></title>
     <link href="http://balinterdi.com/2015/06/05/common-ember-mistakes.html"/>
-    <updated>2015-06-05T00:27:00-07:00</updated>
+    <updated>2015-06-05T00:27:00+02:00</updated>
     <id>http://balinterdi.com/2015/06/05/common-ember-mistakes</id>
     <content type="html"><![CDATA[<p>I wrote an article called <a href="http://www.toptal.com/emberjs/the-8-most-common-ember-js-developer-mistakes">&#8220;The Top 8 Most Common Ember.js Developer
 Mistakes&#8221;</a> for Toptal that just went live on their blog. As the name
@@ -2799,118 +3142,6 @@ happy about how it turned out and suggest you <a href="http://www.toptal.com/emb
 <p>Also, it turned out to have more than 2500 words so I thought it might be
 convenient for you to have it as a pdf. It spans 13 pages and you can get it
 right here below by providing your email address to send the paper to:</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[My book, Rock and Roll with Ember.js, is now live!]]></title>
-    <link href="http://balinterdi.com/2015/02/18/rock-and-roll-with-ember-js-is-live.html"/>
-    <updated>2015-02-18T09:51:00-08:00</updated>
-    <id>http://balinterdi.com/2015/02/18/rock-and-roll-with-ember-js-is-live</id>
-    <content type="html"><![CDATA[<p>I started writing my book, Rock &amp; Roll with Ember.js, on July 18, 2014, exactly
-7 months ago (More precisely, I prepared some drafts from early chapters most of
-which I ended up rewriting before that, but who doesn&#8217;t like a good story?).</p>
-
-<p>Today, I am extremely happy to announce that <a href="http://rockandrollwithemberjs.com">the book is available for purchase</a>!</p>
-
-<h2>Tame the dreaded Ember.js learning curve</h2>
-
-<p>Ember is said to be hard to learn. Developers who are new to the framework hit
-a wall and can&#8217;t easily find out how all the pieces fit together.</p>
-
-<p>My own experience tells me that Ember has a small number of core concepts that
-you have to grok to be able to tame the learning curve. Once you understand
-these key ideas behind the framework&#8217;s design, you will fly over that wall and
-see the green meadow filled with flowers and bunnies.</p>
-
-<p>You will build Ember applications with confidence and - if you are like me -
-you will love building them.</p>
-
-<h2>Read it and build it!</h2>
-
-<p>My book also has a concept, and a very pragmatic one at that.</p>
-
-<p>In the book, we are building an application, chapter by chapter. As we
-progress, we are adding new features to the application, introducing new
-Ember concepts that are needed for implementing the feature.</p>
-
-<p>When a list of bands need to be displayed alongside with the songs of the
-selected band, we reach for nested routes.  When we need a widget that displays
-stars for the songs, we introduce components. When we want to show the user
-that loading data from the backend is in progress, we learn about loading
-routes.</p>
-
-<h2>Set List</h2>
-
-<p>The book currently has the following chapters:</p>
-
-<ol>
-<li>Introduction to Ember.js</li>
-<li>Ember CLI</li>
-<li>Templates and data bindings</li>
-<li>Routing</li>
-<li>Nested routes</li>
-<li>Actions</li>
-<li>Components</li>
-<li>Controllers</li>
-<li>Advanced routing</li>
-<li>Talking to a backend - with Ember Data</li>
-<li>Testing</li>
-<li>Sorting and searching with query params</li>
-<li>Loading and error routes</li>
-<li>Helpers</li>
-<li>Getting ready for Ember 2.0</li>
-</ol>
-
-
-<p>I say &#8216;currently&#8217; because I will definitely have to change some chapters as
-Ember evolves (To give an example, Controllers will probably become Routable components).</p>
-
-<h2>A reference book and a reference application</h2>
-
-<p>Ember moves rapidly towards version 2.0. As each minor version is released, it
-brings new syntaxes and deprecates old ones. Even though the Ember Core team
-takes extreme care to ensure a smooth upgrade process, it is easy for an
-application to lag behind, having a few deprecations here and there and not
-using the shiny new tools.</p>
-
-<p>The motto of the Ember 2.0 roadmap is &#8220;Stability without Stagnation&#8221;, that old
-syntaxes and practices should vanish gradually, giving ample time for developers
-to update their applications. At the same time, Ember should not stagnate, it
-should introduce new features.</p>
-
-<p>I adhere to this motto, but, more importantly, my book does, too.</p>
-
-<p>I want the book and the Rock &amp; Roll application to be up-to-date with the latest
-stable Ember version and not have any of the deprecations. What that means in
-practice is that if you buy one of the packages, you will most likely get book
-updates after each 1.x release. And at no extra cost to you until 2.0 ships!</p>
-
-<h2>A bonus deal you will definitely like</h2>
-
-<p>When you <a href="http://rockandrollwithemberjs.com/#stairway-to-heaven">buy one of the packages</a> you also get access to an awesome deal
-from <a href="https://divshot.com">Divshot</a>, a company that provides static hosting for your Ember apps.</p>
-
-<p>You get 3 months free of <a href="https://divshot.com/pricing">their Fleet plan</a>, a $150 value.</p>
-
-<h2>The &#8220;New Beginning&#8221; tour</h2>
-
-<p><del>Wait, there is more!</del> To celebrate that the book has finally seen the
-light of day, there is a 25% discount <a href="http://rockandrollwithemberjs.com/#pricing">on all packages</a>.</p>
-
-<p>This offer expires on Sunday, February 22, at 23:59 PST, so <a href="http://rockandrollwithemberjs.com">grab yours</a> now!</p>
-
-<h2>Acknowledgements</h2>
-
-<p>I am indebted to all of you who have pushed me through the finish line, either
-by praising my screencasts, blog posts and review copies of my book, retweeting
-my marketing tweets, giving valuable feedback that made the book better or
-simply by pointing out typos in the text.</p>
-
-<p>I would also like to thank you to the Ember Core team whose relentless work
-makes Ember better every day. You are putting so much time in, it&#8217;s almost
-insane. It&#8217;s kinda obvious but without your contributions, this book would not
-exist.</p>
 ]]></content>
   </entry>
   

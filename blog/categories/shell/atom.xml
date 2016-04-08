@@ -4,7 +4,7 @@
   <title><![CDATA[Category: shell | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/shell/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-04-01T20:54:00-07:00</updated>
+  <updated>2016-04-08T13:59:36+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Find and Replace in all files]]></title>
     <link href="http://balinterdi.com/2013/08/23/find-and-replace-in-all-files.html"/>
-    <updated>2013-08-23T22:01:00-07:00</updated>
+    <updated>2013-08-23T22:01:00+02:00</updated>
     <id>http://balinterdi.com/2013/08/23/find-and-replace-in-all-files</id>
     <content type="html"><![CDATA[<p>You want to change a string with another one in some directory in your project.</p>
 
