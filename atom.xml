@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-04-14T10:19:37+02:00</updated>
+  <updated>2016-04-14T22:37:26+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -3026,6 +3026,12 @@ becoming best practice.</p>
 
 <p>(By the way, my PR to add a section about <a href="https://github.com/emberjs/guides/pull/670">the actions helper&#8217;s <code>value</code> option</a> to
 the guides was merged yesterday, so hopefully more people will know about it.)</p>
+
+<h3>Wait, there is more!</h3>
+
+<p>This post received a lot of comments, some of which are inquiring about more
+complex use cases. I decided to do a screencast where I implement some of
+these. You can get it by signing up below:</p>
 ]]></content>
   </entry>
   
