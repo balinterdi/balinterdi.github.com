@@ -7,10 +7,12 @@ categories: ember.js
 perk: complex-component-design
 ---
 
-*This is part 2 of my Complex Component Design series. Here are the preceding posts:*
+*This is part 2 of my Complex Component Design series. Here are the posts in the series:*
 
 * [**Intro**](/2015/09/10/complex-component-design-in-ember-intro.html)
-* [**Analyzing User Flows**][1]
+* [**Part 1 - Analyzing User Flows**](/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html)
+* **Part 2 - Towards a more reactive component**
+* [**Part 3 - Remove the observer**](/2016/04/08/complex-component-design-in-ember-replace-the-observer.html)
 
 - - - -
 
