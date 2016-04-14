@@ -4,7 +4,7 @@ title: "How to do a select (dropdown) in Ember 2.0?"
 date: 2015-08-29 17:43
 comments: true
 categories: ember.js
-perk: general-signup
+perk: select-in-ember-2
 ---
 <iframe
   width="178" height="24" style="border:0px"
@@ -136,6 +136,13 @@ becoming best practice.
 
 (By the way, my PR to add a section about [the actions helper's `value` option][4] to
 the guides was merged yesterday, so hopefully more people will know about it.)
+
+### Wait, there is more!
+
+This post received a lot of comments, some of which are inquiring about more
+complex use cases. I decided to do a screencast where I implement some of
+these. You can get it by signing up below:
+
 
 [1]: https://gist.github.com/ef4/8367f996eb7b57d1f7a5
 [2]: http://smile.amazon.com/How-Solve-It-Mathematical-Princeton/dp/069111966X/ref=smi_www_rco2_go_smi_g2147660602?_encoding=UTF8&*Version*=1&*entries*=0&ie=UTF8
