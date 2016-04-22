@@ -8,7 +8,7 @@ perk: complex-component-design
 ---
 *This is Part 1 of the Complex Component Design series. Here are the posts in the series:*
 
-* [**Intro**](2015/09/10/complex-component-design-in-ember-intro.html)
+* [**Intro**](/2015/09/10/complex-component-design-in-ember-intro.html)
 * **Part 1 - Analyzing User Flows**
 * [**Part 2 - Towards a more reactive component**](/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html)
 * [**Part 3 - Remove the observer**](/2016/04/08/complex-component-design-in-ember-replace-the-observer.html)
