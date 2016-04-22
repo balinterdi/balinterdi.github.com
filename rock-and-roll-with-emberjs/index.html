@@ -353,230 +353,229 @@ and put it all together in an understandable form but you pulled it off.</p>
   <div class="wrap">
     <!-- COPY HERE div.detailed-doc -->
     <div class="detailed-toc">
-    <ul>
-    <li>Preface
-
-    <ul>
-    <li>My love affair with Ember.js</li>
-    <li>Acknowledgements</li>
-    </ul></li>
-    <li>Introduction to Ember.js
-
-    <ul>
-    <li>Why Ember.js</li>
-    <li>Backstage - Dial M for Model</li>
-    <li>About this book</li>
-    <li>Is this book for you?</li>
-    <li>Ambitious goal for an ambitious framework</li>
-    <li>The application we are going to build</li>
-    <li>Errata</li>
-    </ul></li>
-    <li>Ember CLI
-
-    <ul>
-    <li>Setting up Ember CLI</li>
-    <li>Creating our application</li>
-    </ul></li>
-    <li>Templates and data bindings
-
-    <ul>
-    <li>The first template</li>
-    <li>Showing a list of songs in the application template</li>
-    <li>Backstage - Handlebar's fail-softness</li>
-    <li>Backstage - ES2015 modules</li>
-    <li>Backstage - Class and instance properties</li>
-    <li>Adding libraries to the build</li>
-    <li>Importing needed assets manually</li>
-    <li>Using an Ember add-on</li>
-    <li>Auto-updating templates</li>
-    </ul></li>
-    <li>Routing
-
-    <ul>
-    <li>What do we want to achieve?</li>
-    <li>New styles</li>
-    <li>Routes set up data</li>
-    <li>Backstage - A word about generated test files</li>
-    <li>Moving around with link-to</li>
-    <li>Using the model property</li>
-    <li>Showing a list of bands</li>
-    <li>Showing a list of songs</li>
-    </ul></li>
-    <li>Nested routes
-
-    <ul>
-    <li>Defining the nested routes</li>
-    <li>Full route names</li>
-    <li>Backstage - Resource routes</li>
-    <li>Stepping through a router transition</li>
-    <li>Backstage - Computed properties</li>
-    <li>Nested templates</li>
-    <li> is the default template for routes</li>
-    </ul></li>
-    <li>Actions
-
-    <ul>
-    <li>Extracting model classes</li>
-    <li>The class-level mutable attribute property</li>
-    <li>Capturing the event</li>
-    <li>Turning event into intent</li>
-    </ul></li>
-    <li>Components
-
-    <ul>
-    <li>The idea behind components</li>
-    <li>Component specification</li>
-    <li>Defining the component's properties</li>
-    <li>Using the component</li>
-    <li>Displaying the rating with stars</li>
-    <li>Backstage - The default component template</li>
-    <li>Backstage - On the utility of explicit dependency definitions</li>
-    <li>Speaking to the outside world through actions</li>
-    <li>Closure actions</li>
-    </ul></li>
-    <li>Controllers
-
-    <ul>
-    <li>Preventing the creation of bands without a name</li>
-    <li>Smooth UI flows</li>
-    <li>Going to the band page after it is created</li>
-    <li>Nudging the user to create the first song</li>
-    <li>Showing the text field when the call to action has been acted on</li>
-    <li>Creating new bands and songs by pressing return</li>
-    <li>Backstage - Where to handle actions?</li>
-    </ul></li>
-    <li>Advanced routing
-
-    <ul>
-    <li>Route hooks</li>
-    <li>Route actions</li>
-    <li>Redirection</li>
-    <li>Redirecting before the model is known</li>
-    <li>Redirecting after the model is known</li>
-    <li>Backstage - Skipping model resolution</li>
-    <li>Leaving routes and arriving at them</li>
-    <li>Setting descriptive page titles</li>
-    <li>Warning about losing data</li>
-    </ul></li>
-    <li>Talking to a backend - with Ember Data
-
-    <ul>
-    <li>The concept behind Ember Data</li>
-    <li>The API</li>
-    <li>Model classes</li>
-    <li>Transforming the app to use Ember Data</li>
-    <li>Loading bands</li>
-    <li>Fetching a single band</li>
-    <li>Loading songs for a band</li>
-    <li>Creating a band</li>
-    <li>Updating a band's description</li>
-    <li>Updating song ratings</li>
-    <li>Backstage - Promises</li>
-    </ul></li>
-    <li>Testing
-
-    <ul>
-    <li>Clarifying the vocabulary</li>
-    <li>Acceptance tests</li>
-    <li>To mock or not to mock?</li>
-    <li>Unit tests</li>
-    <li>Integration tests</li>
-    <li>Adding an acceptance test</li>
-    <li>Analyzing an Ember acceptance test</li>
-    <li>Making the first test pass</li>
-    <li>Safeguarding critical user scenarios</li>
-    <li>Creating a band</li>
-    <li>Creating a song</li>
-    <li>Backstage – Fake synchronous tests</li>
-    <li>Writing your own test helpers</li>
-    <li>Registering a synchronous helper</li>
-    <li>Registering an async helper</li>
-    <li>Refactoring stubs</li>
-    <li>Integration tests in Ember</li>
-    <li>Unit tests in Ember</li>
-    </ul></li>
-    <li>Sorting and searching with query parameters
-
-    <ul>
-    <li>Query parameters</li>
-    <li>Query parameters in Ember</li>
-    <li>Sorting the list of songs</li>
-    <li>Sorting an array of items</li>
-    <li>Backstage - Computed property macros</li>
-    <li>Changing the sorting criteria</li>
-    <li>Filtering songs by a search term</li>
-    <li>Adding a dash of query parameters</li>
-    <li>Using links instead of buttons</li>
-    <li>Taking a look at what we made</li>
-    </ul></li>
-    <li>Loading and error routes
-
-    <ul>
-    <li>Loading routes</li>
-    <li>Backstage - Rendering the loading template is an overridable default</li>
-    <li>Error routes</li>
-    </ul></li>
-    <li>Helpers
-
-    <ul>
-    <li>About helpers</li>
-    <li>Capitalizing each word of a name</li>
-    <li>Using it in templates, or elsewhere</li>
-    <li>Use dashed names for helpers</li>
-    </ul></li>
-    <li>Animations
-
-    <ul>
-    <li>Setting up liquid-fire</li>
-    <li>liquid-fire architecture</li>
-    <li>Transition map</li>
-    <li>Transition functions</li>
-    <li>Template helpers</li>
-    <li>Putting it all together</li>
-    <li>Debugging transitions</li>
-    <li>Animate moving between routes</li>
-    <li>Adding a custom animation</li>
-    <li>Animate a value change</li>
-    </ul></li>
-    <li>Making an Ember addon
-
-    <ul>
-    <li>What is an Ember addon?</li>
-    <li>Developing the addon</li>
-    <li>Integrating our addon into our app</li>
-    <li>Adding a block form</li>
-    <li>Customizing the star-rating component's look and behavior</li>
-    <li>Publishing the addon</li>
-    <li>Using a published addon from the app</li>
-    </ul></li>
-    <li>ES2015 - Writing modern JavaScript
-
-    <ul>
-    <li>Modernizing the app</li>
-    <li>Modules</li>
-    <li>Template strings</li>
-    <li>Short-hand method definitions</li>
-    <li>Replacing var (let &amp; const)</li>
-    <li>Arrow functions</li>
-    <li>Destructuring</li>
-    <li>Other useful ES2015 features</li>
-    <li>Backstage - ember-watson</li>
-    <li>Computed property macros</li>
-    </ul></li>
-    <li>Deployment
-
-    <ul>
-    <li>FrontPage</li>
-    <li>Heroku</li>
-    <li>ember-cli-deploy</li>
-    </ul></li>
-    <li>Afterword
-
-    <ul>
-    <li>Your journey with Ember.js</li>
-    </ul></li>
-    </ul>
-
+      <ul>
+        <li>Preface
+        <ul>
+          <li>My love affair with Ember.js</li>
+          <li>Acknowledgements</li>
+        </ul>
+        </li>
+        <li>Introduction to Ember.js
+        <ul>
+          <li>Why Ember.js</li>
+          <li>Backstage - Dial M for Model</li>
+          <li>About this book</li>
+          <li>Is this book for you?</li>
+          <li>Ambitious goal for an ambitious framework</li>
+          <li>The application we are going to build</li>
+          <li>Errata</li>
+        </ul>
+        </li>
+        <li>Ember CLI
+        <ul>
+          <li>Setting up Ember CLI</li>
+          <li>Creating our application</li>
+        </ul>
+        </li>
+        <li>Templates and data bindings
+        <ul>
+          <li>The first template</li>
+          <li>Backstage - Handlebar's fail-softness</li>
+          <li>Adding assets to the build</li>
+        </ul>
+        </li>
+        <li>Routing
+        <ul>
+          <li>What do we want to achieve?</li>
+          <li>New styles</li>
+          <li>Routes set up data</li>
+          <li>Backstage - A word about generated test files</li>
+          <li>Moving around with link-to</li>
+          <li>Using the model property</li>
+          <li>Showing a list of bands</li>
+          <li>Showing a list of songs</li>
+        </ul>
+        </li>
+        <li>Nested routes
+        <ul>
+          <li>Defining the nested routes</li>
+          <li>Full route names</li>
+          <li>Stepping through a router transition</li>
+          <li>Backstage - Computed properties</li>
+          <li>Nested templates</li>
+        </ul>
+        </li>
+        <li>Actions
+        <ul>
+          <li>Extracting model classes</li>
+          <li>Backstage - The class-level mutable attribute property</li>
+          <li>Capturing the event</li>
+          <li>Turning event into intent</li>
+        </ul>
+        </li>
+        <li>Components
+        <ul>
+          <li>The idea behind components</li>
+          <li>Component specification</li>
+          <li>Defining the component's properties</li>
+          <li>Using the component</li>
+          <li>Displaying the rating with stars</li>
+          <li>Speaking to the outside world through actions</li>
+          <li>Closure actions</li>
+        </ul>
+        </li>
+        <li>Controllers
+        <ul>
+          <li>Preventing the creation of bands without a name</li>
+          <li>Smooth UI flows</li>
+          <li>Going to the band page after it is created</li>
+          <li>Nudging the user to create the first song</li>
+          <li>Showing the text field when the call to action has been acted on</li>
+          <li>Creating new bands and songs by pressing return</li>
+          <li>Backstage - Where to handle actions?</li>
+        </ul>
+        </li>
+        <li>Advanced routing
+        <ul>
+          <li>Route hooks</li>
+          <li>Route actions</li>
+          <li>Redirection</li>
+          <li>Redirecting before the model is known</li>
+          <li>Redirecting after the model is known</li>
+          <li>Backstage - Skipping model resolution</li>
+          <li>Resetting controller properties</li>
+          <li>Leaving routes and arriving at them</li>
+          <li>Setting descriptive page titles</li>
+          <li>Warning about losing data</li>
+        </ul>
+        </li>
+        <li>Talking to a backend - with Ember Data
+        <ul>
+          <li>The concept behind Ember Data</li>
+          <li>The API</li>
+          <li>Model classes</li>
+          <li>Transforming the app to use Ember Data</li>
+          <li>Loading bands</li>
+          <li>Fetching a single band</li>
+          <li>Loading songs for a band</li>
+          <li>Creating a band</li>
+          <li>Updating a band's description</li>
+          <li>Updating song ratings</li>
+          <li>Backstage - Promises</li>
+        </ul>
+        </li>
+        <li>Testing
+        <ul>
+          <li>Clarifying the vocabulary</li>
+          <li>Acceptance tests</li>
+          <li>To mock or not to mock?</li>
+          <li>Unit tests</li>
+          <li>Integration tests</li>
+          <li>Adding an acceptance test</li>
+          <li>Analyzing an Ember acceptance test</li>
+          <li>Making the first test pass</li>
+          <li>Safeguarding critical user scenarios</li>
+          <li>Creating a band</li>
+          <li>Creating a song</li>
+          <li>Writing your own test helpers</li>
+          <li>Registering a synchronous helper</li>
+          <li>Registering an async helper</li>
+          <li>Refactoring stubs</li>
+          <li>Integration tests in Ember</li>
+          <li>Unit tests in Ember</li>
+        </ul>
+        </li>
+        <li>Sorting and searching with query parameters
+        <ul>
+          <li>Query parameters</li>
+          <li>Query parameters in Ember</li>
+          <li>Sorting the list of songs</li>
+          <li>Sorting an array of items</li>
+          <li>Backstage - Computed property macros</li>
+          <li>Changing the sorting criteria</li>
+          <li>Filtering songs by a search term</li>
+          <li>Adding a dash of query parameters</li>
+          <li>Using links instead of buttons</li>
+          <li>Taking a look at what we made</li>
+        </ul>
+        </li>
+        <li>Loading and error routes
+        <ul>
+          <li>Loading routes</li>
+          <li>Backstage - Rendering the loading template is an overridable default</li>
+          <li>Error routes</li>
+        </ul>
+        </li>
+        <li>Helpers
+        <ul>
+          <li>About helpers</li>
+          <li>Capitalizing each word of a name</li>
+          <li>Using it in templates, or elsewhere</li>
+        </ul>
+        </li>
+        <li>Animations
+        <ul>
+          <li>Setting up liquid-fire</li>
+          <li>liquid-fire architecture</li>
+          <li>Transition map</li>
+          <li>Transition functions</li>
+          <li>Template helpers</li>
+          <li>Putting it all together</li>
+          <li>Debugging transitions</li>
+          <li>Animate moving between routes</li>
+          <li>Adding a custom animation</li>
+          <li>Animate a value change</li>
+        </ul>
+        </li>
+        <li>Making an Ember addon
+        <ul>
+          <li>What is an Ember addon?</li>
+          <li>Developing the addon</li>
+          <li>Integrating our addon into our app</li>
+          <li>Adding a block form</li>
+          <li>Customizing the star-rating component's look and behavior</li>
+          <li>Publishing the addon</li>
+          <li>Using a published addon from the app</li>
+        </ul>
+        </li>
+        <li>ES2015 - Writing modern JavaScript
+        <ul>
+          <li>Modernizing the app</li>
+          <li>Modules</li>
+          <li>Template strings</li>
+          <li>Short-hand method definitions</li>
+          <li>Replacing var (let & const)</li>
+          <li>Arrow functions</li>
+          <li>Destructuring</li>
+          <li>Other useful ES2015 features</li>
+          <li>Backstage - ember-watson</li>
+          <li>Computed property macros</li>
+        </ul>
+        </li>
+        <li>Deployment
+        <ul>
+          <li>PageFront</li>
+          <li>Heroku</li>
+          <li>ember-cli-deploy</li>
+        </ul>
+        </li>
+        <li>Afterword
+        <ul>
+          <li>Your journey with Ember.js</li>
+        </ul>
+        </li>
+        <li>Encore
+        <ul>
+          <li>ES2015 modules</li>
+          <li>Class and instance properties</li>
+          <li>Mixins</li>
+          <li>Concatenated properties</li>
+          <li>On the utility of explicit dependency definitions</li>
+          <li>The default component template</li>
+          <li>Fake synchronous tests</li>
+        </ul>
+        </li>
+      </ul>
     </div><!-- END OF div.detailed-doc -->
 
     <div class="gradient"></div>
