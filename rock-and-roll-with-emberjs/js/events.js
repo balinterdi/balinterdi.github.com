@@ -7,6 +7,7 @@
        'eventLabel': label,
        'eventValue': value
      });
+     return false;
    }
 
   $(function() {

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-04-22T22:33:50+02:00</updated>
+  <updated>2016-05-02T22:07:19+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -220,79 +220,78 @@ API of the <code>selectOption</code> action.</p>
 <code>options</code> to be consumed downstream. Let's also not forget to rename
 <code>selectItem</code> to <code>selectOption</code>:</p>
 
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
+<p>{% highlight html %}
+{% raw %}</p>
 
-&lt;!-- addon/templates/components/auto-complete.hbs --&gt;
+<!-- addon/templates/components/auto-complete.hbs -->
 
 
-&lt;p&gt;{{yield isDropdownOpen&lt;/p&gt;
+<p>{{yield isDropdownOpen</p>
 
-&lt;pre&gt;&lt;code&gt;    inputValue
+<pre><code>    inputValue
     options
     focusedIndex
     selectedIndex
-    (action &quot;toggleDropdown&quot;)
-    (action &quot;selectOption&quot;)
-    (action &quot;inputDidChange&quot;)}}
-&lt;/code&gt;&lt;/pre&gt;
+    (action "toggleDropdown")
+    (action "selectOption")
+    (action "inputDidChange")}}
+</code></pre>
 
-&lt;p&gt;</code></pre>
-</div>
-</p>
+<p>{% endraw %}
+{% endhighlight %}</p>
 
 <p>Then, the <code>each</code> loop should iterate through <code>options</code>, and not through
 <code>matchingArtists</code> as before:</p>
 
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
+<p>{% highlight html %}
+{% raw %}</p>
 
-&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
+<!-- tests/dummy/app/templates/index.hbs -->
 
 
-&lt;p&gt;{{#auto-complete&lt;/p&gt;
+<p>{{#auto-complete</p>
 
-&lt;pre&gt;&lt;code&gt;  on-select=(action &quot;selectArtist&quot;)
-  on-input=(action &quot;filterArtists&quot;)
+<pre><code>  on-select=(action "selectArtist")
+  on-input=(action "filterArtists")
   options=matchingArtists
-  displayProperty=&quot;name&quot;
-  class=&quot;autocomplete-container&quot; as |isDropdownOpen inputValue options
+  displayProperty="name"
+  class="autocomplete-container" as |isDropdownOpen inputValue options
                                      focusedIndex selectedIndex
                                      toggleDropdown onSelect onInput|}}
-&lt;/code&gt;&lt;/pre&gt;
+</code></pre>
 
-&lt;p&gt;  &lt;div class=&quot;input-group&quot;&gt;&lt;/p&gt;
+<p>  <div class="input-group"></p>
 
-&lt;pre&gt;&lt;code&gt;{{auto-complete-input
+<pre><code>{{auto-complete-input
     value=inputValue
     on-change=onInput
-    type=&quot;text&quot;
-    class=&quot;combobox input-large form-control&quot;
-    placeholder=&quot;Select an artist&quot;}}
+    type="text"
+    class="combobox input-large form-control"
+    placeholder="Select an artist"}}
 {{#auto-complete-list
     isVisible=isDropdownOpen
-    class=&quot;typeahead typeahead-long dropdown-menu&quot;}}
+    class="typeahead typeahead-long dropdown-menu"}}
   {{#each options as |option index|}}
     {{#auto-complete-option
         item=option
         on-click=onSelect
         isFocused=(eq focusedIndex index)
         isSelected=(eq selectedIndex index)}}
-      &amp;lt;a href=&quot;#&quot;&amp;gt;{{option.name}}&amp;lt;/a&amp;gt;
+      &lt;a href="#"&gt;{{option.name}}&lt;/a&gt;
     {{/auto-complete-option}}
   {{else}}
-    &amp;lt;li&amp;gt;&amp;lt;a href=&quot;#&quot;&amp;gt;No results.&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;
+    &lt;li&gt;&lt;a href="#"&gt;No results.&lt;/a&gt;&lt;/li&gt;
   {{/each}}
 {{/auto-complete-list}}
-{{#auto-complete-dropdown-toggle on-click=toggleDropdown class=&quot;input-group-addon dropdown-toggle&quot;}}
-  &amp;lt;span class=&quot;caret&quot;&amp;gt;&amp;lt;/span&amp;gt;
+{{#auto-complete-dropdown-toggle on-click=toggleDropdown class="input-group-addon dropdown-toggle"}}
+  &lt;span class="caret"&gt;&lt;/span&gt;
 {{/auto-complete-dropdown-toggle}}
-&lt;/code&gt;&lt;/pre&gt;
+</code></pre>
 
-&lt;p&gt;  &lt;/div&gt;
-{{/auto-complete}}</code></pre>
-</div>
-</p>
+<p>  </div>
+{{/auto-complete}}
+{% endraw %}
+{% endhighlight %}</p>
 
 <p>The bug at the beginning of the post is now gone:</p>
 
@@ -476,38 +475,38 @@ see how to get rid of these and replace them with more reactive solutions.</p>
 children. <code>auto-complete-input</code> binds its own <code>autocomplete</code> attribute to it so
 that it can register itself with its parent when inserted:</p>
 
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
+<p>{% highlight html %}
+{% raw %}</p>
 
-&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
+<!-- tests/dummy/app/templates/index.hbs -->
 
 
-&lt;p&gt;{{#auto-complete&lt;/p&gt;
+<p>{{#auto-complete</p>
 
-&lt;pre&gt;&lt;code&gt;  on-select=(action &quot;selectArtist&quot;)
-  on-input=(action &quot;filterArtists&quot;)
-  class=&quot;autocomplete-container&quot; as
+<pre><code>  on-select=(action "selectArtist")
+  on-input=(action "filterArtists")
+  class="autocomplete-container" as
     |autocomplete isDropdownOpen inputValue
      toggleDropdown onSelect onInput|}}
-&lt;/code&gt;&lt;/pre&gt;
+</code></pre>
 
-&lt;p&gt;  &lt;div class=&quot;input-group&quot;&gt;&lt;/p&gt;
+<p>  <div class="input-group"></p>
 
-&lt;pre&gt;&lt;code&gt;{{auto-complete-input
+<pre><code>{{auto-complete-input
     autocomplete=autocomplete
     value=inputValue
     on-change=onInput
-    type=&quot;text&quot;
-    class=&quot;combobox input-large form-control&quot;
-    placeholder=&quot;Select an artist&quot;}}
+    type="text"
+    class="combobox input-large form-control"
+    placeholder="Select an artist"}}
 (...)
-&lt;/code&gt;&lt;/pre&gt;
+</code></pre>
 
-&lt;p&gt;  &lt;/div&gt;
+<p>  </div>
 (...)
-{{/auto-complete}}</code></pre>
-</div>
-</p>
+{{/auto-complete}}
+{% endraw %}
+{% endhighlight %}</p>
 
 <p>```js
 // addon/components/auto-complete-input.js
@@ -648,29 +647,29 @@ autocomplete instance to the input component.</p>
 <code>autocomplete</code> component to the <code>auto-complete-option</code>, through the
 <code>auto-complete-list</code>.</p>
 
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
+<p>{% highlight html %}
+{% raw %}</p>
 
-&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
+<!-- tests/dummy/app/templates/index.hbs -->
 
 
-&lt;p&gt;{{#auto-complete&lt;/p&gt;
+<p>{{#auto-complete</p>
 
-&lt;pre&gt;&lt;code&gt;  on-select=(action &quot;selectArtist&quot;)
-  on-input=(action &quot;filterArtists&quot;)
-  class=&quot;autocomplete-container&quot; as |autocomplete isDropdownOpen inputValue
+<pre><code>  on-select=(action "selectArtist")
+  on-input=(action "filterArtists")
+  class="autocomplete-container" as |autocomplete isDropdownOpen inputValue
                                      toggleDropdown onSelect onInput|}}
-&lt;/code&gt;&lt;/pre&gt;
+</code></pre>
 
-&lt;p&gt;  &lt;div class=&quot;input-group&quot;&gt;&lt;/p&gt;
+<p>  <div class="input-group"></p>
 
-&lt;pre&gt;&lt;code&gt;{{auto-complete-input
+<pre><code>{{auto-complete-input
     value=inputValue
     on-change=onInput
-    type=&quot;text&quot;
-    class=&quot;combobox input-large form-control&quot;
-    placeholder=&quot;Select an artist&quot;}}
-{{#auto-complete-list autocomplete=autocomplete isVisible=isDropdownOpen class=&quot;typeahead typeahead-long dropdown-menu&quot; as |list|}}
+    type="text"
+    class="combobox input-large form-control"
+    placeholder="Select an artist"}}
+{{#auto-complete-list autocomplete=autocomplete isVisible=isDropdownOpen class="typeahead typeahead-long dropdown-menu" as |list|}}
   {{#each matchingArtists as |artist|}}
     {{#auto-complete-option
         id=artist.id
@@ -679,17 +678,17 @@ autocomplete instance to the input component.</p>
         list=list
         on-click=onSelect
         activeId=selectedArtist.id}}
-      &amp;lt;a href=&quot;#&quot;&amp;gt;{{artist.name}}&amp;lt;/a&amp;gt;
+      &lt;a href="#"&gt;{{artist.name}}&lt;/a&gt;
     {{/auto-complete-option}}
   {{/each}}
 {{/auto-complete-list}}
 (...)
-&lt;/code&gt;&lt;/pre&gt;
+</code></pre>
 
-&lt;p&gt;  &lt;/div&gt;
-{{/auto-complete}}</code></pre>
-</div>
-</p>
+<p>  </div>
+{{/auto-complete}}
+{% endraw %}
+{% endhighlight %}</p>
 
 <p>I am not copying all the registration code here as it's very boilerplatey. Each
 option, when inserted into the DOM, registers itself with its list, while the
@@ -850,54 +849,53 @@ know whether they are focused or not.</p>
 
 <p>Here is how the templates need to change:</p>
 
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
+<p>{% highlight html %}
+{% raw %}</p>
 
-&lt;!-- addon/templates/components/autocomplete.hbs --&gt;
+<!-- addon/templates/components/autocomplete.hbs -->
 
 
-&lt;p&gt;{{yield isDropdownOpen&lt;/p&gt;
+<p>{{yield isDropdownOpen</p>
 
-&lt;pre&gt;&lt;code&gt;    inputValue
+<pre><code>    inputValue
     focusedIndex
     selectedIndex
-    (action &quot;toggleDropdown&quot;)
-    (action &quot;selectItem&quot;)
-    (action &quot;inputDidChange&quot;)}}
-&lt;/code&gt;&lt;/pre&gt;
+    (action "toggleDropdown")
+    (action "selectItem")
+    (action "inputDidChange")}}
+</code></pre>
 
-&lt;p&gt;</code></pre>
-</div>
-</p>
+<p>{% endraw %}
+{% endhighlight %}</p>
 
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
+<p>{% highlight html linenos %}
+{% raw %}</p>
 
-&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
+<!-- tests/dummy/app/templates/index.hbs -->
 
 
-&lt;p&gt;{{#auto-complete&lt;/p&gt;
+<p>{{#auto-complete</p>
 
-&lt;pre&gt;&lt;code&gt;  on-select=(action &quot;selectArtist&quot;)
-  on-input=(action &quot;filterArtists&quot;)
+<pre><code>  on-select=(action "selectArtist")
+  on-input=(action "filterArtists")
   options=matchingArtists
-  displayProperty=&quot;name&quot;
-  class=&quot;autocomplete-container&quot; as |isDropdownOpen inputValue
+  displayProperty="name"
+  class="autocomplete-container" as |isDropdownOpen inputValue
                                      focusedIndex selectedIndex
                                      toggleDropdown onSelect onInput|}}
-&lt;/code&gt;&lt;/pre&gt;
+</code></pre>
 
-&lt;p&gt;  &lt;div class=&quot;input-group&quot;&gt;&lt;/p&gt;
+<p>  <div class="input-group"></p>
 
-&lt;pre&gt;&lt;code&gt;{{auto-complete-input
+<pre><code>{{auto-complete-input
     value=inputValue
     on-change=onInput
-    type=&quot;text&quot;
-    class=&quot;combobox input-large form-control&quot;
-    placeholder=&quot;Select an artist&quot;}}
+    type="text"
+    class="combobox input-large form-control"
+    placeholder="Select an artist"}}
 {{#auto-complete-list
     isVisible=isDropdownOpen
-    class=&quot;typeahead typeahead-long dropdown-menu&quot; as |list|}}
+    class="typeahead typeahead-long dropdown-menu" as |list|}}
   {{#each matchingArtists as |artist index|}}
     {{#auto-complete-option
         label=artist.name
@@ -905,19 +903,19 @@ know whether they are focused or not.</p>
         on-click=onSelect
         isFocused=(eq focusedIndex index)
         isSelected=(eq selectedIndex index)}}
-      &amp;lt;a href=&quot;#&quot;&amp;gt;{{artist.name}}&amp;lt;/a&amp;gt;
+      &lt;a href="#"&gt;{{artist.name}}&lt;/a&gt;
     {{/auto-complete-option}}
   {{else}}
-    &amp;lt;li&amp;gt;&amp;lt;a href=&quot;#&quot;&amp;gt;No results.&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;
+    &lt;li&gt;&lt;a href="#"&gt;No results.&lt;/a&gt;&lt;/li&gt;
   {{/each}}
 {{/auto-complete-list}}
 (...)
-&lt;/code&gt;&lt;/pre&gt;
+</code></pre>
 
-&lt;p&gt;  &lt;/div&gt;
-{{/auto-complete}}</code></pre>
-</div>
-</p>
+<p>  </div>
+{{/auto-complete}}
+{% endraw %}
+{% endhighlight %}</p>
 
 <p>Note the new <code>focusedIndex</code> and <code>selectedIndex</code> attributes, yielded by the
 top-level component that <code>isFocused</code> and <code>isSelected</code> in the
