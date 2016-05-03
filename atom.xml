@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-05-03T10:45:29+02:00</updated>
+  <updated>2016-05-03T11:33:08+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -48,7 +48,7 @@ can skip to each chapter in the code in a very simple way, using <code>git check
 </ol>
 
 
-<p>(There were some other changes, the whole list of which you can see <a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aopen+is%3Aissue+milestone%3A2.5">here.</a>)</p>
+<p>(There were some other changes, the whole list of which you can see <a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A2.5">here.</a>)</p>
 
 <p>This is the most significant update since I published the Ember 2 version of the
 book last October and I believe following the book (and the building of the app)
