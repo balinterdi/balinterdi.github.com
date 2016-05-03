@@ -48,4 +48,4 @@ If this piqued your interest, you can download a sample chapter below.
 [1]: http://rockandrollwithemberjs.com
 [2]: http://rockandrollwithemberjs.com/#light-my-fire
 [3]: http://rockandrollwithemberjs.com/#stairway-to-heaven
-[4]: https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aopen+is%3Aissue+milestone%3A2.5
+[4]: https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A2.5
