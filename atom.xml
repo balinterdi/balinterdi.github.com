@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-05-02T22:04:58+02:00</updated>
+  <updated>2016-05-03T10:45:29+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,51 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rock and Roll with Ember.js 2.5 is released]]></title>
+    <link href="http://balinterdi.com/2016/05/03/rock-and-roll-with-ember-dot-js-2-dot-5-is-released.html"/>
+    <updated>2016-05-03T10:22:00+02:00</updated>
+    <id>http://balinterdi.com/2016/05/03/rock-and-roll-with-ember-dot-js-2-dot-5-is-released</id>
+    <content type="html"><![CDATA[<p>I published a new version of <a href="http://rockandrollwithemberjs.com">the Rock and Roll Ember.js book</a>, and the
+related application. It now runs on Ember, Ember Data and Ember CLI ~2.5.0.</p>
+
+<p>More importantly, I made other improvements that serve to improve clarity and
+reduce the number of new things the reader has to absorb at each step, which I
+think is hugely important for an efficient, non-frustrating learning process.</p>
+
+<ol>
+<li><p>The biggest change (and simplification) is that I no longer sort the songs
+from the get-go. To do so, I needed to use the <code>SortableMixin</code> and later, when
+that was gone, an <code>ArrayProxy</code>. This resulted in other simplifications, like
+not having to use (and maintain) a jsbin for that code snippet that used the
+&#8220;global&#8221; Ember application building style and iterated on the magical
+<code>sortedContent</code> property.</p></li>
+<li><p>I also improved the flow of the Components chapter, rearranged some sections,
+explained a few things that help comprehension and moved a few things that
+only add to the learning burden.</p></li>
+<li><p>I created an Appendix, called &#8220;Encore&#8221; to further the rock analogy. I felt
+(and got matching feedback) that on some occasions there were too many
+&#8220;sidebar&#8221; explanations (called &#8220;Backstage&#8221; sections in the book), that either
+weren&#8217;t important enough to warrant holding up the flow of explanation or
+lacked context. I moved these sections into the Encore where interested
+readers can learn about these topics when they see fit.</p></li>
+<li><p>Last, but not least, I went through the book and built the application from
+scratch to see that everything still works. I also applied git tags at the
+end of each chapter so that readers of <a href="http://rockandrollwithemberjs.com/#light-my-fire">the middle-</a> and <a href="http://rockandrollwithemberjs.com/#stairway-to-heaven">high-tier packages</a>
+can skip to each chapter in the code in a very simple way, using <code>git checkout</code>.</p></li>
+</ol>
+
+
+<p>(There were some other changes, the whole list of which you can see <a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aopen+is%3Aissue+milestone%3A2.5">here.</a>)</p>
+
+<p>This is the most significant update since I published the Ember 2 version of the
+book last October and I believe following the book (and the building of the app)
+became even easier.</p>
+
+<p>If this piqued your interest, you can download a sample chapter below.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Complex Component Design in Ember - Part 3 - Replace the observer]]></title>
@@ -3158,23 +3203,6 @@ used <code>store.find</code>.</li>
 
 <p>As usual, there are also smaller improvements and fixes and you can find the
 whole list in the errata/issues repository for the book, assigned to <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13+is%3Aclosed">the release milestone.</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Common Ember Mistakes]]></title>
-    <link href="http://balinterdi.com/2015/06/05/common-ember-mistakes.html"/>
-    <updated>2015-06-05T00:27:00+02:00</updated>
-    <id>http://balinterdi.com/2015/06/05/common-ember-mistakes</id>
-    <content type="html"><![CDATA[<p>I wrote an article called <a href="http://www.toptal.com/emberjs/the-8-most-common-ember-js-developer-mistakes">&#8220;The Top 8 Most Common Ember.js Developer
-Mistakes&#8221;</a> for Toptal that just went live on their blog. As the name
-suggests, it describes the typical pitfalls beginner, and sometimes advanced,
-Ember developers make with a mitigation strategy for each of them. I am quite
-happy about how it turned out and suggest you <a href="http://www.toptal.com/emberjs/the-8-most-common-ember-js-developer-mistakes">give it a read</a>.</p>
-
-<p>Also, it turned out to have more than 2500 words so I thought it might be
-convenient for you to have it as a pdf. It spans 13 pages and you can get it
-right here below by providing your email address to send the paper to:</p>
 ]]></content>
   </entry>
   

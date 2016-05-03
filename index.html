@@ -91,6 +91,78 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2016/05/03/rock-and-roll-with-ember-dot-js-2-dot-5-is-released.html">Rock and Roll With Ember.js 2.5 Is Released</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-05-03T10:22:00+02:00" pubdate data-updated="true">May 3<span>rd</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I published a new version of <a href="http://rockandrollwithemberjs.com">the Rock and Roll Ember.js book</a>, and the
+related application. It now runs on Ember, Ember Data and Ember CLI ~2.5.0.</p>
+
+<p>More importantly, I made other improvements that serve to improve clarity and
+reduce the number of new things the reader has to absorb at each step, which I
+think is hugely important for an efficient, non-frustrating learning process.</p>
+
+<ol>
+<li><p>The biggest change (and simplification) is that I no longer sort the songs
+from the get-go. To do so, I needed to use the <code>SortableMixin</code> and later, when
+that was gone, an <code>ArrayProxy</code>. This resulted in other simplifications, like
+not having to use (and maintain) a jsbin for that code snippet that used the
+&#8220;global&#8221; Ember application building style and iterated on the magical
+<code>sortedContent</code> property.</p></li>
+<li><p>I also improved the flow of the Components chapter, rearranged some sections,
+explained a few things that help comprehension and moved a few things that
+only add to the learning burden.</p></li>
+<li><p>I created an Appendix, called &#8220;Encore&#8221; to further the rock analogy. I felt
+(and got matching feedback) that on some occasions there were too many
+&#8220;sidebar&#8221; explanations (called &#8220;Backstage&#8221; sections in the book), that either
+weren&#8217;t important enough to warrant holding up the flow of explanation or
+lacked context. I moved these sections into the Encore where interested
+readers can learn about these topics when they see fit.</p></li>
+<li><p>Last, but not least, I went through the book and built the application from
+scratch to see that everything still works. I also applied git tags at the
+end of each chapter so that readers of <a href="http://rockandrollwithemberjs.com/#light-my-fire">the middle-</a> and <a href="http://rockandrollwithemberjs.com/#stairway-to-heaven">high-tier packages</a>
+can skip to each chapter in the code in a very simple way, using <code>git checkout</code>.</p></li>
+</ol>
+
+
+<p>(There were some other changes, the whole list of which you can see <a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aopen+is%3Aissue+milestone%3A2.5">here.</a>)</p>
+
+<p>This is the most significant update since I published the Ember 2 version of the
+book last October and I believe following the book (and the building of the app)
+became even easier.</p>
+
+<p>If this piqued your interest, you can download a sample chapter below.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2016/04/08/complex-component-design-in-ember-replace-the-observer.html">Complex Component Design in Ember - Part 3 - Replace the Observer</a></h1>
     
     
@@ -2280,518 +2352,6 @@ this release, the list of which can be viewed on <a href="https://github.com/bal
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2015/10/22/the-tale-of-two-bindings.html">The Tale of Two Bindings</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-10-22T16:41:00+02:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><iframe
-  width="178" height="24" style="border:0px"
-  src="https://mixonic.github.io/ember-community-versions/2015/10/22/the-tale-of-two-bindings.html">
-</iframe>
-
-
-<p>Two weeks ago I had a presentation called &#8220;Complex component design&#8221; at the
-Global Ember Meetup.</p>
-
-<p>When I had given the title and abstract of this presentation, I had wanted to
-speak about how to implement more involved, nested components in Ember 2 (but
-actually, more like 1.13+), which is a fascinating and complex (pun intended)
-topic. I had something like a highly reusable autocomplete input component in
-mind something that <a href="http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html">I had decided to explore further</a>.</p>
-
-<p>When I sat down to think about it, I had realized there is a related and equally
-fascinating topic, that of communication between components that live on the
-same page. As everything is <a href="https://github.com/emberjs/rfcs/pull/38">soon becoming a component</a> in Ember, the two are
-very similar. A difference is that communicating components in an app do not
-need such a high degree of flexibility as a reusable component (like an Ember
-addon). In any case, it does not hurt, since making them flexible facilitates
-their reuse.</p>
-
-<p>In this post, I&#8217;ll show an example of simple component communication and focus
-on how moving from two-way bindings to one-way bindings changes that. Spending
-some time on playing around with this, I was very pleasantly surprised in what
-this shift enables.</p>
-
-<h3>The example</h3>
-
-<p>If you know me a bit, you&#8217;d expect the &#8220;app&#8221; to be Rock &amp; Roll themed and
-you&#8217;d be right. I reduced the app <a href="http://rockandrollwithemberjs.com">in the book</a> to a very simple interface
-where you can pick a band and then edit it on a form:</p>
-
-<p><img src="/images/posts/tale-of-two-bindings/sketch.png" alt="Edit band on a form" /></p>
-
-<p>In the remainder of the post, we&#8217;ll see different implementations to achieve the
-validation and saving of the band. There will be 3 scenarios: the traditional
-one, using two-way bindings, the Glimmer version, using one-way bindings, DOM
-events and Data Down, Actions up (DDAU) and finally 1WAY Deluxe&#8482;: adding a few
-features on top of the second scenario that one-way bindings make easy (or
-possible at all).</p>
-
-<h3>Take 1: Traditional, two-way bound</h3>
-
-<p>Ignoring the list of bands on the left, the template belonging to the band
-route, where the band can be edited, contains the band-form (on the right of the
-screenshot), and some minimal markup. We pass in the band object, the <code>on-save</code> and the
-<code>on-star-click</code> closure actions to the band form:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class=&quot;panel panel-default band-panel&quot;&gt;
-  &lt;div class=&quot;panel-body&quot;&gt;
-    {{band-form band=model
-                errors=errors
-                on-save=(action &quot;saveBand&quot;)
-                on-star-click=(action &quot;updateRating&quot;)}}
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-</div>
-
-
-<p>The controller has these actions, sets up the errors object and contains the
-validation logic. The <code>hasErrors</code> property will be true if the band&#8217;s name is
-empty:</p>
-
-<div>
-  <pre><code class='javascript'>import Ember from &#39;ember&#39;;
-
-export default Ember.Controller.extend({
-  hasValidName: Ember.computed.notEmpty(&#39;model.name&#39;),
-  hasErrors: Ember.computed.not(&#39;hasValidName&#39;),
-
-  setupErrors: Ember.on(&#39;init&#39;, function() {
-    this.set(&#39;errors&#39;, Ember.Object.create());
-  }),
-
-  validate() {
-    this.set(&#39;errors.name&#39;, this.get(&#39;hasValidName&#39;) ? null : &quot;Name is required.&quot;);
-  },
-
-  actions: {
-    updateRating(params) {
-      const { item: band, rating } = params;
-      band.set(&#39;rating&#39;, rating);
-    },
-
-    saveBand() {
-      this.validate();
-      if (this.get(&#39;hasErrors&#39;)) {
-        return;
-      }
-
-      const band = this.get(&#39;model&#39;);
-      return band.save().then(() =&gt; {
-        console.log(&quot;Band is saved&quot;);
-      });
-    }
-  }
-});</code></pre>
-</div>
-
-
-<p>Upon validation, the errors are set but this is only needed to be able to
-show the error in the template. <code>this.get('hasErrors')</code> is already true if the
-band&#8217;s name is an empty string.</p>
-
-<p>The missing piece is the <code>band-form</code> template:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class={{if errors.name &quot;form-group has-error&quot; &quot;form-group&quot;}}&gt;
-  &lt;label for=&quot;band-name&quot;&gt;Name&lt;/label&gt;
-  {{input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-name&quot; value=band.name}}
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-year&quot;&gt;Formed in&lt;/label&gt;
-  {{input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-year&quot; value=band.year}}
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-rating&quot;&gt;Rating&lt;/label&gt;
-  {{star-rating id=&quot;band-rating&quot; item=band rating=band.rating on-click=on-star-click}}
-&lt;/div&gt;
-&lt;button type=&quot;submit&quot; class=&quot;btn btn-primary pull-right&quot; {{action &quot;saveBand&quot;}}&gt;Submit&lt;/button&gt;</code></pre>
-</div>
-
-
-<p>It uses the <code>input</code> helper which established two-way bindings between the value
-of the input and the property that was passed to it. When the user modifies the
-input, <code>band.name</code> changes in sync. Since band in the component is the model of
-the controller, the band name in the list changes as the name is edited:</p>
-
-<p><img src="/images/posts/tale-of-two-bindings/two-way-bindings-in-action.gif" alt="Two-way bindings in action" /></p>
-
-<p>In this scenario, communication between the top-level component (controller, if
-you will) and the band form is quite blunt. As data is two-way bound, there is
-no simple, &#8220;in-framework&#8221; way of not changing the name in the list when the name
-on the form is modified. There is shared state and the components do not act via
-messages: they pull two ends of the same string.</p>
-
-<p>(In cases where you had to prevent that in the pre-Glimmer era, you had to resort
-to using a separate property, like <code>band.newName</code>, or using <a href="https://github.com/yapplabs/ember-buffered-proxy">BufferedProxy</a>.)</p>
-
-<p>So let&#8217;s take a step forwards and see how this can be improved.</p>
-
-<h3>Take 2: One-way bound with DDAU</h3>
-
-<p>We&#8217;ll first replace the two-way binding with a one-way one and manually
-synchronize the upstream direction using DDAU. It will not seem like a big gain
-but it will enable us to go further and attain 1WAY Deluxe&#8482;.</p>
-
-<p>The top-level template only needs a slight change. We no longer pass in an
-<code>on-star-click</code> action but instead an <code>on-update</code> one. This will serve for the
-upstream synchronization, setting what changed in the component on the band
-object (the model) of the controller.</p>
-
-<div>
-  <pre><code class='html'>&lt;div class=&quot;panel panel-default band-panel&quot;&gt;
-  &lt;div class=&quot;panel-body&quot;&gt;
-    {{band-form band=model
-                errors=errors
-                on-save=(action &quot;saveBand&quot;)
-                on-update=(action &quot;updateBandProperty&quot;)}}
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-</div>
-
-
-<p>In accordance, the only thing that has changed in the controller is that
-the <code>updateStarRating</code> action has been replaced by <code>updateBandProperty</code>. This is
-the manual syncing:</p>
-
-<div>
-  <pre><code class='javascript'>export default Ember.Controller.extend({
-  (...)
-  actions: {
-    updateBandProperty(property, value) {
-      this.get(&#39;model&#39;).set(property, value);
-    },
-
-    (...)
-  }
-});</code></pre>
-</div>
-
-
-<p>In the template, the two-way bound <code>input</code> helpers are out, substituted by
-regular input tags. We attach event listeners to them which will trigger the
-synchronization proces (I wrote <a href="http://balinterdi.com/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">a post</a> about how that works a few months ago):</p>
-
-<div>
-  <pre><code class='html'>&lt;div class={{if errors.name &quot;form-group has-error&quot; &quot;form-group&quot;}}&gt;
-  &lt;label for=&quot;band-name&quot;&gt;Name&lt;/label&gt;
-  &lt;input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-name&quot; value={{band.name}}
-    oninput={{action &quot;nameDidChange&quot; value=&quot;target.value&quot;}} /&gt;
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-year&quot;&gt;Formed in&lt;/label&gt;
-  &lt;input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-year&quot; value={{band.year}}
-    oninput={{action &quot;yearDidChange&quot; value=&quot;target.value&quot;}} /&gt;
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-rating&quot;&gt;Rating&lt;/label&gt;
-  {{star-rating id=&quot;band-rating&quot; item=band rating=band.rating on-click=(action &quot;ratingDidChange&quot;)}}
-&lt;/div&gt;
-&lt;button type=&quot;submit&quot; class=&quot;btn btn-primary pull-right&quot; {{action &quot;saveBand&quot;}}&gt;Submit&lt;/button&gt;</code></pre>
-</div>
-
-
-<p><code>nameDidChange</code>, <code>yearDidChange</code> and <code>ratingDidChange</code> all end up calling the
-passed in closure action, <code>on-update</code>, with the name of the property that has
-changed and its new value. This calls <code>updateBandProperty</code> in the controller we
-already saw:</p>
-
-<div>
-  <pre><code class='html'>import Ember from &#39;ember&#39;;
-
-export default Ember.Component.extend({
-  tagName: &#39;form&#39;,
-  band: null,
-  errors: null,
-  &quot;on-update&quot;: null,
-  &quot;on-save&quot;: null,
-
-  actions: {
-    saveBand() {
-      this.attrs[&#39;on-save&#39;]();
-    },
-
-    nameDidChange(value) {
-      this.attrs[&#39;on-update&#39;](&#39;name&#39;, value);
-    },
-    yearDidChange(value) {
-      this.attrs[&#39;on-update&#39;](&#39;year&#39;, value);
-    },
-    ratingDidChange(params) {
-      const { rating } = params;
-      this.attrs[&#39;on-update&#39;](&#39;rating&#39;, rating);
-    },
-  }
-});</code></pre>
-</div>
-
-
-<p>From the outside, the app works just as before. The band name changes in the
-list as we edit it in the text field:</p>
-
-<p><img src="/images/posts/tale-of-two-bindings/one-way-bindings-in-action.gif" alt="One-way bindings in action" /></p>
-
-<p>However, we know that under the hood our code took control of propagating data
-changes. We have undone the string that kept the two sides (two components)
-tied strongly together. In the third and final iteration, we&#8217;ll leverage that to
-move validation where it belongs and add a micro-feature.</p>
-
-<h3>Take 3: 1WAY Deluxe&#8482;</h3>
-
-<p>Now, for the cool part. Now that we&#8217;re free to change band-related properties on
-the component without affecting the properties of the band object (the model of
-the controller), we no longer have a shared state.</p>
-
-<p>The first thing we&#8217;ll do is to move the validation into the <code>band-form component</code>.
-<code>band-form</code> will be also less chatty. It will only send property updates when
-the form is submitted. That means we don&#8217;t need to pass in the <code>errors</code> object
-or an <code>on-update</code> action:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class=&quot;panel panel-default band-panel&quot;&gt;
-  &lt;div class=&quot;panel-body&quot;&gt;
-    {{band-form band=model on-save=(action &quot;saveBand&quot;)}}
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-</div>
-
-
-<p>That implies that the controller can be really slimmed down to the <code>saveBand</code>
-action:</p>
-
-<div>
-  <pre><code class='html'>import Ember from &#39;ember&#39;;
-
-export default Ember.Controller.extend({
-  actions: {
-    saveBand(properties) {
-      const band = this.get(&#39;model&#39;);
-      band.setProperties(properties);
-
-      return band.save().then(() =&gt; {
-        console.log(&quot;Band is saved&quot;);
-      });
-    }
-  }
-});</code></pre>
-</div>
-
-
-<p>Note how the input field values in the <code>band-form</code> template are now bound to
-properties on the component as opposed to that of the passed in <code>band</code> object:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class={{if errors.name &quot;form-group has-error&quot; &quot;form-group&quot;}}&gt;
-  &lt;label for=&quot;band-name&quot;&gt;Name&lt;/label&gt;
-  &lt;input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-name&quot; value={{name}}
-    oninput={{action &quot;nameDidChange&quot; value=&quot;target.value&quot;}} /&gt;
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-year&quot;&gt;Formed in&lt;/label&gt;
-  &lt;input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-year&quot; value={{year}}
-    oninput={{action &quot;yearDidChange&quot; value=&quot;target.value&quot;}} /&gt;
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-rating&quot;&gt;Rating&lt;/label&gt;
-  {{star-rating id=&quot;band-rating&quot; item=band rating=rating on-click=(action &quot;ratingDidChange&quot;)}}
-&lt;/div&gt;
-&lt;div class=&quot;form-group button-panel&quot;&gt;
-  &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary pull-right&quot; {{action &quot;saveBand&quot;}}&gt;Submit&lt;/button&gt;
-  &lt;button type=&quot;button&quot; class=&quot;btn btn-danger pull-right&quot; {{action &quot;reset&quot;}}&gt;Reset&lt;/button&gt;
-&lt;/div&gt;</code></pre>
-</div>
-
-
-<p>Little else has changed but a second button, Reset, already gives you a taste of
-things to come. Let&#8217;s see the component definition:</p>
-
-<div>
-  <pre><code class='javascript'>import Ember from &#39;ember&#39;;
-
-export default Ember.Component.extend({
-  tagName: &#39;form&#39;,
-  band: null,
-  &quot;on-save&quot;: null,
-
-  name:    null,
-  year:    null,
-  rating:  null,
-  errors:  null,
-
-  // Validation code comes here, copied verbatim from the controller
-
-  resetOnInit: Ember.on(&#39;init&#39;, function() {
-    this.resetFromBand();
-  }),
-
-  resetFromBand() {
-    [&#39;name&#39;, &#39;year&#39;, &#39;rating&#39;].forEach((field) =&gt; {
-      const valueInBand = this.get(&#39;band&#39;).get(field);
-      this.set(field, valueInBand);
-    });
-  },
-
-  actions: {
-    saveBand() {
-      this.validate();
-      if (this.get(&#39;hasErrors&#39;)) {
-        return;
-      }
-
-      return this.attrs[&#39;on-save&#39;](this.getProperties([&#39;name&#39;, &#39;year&#39;, &#39;rating&#39;]));
-    },
-
-    nameDidChange(value) {
-      this.set(&#39;name&#39;, value);
-    },
-    yearDidChange(value) {
-      this.set(&#39;year&#39;, value);
-    },
-    ratingDidChange(params) {
-      const { rating } = params;
-      this.set(&#39;rating&#39;, value);
-    },
-    reset() {
-      this.resetFromBand();
-    }
-  }
-});</code></pre>
-</div>
-
-
-<p>I cut out the code responsible for validation since that has just been brought
-over from the controller.</p>
-
-<p>The interesting stuff happens in <code>resetFromBand</code> which is both called when the
-component comes to life and when the Reset button is clicked. It copies the
-<code>name</code>, <code>year</code> and <code>rating</code> properties of the band onto those of the component,
-effectively resetting them to their original value. That&#8217;s the only reason we
-still need to pass in the band object into the component.</p>
-
-<p>Also notice how the <code>name</code> and the <code>rating</code> are not updated on the band object
-as we interact with the form:</p>
-
-<p><img src="/images/posts/tale-of-two-bindings/one-way-deluxe-in-action.gif" alt="1WAY Deluxe in action" /></p>
-
-<p>Having the data validated by the form acts as a guard. The save action is only
-triggered if the data was found to be valid. It is only then that the form&#8217;s
-data will overwrite that of the band object. Data flows both ways but in a very
-controlled way.</p>
-
-<p>To take this further, thanks to closure actions, we could even display an error in the <code>band-form</code>
-component if the save operation fails on the controller:</p>
-
-<div>
-  <pre><code class='javascript'>export default Ember.Component.extend({
-  (...)
-  actions: {
-    saveBand() {
-      this.validate();
-      if (this.get(&#39;hasErrors&#39;)) {
-        return;
-      }
-      const properties = this.getProperties([&#39;name&#39;, &#39;year&#39;, &#39;rating&#39;]);
-      return this.attrs[&#39;on-save&#39;](properties)
-        .catch((error) =&gt; {
-          this.set(&#39;errors.base&#39;, error.get(&#39;message&#39;));
-        });
-    },
-
-    (...)
-  }
-});</code></pre>
-</div>
-
-
-<p><strong>UPDATE</strong></p>
-
-<h3>Take 4: 1WAY Deluxe&#8482; without input cursor wackiness</h3>
-
-<p>The above 1WAY Deluxe&#8482; has a bug that <a href="https://twitter.com/rwjblue">Robert Jackson</a> pointed out and that
-I did not realize while building the demo app. The cursor in the text field
-always jumps back at the end of the text after each change:</p>
-
-<p><img src="/images/posts/tale-of-two-bindings/1way-deluxe-input-wackiness.gif" alt="1WAY Deluxe input wackiness" /></p>
-
-<p>During the Glimmer rewrite he spend a lot of time tracking down that bug, the
-result of which is the <a href="https://github.com/dockyard/ember-one-way-input"><code>ember-one-way-input</code> Ember addon</a>.</p>
-
-<p>So that&#8217;s what we should use instead of regular input tags. We first install the
-addon with <code>ember install ember-one-way-input</code>. That gives us a <code>one-way-input</code>
-component that takes an <code>update</code> action which will be triggered at each change
-of the input&#8217;s value (more precisely, on both <code>change</code> and <code>input</code> events).</p>
-
-<p>Let&#8217;s replace the input tags in the component&#8217;s template:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class={{if errors.name &quot;form-group has-error&quot; &quot;form-group&quot;}}&gt;
-  &lt;label for=&quot;band-name&quot;&gt;Name&lt;/label&gt;
-  {{one-way-input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-name&quot; value=name
-    update=(action &quot;nameDidChange&quot;)}}
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-year&quot;&gt;Formed in&lt;/label&gt;
-  {{one-way-input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-year&quot; value=year
-    update=(action &quot;yearDidChange&quot;)}}
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-rating&quot;&gt;Rating&lt;/label&gt;
-  {{star-rating id=&quot;band-rating&quot; item=band rating=rating on-click=(action &quot;ratingDidChange&quot;)}}
-&lt;/div&gt;
-&lt;div class=&quot;form-group button-panel&quot;&gt;
-  &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary pull-right&quot; {{action &quot;saveBand&quot;}}&gt;Submit&lt;/button&gt;
-  &lt;button type=&quot;button&quot; class=&quot;btn btn-danger pull-right&quot; {{action &quot;reset&quot;}}&gt;Reset&lt;/button&gt;
-&lt;/div&gt;</code></pre>
-</div>
-
-
-<p>Nothing else needs to change for the cursor position weirdness to go away:</p>
-
-<p><img src="/images/posts/tale-of-two-bindings/1way-deluxe-with-one-way-input.gif" alt="1WAY Deluxe input without cursor wackiness" /></p>
-
-<p>Thank you to <a href="https://twitter.com/rwjblue">Robert Jackson</a> and <a href="https://twitter.com/toranb">Toran Billups</a> for spotting this and pointing me
-to the solution.</p>
-
-<h3>Conclusion</h3>
-
-<p>I&#8217;m really excited and curious about how many things this makes possible. As I
-said in my presentation, we&#8217;re (but surely: I am) only figuring out both the
-possibilities &#8220;managed&#8221; one-way bindings open up and the best way to work with
-them. So if you have thoughts or insights, please do share them in the comments.</p>
-
-<p>NOTE: I published <a href="https://github.com/balinterdi/tale-of-two-bindings">the demo app of this post on Github.</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2822,6 +2382,10 @@ them. So if you have thoughts or insights, please do share them in the comments.
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/05/03/rock-and-roll-with-ember-dot-js-2-dot-5-is-released.html">Rock and Roll with Ember.js 2.5 is released</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/04/08/complex-component-design-in-ember-replace-the-observer.html">Complex Component Design in Ember - Part 3 - Replace the observer</a>
       </li>
     
@@ -2835,10 +2399,6 @@ them. So if you have thoughts or insights, please do share them in the comments.
     
       <li class="post">
         <a href="/2016/02/12/how-to-make-an-ember-module-resolve-as-another-one.html">How to make an Ember module resolve as another one</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html">Complex Components in Ember.js - Part 2 - Towards a more reactive component</a>
       </li>
     
   </ul>
