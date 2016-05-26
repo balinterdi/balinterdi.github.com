@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-05-03T11:33:08+02:00</updated>
+  <updated>2016-05-26T11:39:14+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,195 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Complex Component Design in Ember - Part 4 - Use the hash helper]]></title>
+    <link href="http://balinterdi.com/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper.html"/>
+    <updated>2016-05-26T09:21:00+02:00</updated>
+    <id>http://balinterdi.com/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper</id>
+    <content type="html"><![CDATA[<p><em>This is the fourth and final part of my Complex Component Design series. Here are the preceding posts:</em></p>
+
+<ul>
+<li><a href="http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html"><strong>Intro</strong></a></li>
+<li><a href="http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html"><strong>Part 1 - Analyzing User Flows</strong></a></li>
+<li><a href="http://balinterdi.com/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html"><strong>Part 2 - Towards a more reactive component</strong></a></li>
+<li><a href="http://balinterdi.com/2016/04/08/complex-component-design-in-ember-replace-the-observer.html"><strong>Part 3 - Remove the observer</strong></a></li>
+<li><strong>Part 4 - Use the hash helper</strong></li>
+</ul>
+
+
+<p>You can find the code for this post <a href="https://github.com/balinterdi/ember-cli-autocomplete/releases/tag/ccd-part-four">on Github.</a></p>
+
+<hr />
+
+<p>After our last refactoring, the <code>ember-cli-autocomplete</code> component no longer
+uses observers. However, the list of parameters the outermost, container
+component, <code>auto-complete</code> returns is now unwieldily long:</p>
+
+<div>
+  <pre><code class='html'>&lt;!-- tests/dummy/templates/index.hbs --&gt;
+{{#auto-complete
+          on-select=(action &quot;selectArtist&quot;)
+          on-input=(action &quot;filterArtists&quot;)
+          options=matchingArtists
+          displayProperty=&quot;name&quot;
+          class=&quot;autocomplete-container&quot; as |isDropdownOpen inputValue options
+                                             focusedIndex selectedIndex
+                                             toggleDropdown onSelect onInput|}}
+
+  (...)
+{{/auto-complete}}</code></pre>
+</div>
+
+
+<p>Not only does that look clumsy, it also makes refactoring more difficult and one
+always constantly have to flip between the component&#8217;s template (where params
+are yielded from) and the template where the component is used to see if the
+position of values match. So how can improve this?</p>
+
+<h2>Components as functions</h2>
+
+<p>To understand several concepts about components, consider them functions.
+Putting aside the fact that they can also emit DOM elements, you call them with
+a list of arguments, usually, though not exclusively, a collection of key-value
+pairs.  The component then does some internal stuff and returns a value from its
+template via the <code>yield</code> keyword.</p>
+
+<p>Our current case is another instance when treating them as functions can help us
+find the solution. Ask yourself: what would you do if the return value of a
+function you wrote grew to a long list of arguments? You would convert the
+return value to a key-value collection, such as a hash, wouldn&#8217;t you?</p>
+
+<p>Well, in Ember&#8217;s component land, we can do this by using the <code>hash</code> helper,
+<a href="http://emberjs.com/blog/2016/01/15/ember-2-3-released.html">introduced in Ember 2.3</a>. It takes a list of key-value pairs at invocation
+time and outputs an object (a hash) with them:</p>
+
+<div>
+  <pre><code class='html'>{{#with (hash firstName=&#39;Mike&#39; lastName=&#39;McCready&#39; instrument=&#39;guitar&#39;) as |musician|}}
+  Hello, I&#39;m {{musician.firstName}} {{musician.lastName}} and I play the {{musician.instrument}}.
+{{/with}}</code></pre>
+</div>
+
+
+<p>We can use the <code>hash</code> helper to bring some sanity to the return value of <code>auto-complete</code>
+parameters. It currently looks like this:</p>
+
+<div>
+  <pre><code class='html'>&lt;!-- addon/templates/components/auto-complete.hbs --&gt;
+{{yield isDropdownOpen
+        inputValue
+        options
+        focusedIndex
+        selectedIndex
+        (action &quot;toggleDropdown&quot;)
+        (action &quot;selectOption&quot;)
+        (action &quot;inputDidChange&quot;)}}</code></pre>
+</div>
+
+
+<p>So we introduce the <code>hash</code> helper to get the following:</p>
+
+<div>
+  <pre><code class='html'>&lt;!-- addon/templates/components/auto-complete.hbs --&gt;
+{{yield (hash
+    isOpen=isDropdownOpen
+    inputValue=inputValue
+    options=options
+    focusedIndex=focusedIndex
+    selectedIndex=selectedIndex
+    toggleDropdown=(action &quot;toggleDropdown&quot;)
+    onSelect=(action &quot;selectItem&quot;)
+    onInput=(action &quot;inputDidChange&quot;))}}</code></pre>
+</div>
+
+
+<h2>Modifying call sites</h2>
+
+<p>Now that the component&#8217;s return value has changed, we should not forget to
+modify the callers, the downstream components that use that value:</p>
+
+<div>
+  <pre><code class='html'>&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
+{{#auto-complete
+      on-select=(action &quot;selectArtist&quot;)
+      on-input=(action &quot;filterArtists&quot;)
+      items=matchingArtists
+      displayProperty=&quot;name&quot;
+      class=&quot;autocomplete-container&quot; as |params|}}
+  &lt;div class=&quot;input-group&quot;&gt;
+    {{auto-complete-input
+        value=params.inputValue
+        on-change=params.onInput
+        type=&quot;text&quot;
+        class=&quot;combobox input-large form-control&quot;
+        placeholder=&quot;Select an artist&quot;}}
+    {{#auto-complete-list
+        isVisible=params.isOpen
+        class=&quot;typeahead typeahead-long dropdown-menu&quot;}}
+      {{#each params.options as |option|}}
+        {{#auto-complete-option
+            index=option.index
+            on-click=params.onSelect
+            isFocused=(eq params.focusedIndex option.index)
+            isSelected=(eq params.selectedIndex option.index)}}
+          &lt;a href=&quot;#&quot;&gt;{{option.value}}&lt;/a&gt;
+        {{/auto-complete-option}}
+      {{else}}
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;No results.&lt;/a&gt;&lt;/li&gt;
+      {{/each}}
+    {{/auto-complete-list}}
+    {{#auto-complete-dropdown-toggle on-click=params.toggleDropdown class=&quot;input-group-addon dropdown-toggle&quot;}}
+      &lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;
+    {{/auto-complete-dropdown-toggle}}
+  &lt;/div&gt;
+{{/auto-complete}}</code></pre>
+</div>
+
+
+<p>Instead of the long list of parameters, <code>auto-complete</code> now yields a single hash
+parameter (called <code>params</code> above), whose keys are used in the child components
+(<code>params.isOpen</code>, <code>params.options</code>, etc.)</p>
+
+<h2>Polyfill it</h2>
+
+<p>Since we want our component to be usable not only in Ember >=2.3 applications,
+where the <code>hash</code> helper is built in, we should add the
+<code>ember-hash-helper-polyfill</code>, which makes the <code>hash</code> helper available in earlier
+Ember versions, as a dependency of the addon:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// package.json</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;ember-cli-autocomplete&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;0.0.0&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">(...)</span>
+</span><span class='line'>    <span class="s2">&quot;ember-hash-helper-polyfill&quot;</span><span class="o">:</span> <span class="s2">&quot;0.1.0&quot;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Wrapping up</h2>
+
+<p>That wraps up my Complex Component Design in Ember.js series. Our component
+improved by each post and I think we now have a pretty flexible and thus
+reusable component. The main purpose of the series, however, is education, so I
+hope that I was able to transfer some of the knowledge I&#8217;ve acquired by building
+components.</p>
+
+<p>If you would like to read the whole series as a pdf, just give my your email
+address below and I&#8217;m sending it to you.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js 2.5 is released]]></title>
@@ -69,7 +258,8 @@ became even easier.</p>
 <li><a href="http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html"><strong>Intro</strong></a></li>
 <li><a href="http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html"><strong>Part 1 - Analyzing User Flows</strong></a></li>
 <li><a href="http://balinterdi.com/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html"><strong>Part 2 - Towards a more reactive component</strong></a></li>
-<li><strong>Part 3 - Remove the observer</strong></li>
+<li><strong>Part 3 - Replace the observer</strong></li>
+<li><a href="http://balinterdi.com/2016-05-26-complex-component-design-in-ember-part-4-use-the-hash-helper.html"><strong>Part 4 - Use the hash helper</strong></a></li>
 </ul>
 
 
@@ -556,6 +746,7 @@ took me a few attempts to arrive at this.</p>
 <li><a href="http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html"><strong>Part 1 - Analyzing User Flows</strong></a></li>
 <li><strong>Part 2 - Towards a more reactive component</strong></li>
 <li><a href="http://balinterdi.com/2016/04/08/complex-component-design-in-ember-replace-the-observer.html"><strong>Part 3 - Remove the observer</strong></a></li>
+<li><a href="http://balinterdi.com/2016-05-26-complex-component-design-in-ember-part-4-use-the-hash-helper.html"><strong>Part 4 - Use the hash helper</strong></a></li>
 </ul>
 
 
@@ -1423,6 +1614,7 @@ which brings it up to Ember 2.3.0, ED 2.3.2 and Ember CLI 2.3.0-beta.1.</p>
 <li><strong>Part 1 - Analyzing User Flows</strong></li>
 <li><a href="http://balinterdi.com/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html"><strong>Part 2 - Towards a more reactive component</strong></a></li>
 <li><a href="http://balinterdi.com/2016/04/08/complex-component-design-in-ember-replace-the-observer.html"><strong>Part 3 - Remove the observer</strong></a></li>
+<li><a href="http://balinterdi.com/2016-05-26-complex-component-design-in-ember-part-4-use-the-hash-helper.html"><strong>Part 4 - Use the hash helper</strong></a></li>
 </ul>
 
 
@@ -2867,6 +3059,7 @@ miss any in the future.</p>
 <li><a href="http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html"><strong>Part 1 - Analyzing User Flows</strong></a></li>
 <li><a href="2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html"><strong>Part 2 - Towards a more reactive component</strong></a></li>
 <li><a href="http://balinterdi.com/2016/04/08/complex-component-design-in-ember-replace-the-observer.html"><strong>Part 3 - Remove the observer</strong></a></li>
+<li><a href="http://balinterdi.com/2016-05-26-complex-component-design-in-ember-part-4-use-the-hash-helper.html"><strong>Part 4 - Use the hash helper</strong></a></li>
 </ul>
 
 
@@ -3164,45 +3357,6 @@ relationship was in order.</p></li>
 <p>The whole change list is observable <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13.3+is%3Aclosed">here</a>.</p>
 
 <p>Hoist the sails, Ember 2.0 (and with it, Rock and Roll with Ember 2.0) is on the horizon!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rock and Roll with Ember.js v1.13 is out]]></title>
-    <link href="http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html"/>
-    <updated>2015-07-03T15:25:00+02:00</updated>
-    <id>http://balinterdi.com/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out</id>
-    <content type="html"><![CDATA[<p>Today marks the sixth release of my book, <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js</a>, and
-brings it in sync with Ember 1.13. The book follows along the development from
-scratch of an Ember application, and chapter by chapter and explains concepts in
-the process.</p>
-
-<p>As I have promised, the book is kept up-to-date with the latest stable Ember
-version. That implies both using idiomatic Ember and not using deprecated
-syntaxes or APIs.</p>
-
-<p>Now that the versioning of Ember Data is in lockstep with that of Ember, I
-considered it important to update to the latest Ember Data, too, and will
-strive to do so in future releases, too.</p>
-
-<p>Here are the major things I updated for the 1.13 release:</p>
-
-<ul>
-<li>Use <code>this.route</code> instead of <code>this.resource</code> in the router map as the latter is now deprecated.</li>
-<li>Use <code>Ember.computed</code> and <code>Ember.on</code> instead of the Function prototype
-extensions, <code>property</code> and <code>on</code> as extending the Function prototype is
-consired a poor practice.</li>
-<li>Update the &#8220;Getting ready for Ember 2.0&#8221; chapter as most things are clear now
-for the 2.0 release. As I give particular examples for each deprecation, this
-chapter can also serve as an update guide for 1.x Ember applications.</li>
-<li>Use the new Ember Data find methods, namely <code>store.findAll</code> and
-<code>store.findRecord</code>. Before, both fetching a collection and a single record
-used <code>store.find</code>.</li>
-</ul>
-
-
-<p>As usual, there are also smaller improvements and fixes and you can find the
-whole list in the errata/issues repository for the book, assigned to <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13+is%3Aclosed">the release milestone.</a></p>
 ]]></content>
   </entry>
   

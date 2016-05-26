@@ -91,6 +91,72 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2015/07/03/rock-and-roll-with-ember-dot-js-v1-dot-13-is-out.html">Rock and Roll With Ember.js v1.13 Is Out</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-07-03T15:25:00+02:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Today marks the sixth release of my book, <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js</a>, and
+brings it in sync with Ember 1.13. The book follows along the development from
+scratch of an Ember application, and chapter by chapter and explains concepts in
+the process.</p>
+
+<p>As I have promised, the book is kept up-to-date with the latest stable Ember
+version. That implies both using idiomatic Ember and not using deprecated
+syntaxes or APIs.</p>
+
+<p>Now that the versioning of Ember Data is in lockstep with that of Ember, I
+considered it important to update to the latest Ember Data, too, and will
+strive to do so in future releases, too.</p>
+
+<p>Here are the major things I updated for the 1.13 release:</p>
+
+<ul>
+<li>Use <code>this.route</code> instead of <code>this.resource</code> in the router map as the latter is now deprecated.</li>
+<li>Use <code>Ember.computed</code> and <code>Ember.on</code> instead of the Function prototype
+extensions, <code>property</code> and <code>on</code> as extending the Function prototype is
+consired a poor practice.</li>
+<li>Update the &#8220;Getting ready for Ember 2.0&#8221; chapter as most things are clear now
+for the 2.0 release. As I give particular examples for each deprecation, this
+chapter can also serve as an update guide for 1.x Ember applications.</li>
+<li>Use the new Ember Data find methods, namely <code>store.findAll</code> and
+<code>store.findRecord</code>. Before, both fetching a collection and a single record
+used <code>store.find</code>.</li>
+</ul>
+
+
+<p>As usual, there are also smaller improvements and fixes and you can find the
+whole list in the errata/issues repository for the book, assigned to <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13+is%3Aclosed">the release milestone.</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2015/06/05/common-ember-mistakes.html">Common Ember Mistakes</a></h1>
     
     
@@ -1634,90 +1700,6 @@ a <code>:</code>.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/05/09/ember-dot-run-dot-bind.html">Ember.run.bind</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-05-09T23:25:00+02:00" pubdate data-updated="true">May 9<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Ember has several great features that are not widely known, like <a href="http://balinterdi.com/2014/05/01/dependency-injection-in-ember-dot-js.html">its Dependency Injection system</a> I wrote about last week.</p>
-
-<p>It has also really handy API methods in hiding. One usually stumbles on them
-while looking for something in the superbly commented source code.</p>
-
-<p>I hereby introduce such a handy method and hope to make that into a recurring
-thing. Who knows? Eventually this might also grow into a series.</p>
-
-<p>If it does, I would have to find a catchy name for it. &#8220;Ember Chispas&#8221; came to
-mind and rings nice but unfortunately <a href="https://www.youtube.com/user/edisonstew">Jeffrey Biles</a> already has a monopoly on it via his
-&#8220;Ember Sparks&#8221; series. (<em>Chispa</em> is Spanish for spark.) We&#8217;ll have to talk, Jeffrey :)</p>
-
-<p>Anyway, let&#8217;s see the first thingie.</p>
-
-<h2>&#8230; and in the runloop bind them</h2>
-
-<p>The run loop in Ember deserves its own blog post series, and I am probably not
-the one who will write it. (<a href="http://emberjs.com/guides/understanding-ember/run-loop/">The official guide on the subject</a> is a good place
-to start, <a href="http://alexmatchneer.com/blog/2013/01/12/everything-you-never-wanted-to-know-about-the-ember-run-loop/">Alex Matchneer&#8217;s &#8220;Everything You Never Wanted to Know About the Ember Run Loop&#8221;</a> is more elaborate).</p>
-
-<p>For the sake of this chispa, it suffices to state that any async callback from a 3rd
-party javascript library needs to be wrapped into an Ember.run.</p>
-
-<p>Blatantly stealing <a href="https://github.com/emberjs/ember.js/blob/24dcb0c566284a7aa926e701d33f40717264b9b1/packages_es6/ember-metal/lib/run_loop.js#L153">the example from the source code</a>, here is how this is done:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-</span><span class='line'><span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;resize&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-</span><span class='line'>  <span class="nx">Ember</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-</span><span class='line'>    <span class="nx">that</span><span class="p">.</span><span class="nx">handleResize</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">});</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>See that beautiful <code>var that=this;</code>? It can be got ridden of via <code>Ember.run.bind</code>:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;resize&#39;</span><span class="p">,</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">run</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleResize</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Less code to write and all the mustaches are gone (not that there is anything
-wrong with &#123;&#123;mustaches&#125;&#125;, of course).</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -1750,6 +1732,10 @@ wrong with &#123;&#123;mustaches&#125;&#125;, of course).</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper.html">Complex Component Design in Ember - Part 4 - Use the hash helper</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/05/03/rock-and-roll-with-ember-dot-js-2-dot-5-is-released.html">Rock and Roll with Ember.js 2.5 is released</a>
       </li>
     
@@ -1763,10 +1749,6 @@ wrong with &#123;&#123;mustaches&#125;&#125;, of course).</p>
     
       <li class="post">
         <a href="/2016/02/26/rock-and-roll-with-ember-dot-js-demo-a-public-ember-dot-js-example-project.html">Rock and Roll with Ember.js demo - A public Ember.js example project</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/02/12/how-to-make-an-ember-module-resolve-as-another-one.html">How to make an Ember module resolve as another one</a>
       </li>
     
   </ul>

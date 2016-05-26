@@ -420,7 +420,7 @@
     </url>
     <url>
         <loc>http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html</loc>
-        <lastmod>2016-04-14T10:13:47+02:00</lastmod>
+        <lastmod>2016-05-26T10:44:34+02:00</lastmod>
     </url>
     <url>
         <loc>
@@ -454,7 +454,7 @@
         <loc>
             http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html
         </loc>
-        <lastmod>2016-04-22T22:33:41+02:00</lastmod>
+        <lastmod>2016-05-26T10:44:34+02:00</lastmod>
     </url>
     <url>
         <loc>
@@ -470,7 +470,7 @@
         <loc>
             http://balinterdi.com/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html
         </loc>
-        <lastmod>2016-04-14T10:10:46+02:00</lastmod>
+        <lastmod>2016-05-26T10:44:34+02:00</lastmod>
     </url>
     <url>
         <loc>
@@ -494,7 +494,7 @@
         <loc>
             http://balinterdi.com/2016/04/08/complex-component-design-in-ember-replace-the-observer.html
         </loc>
-        <lastmod>2016-04-14T10:19:17+02:00</lastmod>
+        <lastmod>2016-05-26T10:44:34+02:00</lastmod>
     </url>
     <url>
         <loc>
@@ -503,12 +503,18 @@
         <lastmod>2016-05-03T11:32:46+02:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://balinterdi.com/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper.html
+        </loc>
+        <lastmod>2016-05-26T11:39:13+02:00</lastmod>
+    </url>
+    <url>
         <loc>http://balinterdi.com/blog/archives/</loc>
-        <lastmod>2016-05-03T11:32:46+02:00</lastmod>
+        <lastmod>2016-05-26T11:39:13+02:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/</loc>
-        <lastmod>2016-05-03T11:32:46+02:00</lastmod>
+        <lastmod>2016-05-26T11:39:13+02:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/privacy-policy/</loc>

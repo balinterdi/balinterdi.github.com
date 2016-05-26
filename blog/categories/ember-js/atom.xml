@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-05-03T11:33:08+02:00</updated>
+  <updated>2016-05-26T15:09:28+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,220 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Complex Component Design in Ember - Part 4 - Use the hash helper]]></title>
+    <link href="http://balinterdi.com/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper.html"/>
+    <updated>2016-05-26T09:21:00+02:00</updated>
+    <id>http://balinterdi.com/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper</id>
+    <content type="html"><![CDATA[<p><em>This is the fourth and final part of my Complex Component Design series. Here are the preceding posts:</em></p>
+
+<ul>
+<li><a href="/2015/09/10/complex-component-design-in-ember-intro.html"><strong>Intro</strong></a></li>
+<li><a href="/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html"><strong>Part 1 - Analyzing User Flows</strong></a></li>
+<li><a href="/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html"><strong>Part 2 - Towards a more reactive component</strong></a></li>
+<li><a href="/2016/04/08/complex-component-design-in-ember-replace-the-observer.html"><strong>Part 3 - Remove the observer</strong></a></li>
+<li><strong>Part 4 - Use the hash helper</strong></li>
+</ul>
+
+
+<p>You can find the code for this post <a href="https://github.com/balinterdi/ember-cli-autocomplete/releases/tag/ccd-part-four">on Github.</a></p>
+
+<hr />
+
+<p>After our last refactoring, the <code>ember-cli-autocomplete</code> component no longer
+uses observers. However, the list of parameters the outermost, container
+component, <code>auto-complete</code> returns is now unwieldily long:</p>
+
+<p>{% highlight html %}
+{% raw %}</p>
+
+<!-- tests/dummy/templates/index.hbs -->
+
+
+<p>{{#auto-complete</p>
+
+<pre><code>      on-select=(action "selectArtist")
+      on-input=(action "filterArtists")
+      options=matchingArtists
+      displayProperty="name"
+      class="autocomplete-container" as |isDropdownOpen inputValue options
+                                         focusedIndex selectedIndex
+                                         toggleDropdown onSelect onInput|}}
+</code></pre>
+
+<p>  (...)
+{{/auto-complete}}
+{% endraw %}
+{% endhighlight %}</p>
+
+<p>Not only does that look clumsy, it also makes refactoring more difficult and one
+always constantly have to flip between the component's template (where params
+are yielded from) and the template where the component is used to see if the
+position of values match. So how can improve this?</p>
+
+<h2>Components as functions</h2>
+
+<p>To understand several concepts about components, consider them functions.
+Putting aside the fact that they can also emit DOM elements, you call them with
+a list of arguments, usually, though not exclusively, a collection of key-value
+pairs.  The component then does some internal stuff and returns a value from its
+template via the <code>yield</code> keyword.</p>
+
+<p>Our current case is another instance when treating them as functions can help us
+find the solution. Ask yourself: what would you do if the return value of a
+function you wrote grew to a long list of arguments? You would convert the
+return value to a key-value collection, such as a hash, wouldn't you?</p>
+
+<p>Well, in Ember's component land, we can do this by using the <code>hash</code> helper,
+<a href="http://emberjs.com/blog/2016/01/15/ember-2-3-released.html">introduced in Ember 2.3</a>. It takes a list of key-value pairs at invocation
+time and outputs an object (a hash) with them:</p>
+
+<p>{% highlight html %}
+{% raw %}
+{{#with (hash firstName='Mike' lastName='McCready' instrument='guitar') as |musician|}}
+  Hello, I'm {{musician.firstName}} {{musician.lastName}} and I play the {{musician.instrument}}.
+{{/with}}
+{% endraw %}
+{% endhighlight %}</p>
+
+<p>We can use the <code>hash</code> helper to bring some sanity to the return value of <code>auto-complete</code>
+parameters. It currently looks like this:</p>
+
+<p>{% highlight html %}
+{% raw %}</p>
+
+<!-- addon/templates/components/auto-complete.hbs -->
+
+
+<p>{{yield isDropdownOpen</p>
+
+<pre><code>    inputValue
+    options
+    focusedIndex
+    selectedIndex
+    (action "toggleDropdown")
+    (action "selectOption")
+    (action "inputDidChange")}}
+</code></pre>
+
+<p>{% endraw %}
+{% endhighlight %}</p>
+
+<p>So we introduce the <code>hash</code> helper to get the following:</p>
+
+<p>{% highlight html %}
+{% raw %}</p>
+
+<!-- addon/templates/components/auto-complete.hbs -->
+
+
+<p>{{yield (hash</p>
+
+<pre><code>isOpen=isDropdownOpen
+inputValue=inputValue
+options=options
+focusedIndex=focusedIndex
+selectedIndex=selectedIndex
+toggleDropdown=(action "toggleDropdown")
+onSelect=(action "selectItem")
+onInput=(action "inputDidChange"))}}
+</code></pre>
+
+<p>{% endraw %}
+{% endhighlight %}</p>
+
+<h2>Modifying call sites</h2>
+
+<p>Now that the component's return value has changed, we should not forget to
+modify the callers, the downstream components that use that value:</p>
+
+<p>{% highlight html %}
+{% raw %}</p>
+
+<!-- tests/dummy/app/templates/index.hbs -->
+
+
+<p>{{#auto-complete</p>
+
+<pre><code>  on-select=(action "selectArtist")
+  on-input=(action "filterArtists")
+  items=matchingArtists
+  displayProperty="name"
+  class="autocomplete-container" as |params|}}
+</code></pre>
+
+<p>  <div class="input-group"></p>
+
+<pre><code>{{auto-complete-input
+    value=params.inputValue
+    on-change=params.onInput
+    type="text"
+    class="combobox input-large form-control"
+    placeholder="Select an artist"}}
+{{#auto-complete-list
+    isVisible=params.isOpen
+    class="typeahead typeahead-long dropdown-menu"}}
+  {{#each params.options as |option|}}
+    {{#auto-complete-option
+        index=option.index
+        on-click=params.onSelect
+        isFocused=(eq params.focusedIndex option.index)
+        isSelected=(eq params.selectedIndex option.index)}}
+      &lt;a href="#"&gt;{{option.value}}&lt;/a&gt;
+    {{/auto-complete-option}}
+  {{else}}
+    &lt;li&gt;&lt;a href="#"&gt;No results.&lt;/a&gt;&lt;/li&gt;
+  {{/each}}
+{{/auto-complete-list}}
+{{#auto-complete-dropdown-toggle on-click=params.toggleDropdown class="input-group-addon dropdown-toggle"}}
+  &lt;span class="caret"&gt;&lt;/span&gt;
+{{/auto-complete-dropdown-toggle}}
+</code></pre>
+
+<p>  </div>
+{{/auto-complete}}
+{% endraw %}
+{% endhighlight %}</p>
+
+<p>Instead of the long list of parameters, <code>auto-complete</code> now yields a single hash
+parameter (called <code>params</code> above), whose keys are used in the child components
+(<code>params.isOpen</code>, <code>params.options</code>, etc.)</p>
+
+<h2>Polyfill it</h2>
+
+<p>Since we want our component to be usable not only in Ember >=2.3 applications,
+where the <code>hash</code> helper is built in, we should add the
+<code>ember-hash-helper-polyfill</code>, which makes the <code>hash</code> helper available in earlier
+Ember versions, as a dependency of the addon:</p>
+
+<p>```js
+// package.json
+{
+  "name": "ember-cli-autocomplete",
+  "version": "0.0.0",
+  "dependencies": {</p>
+
+<pre><code>(...)
+"ember-hash-helper-polyfill": "0.1.0"
+</code></pre>
+
+<p>  },
+}
+```</p>
+
+<h2>Wrapping up</h2>
+
+<p>That wraps up my Complex Component Design in Ember.js series. Our component
+improved by each post and I think we now have a pretty flexible and thus
+reusable component. The main purpose of the series, however, is education, so I
+hope that I was able to transfer some of the knowledge I've acquired by building
+components.</p>
+
+<p>If you would like to read the whole series as a pdf, just give my your email
+address below and I'm sending it to you.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js 2.5 is released]]></title>
@@ -69,7 +283,8 @@ became even easier.</p>
 <li><a href="/2015/09/10/complex-component-design-in-ember-intro.html"><strong>Intro</strong></a></li>
 <li><a href="/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html"><strong>Part 1 - Analyzing User Flows</strong></a></li>
 <li><a href="/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html"><strong>Part 2 - Towards a more reactive component</strong></a></li>
-<li><strong>Part 3 - Remove the observer</strong></li>
+<li><strong>Part 3 - Replace the observer</strong></li>
+<li><a href="/2016-05-26-complex-component-design-in-ember-part-4-use-the-hash-helper.html"><strong>Part 4 - Use the hash helper</strong></a></li>
 </ul>
 
 
@@ -265,79 +480,78 @@ API of the <code>selectOption</code> action.</p>
 <code>options</code> to be consumed downstream. Let's also not forget to rename
 <code>selectItem</code> to <code>selectOption</code>:</p>
 
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
+<p>{% highlight html %}
+{% raw %}</p>
 
-&lt;!-- addon/templates/components/auto-complete.hbs --&gt;
+<!-- addon/templates/components/auto-complete.hbs -->
 
 
-&lt;p&gt;{{yield isDropdownOpen&lt;/p&gt;
+<p>{{yield isDropdownOpen</p>
 
-&lt;pre&gt;&lt;code&gt;    inputValue
+<pre><code>    inputValue
     options
     focusedIndex
     selectedIndex
-    (action &quot;toggleDropdown&quot;)
-    (action &quot;selectOption&quot;)
-    (action &quot;inputDidChange&quot;)}}
-&lt;/code&gt;&lt;/pre&gt;
+    (action "toggleDropdown")
+    (action "selectOption")
+    (action "inputDidChange")}}
+</code></pre>
 
-&lt;p&gt;</code></pre>
-</div>
-</p>
+<p>{% endraw %}
+{% endhighlight %}</p>
 
 <p>Then, the <code>each</code> loop should iterate through <code>options</code>, and not through
 <code>matchingArtists</code> as before:</p>
 
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
+<p>{% highlight html %}
+{% raw %}</p>
 
-&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
+<!-- tests/dummy/app/templates/index.hbs -->
 
 
-&lt;p&gt;{{#auto-complete&lt;/p&gt;
+<p>{{#auto-complete</p>
 
-&lt;pre&gt;&lt;code&gt;  on-select=(action &quot;selectArtist&quot;)
-  on-input=(action &quot;filterArtists&quot;)
+<pre><code>  on-select=(action "selectArtist")
+  on-input=(action "filterArtists")
   options=matchingArtists
-  displayProperty=&quot;name&quot;
-  class=&quot;autocomplete-container&quot; as |isDropdownOpen inputValue options
+  displayProperty="name"
+  class="autocomplete-container" as |isDropdownOpen inputValue options
                                      focusedIndex selectedIndex
                                      toggleDropdown onSelect onInput|}}
-&lt;/code&gt;&lt;/pre&gt;
+</code></pre>
 
-&lt;p&gt;  &lt;div class=&quot;input-group&quot;&gt;&lt;/p&gt;
+<p>  <div class="input-group"></p>
 
-&lt;pre&gt;&lt;code&gt;{{auto-complete-input
+<pre><code>{{auto-complete-input
     value=inputValue
     on-change=onInput
-    type=&quot;text&quot;
-    class=&quot;combobox input-large form-control&quot;
-    placeholder=&quot;Select an artist&quot;}}
+    type="text"
+    class="combobox input-large form-control"
+    placeholder="Select an artist"}}
 {{#auto-complete-list
     isVisible=isDropdownOpen
-    class=&quot;typeahead typeahead-long dropdown-menu&quot;}}
+    class="typeahead typeahead-long dropdown-menu"}}
   {{#each options as |option index|}}
     {{#auto-complete-option
         item=option
         on-click=onSelect
         isFocused=(eq focusedIndex index)
         isSelected=(eq selectedIndex index)}}
-      &amp;lt;a href=&quot;#&quot;&amp;gt;{{option.name}}&amp;lt;/a&amp;gt;
+      &lt;a href="#"&gt;{{option.name}}&lt;/a&gt;
     {{/auto-complete-option}}
   {{else}}
-    &amp;lt;li&amp;gt;&amp;lt;a href=&quot;#&quot;&amp;gt;No results.&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;
+    &lt;li&gt;&lt;a href="#"&gt;No results.&lt;/a&gt;&lt;/li&gt;
   {{/each}}
 {{/auto-complete-list}}
-{{#auto-complete-dropdown-toggle on-click=toggleDropdown class=&quot;input-group-addon dropdown-toggle&quot;}}
-  &amp;lt;span class=&quot;caret&quot;&amp;gt;&amp;lt;/span&amp;gt;
+{{#auto-complete-dropdown-toggle on-click=toggleDropdown class="input-group-addon dropdown-toggle"}}
+  &lt;span class="caret"&gt;&lt;/span&gt;
 {{/auto-complete-dropdown-toggle}}
-&lt;/code&gt;&lt;/pre&gt;
+</code></pre>
 
-&lt;p&gt;  &lt;/div&gt;
-{{/auto-complete}}</code></pre>
-</div>
-</p>
+<p>  </div>
+{{/auto-complete}}
+{% endraw %}
+{% endhighlight %}</p>
 
 <p>The bug at the beginning of the post is now gone:</p>
 
@@ -426,66 +640,6 @@ used in development, and play around with it.</p>
 <p>As I mentioned in the introduction, the full version of the app is developed
 chapter by chapter in <a href="http://rockandrollwithemberjs.com">the Rock and Roll with Ember book</a>. You can download a
 sample chapter below:</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[How to make an Ember module resolve as another one]]></title>
-    <link href="http://balinterdi.com/2016/02/12/how-to-make-an-ember-module-resolve-as-another-one.html"/>
-    <updated>2016-02-12T11:12:00+01:00</updated>
-    <id>http://balinterdi.com/2016/02/12/how-to-make-an-ember-module-resolve-as-another-one</id>
-    <content type="html"><![CDATA[<p>I wanted to write another short, and hopefully useful, post just as I did
-recently for <a href="/2016/02/03/binding-style-attributes-warning-in-ember.html">binding the style attribute</a>.</p>
-
-<h2>No configuration is simpler than no configuration</h2>
-
-<p>About a month ago I was working to add authorization to the <a href="http://rockandrollwithemberjs.com">Rock and Roll with
-Ember</a> application. I used my favorite addon, <a href="https://github.com/Vestorly/torii">Torii</a>, to help with that
-and opted to do the authorization via the <code>google-oauth2-bearer</code> provider.  To
-restore the session, Torii looks up the application (Torii) adapter, but the
-session initialization and closing code used the <code>google-oauth2-bearer</code>
-adapter. So I had two separate files, which I was not happy about and I did not
-want to merge everything into the <code>application</code> adapter, as it does not give a
-hint about its contents then.</p>
-
-<p>My idea was to make it possible to use another adapter <a href="https://github.com/Vestorly/torii/issues/268">to restore the session
-from, via a configuration option</a>. Matthew Beale hinted at a solution that
-removes the need for a configuration option and since I haven't seen this
-before, I want to share it with you.</p>
-
-<h2>Import from target module, then reexport</h2>
-
-<p>The Ember resolver is the piece that maps qualified full names (like
-<code>route:blog</code> or <code>controller:bands</code>) to module names.</p>
-
-<p>In my case, Torii makes the resolver look up <code>torii-adapter:application</code> to
-fetch the session from and I wanted this to be resolved to
-<code>torii-adapter:google-oauth2-bearer</code>. In the Ember CLI project, that is
-equivalent of having the <code>app/torii-adapters/application.js</code> file export
-what is exported by <code>app/torii-adapters/google-oauth2-bearer.js</code>.</p>
-
-<p>When phrased like this, the solution is near and I am somewhat embarrassed it
-took me a few attempts to arrive at this.</p>
-
-<p>So the solution is to import in <code>app/torii-adapters/application.js</code> what
-<code>app/torii-adapters/google-oauth2-bearer.js</code> exports and then reexport it:</p>
-
-<p>```js
-// app/torii-adapters/application.js
-import GoogleOAuth2BearerAdapter from './google-oauth2-bearer';</p>
-
-<p>export default GoogleOAuth2BearerAdapter;
-```</p>
-
-<p><code>js
-// app/torii-adapters/google-oauth2-bearer.js
-export default Ember.Object.extend({
-  (...)
-});
-</code></p>
-
-<p>Voila, we have "tricked" the resolver without adding any configuration
-(and thus complexity) to the addon.</p>
 ]]></content>
   </entry>
   
