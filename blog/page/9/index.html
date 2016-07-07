@@ -91,6 +91,44 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2009/03/12/easily-quote-passage-with-mail-in-a-reply.html">Easily Quote Passage With Mail in a Reply</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-12T00:00:00+01:00" pubdate data-updated="true">Mar 12<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>That was too long to twitter, so here it goes.</p>
+
+<p>If you use Mail (OS-X) when replying to a message you can select some text in the email you want to reply to and then hit reply. The new email will only include the text you selected so you don&#8217;t have to delete all the lines you don&#8217;t need. I hope someone finds this useful, I really do.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2009/02/12/why-i-love-datamapper.html">Why I Love Datamapper</a></h1>
     
     
@@ -817,132 +855,6 @@ $ ruby conv.rb 30 EUR HUF
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2008/12/15/ruby-metaprogramming-call-counter-take-2.html">Ruby Metaprogramming: Call Counter - Take 2</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-12-15T00:00:00+01:00" pubdate data-updated="true">Dec 15<span>th</span>, 2008</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>So <a href="http://bucionrails.com/2008/12/06/exploring-ruby-metaprogramming-call-counter/" target="_blank">last time</a> I left you with the promise that I&#8217;d return with a solution so that the number of times a certain method was called is a class method which makes more sense than if it was an instance method. So here is the &#8220;improved version&#8221;:</p>
-
-<p><strong>call_counter.rb:</strong></p>
-
-<div>
-  <pre><code class='ruby'>module CallCounter
-        
-    def count_calls_to(method_name)
-      original_method = instance_method(method_name)
-            
-      unless class_variable_defined?(:@@call_counter):
-        class_variable_set(:@@call_counter, {})
-      end
-    
-      call_counter = class_variable_get(:@@call_counter)
-    
-      define_method(method_name) do |*args|
-        call_counter[method_name] ||= 0
-        call_counter[method_name] += 1
-        bound_original_method = original_method.bind(self)
-        bound_original_method.call(*args)
-      end
-
-      metaclass = class &lt;&lt; self; self; end
-      metaclass.instance_eval do
-
-        define_method(:calls_to) do |m|
-          call_counter[m].nil? ? 0 : call_counter[m]
-        end
-
-        define_method(:reset_counters) do
-          call_counter.each_key do |k|
-            call_counter[k] = 0
-          end
-        end
-    end
-    
-  end
-
-end</code></pre>
-</div>
-
-
-<p>What has changed is the introduction of a class variable that counts the calls on all watched methods and that the number of calls on each method is queried by calls_to(&lt;method name&gt;) instead of calls_to_&lt;method_name&gt;. A bit less magic.</p>
-
-<p><strong>call_foo.rb:</strong></p>
-
-<div>
-  <pre><code class='ruby'>require &quot;call_counter&quot;
-
-class CallFoo
-    
-  extend CallCounter
-
-  def foo; &quot;foo&quot;; end
-  def bar; &quot;bar&quot;; end
-
-  count_calls_to :foo
-  count_calls_to :bar
-
-end</code></pre>
-</div>
-
-
-<p><strong>(a snippet of) call_counter_spec.rb:</strong></p>
-
-<div>
-  <pre><code class='ruby'>require &quot;call_foo&quot;
-require &quot;spec&quot;
-    
-describe CallFoo do
-    
-  before(:each) do
-    @call_foo = CallFoo.new
-    CallFoo.reset_counters
-  end
-        
-  it &quot;should be able to count several methods&#39; calls&quot; do
-    4.times { @call_foo.foo }
-    CallFoo.calls_to(:foo).should == 4
-    7.times { @call_foo.bar }
-    CallFoo.calls_to(:bar).should == 7
-  end
-    
-end</code></pre>
-</div>
-
-
-<p>I&#8217;m still not 100% content with this solution, the programming interface is nice now but it would be cool to get rid of the class variable somehow, possibly replacing it with closures. If you know how to achieve it, please leave a comment.</p>
-
-<p>ps. You can also get <a href="http://pastie.org/338877">the whole code in nice colored format</a> or <a href="http://pastie.org/338877.txt">the raw text version</a>.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/10/">&larr; Older</a>
@@ -975,6 +887,10 @@ end</code></pre>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html">Rock and Roll with Ember.js 2.6 is released</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper.html">Complex Component Design in Ember - Part 4 - Use the hash helper</a>
       </li>
     
@@ -988,10 +904,6 @@ end</code></pre>
     
       <li class="post">
         <a href="/2016/03/24/rock-and-roll-with-ember-dot-js-now-on-2-dot-4-and-with-code-diffs.html">Rock and Roll with Ember.js - Now on 2.4 and with code diffs</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/02/26/rock-and-roll-with-ember-dot-js-demo-a-public-ember-dot-js-example-project.html">Rock and Roll with Ember.js demo - A public Ember.js example project</a>
       </li>
     
   </ul>

@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-06-02T11:41:31+02:00</updated>
+  <updated>2016-07-07T22:29:21+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,27 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rock and Roll with Ember.js 2.6 is released]]></title>
+    <link href="http://balinterdi.com/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html"/>
+    <updated>2016-07-07T22:21:00+02:00</updated>
+    <id>http://balinterdi.com/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released</id>
+    <content type="html"><![CDATA[<p>With some delay, but I just sent an update to all of the Rock and Roll with
+Ember.js customers. The book brings the app in sync with Ember, Ember Data and
+Ember CLI 2.6. Among a few other improvments it:</p>
+
+<ul>
+<li>Makes sure the new Ember welcome page is removed before generating the
+application template: <a href="https://github.com/balinterdi/rarwe-issues/issues/196">#196</a></li>
+<li>Adds a version string to the book&#8217;s title and also in the Preface so that the
+reader knows whether they are reading the latest version: <a href="https://github.com/balinterdi/rarwe-issues/issues/174">#174</a></li>
+</ul>
+
+
+<p>The list of all accomplished things can be seen <a href="https://github.com/balinterdi/rarwe-issues/milestone/14?closed=1">here</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Complex Component Design in Ember - Part 4 - Use the hash helper]]></title>
@@ -3313,50 +3334,6 @@ CSS) tasks to get done.</p></li>
 
 <p>There are a couple of other, smaller changes and you can see the whole list in
 <a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A1.13.7+is%3Aclosed">the issues repo</a>. Or you can buy the book <a href="http://rockandrollwithemberjs.com">here</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rock and Roll with Ember.js v1.13.3 is out]]></title>
-    <link href="http://balinterdi.com/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out.html"/>
-    <updated>2015-07-17T10:47:00+02:00</updated>
-    <id>http://balinterdi.com/2015/07/17/rock-and-roll-with-ember-dot-js-v1-dot-13-3-is-out</id>
-    <content type="html"><![CDATA[<p>It&#8217;s Friday and if it&#8217;s (every 2nd-6th) Friday, it&#8217;s Rock and Roll release day!</p>
-
-<p>Book version 1.13.3 is rolling out as we speak (ok, we don&#8217;t speak and you
-probably read this later, but you get the point) which contains the following
-changes:</p>
-
-<ul>
-<li><strong>Upgrade to Ember version 1.13.3 (the book is in lockstep, too!)</strong></li>
-<li><strong>Update to Ember CLI 1.13.1</strong></li>
-<li><p><strong>Extended the Components chapter with closure actions.</strong></p>
-
-<p><a href="http://emberjs.com/blog/2015/06/12/ember-1-13-0-released.html#toc_closure-actions">Closure actions</a> are an awesome new way to fire/handle actions introduced
-in 1.13 and so it has to be in the book!</p></li>
-<li><p><strong>Extended the Testing chapter with component integration tests.</strong></p>
-
-<p>Integration tests make component tests super simple to set up and so much more
-descriptive than unit tests. Our beloved star-rating component is now tested
-by the shiny new integration tests.</p></li>
-<li><p><strong>Get rid of <code>needs</code> in the controller.</strong></p>
-
-<p>There was one instance where I used this to get a nice placeholder text. As a
-preparation for Ember 2.0 where <code>needs</code> is going the way of the dodo, I
-removed that nasty <code>needs</code>.</p></li>
-<li><p><strong>Specify the band-songs relationship as sync.</strong></p>
-
-<p>Starting from 2.0, Ember Data relationships are assumed to be asynchronous
-unless otherwise specified. In the Rock &amp; Roll application, we sideload the
-songs with the bands, so adding a <code>{ async: false }</code> option to the
-relationship was in order.</p></li>
-<li><strong>A few CSS fixes, one of them thanks to <a href="https://twitter.com/lonekorean">lonekorean</a></strong></li>
-</ul>
-
-
-<p>The whole change list is observable <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A1.13.3+is%3Aclosed">here</a>.</p>
-
-<p>Hoist the sails, Ember 2.0 (and with it, Rock and Roll with Ember 2.0) is on the horizon!</p>
 ]]></content>
   </entry>
   

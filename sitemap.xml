@@ -509,8 +509,14 @@
         <lastmod>2016-05-26T11:39:13+02:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://balinterdi.com/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html
+        </loc>
+        <lastmod>2016-07-07T22:28:59+02:00</lastmod>
+    </url>
+    <url>
         <loc>http://balinterdi.com/blog/archives/</loc>
-        <lastmod>2016-05-26T11:39:13+02:00</lastmod>
+        <lastmod>2016-07-07T22:28:59+02:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/emberjs-crash-course/</loc>
@@ -518,7 +524,7 @@
     </url>
     <url>
         <loc>http://balinterdi.com/</loc>
-        <lastmod>2016-05-26T11:39:13+02:00</lastmod>
+        <lastmod>2016-07-07T22:28:59+02:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/privacy-policy/</loc>
