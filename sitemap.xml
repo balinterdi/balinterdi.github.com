@@ -515,8 +515,14 @@
         <lastmod>2016-07-07T22:28:59+02:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://balinterdi.com/2016/08/11/using-dependency-injection-to-write-better-tests.html
+        </loc>
+        <lastmod>2016-08-11T11:05:47+02:00</lastmod>
+    </url>
+    <url>
         <loc>http://balinterdi.com/blog/archives/</loc>
-        <lastmod>2016-07-07T22:28:59+02:00</lastmod>
+        <lastmod>2016-08-11T11:05:47+02:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/emberjs-crash-course/</loc>
@@ -524,7 +530,7 @@
     </url>
     <url>
         <loc>http://balinterdi.com/</loc>
-        <lastmod>2016-07-07T22:28:59+02:00</lastmod>
+        <lastmod>2016-08-11T11:05:47+02:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/privacy-policy/</loc>

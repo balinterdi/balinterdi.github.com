@@ -91,6 +91,216 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-08-11T09:13:00+02:00" pubdate data-updated="true">Aug 11<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Testing is given much emphasis in the Ember.js community, and testing tools have
+showed steady progress to reduce the cost of writing tests of all types.</p>
+
+<p>Lauren Tan wrote <a href="https://emberway.io/component-dependency-injection-in-ember-js-a46a39a5d30a#.45qfbv52x">a great post</a>
+about how Dependency Injection (DI) can be used to decouple a parent component
+from the internals of its child components. One of the gains of doing so is that
+the parent component becomes more focused and thus easier to test.</p>
+
+<p>In this post, I&#8217;m doing something similar, although much simpler. I want to show
+you how to use DI in a simple helper function to make it easier to test.</p>
+
+<h3>Just your ordinary, run-of-the-mill function</h3>
+
+<p>Although the helper is an Ember (template) helper, the concepts could be very
+easily transferred to other frameworks, libraries and even languages.</p>
+
+<p>I recently had to modify a <code>normalizeText</code> helper function that looked
+like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// tests/unit/helpers/normalize-text-test.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="kd">function</span> <span class="nx">normalizeText</span><span class="p">([</span><span class="nx">text</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">let</span> <span class="nx">normalizedEOLs</span> <span class="o">=</span> <span class="nx">text</span><span class="p">.</span><span class="nx">trim</span><span class="p">().</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(?:\r\n|\r|\n)/g</span><span class="p">,</span> <span class="s1">&#39;&lt;/p&gt;&lt;p&gt;&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="kd">let</span> <span class="nx">noEmptyParagraphs</span> <span class="o">=</span> <span class="nx">normalizedEOLs</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(&lt;p&gt;&lt;\/p&gt;)/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">String</span><span class="p">.</span><span class="nx">htmlSafe</span><span class="p">(</span><span class="s2">&quot;&lt;p&gt;&quot;</span> <span class="o">+</span> <span class="nx">noEmptyParagraphs</span> <span class="o">+</span> <span class="s2">&quot;&lt;/p&gt;&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>(I realize the above code does not handle a text value of <code>undefined</code> or <code>null</code>.
+The real code does but I want to keep the code examples to the minimum necessary
+to get my point across.)</p>
+
+<h3>Comparing objects to objects</h3>
+
+<p>Its test was quite simple and straightforward:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// tests/unit/helpers/normalize-text-test.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="p">{</span> <span class="nx">normalizeText</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;../../../helpers/normalize-text&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="kr">import</span> <span class="p">{</span> <span class="nx">module</span><span class="p">,</span> <span class="nx">test</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;qunit&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;Unit | Helper | normalize-text&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;it works&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">assert</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">let</span> <span class="nx">normalizedText</span> <span class="o">=</span> <span class="nx">normalizeText</span><span class="p">([</span><span class="s2">&quot;The brown fox\r\njumped over the quick rabbit.\n&quot;</span><span class="p">]);</span>
+</span><span class='line'>  <span class="nx">assert</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="nx">normalizedText</span><span class="p">,</span> <span class="s2">&quot;&lt;p&gt;The brown fox&lt;/p&gt;&lt;p&gt;jumped over the quick rabbit.&lt;/p&gt;&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The problem with that test is that we compare two <code>Handlebars.SafeString</code>
+instances (returned by <code>Ember.String.htmlSafe</code>) which are different even if
+the strings they wrap, their value, is the same:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">let</span> <span class="nx">s1</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">String</span><span class="p">.</span><span class="nx">htmlSafe</span><span class="p">(</span><span class="s2">&quot;sid transit gloria mundi&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="kd">let</span> <span class="nx">s2</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">String</span><span class="p">.</span><span class="nx">htmlSafe</span><span class="p">(</span><span class="s2">&quot;sid transit gloria mundi&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">s1</span> <span class="o">===</span> <span class="nx">s2</span> <span class="c1">// =&gt; false</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&#8217;re, however, interested in the equality of the strings. If only there was a
+way to replace that pesky <code>Ember.String.htmlSafe</code> call from the call site&#8230;</p>
+
+<h3>DI to the rescue</h3>
+
+<p>This is exactly what Dependency Injection can help us do. Instead of hard-coding
+that &#8220;sanitizer&#8221; function dependency, the function could take it as a parameter
+so that callers could inject it. Usually DI examples use (and thus inject) class
+names or object instances but it is important to realize that the injected param
+could be very &#8220;primitive&#8221;, like a simple function.</p>
+
+<p>So here is how I rewrote the function:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// app/helpers/normalize-text.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="kd">function</span> <span class="nx">normalizeText</span><span class="p">([</span><span class="nx">text</span><span class="p">],</span> <span class="nx">params</span><span class="o">=</span><span class="p">{})</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">let</span> <span class="p">{</span> <span class="nx">sanitizer</span><span class="o">=</span><span class="nx">Ember</span><span class="p">.</span><span class="nb">String</span><span class="p">.</span><span class="nx">htmlSafe</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">params</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">let</span> <span class="nx">normalizedEOLs</span> <span class="o">=</span> <span class="nx">text</span><span class="p">.</span><span class="nx">trim</span><span class="p">().</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(?:\r\n|\r|\n)/g</span><span class="p">,</span> <span class="s1">&#39;&lt;/p&gt;&lt;p&gt;&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="kd">let</span> <span class="nx">noEmptyParagraphs</span> <span class="o">=</span> <span class="nx">normalizedEOLs</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(&lt;p&gt;&lt;\/p&gt;)/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">sanitizer</span><span class="p">(</span><span class="s2">&quot;&lt;p&gt;&quot;</span> <span class="o">+</span> <span class="nx">noEmptyParagraphs</span> <span class="o">+</span> <span class="s2">&quot;&lt;/p&gt;&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Helper</span><span class="p">.</span><span class="nx">helper</span><span class="p">(</span><span class="nx">normalizeText</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Notice how easy ES2015 destructuring makes the assignment of the sanitizer
+function:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">let</span> <span class="p">{</span> <span class="nx">sanitizer</span><span class="o">=</span><span class="nx">Ember</span><span class="p">.</span><span class="nb">String</span><span class="p">.</span><span class="nx">htmlSafe</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">params</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If no <code>sanitizer</code> key was present in <code>params</code>, then it will have a value of
+<code>Ember.String.htmlSafe</code>, the default behavior.</p>
+
+<p>The call from the test can now override the default behavior of sending the
+normalized text through <code>Ember.String.htmlSafe</code> by passing in a &#8220;no-op&#8221;
+sanitizer function:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// tests/unit/helpers/normalize-text-test.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="p">{</span> <span class="nx">normalizeText</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;../../../helpers/normalize-text&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="kr">import</span> <span class="p">{</span> <span class="nx">module</span><span class="p">,</span> <span class="nx">test</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;qunit&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">leaveAsIs</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">text</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;Unit | Helper | normalize-text&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;it works&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">assert</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">let</span> <span class="nx">normalizedText</span> <span class="o">=</span> <span class="nx">normalizeText</span><span class="p">([</span><span class="s2">&quot;The brown fox\r\njumped over the quick rabbit.\n&quot;</span><span class="p">],</span> <span class="p">{</span> <span class="nx">sanitizer</span><span class="o">:</span> <span class="nx">leaveAsIs</span> <span class="p">});</span>
+</span><span class='line'>  <span class="nx">assert</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="nx">normalizedText</span><span class="p">,</span> <span class="s2">&quot;&lt;p&gt;The brown fox&lt;/p&gt;&lt;p&gt;jumped over the quick rabbit.&lt;/p&gt;&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&#8217;re now comparing simple strings which place nicely with <code>assert.equal</code> (with
+<code>===</code>), and our test now passes.</p>
+
+<h3>Non-testing benefits</h3>
+
+<p>Code modifications introduced for the sake of testing usually also improve the
+non-testing aspect. Here, we made it possible to pass any function before we
+return the normalized text. We could, for example, use this to replace the <code>&lt;p&gt;</code>
+tags with <code>&lt;span&gt;</code>s, if we so wish.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html">Rock and Roll With Ember.js 2.6 Is Released</a></h1>
     
     
@@ -1916,56 +2126,6 @@ work.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2016/01/21/rock-and-roll-with-ember-dot-js-updated-to-use-ember-and-co-2-dot-3.html">Rock and Roll With Ember.js Updated to Use Ember &amp; Co 2.3</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2016-01-21T14:50:00+01:00" pubdate data-updated="true">Jan 21<span>st</span>, 2016</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I have just released a new update to <a href="http://rockandrollwithemberjs.com">the Rock and Roll Ember.js book</a>,
-which brings it up to Ember 2.3.0, ED 2.3.2 and Ember CLI 2.3.0-beta.1.</p>
-
-<p>Other improvements made in this release are:</p>
-
-<ul>
-<li>Update the PageFront section as it has now become even simpler to deploy apps to PageFront</li>
-<li>Reset the song creation process when switching bands</li>
-<li>Use ember-bootstrap and remove the section on manually adding assets to the build</li>
-<li>Use consistent quoting in snippets and include <code>import Ember from 'ember'</code> wherever needed.</li>
-<li>Remove a few paragraphs that talk about how things were in the past (like <code>bind-attr</code>)</li>
-</ul>
-
-
-<p>Happy reading!</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1977,17 +2137,6 @@ which brings it up to Ember 2.3.0, ED 2.3.2 and Ember CLI 2.3.0-beta.1.</p>
 <aside class="sidebar">
   
     <section>
-  <h1>1k Customers Giveaway!</h1>
-  <div>
-    <a href="http://balinterdi.com/rock-and-roll-with-ember-1k-customers-giveaway/?utm_source=my-blog&utm_medium=sidebar&utm_campaign=1k-rarwe-customers-giveaway">Enter to win</a> one of the awesome prizes on the occasion that my book now has more than 1.000 customers.
-  </div>
-  <div>
-    <a href="http://balinterdi.com/rock-and-roll-with-ember-1k-customers-giveaway/?utm_source=my-blog&utm_medium=sidebar&utm_campaign=1k-rarwe-customers-giveaway" style="text-decoration:none">
-      <img src="/images/gleam-logo.png" alt="1k RARWE Customers Giveaway" title="1k RARWE Customers Giveaway" />
-    </a>
-  </div>
-</section>
-<section>
   <h1>My Ember 2 book</h1>
   <div>
     <a href="http://rockandrollwithemberjs.com/?utm_source=my-blog&utm_medium=sidebar&utm_campaign=rarwe-book" style="text-decoration:none">
@@ -2007,6 +2156,10 @@ which brings it up to Ember 2.3.0, ED 2.3.2 and Ember CLI 2.3.0-beta.1.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html">Rock and Roll with Ember.js 2.6 is released</a>
       </li>
     
@@ -2020,10 +2173,6 @@ which brings it up to Ember 2.3.0, ED 2.3.2 and Ember CLI 2.3.0-beta.1.</p>
     
       <li class="post">
         <a href="/2016/04/08/complex-component-design-in-ember-replace-the-observer.html">Complex Component Design in Ember - Part 3 - Replace the observer</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/03/24/rock-and-roll-with-ember-dot-js-now-on-2-dot-4-and-with-code-diffs.html">Rock and Roll with Ember.js - Now on 2.4 and with code diffs</a>
       </li>
     
   </ul>
