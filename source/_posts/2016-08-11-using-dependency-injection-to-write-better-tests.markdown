@@ -3,7 +3,7 @@ layout: post
 title: "Using Dependency Injection to Write Better Tests"
 date: 2016-08-11 09:13
 comments: true
-categories: ember.js, testing
+categories: ember.js testing
 perk: general-signup
 ---
 
