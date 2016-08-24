@@ -91,6 +91,119 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2014/05/28/setting-the-document-title-in-ember-apps.html">Setting the Document Title in Ember Apps</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-28T07:27:00+02:00" pubdate data-updated="true">May 28<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The document title serves as a quick and concise way to identify web pages. It
+gets displayed in search results and bookmarks and allows the user to see at a
+glance what content she has open in each tab.</p>
+
+<p>Therefore it is important to have descriptive document titles in our web
+applications, whether they get rendered on the backend or set in the client app.</p>
+
+<p>In the following short post, I&#8217;ll focus on showing how to do that with Ember.</p>
+
+<h3>Setting the title property</h3>
+
+<p>The way to set the document title from the browser is to just assign a
+value to the <code>title</code> property of the document:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nb">document</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="s2">&quot;1 mind-blowing way to set the title for your html document&quot;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Or, from jQuery:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span><span class="s2">&quot;1 mind-blowing way to set the title for your html document&quot;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Having context-aware titles</h3>
+
+<p>For our document titles to be really useful, it would be great to have some
+kind of information from the page&#8217;s content be reflected in them.</p>
+
+<p>To use <a href="https://github.com/balinterdi/rock-and-rol://github.com/balinterdi/rock-and-roll">my favorite example app, Rock &amp; Roll</a>, I expect the page that
+displays songs from a certain artist to have a segment that is common across all
+pages in the app and another segment that uniquely identifies that page. For
+songs of Led Zeppelin, this could be <code>Led Zeppelin songs - Rock &amp; Roll with
+Ember.js</code>.</p>
+
+<p>I choose to put the unique part first so it can be clearly seen in a tab even if
+its width is limited.</p>
+
+<h3>Finding the best place for setting the title</h3>
+
+<p>When considering where to implement setting the title, we have to keep in mind
+that the code has to run at each route transition so that the title for the new
+page is correctly set. Also, the context of the page (in the above example, the
+artist Led Zeppelin) already has to be known.</p>
+
+<p>Considering these constraints, the title could be set either in the
+<code>afterModel</code> or in the <code>setupController</code> hook. The controller instance is not
+needed for setting the title so I&#8217;ll go with the <code>afterModel</code> hook.</p>
+
+<p>For the <code>artists</code> route, we content ourselves with setting a static title and we
+can thus focus on the <code>artist.songs</code> route:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">ArtistSongsRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">afterModel</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">artistName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">modelFor</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="nx">artistName</span> <span class="o">+</span> <span class="s1">&#39; songs - Rock &amp; Roll&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we now navigate to the songs page for any artist, we can see the name of the
+artist reflected in the tab title:</p>
+
+<p><img src="/images/posts/set-document-title-in-ember/see-artist-in-tab-title.png" alt="Artist name in tab title" /></p>
+
+<p><em>NOTE: Jonathan Evans has <a href="http://www.jrhe.co.uk/setting-the-document-title-in-ember-js-apps/">a great post</a> in which he uses the <code>didTransition</code>
+action in routes to set the document title. I recommend you to read it.</em></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2014/05/22/make-your-own-computed-property-macro-in-emberjs.html">Make Your Own Computed Property Macro in Ember.js</a></h1>
     
     
@@ -2284,237 +2397,6 @@ you!&#8221; from me.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/02/12/making-an-emberjs-component-more-reusable.html">Making an Ember.js Component More Reusable</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-02-12T07:54:00+01:00" pubdate data-updated="true">Feb 12<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><em>This is Part 2 of a mini-series on components. Here is the first post in the series:</em></p>
-
-<p><em><a href="/2014/02/05/convert-a-view-into-a-component.html">Convert a view into a component</a></em></p>
-
-<h2>Intro</h2>
-
-<p><a href="/2014/02/05/convert-a-view-into-a-component.html">We saw how to turn the star-rating view into a component</a> to
-make it more reusable, and less reliant on its context. Everything that the
-component needs to do its job had to be passed in, and that is enough for it to
-be reusable not just across screens in your application but also across
-different applications.  Or is it? Let&#8217;s take a look at the component code
-again:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">StarRatingComponent</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">classNames</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;rating-panel&#39;</span><span class="p">],</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">fullStars</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;item.rating&#39;</span><span class="p">),</span>
-</span><span class='line'>  <span class="nx">numStars</span><span class="o">:</span>  <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;maxRating&#39;</span><span class="p">),</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">setRating</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">newRating</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;data-rating&#39;</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="nx">newRating</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">sendAction</span><span class="p">(</span><span class="s1">&#39;setAction&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">));</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Is something assumed about the object whose rating our component will display
-and set? I&#8217;ll give you some time to think about it.</p>
-
-<h2>A glove that fits all hands</h2>
-
-<p>What we assume is that the <code>item</code> that gets passed in has a <code>rating</code> property.
-If we really want our component to be used in all Ember applications (why not
-reach for the <em>stars</em>?), then this should not be an assumption that we make.
-After all, a player in a hockey team might have a <code>score</code> property and not
-rating. We could get around that by aliasing <code>score</code> to <code>rating</code> in our
-controller:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">PlayerController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ObjectController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">rating</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;score&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>However, this is inconvenient for the app developer and is only necessary
-because the star-rating component is not flexible enough. It&#8217;s as if I had to
-reshape my hand to fit the glove.</p>
-
-<p>So let&#8217;s make it take the property name as a parameter, too:</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;artists/songs&quot;&gt;
-  {{#each songs}}
-    &lt;div class=&quot;list-group-item&quot;&gt;
-      {{title}}
-      {{star-rating item=this ratingProperty=&quot;rating&quot; maxRating=5 setAction=&quot;setRating&quot;}}
-    &lt;/div&gt;
-  (...)
-  {{/each}}
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p>That was easy, now comes the harder part, the component code. Previously, the
-fullStars property of the component was just an alias for <code>item.rating</code>. We
-can&#8217;t do that anymore, since the name of the rating property is only known when
-the component is used in a template, and can thus differ in each case.</p>
-
-<p>Did Ember let us down this time? Before, it had kept the fullStars property of
-our component in sync with the item&#8217;s rating. We just sat back and took sips of
-our mojito. Now, when the going gets tough, we are on our own.</p>
-
-<p>Well, not really. We are doing some advanced stuff so it&#8217;s no surprise that we
-have to use advanced tools that are not needed in the majority of cases. Ember
-has nice lower-level functions to support us.</p>
-
-<p>We have to set up the property synchronization ourselves but it sounds scarier
-than it is. We just have to watch when the item&#8217;s rating (score, points,
-etc.) property changes and set the fullStars property to that value:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">StarRatingComponent</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">classNames</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;rating-panel&#39;</span><span class="p">],</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">numStars</span><span class="o">:</span>  <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;maxRating&#39;</span><span class="p">),</span>
-</span><span class='line'>  <span class="nx">fullStars</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">didInsertElement</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;ratingProperty&#39;</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;fullStars&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="nx">property</span><span class="p">));</span>
-</span><span class='line'>    <span class="nx">Ember</span><span class="p">.</span><span class="nx">addObserver</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">),</span> <span class="nx">property</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">ratingPropertyDidChange</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">willDestroyElement</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;ratingProperty&#39;</span><span class="p">);</span>
-</span><span class='line'>    <span class="nx">Ember</span><span class="p">.</span><span class="nx">removeObserver</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">),</span> <span class="nx">property</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">ratingPropertyDidChange</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">ratingPropertyDidChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">ratingProperty</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;fullStars&#39;</span><span class="p">,</span> <span class="nx">item</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ratingProperty</span><span class="p">));</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>  <span class="p">(...)</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>There are several things that might be new to you, dear reader, so let me go
-through each of them.</p>
-
-<p>The most important thing is the call to <a href="http://emberjs.com/api/classes/Ember.Observable.html#method_addObserver">&#8216;Ember.addObserver(object, property,
-context, function)&#8217;</a>. Whenever <code>property</code> of <code>object</code> changes, it
-calls <code>function</code> with <code>context</code> as its <code>this</code>. (Providing a <code>context</code> is
-optional).</p>
-
-<p>The observer function (<code>ratingPropertyDidChange</code>) gets the object that was
-changed as its first parameter and the property name that was changed. In this
-case, it does not have to do anything else but set the <code>fullStars</code> property of
-the component to the new value of the item&#8217;s rating property.</p>
-
-<p>The observer is set up in the <code>didInsertElement</code> function. It is a handy
-lifecycle-event for Ember views (and thus components) which gets called after
-the view has been inserted into the DOM. This time, we don&#8217;t need it to be in
-the DOM already but it serves as a convenient way to add the observer.</p>
-
-<p>Lastly, since the observer was added manually, it has to be torn down manually,
-too, when it is no longer needed. We do this in <code>willDestroyElement</code>, another
-view lifecycle event which gets called before the element gets removed from the
-DOM. Also, the code comments mention the following about <code>willDestroyElement</code>:</p>
-
-<pre><code>If you write a `willDestroyElement()` handler, you can assume that your
-`didInsertElement()` handler was called earlier for the same element.
-</code></pre>
-
-<p>This makes <code>didInsertElement</code> - <code>willDestroyElement</code> a perfect pair for manually
-setting up and tearing down event handlers (or observers) even if no DOM
-manipulation has to be carried out.</p>
-
-<p>I&#8217;ve made a jsbin to show how the star-rating component can now be used with
-a <code>score</code> property while the component code stays identical:</p>
-
-<p><a class="jsbin-embed" href="http://emberjs.jsbin.com/sokov/4/embed?html,js,output">Reusable Star Rating component</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
-
-<h3>Conclusion</h3>
-
-<p>We now have a star-rating component that is general enough to be used in all
-contexts. Go ahead and use it in your Ember app and let me know if I missed
-something.</p>
-
-<p>Actually, there are a couple of featurettes -unrelated to its flexibility, as
-far as I see- we can add which I might come back to.</p>
-
-<hr />
-
-<p><em>This was Part 2 of a mini-series on components. Here is the third post in the series:</em></p>
-
-<p><em><a href="/2014/02/18/readers-letters-making-an-ember-dot-js-component-even-better.html">Readers&#8217; Letters: Making an Ember.js Component Even Better</a></em></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/5/">&larr; Older</a>
@@ -2547,6 +2429,10 @@ far as I see- we can add which I might come back to.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html">Rock and Roll with Ember.js 2.7 is released</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
       </li>
     
@@ -2560,10 +2446,6 @@ far as I see- we can add which I might come back to.</p>
     
       <li class="post">
         <a href="/2016/05/03/rock-and-roll-with-ember-dot-js-2-dot-5-is-released.html">Rock and Roll with Ember.js 2.5 is released</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/04/08/complex-component-design-in-ember-replace-the-observer.html">Complex Component Design in Ember - Part 3 - Replace the observer</a>
       </li>
     
   </ul>

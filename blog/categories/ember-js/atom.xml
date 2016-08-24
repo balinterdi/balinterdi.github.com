@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-08-11T11:05:51+02:00</updated>
+  <updated>2016-08-24T20:57:40+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,19 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rock and Roll with Ember.js 2.7 is released]]></title>
+    <link href="http://balinterdi.com/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html"/>
+    <updated>2016-08-24T20:50:00+02:00</updated>
+    <id>http://balinterdi.com/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released</id>
+    <content type="html"><![CDATA[<p>Today marks the release of the <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js book</a>,
+version 2.7, which means the app built in the book now runs on Ember 2.7 (and uses Ember CLI 2.7).</p>
+
+<p>There is a number of other small fixes, the full list of which you can see
+<a href="https://github.com/balinterdi/rarwe-issues/milestone/15?closed=1">here</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Using Dependency Injection to Write Better Tests]]></title>
@@ -427,306 +440,6 @@ book last October and I believe following the book (and the building of the app)
 became even easier.</p>
 
 <p>If this piqued your interest, you can download a sample chapter below.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Complex Component Design in Ember - Part 3 - Replace the observer]]></title>
-    <link href="http://balinterdi.com/2016/04/08/complex-component-design-in-ember-replace-the-observer.html"/>
-    <updated>2016-04-08T09:54:00+02:00</updated>
-    <id>http://balinterdi.com/2016/04/08/complex-component-design-in-ember-replace-the-observer</id>
-    <content type="html"><![CDATA[<p><em>This is part 3 of my Complex Component Design series. Here are the preceding posts:</em></p>
-
-<ul>
-<li><a href="/2015/09/10/complex-component-design-in-ember-intro.html"><strong>Intro</strong></a></li>
-<li><a href="/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html"><strong>Part 1 - Analyzing User Flows</strong></a></li>
-<li><a href="/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html"><strong>Part 2 - Towards a more reactive component</strong></a></li>
-<li><strong>Part 3 - Replace the observer</strong></li>
-<li><a href="/2016-05-26-complex-component-design-in-ember-part-4-use-the-hash-helper.html"><strong>Part 4 - Use the hash helper</strong></a></li>
-</ul>
-
-
-<p>You can find the code for this post <a href="https://github.com/balinterdi/ember-cli-autocomplete/releases/tag/ccd-part-three">on Github.</a></p>
-
-<hr />
-
-<p>In the last post, we refactored towards a more reactive component and got
-pretty far. However, we established that we'd still have to remove the observer
-that was also causing a weird bug:</p>
-
-<p><img src="/images/posts/complex-component-design-ember/jpj-too-good-bug.gif" alt="JPJ is too good to be replaced" /></p>
-
-<h3>Event origin and data owner components are different</h3>
-
-<p>The reason we introduced an observer was that we wanted to trigger an action
-when one of the options was selected via cycling through them and hitting the
-return key on the focused option. Since the necessary data for that event was
-contained in the <code>auto-complete-option</code> component but the source of the keyboard
-event was the <code>auto-complete</code> component, we couldn't simply trigger the action
-with the right data from the event source.</p>
-
-<p>We fixed this by using an observer so that even though the event that
-should trigger the action was fired "upstream", in the <code>auto-complete</code>
-component, we could react to this change "downstream", in the appropriate
-<code>auto-complete-option</code> whose <code>isSelected</code> property became true:</p>
-
-<p>```js
-// addon/components/auto-complete-option.js
-import Ember from 'ember';</p>
-
-<p>export default Ember.Component.extend({
-  (...)</p>
-
-<p>  didBecomeSelected: Ember.observer('isSelected', function() {</p>
-
-<pre><code>let isSelected = this.get('isSelected');
-if (isSelected) {
-  this._selectItem();
-}
-</code></pre>
-
-<p>  }),</p>
-
-<p>   _selectItem() {</p>
-
-<pre><code>let item = this.get('item');
-this.get('on-click')(item, this.get('label'));
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<p>Our analysis of the cause already hints at the solution. We could move the
-knowledge of which option is selected up to the <code>auto-complete</code> component and
-then, when the user hits the return key to select the focused option, trigger
-the action with the data that we have at our disposal.</p>
-
-<h3>Centralized power in auto-complete</h3>
-
-<h4>Changes in components</h4>
-
-<p>We will maintain the selected option in <code>auto-complete</code> and trigger the
-<code>selectItem</code> action when one of them is selected via a return key event (I
-skipped the code snippet that calls <code>selectOption</code> for return):</p>
-
-<p>```js
-// addon/components/auto-complete.js
-import Ember from 'ember';</p>
-
-<p>export default Ember.Component.extend({
-  (...)
-  selectOption: function(event) {</p>
-
-<pre><code>event.preventDefault();
-const focusedIndex = this.get('focusedIndex');
-if (Ember.isPresent(focusedIndex)) {
-  this.set('selectedIndex', focusedIndex);
-  this.send('selectOption', this.get('selectedOption'));
-}
-this.set('isDropdownOpen', false);
-</code></pre>
-
-<p>  },</p>
-
-<p>  selectedOption: Ember.computed('selectedIndex', 'options.[]', function() {</p>
-
-<pre><code>return this.get('options').objectAt(this.get('selectedIndex'));
-</code></pre>
-
-<p>  }),
-});
-```</p>
-
-<p>On line 11, we call the <code>selectOption</code> action (renamed from <code>selectItem</code>) with
-the (new) selected option. <code>selectedOption</code> is simply the option that has the
-<code>selectedIndex</code>.</p>
-
-<p>Independently of the current <code>selectOption</code> refactor, let's fix a nasty
-bug by making sure to reset the <code>focusedIndex</code> when the input changes:</p>
-
-<p>```js
-// addon/components/auto-complete.js
-import Ember from 'ember';</p>
-
-<p>export default Ember.Component.extend({
-  (...)
-  actions: {</p>
-
-<pre><code>inputDidChange(value) {
-  this.get('on-input')(value);
-  this.set('focusedIndex', null);
-  (...)
-}
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<p>Next, let's look at how the <code>selectOption</code> action needs to change:</p>
-
-<p>```js
-// addon/components/auto-complete.js
-import Ember from 'ember';</p>
-
-<p>export default Ember.Component.extend({
-  (...)
-  _displayForOption(option) {</p>
-
-<pre><code>const displayProperty = this.get('displayProperty');
-return option.get(displayProperty);
-</code></pre>
-
-<p>  },</p>
-
-<p>  actions: {</p>
-
-<pre><code>selectOption(option) {
-  let inputValue = this._displayForOption(option);
-  this.get('on-select')(option);
-  this.set('isDropdownOpen', false);
-  this.set('inputValue', inputValue);
-},
-(...)
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<p>One of the things that has changed is that it now only receives one argument,
-<code>option</code> as the label of the option can now be computed internally, from within
-the component.</p>
-
-<p>That means that the label now does not need to be passed to the
-<code>auto-complete-option</code> components and that its action that gets triggered when
-the user clicks on it needs to be adjusted:</p>
-
-<p>```js
-// addon/components/auto-complete-option.js
-import Ember from 'ember';</p>
-
-<p>export default Ember.Component.extend({
-  tagName: 'li',
-  classNames: 'ember-autocomplete-option',
-  classNameBindings: Ember.String.w('isSelected:active isFocused:focused'),</p>
-
-<p>  item: null,
-  'on-click': null,
-  isFocused: false,
-  isSelected: false,</p>
-
-<p>  click() {</p>
-
-<pre><code>this.get('on-click')(this.get('item'));
-</code></pre>
-
-<p>  }
-});
-```</p>
-
-<p>You can see I removed the observer and that I only send the item (not the label,
-see the very first code example) in the action handler to comply with the new
-API of the <code>selectOption</code> action.</p>
-
-<h4>Changes in templates</h4>
-
-<p>Let's see how the templates need to change to accommodate that change.</p>
-
-<p>First of all, the template of the <code>auto-complete</code> component needs to yield the
-<code>options</code> to be consumed downstream. Let's also not forget to rename
-<code>selectItem</code> to <code>selectOption</code>:</p>
-
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
-
-&lt;!-- addon/templates/components/auto-complete.hbs --&gt;
-
-
-&lt;p&gt;{{yield isDropdownOpen&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;    inputValue
-    options
-    focusedIndex
-    selectedIndex
-    (action &quot;toggleDropdown&quot;)
-    (action &quot;selectOption&quot;)
-    (action &quot;inputDidChange&quot;)}}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;</code></pre>
-</div>
-</p>
-
-<p>Then, the <code>each</code> loop should iterate through <code>options</code>, and not through
-<code>matchingArtists</code> as before:</p>
-
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
-
-&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
-
-
-&lt;p&gt;{{#auto-complete&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;  on-select=(action &quot;selectArtist&quot;)
-  on-input=(action &quot;filterArtists&quot;)
-  options=matchingArtists
-  displayProperty=&quot;name&quot;
-  class=&quot;autocomplete-container&quot; as |isDropdownOpen inputValue options
-                                     focusedIndex selectedIndex
-                                     toggleDropdown onSelect onInput|}}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;  &lt;div class=&quot;input-group&quot;&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;{{auto-complete-input
-    value=inputValue
-    on-change=onInput
-    type=&quot;text&quot;
-    class=&quot;combobox input-large form-control&quot;
-    placeholder=&quot;Select an artist&quot;}}
-{{#auto-complete-list
-    isVisible=isDropdownOpen
-    class=&quot;typeahead typeahead-long dropdown-menu&quot;}}
-  {{#each options as |option index|}}
-    {{#auto-complete-option
-        item=option
-        on-click=onSelect
-        isFocused=(eq focusedIndex index)
-        isSelected=(eq selectedIndex index)}}
-      &amp;lt;a href=&quot;#&quot;&amp;gt;{{option.name}}&amp;lt;/a&amp;gt;
-    {{/auto-complete-option}}
-  {{else}}
-    &amp;lt;li&amp;gt;&amp;lt;a href=&quot;#&quot;&amp;gt;No results.&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;
-  {{/each}}
-{{/auto-complete-list}}
-{{#auto-complete-dropdown-toggle on-click=toggleDropdown class=&quot;input-group-addon dropdown-toggle&quot;}}
-  &amp;lt;span class=&quot;caret&quot;&amp;gt;&amp;lt;/span&amp;gt;
-{{/auto-complete-dropdown-toggle}}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;  &lt;/div&gt;
-{{/auto-complete}}</code></pre>
-</div>
-</p>
-
-<p>The bug at the beginning of the post is now gone:</p>
-
-<p><img src="/images/posts/complex-component-design-ember/jpj-too-good-to-go-fixed.gif" alt="JPG too-good-to-go bug fixed" /></p>
-
-<h3>In the next episode...</h3>
-
-<p>We now have a working, state-of-the-art component design with no coupling
-between the sub-components and no observers. One thing that is not ideal,
-though, is the number of parameters the <code>auto-complete</code> components yields (see
-last code snippet).</p>
-
-<p>Just as you wouldn't have a method with 7 or 8 positional parameters, you don't
-want a component that yields that many properties matched by position. So in the
-next installment of this series, we'll use the <code>hash</code> helper to transform that
-long list into keyed parameters.</p>
 ]]></content>
   </entry>
   

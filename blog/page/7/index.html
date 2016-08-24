@@ -91,6 +91,60 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2010/10/10/dont-tell-michelle-facebook-privacy-as-it-should-be.html">Don&#8217;t Tell Michelle, Facebook Privacy as It Should Be</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-10T00:00:00+02:00" pubdate data-updated="true">Oct 10<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>It&#8217;s been a quiet four months over here. My excuse is that I&#8217;ve been working. I joined a startup, <a href="http://secretsaucepartners.com">Secret Sauce Partners</a> in June and we have started to build our first product a couple of weeks later. Now I am proud (actually, quite proud) to announce that we have released a first version last week.</p>
+
+<h2>The problem we are solving</h2>
+
+<p>I&#8217;m sure you have a Facebook account. You probably have around <a href="http://www.facebook.com/press/info.php?statistics">130 &#8220;friends&#8221;</a>. Chances are you want to share lots of things but on several occasions you don&#8217;t want to tell everybody. Sure, you can create friend lists and post to them based on what you want to say. Or, you can pick individual friends for your message (good luck with that if you would like to speak to more than 3 friends). It would definitely make sense (and would hugely improve the state of the world!) if you only showed your Farmville achievements to your friends who play Farmville and nobody else. Especially not your colleagues during work hours.</p>
+
+<p>Wouldn&#8217;t it be cool if you did not have to fiddle with setting the proper audience of your posts every single time you share something? If the people whom you post to would be determined from the content and the context of your message? Better still, if friends that join later could not see your posts prior to that?</p>
+
+<h2>The solution</h2>
+
+<p>Let&#8217;s go back to Farmville-land (I know, I know, but bear with me for a few more minutes). If you only want to show your Farmville posts to selected people the only way to achieve it is to set your default privacy to that list of selected friends prior to diving in to FarmVille. Then you set it back to your default posting setting. Not quite comfortable.</p>
+
+<p>That&#8217;s where our application comes into the picture. To solve the above problem, you set up a rule that says:
+&#8220;Hide posts from Farmville posted during Work Hours from my Co-Workers&#8221;. You lay back, go feed your piggies, and water your sunflowers safe in the knowledge that your colleagues will not know about it. Suppose you don&#8217;t want your mom to know where you spend your weekends. Here is your rule: &#8220;Hide All posts from Foursquare from Family&#8221;. Feeling the urge to swear like a sailor some times and don&#8217;t want your little cousins or nieces to know about it? &#8220;Always hide posts with Swear Words from Kids&#8221;. Don&#8217;t want to spam your Twitter followers on Facebook? &#8220;Always hide posts from Twitter from Twitter followers&#8221;. Then, there are the &#8220;Show&#8221; rules*. For example, an even more sensible rule for Farmville posts could be: &#8220;Always show posts from Farmville to Players&#8221;.
+(* &#8220;Show rules&#8221; are the next feature we are going to work on.)</p>
+
+<p>You see, the possibilities are endless, so why don&#8217;t you <a href="http://donttellmichelle.com/">set up your own rules and give it a try</a>? I bet you will never want to go back to (broken) standard Facebook privacy setting.</p>
+
+<p>Ah, and if you don&#8217;t want your wife to know how much high-cholesterol food you eat, then <a href="http://blogs.suntimes.com/sweet/2010/03/dont_tell_michelle_obama_says.html">&#8220;Don&#8217;t Tell Michelle&#8221;</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2010/06/03/its-a-spec-not-a-test.html">It&#8217;s a Spec, Not a Test</a></h1>
     
     
@@ -682,57 +736,6 @@ end</code></pre>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/10/20/rubygems-under-the-hood-introduction.html">RubyGems Under the Hood: Introduction</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-10-20T00:00:00+02:00" pubdate data-updated="true">Oct 20<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I am not sure about you, but one thing I keep bumping into while developing ruby applications is rubygem version conflicts. If you have ever come across &#8220;can&#8217;t activate activesupport (= 2.3.4, runtime) for [], already activated activesupport-2.3.3 for []&#8221; type of errors, you might be sympathetic to the cause.</p>
-
-<p>Since <a href="http://rubygems.org/">rubygems</a> was and is being written by some <a href="http://chadfowler.com">excellent</a> <a href="http://richkilmer.blogs.com/">Ruby</a> <a href="http://onestepback.org/">minds</a> I knew the fault probably lies with me and not with the tool. Being a <a href="http://manifesto.softwarecraftsmanship.org/">motivated and proud craftsman</a> I felt like I needed to know my tools and rubygems is probably the number one tool most of us Ruby developers use on a daily basis.</p>
-
-<p>I intend to write a mini-series of Rubygems posts. A post will be added to the series when I explore some murky corner of rubygems inner mechanics. Some of the time this will come from a particular problem I come across while coding while on other occasions I might just look into the source code and try to understand what a particular piece of code does.</p>
-
-<p>Now, I realized that when I read on a blog: &#8220;I will go into more detail about X in a forthcoming post&#8221;, it is the surest sign that you will never read about X again. At least not on that very blog. And I am not saying this in a mean way, I think it is very natural for our plans to change (&#8220;evolve&#8221; may sound better) even on the short term. So I am aiming low and hoping to give you more than you expected. (Notice I wrote &#8220;mini-series&#8221; which may just mean a couple of posts.)</p>
-
-<h2>Do not set your expectations high</h2>
-
-
-<p>I am absolutely not a Rubygems expert so please do not be fooled by the &#8220;under the hood&#8221; title. This will not be commensurate to <a href="http://weblog.jamisbuck.org/2006/10/2/under-the-hood-rails-routing-dsl">Jamis Buck&#8217;s series on Rails routing</a>. I do not -yet?- have a deep insight and I am not even a contributor to Rubygems.</p>
-
-<p>The forthcoming :) series is just a humble attempt to gain an understanding of a very important part of the Ruby arsenal. I hope to understand it better by explaining to you how it works and I hope you will understand it better by reading my explanation. And last, but not least, I hope we&#8217;ll both spend less time debugging those tricky issues.</p>
-
-<p>Having said that, I encourage you to participate in the series. Tell me about a particular problem you had with Rubygems. Correct me if I am wrong. Point me to an article where all this is already explained, and much better. Give feedback so this might evolve to be a discussion rather than an academic lecture. Thank you.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/8/">&larr; Older</a>
@@ -765,6 +768,10 @@ end</code></pre>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html">Rock and Roll with Ember.js 2.7 is released</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
       </li>
     
@@ -778,10 +785,6 @@ end</code></pre>
     
       <li class="post">
         <a href="/2016/05/03/rock-and-roll-with-ember-dot-js-2-dot-5-is-released.html">Rock and Roll with Ember.js 2.5 is released</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/04/08/complex-component-design-in-ember-replace-the-observer.html">Complex Component Design in Ember - Part 3 - Replace the observer</a>
       </li>
     
   </ul>

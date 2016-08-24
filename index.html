@@ -91,6 +91,46 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html">Rock and Roll With Ember.js 2.7 Is Released</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-08-24T20:50:00+02:00" pubdate data-updated="true">Aug 24<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Today marks the release of the <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js book</a>,
+version 2.7, which means the app built in the book now runs on Ember 2.7 (and uses Ember CLI 2.7).</p>
+
+<p>There is a number of other small fixes, the full list of which you can see
+<a href="https://github.com/balinterdi/rarwe-issues/milestone/15?closed=1">here</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a></h1>
     
     
@@ -2026,106 +2066,6 @@ bug by replacing the observer and make other worthy improvements. Stay tuned!</p
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2016/02/03/binding-style-attributes-warning-in-ember.html">Binding Style Attributes Warning in Ember</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2016-02-03T09:33:00+01:00" pubdate data-updated="true">Feb 3<span>rd</span>, 2016</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>One warning Ember might print in your console concerns binding a property to
-the <code>style</code> attribute of a DOM element, like this:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class=&quot;progress-bar&quot; style=&quot;{{barWidth}}&quot;&gt;...&lt;/div&gt;</code></pre>
-</div>
-
-
-
-
-<div>
-  <pre><code class='javascript'>export default Ember.Controller.extend({
-  progress: 0,
-  barWidth: Ember.computed(&#39;progress&#39;, {
-    return &#39;width:&#39; + this.get(&#39;progress&#39;) + &#39;%&#39;;
-  });
-});</code></pre>
-</div>
-
-
-<p>Handlebars escapes all html content put in double curlies but it does not do
-that with CSS, and thus the above makes possible a cross-site scripting attack.
-That is the reason for the warning and the fix for that is to convert the
-property (in the above case, <code>barWidth</code>) to a <code>SafeString</code>, which tells Ember
-that the content is safe to display. You should only do that after you have
-verified that the content you mark as safe cannot be injected by a malicious
-user. <a href="http://emberjs.com/deprecations/v1.x/#toc_binding-style-attributes">The guide</a> describes how to do that:</p>
-
-<div>
-  <pre><code class='javascript'>export default Ember.Controller.extend({
-  progress: 0,
-  barWidth: Ember.computed(&#39;progress&#39;, {
-    return new Ember.Handlebars.SafeString(&#39;width:&#39; + this.get(&#39;progress&#39;) + &#39;%&#39;);
-  });
-});</code></pre>
-</div>
-
-
-<p>(Alternatively, you can call <code>Ember.String.htmlSafe</code> with the string you want to
-mark as safe, to the same effect.)</p>
-
-<p>When I did this conversion in a recent project, though, the warning persisted.
-After spending a substantial amount of time pouring over the docs and even
-stepping through the warning stacktrace, I still could not find out what was
-wrong. What helped (as so many times already) was a good night sleep and taking
-another look at it in the morning.</p>
-
-<p>Marking the string as safe was done correctly, but when binding it to the
-<code>style</code> attribute, I used double quotes around it, probably inhibiting Ember
-from seeing it as a SafeString:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class=&quot;progress-bar&quot; style=&quot;{{barWidth}}&quot;&gt;...&lt;/div&gt;</code></pre>
-</div>
-
-
-<p>So all I had to do to make the warning go away was to remove the quotes:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class=&quot;progress-bar&quot; style={{barWidth}}&gt;...&lt;/div&gt;</code></pre>
-</div>
-
-
-<p>I hope this saves you some time if you come across a similar situation in your
-work.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2156,6 +2096,10 @@ work.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html">Rock and Roll with Ember.js 2.7 is released</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
       </li>
     
@@ -2169,10 +2113,6 @@ work.</p>
     
       <li class="post">
         <a href="/2016/05/03/rock-and-roll-with-ember-dot-js-2-dot-5-is-released.html">Rock and Roll with Ember.js 2.5 is released</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/04/08/complex-component-design-in-ember-replace-the-observer.html">Complex Component Design in Ember - Part 3 - Replace the observer</a>
       </li>
     
   </ul>

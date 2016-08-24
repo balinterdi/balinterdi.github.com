@@ -91,6 +91,106 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2016/02/03/binding-style-attributes-warning-in-ember.html">Binding Style Attributes Warning in Ember</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-02-03T09:33:00+01:00" pubdate data-updated="true">Feb 3<span>rd</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>One warning Ember might print in your console concerns binding a property to
+the <code>style</code> attribute of a DOM element, like this:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;progress-bar&quot; style=&quot;{{barWidth}}&quot;&gt;...&lt;/div&gt;</code></pre>
+</div>
+
+
+
+
+<div>
+  <pre><code class='javascript'>export default Ember.Controller.extend({
+  progress: 0,
+  barWidth: Ember.computed(&#39;progress&#39;, {
+    return &#39;width:&#39; + this.get(&#39;progress&#39;) + &#39;%&#39;;
+  });
+});</code></pre>
+</div>
+
+
+<p>Handlebars escapes all html content put in double curlies but it does not do
+that with CSS, and thus the above makes possible a cross-site scripting attack.
+That is the reason for the warning and the fix for that is to convert the
+property (in the above case, <code>barWidth</code>) to a <code>SafeString</code>, which tells Ember
+that the content is safe to display. You should only do that after you have
+verified that the content you mark as safe cannot be injected by a malicious
+user. <a href="http://emberjs.com/deprecations/v1.x/#toc_binding-style-attributes">The guide</a> describes how to do that:</p>
+
+<div>
+  <pre><code class='javascript'>export default Ember.Controller.extend({
+  progress: 0,
+  barWidth: Ember.computed(&#39;progress&#39;, {
+    return new Ember.Handlebars.SafeString(&#39;width:&#39; + this.get(&#39;progress&#39;) + &#39;%&#39;);
+  });
+});</code></pre>
+</div>
+
+
+<p>(Alternatively, you can call <code>Ember.String.htmlSafe</code> with the string you want to
+mark as safe, to the same effect.)</p>
+
+<p>When I did this conversion in a recent project, though, the warning persisted.
+After spending a substantial amount of time pouring over the docs and even
+stepping through the warning stacktrace, I still could not find out what was
+wrong. What helped (as so many times already) was a good night sleep and taking
+another look at it in the morning.</p>
+
+<p>Marking the string as safe was done correctly, but when binding it to the
+<code>style</code> attribute, I used double quotes around it, probably inhibiting Ember
+from seeing it as a SafeString:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;progress-bar&quot; style=&quot;{{barWidth}}&quot;&gt;...&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>So all I had to do to make the warning go away was to remove the quotes:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;progress-bar&quot; style={{barWidth}}&gt;...&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>I hope this saves you some time if you come across a similar situation in your
+work.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2016/01/21/rock-and-roll-with-ember-dot-js-updated-to-use-ember-and-co-2-dot-3.html">Rock and Roll With Ember.js Updated to Use Ember &amp; Co 2.3</a></h1>
     
     
@@ -1871,185 +1971,6 @@ join me for the next part of the series:</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">How to Do a Select (Dropdown) in Ember 2.0?</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-08-29T17:43:00+02:00" pubdate data-updated="true">Aug 29<span>th</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><iframe
-  width="178" height="24" style="border:0px"
-  src="https://mixonic.github.io/ember-community-versions/2015/08/29/how-to-do-a-select-dropdown-in-ember-2-0.html">
-</iframe>
-
-
-<p>When the select view was about to be removed from Ember, a lot of people
--myself included- wondered how it was going to be replaced. My bet was on a
-&#8216;select component&#8217;, after all, views should be transformed into components, right?</p>
-
-<p>Then I saw <a href="https://gist.github.com/ef4/8367f996eb7b57d1f7a5">this gist</a> from Edward Faulkner:</p>
-
-<div>
-  <pre><code class='html'>&lt;select onchange={{action (mut vehicle) value=&quot;target.value&quot;}}&gt;
-  {{#each vehicles as |vehicleChoice|}}
-    &lt;option value={{vehicleChoice}} selected={{eq vehicle vehicleChoice}}&gt;{{vehicleChoice}}&lt;/option&gt;
-  {{/each}}
-&lt;/select&gt;</code></pre>
-</div>
-
-
-<p>I did not understand half of it, so I dug down to see how the pieces come
-together. In this short post, I want to explain what I have found out.</p>
-
-<h3>Solve a simpler problem</h3>
-
-<p>A great mathematician, George Polya, wrote a book in 1945 called <a href="http://smile.amazon.com/How-Solve-It-Mathematical-Princeton/dp/069111966X/ref=smi_www_rco2_go_smi_g2147660602?_encoding=UTF8&amp;*Version*=1&amp;*entries*=0&amp;ie=UTF8">&#8220;How to Solve It&#8221;</a>,
-in which he puts down a framework for solving mathematical problems. One
-(probably more) of his recommendations can be applied to software development,
-too: Solve a simpler problem.</p>
-
-<p>Heeding this advice, we&#8217;ll first tackle a more mundane problem and in the
-second round, we&#8217;ll solve the original riddle.</p>
-
-<p>Let&#8217;s assume Edward had written the following:</p>
-
-<div>
-  <pre><code class='html'>&lt;select onchange={{action &quot;selectVehicle&quot; value=&quot;target.value&quot;}}&gt;
-  {{#each vehicles as |vehicleChoice|}}
-    &lt;option value={{vehicleChoice}} selected={{eq vehicle vehicleChoice}}&gt;{{vehicleChoice}}&lt;/option&gt;
-  {{/each}}
-&lt;/select&gt;</code></pre>
-</div>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">vehicle</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">vehicles</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">String</span><span class="p">.</span><span class="nx">w</span><span class="p">(</span><span class="s1">&#39;Tesla Chrysler Toyota&#39;</span><span class="p">),</span>
-</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">selectVehicle</span><span class="p">(</span><span class="nx">vehicle</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;vehicle&#39;</span><span class="p">,</span> <span class="nx">vehicle</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This is easier (as in: more familiar) but there are still a few things that
-might need explanation. First, before 1.13.3, event listeners on browser
-events could not trigger Ember actions like that:</p>
-
-<div>
-  <pre><code class='html'>&lt;select onchange={{action &quot;selectVehicle&quot; value=&quot;target.value&quot;}}&gt;</code></pre>
-</div>
-
-
-<p>What this does, is that when the selected value of the dropdown changes, it
-fires the onchange listener we added on the <code>&lt;select&gt;</code> which results in calling
-our action handler, <code>selectVehicle</code>. The handler just updates the <code>vehicle</code>
-property of the controller. This will mark as selected the dropdown option the
-user picked due to the <code>selected={{eq vehicle vehicleChoice}}</code> term.</p>
-
-<p>(<code>eq</code> comes from a great little Ember addon called <a href="https://github.com/jmurphyau/ember-truth-helpers">ember-truth-helpers</a>. It
-returns true if the two parameters are equal).</p>
-
-<p>Since there is no two-way binding set up between the selected option of the
-dropdown and the controller property (<code>vehicle</code>), this needs to be done using a
-DOM event listener (<code>onchange</code>) and updating in the action handler. That&#8217;s
-exactly what happens in the <code>selectVehicle</code> action handler.</p>
-
-<p>So far so good, let&#8217;s move on.</p>
-
-<h3>Solve the original one</h3>
-
-<p>Wait a minute. How did <code>selectVehicle</code> receive the selected vehicle choice (e.g
-Toyota) when the <code>{{action}}</code> helper did not specify any parameters?</p>
-
-<p>When the browser calls an event listener, it passes it an event object which
-would become the first parameter of <code>selectVehicle</code>. However, <code>selectVehicle</code>
-does not receive the event but the actual value of the selected option, how does
-that come about? The missing link is a lesser-known option of the <code>action</code>
-helper, <code>value</code>. The property passed to it is read off of the first parameter of
-the handler and then replaces it. In our example, <code>target.value</code> is looked up on
-the event object, which is exactly the value of the select option that triggered
-the <code>onchange</code> event.</p>
-
-<p>Ok, only one thing left.</p>
-
-<p>The original example had this line:</p>
-
-<div>
-  <pre><code class='html'>&lt;select onchange={{action (mut vehicle) value=&quot;target.value&quot;}}&gt;</code></pre>
-</div>
-
-
-<p>instead of the more familiar:</p>
-
-<div>
-  <pre><code class='html'>&lt;select onchange={{action &quot;selectVehicle&quot; value=&quot;target.value&quot;}}&gt;</code></pre>
-</div>
-
-
-<p>What mut does here is that it allows updating the passed property, so when the
-action is called, <code>vehicle</code> is set to the passed value, the value of the
-selected option. That is it, we solved the riddle.</p>
-
-<p>The same implementation pattern can be used to update the properties related to
-checkboxes, input fields and radio buttons. This new way of doing things takes a
-while to get used to, but we&#8217;ll see more and more of it with one-way bindings
-becoming best practice.</p>
-
-<p>(By the way, my PR to add a section about <a href="https://github.com/emberjs/guides/pull/670">the actions helper&#8217;s <code>value</code> option</a> to
-the guides was merged yesterday, so hopefully more people will know about it.)</p>
-
-<h3>Wait, there is more!</h3>
-
-<p>This post received a lot of comments, some of which are inquiring about more
-complex use cases. I decided to do a screencast where I implement some of
-these. You can get it by signing up below:</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -2082,6 +2003,10 @@ these. You can get it by signing up below:</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html">Rock and Roll with Ember.js 2.7 is released</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
       </li>
     
@@ -2095,10 +2020,6 @@ these. You can get it by signing up below:</p>
     
       <li class="post">
         <a href="/2016/05/03/rock-and-roll-with-ember-dot-js-2-dot-5-is-released.html">Rock and Roll with Ember.js 2.5 is released</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/04/08/complex-component-design-in-ember-replace-the-observer.html">Complex Component Design in Ember - Part 3 - Replace the observer</a>
       </li>
     
   </ul>
