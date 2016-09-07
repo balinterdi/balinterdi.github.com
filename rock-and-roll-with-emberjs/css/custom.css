@@ -498,6 +498,28 @@ a {
   left: 7em;
 }
 
+.ticket-price {
+  font-size: 34px;
+  position: absolute;
+  right: 25%;
+}
+
+.ticket-price span {
+  color: white;
+  text-shadow: 1px 1px 1px #000;
+  font-weight: bold;
+	position: absolute;
+	top: 16%;
+	left: 20%;
+  text-align: center;
+  z-index: 1000;
+  -webkit-transform: rotate(-6deg);
+     -moz-transform: rotate(-6deg);
+      -ms-transform: rotate(-6deg);
+       -o-transform: rotate(-6deg);
+}
+
+
 /*********************** MEDIA QUERIES ***********************/
 
 @media (max-width: 550px) {
@@ -532,13 +554,15 @@ a {
   }
 }
 
-@media (max-width: 992px) {
-  #sample-chapter-shotd {
-    text-align: center;
+@media (min-width: 992px) {
+  #stairway-to-heaven .ticket-price {
+    top: 33%;
   }
-
-  #stability-without-stagnation:before, #about-the-author:before, #concerns:before {
-    left: 43%;
+  #light-my-fire .ticket-price {
+    top: 32%;
+  }
+  #smoke-on-the-water .ticket-price {
+    top: 15%;
   }
 }
 
@@ -547,9 +571,79 @@ a {
     text-align: center;
   }
 
+  #stability-without-stagnation:before, #about-the-author:before, #concerns:before {
+    left: 43%;
+  }
+
+  #sample-chapter-shotd {
+    text-align: center;
+  }
+
   .wings-badge {
     top: -125px;
     left: 20%;
+  }
+
+
+  .ticket-price {
+    bottom: 1% !important;
+    left: 22%;
+  }
+  .ticket-price span {
+  	top: 8px;
+  	left: -35px;
+    -webkit-transform: rotate(-45deg);
+       -moz-transform: rotate(-6deg);
+        -ms-transform: rotate(-6deg);
+         -o-transform: rotate(-6deg);
+  }
+  .ticket-price-shape {
+     margin: 50px 0;
+     position: relative;
+     display: block;
+     color: #d10c0c;
+     width: 0px;
+     height: 0px;
+     border-right:  100px solid transparent;
+     border-bottom: 70px  solid #d10c0c;
+     border-left:   100px solid transparent;
+     -moz-transform:    rotate(35deg);
+     -webkit-transform: rotate(35deg);
+     -ms-transform:     rotate(35deg);
+     -o-transform:      rotate(35deg);
+  }
+  .ticket-price-shape:before {
+     border-bottom: 80px solid #d10c0c;
+     border-left: 30px solid transparent;
+     border-right: 30px solid transparent;
+     position: absolute;
+     height: 0;
+     width: 0;
+     top: -45px;
+     left: -65px;
+     display: block;
+     content: '';
+     -webkit-transform: rotate(-35deg);
+     -moz-transform:    rotate(-35deg);
+     -ms-transform:     rotate(-35deg);
+     -o-transform:      rotate(-35deg);
+  }
+  .ticket-price-shape:after {
+     position: absolute;
+     display: block;
+     color: red;
+     top: 3px;
+     left: -105px;
+     width: 0px;
+     height: 0px;
+     border-right: 100px solid transparent;
+     border-bottom: 70px solid #d10c0c;
+     border-left: 100px solid transparent;
+     -webkit-transform: rotate(-70deg);
+     -moz-transform:    rotate(-70deg);
+     -ms-transform:     rotate(-70deg);
+     -o-transform:      rotate(-70deg);
+     content: '';
   }
 }
 
@@ -585,4 +679,8 @@ a {
   }
 
 }
+
+
+
+
 
