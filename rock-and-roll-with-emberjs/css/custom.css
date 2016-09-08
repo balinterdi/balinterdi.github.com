@@ -586,7 +586,7 @@ a {
 
 
   .ticket-price {
-    bottom: 1% !important;
+    bottom: 1%;
     left: 22%;
   }
   .ticket-price span {
@@ -646,6 +646,45 @@ a {
      content: '';
   }
 }
+
+
+
+@media (max-width: 700px) {
+
+  .ticket-price {
+    bottom: -14px;
+  }
+
+  .ticket-price span {
+     font-size: 18px;
+     padding-left: 19px;
+     padding-top: 7px;
+  }
+
+  .ticket-price-shape {
+     border-right:  50px solid transparent;
+     border-bottom: 35px  solid #d10c0c;
+     border-left:   50px solid transparent;
+  }
+  .ticket-price-shape:before {
+     border-bottom: 40px solid #d10c0c;
+     border-left: 15px solid transparent;
+     border-right: 15px solid transparent;
+     top: -22px;
+     left: -32px;
+  }
+  .ticket-price-shape:after {
+     top: 3px;
+     left: -52px;
+     width: 0px;
+     height: 0px;
+     border-right: 50px solid transparent;
+     border-bottom: 35px solid #d10c0c;
+     border-left: 50px solid transparent;
+  }
+
+}
+
 
 @media (min-width: 1200px) {
   .pricing_table.three .price_block {
