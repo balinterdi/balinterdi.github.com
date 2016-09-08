@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Twuckoo 0.3.5 - With email notification - Balint Erdi's blog about Ember.js</title>
+  <meta name="author" content="Balint Erdi">
+
+  
+  <meta name="description" content="Ember.js screencasts, articles, best practice tips and more. Check out my blog and stay up-to-date on Ember.js">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://balinterdi.com/2010/01/26/twuckoo-0.3.5-with-email-notification.html">
+  <link href="/favicon.ico" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/balinterdi" rel="alternate" title="Balint Erdi's blog about Ember.js" type="application/atom+xml">
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<script src="//load.sumome.com/" data-sumo-site-id="2f7f42a353353cbb47533e4a22a64e9c3ec9211f92d2320ff1130ad6c622ee03" async></script>
+
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-12299794-2', 'balinterdi.com');
+    ga('send', 'pageview');
+  </script>
+
+
+</head>
+
+<body   >
+  <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NNRW2Q"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NNRW2Q');</script>
+<!-- End Google Tag Manager -->
+
+  <header role="banner"><hgroup>
+  <h1><a href="/">I'm all about Ember.js recently</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/balinterdi" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:balinterdi.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul role=main-navigation>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Twuckoo 0.3.5 - With Email Notification</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-01-26T00:00:00+01:00" pubdate data-updated="true">Jan 26<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>As some of you might know, I am running a <a href="http://twitter.com/pragthinklearn">few</a> <a href="http://twitter.com/daily_oblique">twitter</a> <a href="http://twitter.com/wikipedia_tfa">channels</a> that use my brainchild, <a href="http://github.com/balinterdi/twuckoo">twuckoo</a>, to periodically send a tweet.</p>
+
+<p>In <a href="http://twitter.com/pragthinklearn">two</a> <a href="http://twitter.com/daily_oblique">of</a> these cases the program takes its next message from a file and takes care not to tweet the same thing twice by keeping track of the messages already sent. This means, however, that the pool of sendable messages are depleted after a while and the script simply does not send any more tweets, the channel becomes dead.</p>
+
+<p>This has happened a couple of times in the past and I only realized it with a few days of delay which is kind of awkward (if you were subscribed to one of these accounts, I apologize). So I decided to have twuckoo send a notification in this case so I can go in and refill its queue. Hence twuckoo version 0.3.5 was born which sends an email to the address set in the configuration file when it failed to send a message.</p>
+
+<p>To install it, add <a href="http://gemcutter.org">gemcutter</a> to the list of gem sources if you haven&#8217;t already:</p>
+
+<figure class='code'><figcaption><span>install.sh </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>gem <span class="nb">source</span> --add http://gemcutter.org
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And install twuckoo:</p>
+
+<figure class='code'><figcaption><span>install.sh </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>gem install twuckoo
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You might be thinking that it would be more straightforward to have the program replenish itself so that no intervention from the part of the developer is needed. And you would be right, this could be a task for the next version. I still think it is a good idea to send a notification so the (wo)man in charge knows it happened.</p>
+
+<p>So go ahead, have a look at <a href="http://github.com/balinterdi/twuckoo">the README</a>, set up your own twitter channel and don&#8217;t fret about when the queue would run dry. You&#8217;ll be notified.</p>
+</div>
+
+
+  <footer>
+    <!--
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">I'm all about Ember.js recently</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-01-26T00:00:00+01:00" pubdate data-updated="true">Jan 26<span>th</span>, 2010</time>
+      
+
+
+    </p>
+    -->
+    
+      <!--
+<p class="email-optin-box">
+  Liked this post? <a id="post-email-optin" href="https://my.leadpages.net/leadbox/147fb3573f72a2%3A12ccd2806b46dc/5733935958982656/" target="_blank">Sign up here</a>
+  <script type="text/javascript" src="//my.leadpages.net/leadbox-699.js"></script>
+  to receive articles, screencasts and other Ember goodies regularly to your inbox.
+</p>
+-->
+
+
+
+
+
+
+    
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2010/01/11/my-tech-book-list-for-2009.html" title="Previous Post: My tech book list for 2009">&laquo; My tech book list for 2009</a>
+      
+      
+        <a class="basic-alignment right" href="/2010/01/28/2010-is-the-year-of-the-javascript.html" title="Next Post: 2010 is the year of the Javascript">2010 is the year of the Javascript &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>My Ember 2 book</h1>
+  <div>
+    <a href="http://rockandrollwithemberjs.com/?utm_source=my-blog&utm_medium=sidebar&utm_campaign=rarwe-book" style="text-decoration:none">
+      <img src="/images/rarwe-book.jpg" alt="Rock and Roll with Ember.js" title="Rock and Roll with Ember.js" />
+    </a>
+  </div>
+</section>
+<section>
+  <h1>Contact</h1>
+  <div style="margin-top:10px">
+    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let's start talking.
+  </div>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html">Rock and Roll with Ember.js 2.7 is released</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html">Rock and Roll with Ember.js 2.6 is released</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper.html">Complex Component Design in Ember - Part 4 - Use the hash helper</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/05/03/rock-and-roll-with-ember-dot-js-2-dot-5-is-released.html">Rock and Roll with Ember.js 2.5 is released</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="codementor">
+  <script data-codementor="balint" data-style="button" data-theme="dark" src="https://cdn.codementor.io/d/badge.js"></script>
+</section>
+
+
+<section>
+  
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-show-count="false">Follow @baaz</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Balint Erdi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'codigoergosum';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+<script src="/javascripts/app.js"></script>
+
+
+
+
+</body>
+</html>

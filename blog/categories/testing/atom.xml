@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: testing | Balint Erdi's blog about Ember.js]]></title>
+  <link href="http://balinterdi.com/blog/categories/testing/atom.xml" rel="self"/>
+  <link href="http://balinterdi.com/"/>
+  <updated>2016-09-04T20:57:14+02:00</updated>
+  <id>http://balinterdi.com/</id>
+  <author>
+    <name><![CDATA[I'm all about Ember.js recently]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Using Dependency Injection to Write Better Tests]]></title>
+    <link href="http://balinterdi.com/2016/08/11/using-dependency-injection-to-write-better-tests.html"/>
+    <updated>2016-08-11T09:13:00+02:00</updated>
+    <id>http://balinterdi.com/2016/08/11/using-dependency-injection-to-write-better-tests</id>
+    <content type="html"><![CDATA[<p>Testing is given much emphasis in the Ember.js community, and testing tools have
+showed steady progress to reduce the cost of writing tests of all types.</p>
+
+<p>Lauren Tan wrote <a href="https://emberway.io/component-dependency-injection-in-ember-js-a46a39a5d30a#.45qfbv52x">a great post</a>
+about how Dependency Injection (DI) can be used to decouple a parent component
+from the internals of its child components. One of the gains of doing so is that
+the parent component becomes more focused and thus easier to test.</p>
+
+<p>In this post, I'm doing something similar, although much simpler. I want to show
+you how to use DI in a simple helper function to make it easier to test.</p>
+
+<h3>Just your ordinary, run-of-the-mill function</h3>
+
+<p>Although the helper is an Ember (template) helper, the concepts could be very
+easily transferred to other frameworks, libraries and even languages.</p>
+
+<p>I recently had to modify a <code>normalizeText</code> helper function that looked
+like this:</p>
+
+<p>```js
+// tests/unit/helpers/normalize-text-test.js
+import Ember from 'ember';</p>
+
+<p>export function normalizeText([text]) {
+  let normalizedEOLs = text.trim().replace(/(?:\r\n|\r|\n)/g, '</p><p>');
+  let noEmptyParagraphs = normalizedEOLs.replace(/(<p>&lt;\/p>)/g, '');
+  return Ember.String.htmlSafe("<p>" + noEmptyParagraphs + "</p>");
+}
+```</p>
+
+<p>(I realize the above code does not handle a text value of <code>undefined</code> or <code>null</code>.
+The real code does but I want to keep the code examples to the minimum necessary
+to get my point across.)</p>
+
+<h3>Comparing objects to objects</h3>
+
+<p>Its test was quite simple and straightforward:</p>
+
+<p>```js
+// tests/unit/helpers/normalize-text-test.js
+import { normalizeText } from '../../../helpers/normalize-text';
+import { module, test } from 'qunit';</p>
+
+<p>module('Unit | Helper | normalize-text');</p>
+
+<p>test('it works', function(assert) {
+  let normalizedText = normalizeText(["The brown fox\r\njumped over the quick rabbit.\n"]);
+  assert.equal(normalizedText, "<p>The brown fox</p><p>jumped over the quick rabbit.</p>");
+});
+```</p>
+
+<p>The problem with that test is that we compare two <code>Handlebars.SafeString</code>
+instances (returned by <code>Ember.String.htmlSafe</code>) which are different even if
+the strings they wrap, their value, is the same:</p>
+
+<p><code>
+let s1 = Ember.String.htmlSafe("sid transit gloria mundi");
+let s2 = Ember.String.htmlSafe("sid transit gloria mundi");
+s1 === s2 // =&gt; false
+</code></p>
+
+<p>We're, however, interested in the equality of the strings. If only there was a
+way to replace that pesky <code>Ember.String.htmlSafe</code> call from the call site...</p>
+
+<h3>DI to the rescue</h3>
+
+<p>This is exactly what Dependency Injection can help us do. Instead of hard-coding
+that "sanitizer" function dependency, the function could take it as a parameter
+so that callers could inject it. Usually DI examples use (and thus inject) class
+names or object instances but it is important to realize that the injected param
+could be very "primitive", like a simple function.</p>
+
+<p>So here is how I rewrote the function:</p>
+
+<p>```js
+// app/helpers/normalize-text.js
+import Ember from 'ember';</p>
+
+<p>export function normalizeText([text], params={}) {
+  let { sanitizer=Ember.String.htmlSafe } = params;
+  let normalizedEOLs = text.trim().replace(/(?:\r\n|\r|\n)/g, '</p><p>');
+  let noEmptyParagraphs = normalizedEOLs.replace(/(<p>&lt;\/p>)/g, '');
+  return sanitizer("<p>" + noEmptyParagraphs + "</p>");
+}</p>
+
+<p>export default Ember.Helper.helper(normalizeText);
+```</p>
+
+<p>Notice how easy ES2015 destructuring makes the assignment of the sanitizer
+function:</p>
+
+<p><code>js
+let { sanitizer=Ember.String.htmlSafe } = params;
+</code></p>
+
+<p>If no <code>sanitizer</code> key was present in <code>params</code>, then it will have a value of
+<code>Ember.String.htmlSafe</code>, the default behavior.</p>
+
+<p>The call from the test can now override the default behavior of sending the
+normalized text through <code>Ember.String.htmlSafe</code> by passing in a "no-op"
+sanitizer function:</p>
+
+<p>```js
+// tests/unit/helpers/normalize-text-test.js
+import { normalizeText } from '../../../helpers/normalize-text';
+import { module, test } from 'qunit';</p>
+
+<p>function leaveAsIs(text) {
+  return text;
+}</p>
+
+<p>module('Unit | Helper | normalize-text');</p>
+
+<p>test('it works', function(assert) {
+  let normalizedText = normalizeText(["The brown fox\r\njumped over the quick rabbit.\n"], { sanitizer: leaveAsIs });
+  assert.equal(normalizedText, "<p>The brown fox</p><p>jumped over the quick rabbit.</p>");
+});
+```</p>
+
+<p>We're now comparing simple strings which place nicely with <code>assert.equal</code> (with
+<code>===</code>), and our test now passes.</p>
+
+<h3>Non-testing benefits</h3>
+
+<p>Code modifications introduced for the sake of testing usually also improve the
+non-testing aspect. Here, we made it possible to pass any function before we
+return the normalized text. We could, for example, use this to replace the <code>&lt;p&gt;</code>
+tags with <code>&lt;span&gt;</code>s, if we so wish.</p>
+]]></content>
+  </entry>
+  
+</feed>

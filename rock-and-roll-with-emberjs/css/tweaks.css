@@ -1,0 +1,70 @@
+#sample-chapter-shot {
+  background: url('../images/sample-chapter-shot-1.png') no-repeat center;
+  width: 612px;
+  height: 398px;
+}
+
+.headcontent .text-content.selling-points p {
+  font-size: 18px;
+}
+
+.story {
+  padding: 60px 0;
+}
+
+#about-the-author {
+  border-top: none;
+  border-bottom: none;
+  padding: 60px 0;
+}
+
+#about-the-author .author-bio {
+  margin-top: -20px;
+}
+
+#about-the-author p {
+  font-size: 1.2em;
+}
+
+.unconvinced {
+  background:url('../images/base-section.png');
+  padding:60px 0 120px;
+  margin-top: 30px;
+  box-shadow: 0px -1px 3px -1px #e5e5e5;
+  border-bottom:1px solid #e5e5e5;
+  border-top:1px solid #e5e5e5;
+  color: #404040;
+}
+
+.unconvinced .headline {
+  padding-bottom: 40px;
+}
+
+.unconvinced .content-title .separator-title h2 {
+  background:url('../images/base-section.png');
+}
+
+.unconvinced .perks {
+  font-size: 1.2em;
+}
+
+/* Copied from .bookreview */
+.unconvinced ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.unconvinced li {
+  padding-left: 1.2em;
+  line-height: 50px;
+}
+.unconvinced li:before {
+  content:'\f105';
+  font-family:'FontAwesome';
+  display: inline-block;
+  margin-left: -1.2em;
+  /*same as padding-left set on li*/
+  width: 1.2em;
+  /*same as padding-left set on li*/
+  color: #59ba00;
+}

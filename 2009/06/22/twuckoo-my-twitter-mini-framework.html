@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>twuckoo - my twitter mini framework - Balint Erdi's blog about Ember.js</title>
+  <meta name="author" content="Balint Erdi">
+
+  
+  <meta name="description" content="Ember.js screencasts, articles, best practice tips and more. Check out my blog and stay up-to-date on Ember.js">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://balinterdi.com/2009/06/22/twuckoo-my-twitter-mini-framework.html">
+  <link href="/favicon.ico" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/balinterdi" rel="alternate" title="Balint Erdi's blog about Ember.js" type="application/atom+xml">
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<script src="//load.sumome.com/" data-sumo-site-id="2f7f42a353353cbb47533e4a22a64e9c3ec9211f92d2320ff1130ad6c622ee03" async></script>
+
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-12299794-2', 'balinterdi.com');
+    ga('send', 'pageview');
+  </script>
+
+
+</head>
+
+<body   >
+  <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NNRW2Q"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NNRW2Q');</script>
+<!-- End Google Tag Manager -->
+
+  <header role="banner"><hgroup>
+  <h1><a href="/">I'm all about Ember.js recently</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/balinterdi" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:balinterdi.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul role=main-navigation>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Twuckoo - My Twitter Mini Framework</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-06-22T00:00:00+02:00" pubdate data-updated="true">Jun 22<span>nd</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I am reading Andy Hunt&#8217;s excellent Pragmatic Thinking and Learning book. There is a section about so called &#8220;oblique strategies&#8221;, short, mysterious phrases that exercise your mind and make you look at problems from another perspective (e.g &#8220;repetition is a form of change&#8221;).</p>
+
+<p>The suggested intake was once a day and there was a free application that did just this for Apple computers. However, the application was so outdated that I could no longer run it on my laptop. So, I set out to write that application and after a bit of thinking decided to make a twitter account where I (&#8220;I&#8221; meaning a script that I wrote :) ) would post an oblique strategy each day and then just follow that account. This way, I can also spread the knowledge around.</p>
+
+<p>Thus <a title="Twuckoo" href="http://github.com/balinterdi/twuckoo/tree/master">Twuckoo</a> was born. Twuckoo is a simple program (relying on <a href="http://github.com/cjohansen/twibot/tree/master">twibot</a> for communication with twitter) that lets you periodically post a message on a twitter account. It can fetch the messages from a file, from a database, from the web or whereever you want it to retrieve them from. Its very modular in nature so it delegates the task of getting the next message to twitter and storing the posts to the module. here is currently one generic module, the one that fetches them from a file, and one that fetches them from wikipedia&#8217;s main page. I strongly hope that it is very easy for you to write your own module for your own purpose. Twuckoo aims to follow the &#8220;provide-what&#8217;s-needed-and-then-just-get-out-of-the-way&#8221; principle. Go check out <a href="http://github.com/balinterdi/twuckoo/tree/master">the README</a> for further details.</p>
+
+<p>It&#8217;s quite easy to install and run. You can find an example for the file-fetcher module at <a href="http://twitter.com/daily_oblique">http://twitter.com/daily_oblique</a> and <a href="http://twitter.com/wikipedia_tfa">http://twitter.com/wikipedia_tfa</a> grabs &#8220;Today&#8217;s Featured Article&#8221; from wikipedia and posts the title and the link so you can grow a little wiser each day :)</p>
+
+<p>Since it is modular it&#8217;s very extensible. I kept the API very simple so writing modules should be a piece of cake. Each module has to define the following methods:</p>
+
+<ol>
+<li><strong>load_tweets</strong> Loads the messages that can be twittered.</li>
+<li><strong>next</strong> Gets the next message that will be posted.</li>
+<li><strong>store</strong> Store the tweet after it had been posted.</li>
+</ol>
+
+
+<p>Once more, I encourage you to scan through <a href="http://github.com/balinterdi/twuckoo/">the README</a>, devise your own module and let me know about it. Any feedback is very welcome.</p>
+
+<p><em>Note:</em> For my Hungarian-speaking readers, I gave a <a href="http://docs.google.com/Presentation?id=dccxt9fm_3g8nf5fm5">lightning talk about twuckoo</a> at the latest budapest.rb meetup.</p>
+</div>
+
+
+  <footer>
+    <!--
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">I'm all about Ember.js recently</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-06-22T00:00:00+02:00" pubdate data-updated="true">Jun 22<span>nd</span>, 2009</time>
+      
+
+
+    </p>
+    -->
+    
+      <!--
+<p class="email-optin-box">
+  Liked this post? <a id="post-email-optin" href="https://my.leadpages.net/leadbox/147fb3573f72a2%3A12ccd2806b46dc/5733935958982656/" target="_blank">Sign up here</a>
+  <script type="text/javascript" src="//my.leadpages.net/leadbox-699.js"></script>
+  to receive articles, screencasts and other Ember goodies regularly to your inbox.
+</p>
+-->
+
+
+
+
+
+
+    
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2009/04/27/upstream-or-downstream.html" title="Previous Post: upstream or downstream?">&laquo; upstream or downstream?</a>
+      
+      
+        <a class="basic-alignment right" href="/2009/07/02/installing-ruby-on-a-linode-slice.html" title="Next Post: installing ruby on a linode slice">installing ruby on a linode slice &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>My Ember 2 book</h1>
+  <div>
+    <a href="http://rockandrollwithemberjs.com/?utm_source=my-blog&utm_medium=sidebar&utm_campaign=rarwe-book" style="text-decoration:none">
+      <img src="/images/rarwe-book.jpg" alt="Rock and Roll with Ember.js" title="Rock and Roll with Ember.js" />
+    </a>
+  </div>
+</section>
+<section>
+  <h1>Contact</h1>
+  <div style="margin-top:10px">
+    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let's start talking.
+  </div>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html">Rock and Roll with Ember.js 2.7 is released</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html">Rock and Roll with Ember.js 2.6 is released</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper.html">Complex Component Design in Ember - Part 4 - Use the hash helper</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/05/03/rock-and-roll-with-ember-dot-js-2-dot-5-is-released.html">Rock and Roll with Ember.js 2.5 is released</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="codementor">
+  <script data-codementor="balint" data-style="button" data-theme="dark" src="https://cdn.codementor.io/d/badge.js"></script>
+</section>
+
+
+<section>
+  
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-show-count="false">Follow @baaz</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Balint Erdi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'codigoergosum';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+<script src="/javascripts/app.js"></script>
+
+
+
+
+</body>
+</html>

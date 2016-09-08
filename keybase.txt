@@ -1,0 +1,83 @@
+==================================================================
+https://keybase.io/balint
+--------------------------------------------------------------------
+
+I hereby claim:
+
+* I am an admin of http://balinterdi.com
+* I am balint (https://keybase.io/balint) on keybase.
+* I have a public key with fingerprint 0C1B 0498 F427 03DB 1960
+* C034 66CC 2C76 BF64 5B44
+
+To claim this, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "fingerprint":
+        "0c1b0498f42703db1960c03466cc2c76bf645b44",
+      "host": "keybase.io",
+      "key_id":
+        "66cc2c76bf645b44",
+      "kid":
+        "010197def47abc6f3290a72732297316e0dcd0af275e15e08f87beb0d55d99ce91f90a",
+      "uid":
+        "ee2c7d7b9a571851e2cc9a53b970ca00",
+      "username":
+        "balint"
+    },
+    "service":
+    {
+      "hostname":
+        "balinterdi.com",
+      "protocol":
+        "http:"
+    },
+    "type":
+      "web_service_binding",
+    "version":
+      1
+  },
+  "ctime":
+    1419540403,
+  "expire_in":
+    157680000,
+  "prev":
+    "00c702da4fd7f0ce606bd8bd7c00c60303d8f2f464004d0916e88aed05dc67b7",
+  "seqno":
+    3,
+  "tag":
+    "signature"
+}
+
+with the aforementioned key, yielding the PGP signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v2.0.1
+Comment: https://keybase.io/crypto
+
+yMITAnicbVJrSBRRFN7Nrc0FKyO0SAwmskixO887s5FJRNITIomQYp37GJ20mW12
+dq18EJLaOynpT4UVlAkGUfhHC8weFBZIQj6wLIWFyB9FEWFh3ZH6EXT/3HvO9zic
+c8/jtBRfyK8PVTxofpGV6e97WBj3FV+uulfNIZsc5sLVXAWduQzTKqNO1DEtlwtz
+APMISJpqSAIEIkG8pgAMRElRMBYwVJChSDKSJC6PK7djnoLZID1G802b5VgQMQnL
+/odfMQMAHvAaJNSQoI6wYoiCBnQoQFEQNCjyCgUEE6AbApQpL1OgGipEFAEiy0TT
+MNV4gwmYXXzGjlJWhUCk6TLkVZlnIWZvEWkQYB0AjxijjqUfoIyN9Eqvzdo8juUS
+JqbeALw+/sGpQ8x8bB9g2qhjuza2KxlW7rrRsCd1D0c9bhVFkT8uEWRahI2RCRLU
+iZm2xYV5xsSu6dnyEq/JEpCAmMfRQ1HToRHTY8hQUQE7Xhma8GYDMAQC0SWDQANg
+qgAFERURiBmiAJF9iGoIhqRIAEgEaGxaqqpTAmSCFYgg5/V10LK5MKvk6mXMMmaW
+WbobdyhX29uzN+Dzh3xzZs/yFsEXSl3wdz1SI8HpVRtKc6fOP8Fff5wedwYn7jxb
+Xf92yB9MO3rmtFpV3f0tmYoIP71j+ZoLo5WBeEnV6yPBG7TI6t8ovu2sfb9p+5Y3
+vUVpWeXf088OTl6NaUdeJsq3/twRvDXWvjF39NfEytDNjlOL+7Obx4d7Lq643bK2
+Y/Ljq653waWtS7JLf7QXLpw/ORLoxw0ZNU5y3d262OD8vrbqkgGL//JtRc6l3W2F
+LQ3XNmU2BYrXg/QP042LIg2tI0+ff77+RursOteXPDZgmWvHcPzEWOTKzuHj5qPG
+gv3dacHxbdl7Suae/H7STU7tyukciWSM17c3hWqysvcFPtZ9Sm5e1jo41Tp2f15K
+wW/w4iwp
+=pENa
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/balint
+
+==================================================================
+

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: shell | Balint Erdi's blog about Ember.js]]></title>
+  <link href="http://balinterdi.com/blog/categories/shell/atom.xml" rel="self"/>
+  <link href="http://balinterdi.com/"/>
+  <updated>2016-09-04T20:57:14+02:00</updated>
+  <id>http://balinterdi.com/</id>
+  <author>
+    <name><![CDATA[I'm all about Ember.js recently]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Find and Replace in all files]]></title>
+    <link href="http://balinterdi.com/2013/08/23/find-and-replace-in-all-files.html"/>
+    <updated>2013-08-23T22:01:00+02:00</updated>
+    <id>http://balinterdi.com/2013/08/23/find-and-replace-in-all-files</id>
+    <content type="html"><![CDATA[<p>You want to change a string with another one in some directory in your project.</p>
+
+<p>Here is a one liner to do that:</p>
+
+<p><code>
+for spec_file in $(ag -g _spec.rb spec/); do sed -i.bak 's/john/jane/g' $spec_file; done
+</code></p>
+
+<p>A few caveats:</p>
+
+<ul>
+<li>The match should be case-insensitive. Unfortunately, <code>s/john/jane/gI</code> does not
+work under OSX.</li>
+<li>The -i tells sed to do an in-place replacement. Again, under OSX, however, you
+must give an extension for the backup files. A <code>git clean -f</code> can get rid of
+these in one fell swoop.</li>
+<li>You can use <code>find spec/ -name '_spec.rb'</code> instead of the ag command. <a href="http://geoff.greer.fm/2011/12/27/the-silver-searcher-better-than-ack/">But why
+would you?</a></li>
+</ul>
+
+
+<p>(If you know how to do the replacement with awk, or something similar, please
+tell me in the comments.)</p>
+
+<p>Your text editor might already have a <code>Find &amp; Replace in project</code> functionality.
+But maybe it does not. And surely, the command line version is most flexible.</p>
+]]></content>
+  </entry>
+  
+</feed>

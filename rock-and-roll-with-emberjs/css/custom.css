@@ -1,0 +1,725 @@
+img {
+  max-width: 100%;
+}
+
+a {
+  font-weight: bold
+}
+
+.col-centered {
+  float: none;
+  margin: 0 auto;
+}
+
+/*********************** SECTIONS ***********************/
+
+section {
+  padding: 60px 0;
+  box-shadow: 0px -1px 3px -1px #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+  color: #404040;
+  position: relative;
+}
+
+#pricing-table-testimonials {
+  box-shadow: none;
+}
+
+.package {
+  padding: 5px 0 10px;
+}
+
+.section-white, footer {
+  background: #FFF url('../images/box-shadow.png') top center no-repeat;
+}
+
+.section-gray {
+  border-top: 1px solid #e5e5e5;
+  background: url('../images/base-section.png');
+}
+
+.section-gray + .section-gray {
+  margin-top: 30px;
+}
+
+section.comment {
+  padding-bottom: 100px
+}
+
+.section-gray .marketext, .section-gray .content-title .separator-title h2 {
+  background: url('../images/base-section.png')
+}
+
+.content-title .separator-title h2 {
+  padding-bottom: 6px
+}
+
+.marketext, .selling-points p {
+  font-size: 17px !important;
+  line-height: 1.4em !important;
+}
+
+/*********************** picks ***********************/
+
+body:before {
+  content: '';
+  background: url('../images/pick-cover.png') no-repeat;
+  display: block;
+  height: 118px;
+  width: 101px;
+  background-size: 100%;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 200;
+}
+
+#bonus:before, #about-the-author:before, #new-beginning-tour:before {
+  content: '';
+  display: inline;
+  position: absolute;
+  top: -60px;
+  width: 120px;
+  height: 142px;
+  left: 47%;
+  background-repeat: no-repeat;
+}
+
+#bonus:before {
+  background: url("../images/pick-stay.png") no-repeat;
+  background-size: 80%;
+}
+
+#about-the-author:before {
+  background: url("../images/pick-born.png") no-repeat;
+  background-size: 80%;
+}
+
+/*
+#new-beginning-tour:before {
+  background: url("../images/pick-only.png") no-repeat;
+  background-size: 80%;
+}
+*/
+
+/*********************** testimonials ***********************/
+
+.testimonials .testi p, .testi-name strong {
+  font-size: 16px !important;
+}
+
+/*********************** headcontent ***********************/
+
+.headcontent {
+  padding-bottom: 20px;
+  background: url("../images/rock-star.gif") bottom right no-repeat, url('../images/base-section.png');
+}
+
+.hightlighted {
+  font-family:'Montserrat', sans-serif;
+  font-weight: 700;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  font-size: 24px;
+  margin-bottom: 25px;
+  text-shadow: 0px 2px 1px #fff;
+}
+
+.trusted {
+  font-family: 'Allura', cursive;
+  font-size: 28px;
+  color: #444;
+  text-align: center;
+}
+
+.trusted a {
+  padding-left: 25px;
+}
+
+.trusted a img {
+  opacity: 0.7;
+  height: 35px;
+}
+
+.trusted a:hover img {
+  opacity: 1;
+}
+
+#convinced {
+  font-size: 19px !important;
+  margin-top: 1em;
+}
+
+#convinced a {
+  color: #64a8a6;
+}
+
+.image-content {
+  text-align: center;
+  margin-bottom: 4em;
+}
+
+#sample-chapter-shotd img {
+  max-width: 100%;
+  padding: 1em;
+}
+
+/*********************** signup ***********************/
+
+.signup {
+  margin-top: 1em;
+}
+
+.signup .note {
+  margin-top: 1.5em;
+  display: block;
+}
+
+.note {
+  font-size: 11px;
+}
+
+/*********************** author ***********************/
+
+.author p {
+  font-size: 1.1em;
+}
+
+/*********************** pricing ***********************/
+
+.pricing_table {
+  text-align: center;
+}
+
+.pricing {
+  box-shadow: 0px -1px 3px -1px #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.pricing_table.three .price_block {
+  width: 32%;
+  display: inline-block;
+}
+
+.price_block h3, .price_block.special h3 {
+  padding: 8px 6px;
+}
+
+.price_block .features li {
+  font-size: 13px
+}
+
+.price_block .features li i {
+  padding-right: .5em;
+  font-size: 16px;
+}
+
+.price_block .features li.no-content {
+  height: 3em;
+}
+
+/*********************** concerns ***********************/
+
+#concerns ul {
+  margin-top: 3em;
+  padding: 0;
+  list-style: none;
+}
+
+#concerns ul li {
+  padding-left: 1.8em;
+  padding-bottom: 2em;
+}
+
+#concerns ul li:nth-child(odd) {
+  padding-right: 2em
+}
+
+#concerns ul li:nth-child(even) {
+  padding-left: 2em
+}
+
+#concerns ul li h4:before {
+  content: '\f105 ';
+  font-family: 'FontAwesome';
+  display: inline-block;
+  margin-left: -1.2em;
+  width: 1.2em;
+  color: #59ba00;
+}
+
+/*********************** packages ***********************/
+
+.package {
+  overflow: hidden;
+  position: relative;
+}
+
+.package h2 {
+  font-family: 'Allura', cursive;
+  font-size: 48px;
+  line-height: 1.4em;
+  color: black;
+}
+
+.package h2 span {
+  text-transform: uppercase;
+  color: #111;
+}
+
+.package p {
+  font-size: 14px
+}
+
+.package-intro {
+  text-align: center;
+}
+
+.package span {
+  font-weight: bold;
+}
+
+.package .contains {
+  font-size: 18px;
+  margin: 2em 0;
+}
+
+.package .benefits {
+  margin: 1em auto
+}
+
+.package .benefits .items {
+  margin: 2em auto
+}
+
+.package .benefits .items {
+  text-align: center
+}
+
+.benefits img {
+  height: 120px
+}
+
+.benefits-icon {
+  font-size: 70px;
+  color: #a39381;
+}
+
+.benefits h3 {
+  color: #a39381
+}
+
+.package-buy {
+  text-align: center;
+  margin: 2em auto 1em;
+}
+
+.package-buy a {
+  color: #E9FCE6;
+  text-transform: uppercase;
+}
+
+.package-buy a span {
+  color: #fff
+}
+
+.team-licenses-pointer {
+  text-align: center;
+}
+
+#team-licenses .license-conditions {
+  font-size: 16px;
+  text-align: center;
+  margin: 20px auto;
+}
+
+.package-intro img {
+  width: 725px;
+}
+
+/*********************** detailed-toc ***********************/
+
+.detailed-toc {
+  margin-top: 1em;
+}
+
+.fadeout {
+    position: relative;
+    bottom: 4em;
+    height: 4em;
+    background: -webkit-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: -moz-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: -o-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: -ms-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+}
+
+
+a {
+    color:#0087f1;
+}
+
+.wrap-container {
+  margin:0 auto;
+
+  @media(min-width: 768px) {
+    width: 600px;
+  }
+}
+
+.wrap {
+    position:relative;
+    overflow:hidden;
+    padding:10px;
+}
+
+.gradient {
+    width:100%;
+    height:55px;
+    background: -webkit-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: -moz-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: -o-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: -ms-linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    position:absolute;
+    bottom:0;
+    left:0;
+}
+
+.read-more {
+    background:#fff;
+    color:#333;
+    padding:1em 5em;
+}
+
+.read-more a {
+    font-weight:700;
+    text-decoration:none;
+    position:relative;
+    display: inline-block;
+    padding-left: 1em;
+}
+
+.read-more a:before {
+        position:absolute;
+        font-family: FontAwesome;
+        top:0;
+        left:5px;
+        content: "\f0da";
+    }
+
+.read-more a:hover {
+    color:#000;
+}
+
+/*********************** Announcements ***********************/
+
+.wings-badge-absolute {
+  position: absolute;
+  top: -18px;
+}
+
+.wings-badge-fixed {
+  position:fixed;
+  left: 10px;
+  top: 25px;
+  z-index: 4
+}
+
+.wings-badge img {
+  width: 235px;
+}
+
+.wings-badge-offer {
+  width: 235px;
+  height: 154px;
+  background: url("../images/beggining-tour-offer-2.gif") top center no-repeat;
+  background-size: 100%;
+}
+
+.wings-badge-offer div {
+  color: white;
+  font-weight: bold;
+  padding-right: 5px;
+  font-size: 24px;
+  line-height: 100px;
+  -ms-transform: rotate(-20deg);
+  -webkit-transform: rotate(-20deg);
+  transform: rotate(-20deg);
+}
+
+.announcement {
+  position: relative;
+}
+
+.announcement:before {
+  position: absolute;
+  color: #A71411;
+  border: 1px dotted;
+  padding: 1px 5px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  letter-spacing: -1px;
+  -ms-transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-15deg);
+  content: "New Beginning Tour SPECIAL OFFER 25% OFF";
+  top: 65px;
+  left: 7em;
+}
+
+.ticket-price {
+  font-size: 34px;
+  position: absolute;
+  right: 25%;
+}
+
+.ticket-price span {
+  color: white;
+  text-shadow: 1px 1px 1px #000;
+  font-weight: bold;
+	position: absolute;
+	top: 16%;
+	left: 20%;
+  text-align: center;
+  z-index: 1000;
+  -webkit-transform: rotate(-6deg);
+     -moz-transform: rotate(-6deg);
+      -ms-transform: rotate(-6deg);
+       -o-transform: rotate(-6deg);
+}
+
+
+/*********************** MEDIA QUERIES ***********************/
+
+@media (max-width: 550px) {
+  .pricing_table.three .price_block {
+    width: 100%;
+    margin-bottom: 4em;
+  }
+
+  .price_block .features li.no-content {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .comment .row.top-margin {
+    margin-top: 0;
+  }
+
+  .comment .testi:first-child {
+    margin-top: 3em;
+  }
+
+  .pricing_table h3 {
+    height: 3em;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1200px) {
+  #light-my-fire .rock-and-roll {
+    float: none;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 992px) {
+  #stairway-to-heaven .ticket-price {
+    top: 33%;
+  }
+  #light-my-fire .ticket-price {
+    top: 32%;
+  }
+  #smoke-on-the-water .ticket-price {
+    top: 15%;
+  }
+}
+
+@media (max-width: 992px) {
+  #sample-chapter-shotd {
+    text-align: center;
+  }
+
+  #stability-without-stagnation:before, #about-the-author:before, #concerns:before {
+    left: 43%;
+  }
+
+  #sample-chapter-shotd {
+    text-align: center;
+  }
+
+  .wings-badge {
+    top: -125px;
+    left: 20%;
+  }
+
+
+  .ticket-price {
+    bottom: 1%;
+    left: 22%;
+  }
+  .ticket-price span {
+  	top: 8px;
+  	left: -35px;
+    -webkit-transform: rotate(-45deg);
+       -moz-transform: rotate(-6deg);
+        -ms-transform: rotate(-6deg);
+         -o-transform: rotate(-6deg);
+  }
+  .ticket-price-shape {
+     margin: 50px 0;
+     position: relative;
+     display: block;
+     color: #d10c0c;
+     width: 0px;
+     height: 0px;
+     border-right:  100px solid transparent;
+     border-bottom: 70px  solid #d10c0c;
+     border-left:   100px solid transparent;
+     -moz-transform:    rotate(35deg);
+     -webkit-transform: rotate(35deg);
+     -ms-transform:     rotate(35deg);
+     -o-transform:      rotate(35deg);
+  }
+  .ticket-price-shape:before {
+     border-bottom: 80px solid #d10c0c;
+     border-left: 30px solid transparent;
+     border-right: 30px solid transparent;
+     position: absolute;
+     height: 0;
+     width: 0;
+     top: -45px;
+     left: -65px;
+     display: block;
+     content: '';
+     -webkit-transform: rotate(-35deg);
+     -moz-transform:    rotate(-35deg);
+     -ms-transform:     rotate(-35deg);
+     -o-transform:      rotate(-35deg);
+  }
+  .ticket-price-shape:after {
+     position: absolute;
+     display: block;
+     color: red;
+     top: 3px;
+     left: -105px;
+     width: 0px;
+     height: 0px;
+     border-right: 100px solid transparent;
+     border-bottom: 70px solid #d10c0c;
+     border-left: 100px solid transparent;
+     -webkit-transform: rotate(-70deg);
+     -moz-transform:    rotate(-70deg);
+     -ms-transform:     rotate(-70deg);
+     -o-transform:      rotate(-70deg);
+     content: '';
+  }
+}
+
+
+
+@media (max-width: 700px) {
+
+  .ticket-price {
+    bottom: -14px;
+  }
+
+  .ticket-price span {
+     font-size: 18px;
+     padding-left: 19px;
+     padding-top: 7px;
+  }
+
+  .ticket-price-shape {
+     border-right:  50px solid transparent;
+     border-bottom: 35px  solid #d10c0c;
+     border-left:   50px solid transparent;
+  }
+  .ticket-price-shape:before {
+     border-bottom: 40px solid #d10c0c;
+     border-left: 15px solid transparent;
+     border-right: 15px solid transparent;
+     top: -22px;
+     left: -32px;
+  }
+  .ticket-price-shape:after {
+     top: 3px;
+     left: -52px;
+     width: 0px;
+     height: 0px;
+     border-right: 50px solid transparent;
+     border-bottom: 35px solid #d10c0c;
+     border-left: 50px solid transparent;
+  }
+
+}
+
+
+@media (min-width: 1200px) {
+  .pricing_table.three .price_block {
+    width: 25%;
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  .package:after {
+    content: '';
+    display: inline;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    height: 100%;
+  }
+
+  #stairway-to-heaven:after {
+    background: url("../images/guitar-stairway.jpg") no-repeat;
+    width: 110px;
+  }
+
+  #light-my-fire:after {
+    background: url("../images/guitar-fire.jpg") no-repeat;
+    width: 79px;
+  }
+
+  #smoke-on-the-water:after {
+    background: url("../images/guitar-smoke.jpg") no-repeat;
+    width: 79px;
+  }
+
+}
+
+
+
+
+

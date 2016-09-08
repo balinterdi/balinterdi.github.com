@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ruby | Balint Erdi's blog about Ember.js]]></title>
+  <link href="http://balinterdi.com/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://balinterdi.com/"/>
+  <updated>2016-09-04T20:57:14+02:00</updated>
+  <id>http://balinterdi.com/</id>
+  <author>
+    <name><![CDATA[I'm all about Ember.js recently]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Install Ruby 2.0.0 with rbenv (ruby-build) on Mountain Lion]]></title>
+    <link href="http://balinterdi.com/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion.html"/>
+    <updated>2013-06-02T22:58:00+02:00</updated>
+    <id>http://balinterdi.com/2013/06/02/install-ruby-2-dot-0-0-with-rbenv-ruby-build-on-mountain-lion</id>
+    <content type="html"><![CDATA[<ol>
+<li>You need to <a href="http://www.ruby-lang.org/en/news/2013/05/14/ruby-2-0-0-p195-is-released/">download the source</a>, or use <a href="https://github.com/sstephenson/ruby-build">ruby-build</a> to install it for you. I will subsequently suppose the latter.</li>
+<li>You need to configure it, compile it and copy files to the proper location:</li>
+</ol>
+
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>RUBY_CONFIGURE_OPTS=--with-openssl-dir=&lt;code>brew --prefix openssl&lt;/code> CONFIGURE_OPTS=--with-gcc=clang rbenv install 2.0.0-p195</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>You can see I installed openssl through homebrew. The ruby-build recipe
+downloads an openssl lib for you so only use that if you have it
+installed as I do.</p>
+
+<p>I got the clang compiler frontend through <a href="https://developer.apple.com">Apple's Command Line
+Tools</a> so I'm not sure that's needed if you have the whole Xcode
+package.</p>
+
+<p>It really feels faster -maybe due to the improved GC-, rails starts >2
+as fast as compared to plain 1.9.3, using <a href="https://github.com/jonleighton/spring">spring</a> in both cases.</p>
+]]></content>
+  </entry>
+  
+</feed>

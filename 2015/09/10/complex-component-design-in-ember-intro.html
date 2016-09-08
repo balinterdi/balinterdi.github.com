@@ -1,0 +1,373 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Complex Component Design in Ember.js - Intro - Balint Erdi's blog about Ember.js</title>
+  <meta name="author" content="Balint Erdi">
+
+  
+  <meta name="description" content="Ember.js screencasts, articles, best practice tips and more. Check out my blog and stay up-to-date on Ember.js">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html">
+  <link href="/favicon.ico" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/balinterdi" rel="alternate" title="Balint Erdi's blog about Ember.js" type="application/atom+xml">
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<script src="//load.sumome.com/" data-sumo-site-id="2f7f42a353353cbb47533e4a22a64e9c3ec9211f92d2320ff1130ad6c622ee03" async></script>
+
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-12299794-2', 'balinterdi.com');
+    ga('send', 'pageview');
+  </script>
+
+
+</head>
+
+<body   >
+  <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NNRW2Q"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NNRW2Q');</script>
+<!-- End Google Tag Manager -->
+
+  <header role="banner"><hgroup>
+  <h1><a href="/">I'm all about Ember.js recently</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/balinterdi" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:balinterdi.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul role=main-navigation>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Complex Component Design in Ember.js - Intro</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-09-10T11:07:00+02:00" pubdate data-updated="true">Sep 10<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><em>This is the intro of the Complex Component Design series. Here are the posts in the series:</em></p>
+
+<ul>
+<li><strong>Intro</strong></li>
+<li><a href="/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html"><strong>Part 1 - Analyzing User Flows</strong></a></li>
+<li><a href="2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html"><strong>Part 2 - Towards a more reactive component</strong></a></li>
+<li><a href="/2016/04/08/complex-component-design-in-ember-replace-the-observer.html"><strong>Part 3 - Remove the observer</strong></a></li>
+<li><a href="/2016-05-26-complex-component-design-in-ember-part-4-use-the-hash-helper.html"><strong>Part 4 - Use the hash helper</strong></a></li>
+</ul>
+
+
+<hr />
+
+<p>The title would probably better be &#8220;Somewhat Complex Component Design in Ember.js&#8221;
+but any title including &#8216;Somewhat&#8217; rules out pompousness. I therefore don&#8217;t
+claim that the series of blog posts I intend to start here will represent the
+pinnacle of component design in Ember. There definitely are and definitely will
+be more complex component structures and scenarios.</p>
+
+<p>The component developed in the series is one that autocompletes as the user
+starts to write the input and allows selecting from a fixed set of options.
+Nothing extraordinary but complex enough so that the design/interaction
+principles can be applied and explained while developing the component.</p>
+
+<p>Important disclaimer: I am not an expert on component design (which, it seems
+to me, is quite a complex topic). I got intrigued by it thanks to <a href="https://twitter.com/ryanflorence">Ryan Florence</a>
+and his talks and learned most of the basics from him. My choice of component
+probably also has to do something with Ryan. He developed the ic-autocomplete
+component from which I took several ideas, sometimes simply copying the
+implementation.</p>
+
+<h3>Rationale</h3>
+
+<p>So you probably ask: why reinvent the wheel? Why develop something that is
+already done and not something new?</p>
+
+<p>First of all, I (and science says most of us) learn best by doing. I wanted to
+use an example where I already have a sample implementation but also understand
+why the original implementation did things as it did and see whether I can make
+the component simpler or more robust. I wanted to face the problems, to feel
+the pain of doing things a certain way, and find solutions for typical,
+recurring problems.</p>
+
+<p>It&#8217;s also important to remember that when Ryan developed their autocomplete
+component, there were no block parameters, no closure actions and no direct
+attribute bindings. One still had to resort to observers in several cases.
+Two-way bindings were still in, and the de-facto way of communication between
+pieces of a component structure.</p>
+
+<p>Ember has come a long way since then and its components converged toward those
+of React in its reactive, &#8220;rerender everything&#8221; approach. Potentially some of
+the ideas explained in the series can be applied to React and other libraries,
+too, and thus might prove useful to more people.</p>
+
+<h3>So many words, so little code</h3>
+
+<p>To have something (almost) tangible in this first intro post, too, let me show
+you how one would interact with the finished(?) component. If you have read my
+<a href="/2014/06/26/ember-gotcha-controllers-are-singletons.html">earlier</a> <a href="/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria.html">posts</a> or <a href="http://rockandrollwithemberjs.com">my book</a>, it will come as no surprise that I use it here to
+select a great musician from a defined set of them:</p>
+
+<p><img src="/images/posts/complex-component-design-ember/ember-autocomplete-demo.gif" alt="Selecting an
+artist" /></p>
+
+<p>This short intro and the demo have hopefully whetted your appetite and you&#8217;ll
+join me for the next part of the series:</p>
+</div>
+
+
+  <footer>
+    <!--
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">I'm all about Ember.js recently</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-09-10T11:07:00+02:00" pubdate data-updated="true">Sep 10<span>th</span>, 2015</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ember-js/'>ember.js</a>
+  
+</span>
+
+
+    </p>
+    -->
+    
+      <!--
+<p class="email-optin-box">
+  Liked this post? <a id="post-email-optin" href="https://my.leadpages.net/leadbox/147fb3573f72a2%3A12ccd2806b46dc/5733935958982656/" target="_blank">Sign up here</a>
+  <script type="text/javascript" src="//my.leadpages.net/leadbox-699.js"></script>
+  to receive articles, screencasts and other Ember goodies regularly to your inbox.
+</p>
+-->
+
+
+
+  <script src="https://app.convertkit.com/landing_pages/3636.js"></script>
+
+
+
+
+    
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html" title="Previous Post: How to do a select (dropdown) in Ember 2.0?">&laquo; How to do a select (dropdown) in Ember 2.0?</a>
+      
+      
+        <a class="basic-alignment right" href="/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out.html" title="Next Post: Rock and Roll With Ember.js v1.13.9 Is Out">Rock and Roll With Ember.js v1.13.9 Is Out &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>My Ember 2 book</h1>
+  <div>
+    <a href="http://rockandrollwithemberjs.com/?utm_source=my-blog&utm_medium=sidebar&utm_campaign=rarwe-book" style="text-decoration:none">
+      <img src="/images/rarwe-book.jpg" alt="Rock and Roll with Ember.js" title="Rock and Roll with Ember.js" />
+    </a>
+  </div>
+</section>
+<section>
+  <h1>Contact</h1>
+  <div style="margin-top:10px">
+    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let's start talking.
+  </div>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html">Rock and Roll with Ember.js 2.7 is released</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html">Rock and Roll with Ember.js 2.6 is released</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper.html">Complex Component Design in Ember - Part 4 - Use the hash helper</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/05/03/rock-and-roll-with-ember-dot-js-2-dot-5-is-released.html">Rock and Roll with Ember.js 2.5 is released</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="codementor">
+  <script data-codementor="balint" data-style="button" data-theme="dark" src="https://cdn.codementor.io/d/badge.js"></script>
+</section>
+
+
+<section>
+  
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-show-count="false">Follow @baaz</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Balint Erdi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'codigoergosum';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html';
+        var disqus_url = 'http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+<script src="/javascripts/app.js"></script>
+
+
+
+
+</body>
+</html>

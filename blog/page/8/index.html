@@ -1,0 +1,871 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Balint Erdi's blog about Ember.js</title>
+  <meta name="author" content="Balint Erdi">
+
+  
+  <meta name="description" content="Ember.js screencasts, articles, best practice tips and more. Check out my blog and stay up-to-date on Ember.js">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://balinterdi.com/blog/page/8/index.html">
+  <link href="/favicon.ico" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/balinterdi" rel="alternate" title="Balint Erdi's blog about Ember.js" type="application/atom+xml">
+  <!--Fonts from Google's Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css'>
+<script src="//load.sumome.com/" data-sumo-site-id="2f7f42a353353cbb47533e4a22a64e9c3ec9211f92d2320ff1130ad6c622ee03" async></script>
+
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-12299794-2', 'balinterdi.com');
+    ga('send', 'pageview');
+  </script>
+
+
+</head>
+
+<body   >
+  <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NNRW2Q"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NNRW2Q');</script>
+<!-- End Google Tag Manager -->
+
+  <header role="banner"><hgroup>
+  <h1><a href="/">I'm all about Ember.js recently</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/balinterdi" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:balinterdi.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul role=main-navigation>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/10/20/rubygems-under-the-hood-introduction.html">RubyGems Under the Hood: Introduction</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-10-20T00:00:00+02:00" pubdate data-updated="true">Oct 20<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I am not sure about you, but one thing I keep bumping into while developing ruby applications is rubygem version conflicts. If you have ever come across &#8220;can&#8217;t activate activesupport (= 2.3.4, runtime) for [], already activated activesupport-2.3.3 for []&#8221; type of errors, you might be sympathetic to the cause.</p>
+
+<p>Since <a href="http://rubygems.org/">rubygems</a> was and is being written by some <a href="http://chadfowler.com">excellent</a> <a href="http://richkilmer.blogs.com/">Ruby</a> <a href="http://onestepback.org/">minds</a> I knew the fault probably lies with me and not with the tool. Being a <a href="http://manifesto.softwarecraftsmanship.org/">motivated and proud craftsman</a> I felt like I needed to know my tools and rubygems is probably the number one tool most of us Ruby developers use on a daily basis.</p>
+
+<p>I intend to write a mini-series of Rubygems posts. A post will be added to the series when I explore some murky corner of rubygems inner mechanics. Some of the time this will come from a particular problem I come across while coding while on other occasions I might just look into the source code and try to understand what a particular piece of code does.</p>
+
+<p>Now, I realized that when I read on a blog: &#8220;I will go into more detail about X in a forthcoming post&#8221;, it is the surest sign that you will never read about X again. At least not on that very blog. And I am not saying this in a mean way, I think it is very natural for our plans to change (&#8220;evolve&#8221; may sound better) even on the short term. So I am aiming low and hoping to give you more than you expected. (Notice I wrote &#8220;mini-series&#8221; which may just mean a couple of posts.)</p>
+
+<h2>Do not set your expectations high</h2>
+
+
+<p>I am absolutely not a Rubygems expert so please do not be fooled by the &#8220;under the hood&#8221; title. This will not be commensurate to <a href="http://weblog.jamisbuck.org/2006/10/2/under-the-hood-rails-routing-dsl">Jamis Buck&#8217;s series on Rails routing</a>. I do not -yet?- have a deep insight and I am not even a contributor to Rubygems.</p>
+
+<p>The forthcoming :) series is just a humble attempt to gain an understanding of a very important part of the Ruby arsenal. I hope to understand it better by explaining to you how it works and I hope you will understand it better by reading my explanation. And last, but not least, I hope we&#8217;ll both spend less time debugging those tricky issues.</p>
+
+<p>Having said that, I encourage you to participate in the series. Tell me about a particular problem you had with Rubygems. Correct me if I am wrong. Point me to an article where all this is already explained, and much better. Give feedback so this might evolve to be a discussion rather than an academic lecture. Thank you.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/09/25/cucumber-meets-selenium-meets-integrity.html">Cucumber Meets Selenium Meets Integrity</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-09-25T00:00:00+02:00" pubdate data-updated="true">Sep 25<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="http://martinfowler.com/articles/continuousIntegration.html" title="Continuous Integration">Continuous Integration</a> (CI) is a basic building block of any project done in TDD style. In brief, having a CI server properly set up guarantees that developers can rest assured that the application passes all its tests and can thus be deployed at any moment. It does this by sending some kind of a warning if something is broken so it can be fixed immediately.</p>
+
+<p>Now I noticed that if a CI server is not in the mix right from the beginning of project, chances are it will never be, that was one of the first things I installed on a new Rails project. My server of choice is <a href="http://integrityapp.com">Integrity</a> mostly because it is so easy to set up and quite straightforward to use.</p>
+
+<p>Ok, so next we need some tests that Integrity will run at each commit and make sure the app can still be built. As a high-level acceptance test framework, I use <a href="http://cukes.info">Cucumber</a>, which plays very nicely with <a href="http://seleniumhq.org">Selenium</a> for automated in-browser testing. Since nowadays even the most basic web application will have some amount of client-side scripting code (that is, javascript) if you really want to test the features of your application you&#8217;ll need Selenium tests.</p>
+
+<p>That&#8217;s when matters get a bit more complicated when it comes to integrating these with the Integrity server. Why? Because on the server you usually don&#8217;t have the &#8220;desktop environment&#8221; which is available on the machine you do the development on. By default, you don&#8217;t run a desktop manager and have a graphic display on a server. A tool called <a href="http://linux.about.com/cs/linux101/g/xvfb.htm">xvfb</a> comes into a picture that emulate a dumb framebuffer so you can still programs that need a graphic display.</p>
+
+<p>To have some practical guidance, here&#8217;s what I did on an Ubuntu server to enable all of the above:</p>
+
+<p>Install java since Selenium runs in the JVM:</p>
+
+<div>
+  <pre><code class='bash'>apt-get install java-common sun-java6-jre</code></pre>
+</div>
+
+
+<p>Install firefox since that&#8217;s what Selenium runs by default and that&#8217;s a very good choice.</p>
+
+<div>
+  <pre><code class='bash'>apt-get install apt-get install firefox</code></pre>
+</div>
+
+
+<p>Install X since that&#8217;s what the xvfb launches and Xvfb itself.</p>
+
+<div>
+  <pre><code class='bash'>apt-get install xorg xserver-xorg
+apt-get install xvfb</code></pre>
+</div>
+
+
+<p>Next I found a <a href="http://wiki.openqa.org/display/SRC/Selenium-RC+and+Continuous+Integration">wiki</a> that describes how to launch the Xvfb correctly. Log into the server and do:</p>
+
+<div>
+  <pre><code class='bash'>startx -- `which Xvfb` :1 -screen 0 1024x768x24 2&gt;&amp;1 &gt;/dev/null &amp;</code></pre>
+</div>
+
+
+<p>So Xvfb will run on the DISPLAY :1. So far so good. But something was still not quite right. When integrity launched the test suite that included some Cucumber-Selenium tests I received an error message basically saying that no browser sessions could be started. And the solution to that, in fact, is where this post wants to get at.</p>
+
+<p>After a decent amount of head-scratching and code mining I realized that the Selenium server starts the browser on the same display where the server itself (the jar file) runs. I have found the relevant code that assembles the command that starts the Selenium server in the selenium-client gem and figured it was not meant to be run in graphic hardware-less environment since I saw no options to define which display it should run on. So as an <a href="http://github.com/balinterdi/selenium-client/commit/37094df174b5c52cb68d041f7dc940e501b3e438">easy hack I added the hardcoded &#8220;DISPLAY=:1&#8221; before it</a> and crossed my fingers.</p>
+
+<p>Bingo, it worked and I had a green build again! What&#8217;s more surprising is that it still runs perfectly on my Macbook so it seems to run in (some) graphical environments, too. It seems a bit strange to me to have found so little information on this subject since Rails, Cucumber, Selenium and CI are all en vogue so it is possible that I missed something obvious and there is an easier way to do all this. I am very eager to hear how others set up their CI to run automated-browser features. Do you use another tool, not Selenium? Do you use a CI server with a monitor?</p>
+
+<p>Anyway, I certainly hope my hackish solution will prove to be useful for some of you TDD-minded developers out there who run their CI on a simple &lt;name of your favorite provider here&gt; slice.</p>
+
+<p><strong>UPDATE:</strong> As <a href="http://lackac.hu">a fellow developer</a> and <a href="http://github.com/ph7">the author of the selenium-client gem himself</a> pointed out library code is not the place for enviroment specific settings. Rather, it should go into the application&#8217;s code. I guess that leaves the choice of putting it into the code of the application you are building or the configuration of the CI server. This latter seemed more clean to me so I put the following line into config.ru in Integrity&#8217;s directory:</p>
+
+<div>
+  <pre><code class='bash'>env[&quot;DISPLAY&quot;] = &quot;:1&quot;</code></pre>
+</div>
+
+
+<p>There is still something left, though. When integrity -or, to be precise, the selenium process that was launched from integrity- wants to access display :1, it will be denied. You need to explicitly enable local connections by putting &#8220;localhost&#8221; in a file:</p>
+
+<div>
+  <pre><code class='bash'>echo &#39;localhost&#39; &gt;/etc/X99.cfg</code></pre>
+</div>
+
+
+<p>, and then using that file as the access records list when you launch the server:</p>
+
+<div>
+  <pre><code class='bash'>xinit -- `which Xvfb` :1 -screen 0 1024x768x24 -auth /etc/X99.cfg 2&gt;&amp;1 &gt;/dev/null &amp;</code></pre>
+</div>
+
+
+<p>(Note that I launch xinit and not startx as before. startx somehow adds another -auth option which messes things up)</p>
+
+<p>There, that should do it. It works and there is no code where it does not belong.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/07/14/a-prime-example-of-not-eating-your-own-dog-food.html">A Prime Example of Not Eating Your Own Dog Food</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-07-14T00:00:00+02:00" pubdate data-updated="true">Jul 14<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I realized how 20th century (plus boring and error-prone) it is to write one&#8217;s invoices by hand. So I went looking for an invoicing application. My expectations were quite low: I wanted one which can be used from my MacBook, has some basic functions that cut down on typing (e.g a client &#8220;database&#8221;), has a decent design and UI, can make out invoices in different currencies and did not cost more than ~$100.</p>
+
+<p>It seemed like I have found <a href="http://www.native.hu">one</a>, which, though it had several minor bugs, seemed acceptable, so I purchased the Basic version. Everything went reasonably well until I had to make out my first invoice in euros. It turned out that the Basic version can only make invoices in Hungarian forints in spite of having a couple of other functionalities (e.g set the VAT rate to 0% automatically on invoices made out to EU companies) which made me think it could make it in euros, too.</p>
+
+<p>Ok, so accounting hell got me again. I sighed and asked the <a href="http://www.awasoft.hu/">company</a> how much it would cost to have this funcionality. I was informed I had to buy the upgrade to the Business version which costs ~$120 more, roughly the double of the original price I paid! That was too much to take, so I went looking for another invoicing application. After all, it should not be an insurmountable task to write such an app, I murmured to myself.</p>
+
+<p>I did find a <a href="http://lessaccounting.com">couple of</a> <a href="http://billingsapp.com">very good</a> applications which even overdo what I want them to accomplish. However, the Hungarian homologue of the IRS basically shuts out any foreign competitors by regulating very heavily which conditions must be fulfilled by an invoicing application for a Hungarian company to be able to use it. Bummer.</p>
+
+<p>&#8220;There is still a glimmer of hope.&#8221; - I thought. I checked the Hungarian scene still thinking it could not be that difficult to meet my expectations. Well, apparently I was wrong. The <a href="http://szamlazz.hu">ones</a> <a href="http://cipo.hu">I</a> <a href="https://symbion.eu/">found</a> are either overcomplicated to use, look like home pages in the 80s or are way too expensive. Sometimes all of these. So I put off the challenge of finding an acceptable piece of software and got back of writing invoices manually.</p>
+
+<p>Now you might wonder where <a href="http://en.wikipedia.org/wiki/Eating_one%27s_own_dog_food">the dog food</a> is in the story. Well, today I received the invoice from the company of my purchase of the Basic version of the application. It was written manually on an invoice sheet :) That&#8217;s tantamount of Steve Jobs using a PC with Windows Vista.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/07/12/john-doe-is-dull-the-importance-of-choosing-good-user-names-in-tests.html">John Doe Is Dull: The Importance of Choosing Good User Names in Tests</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-07-12T00:00:00+02:00" pubdate data-updated="true">Jul 12<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>We, developers, have to come up with user names all the time. In this glorious, pioneer era of TDD, more than ever we have to not only enter them into text fields but write them in test files that are part of the code and thus are clearly visible and permanent.</p>
+
+<p>So it is important to give good names, but what is a good name like? I am not thinking about the semantics of the name (whether it has accented letters, or if it has two or three parts, etc.) but look at them from a very personal point of view: whether it makes you, the programmer, satisfied with your choice of names or bored with repeating the same old names you used in other projects and even in those projects, you had copied them from somewhere.</p>
+
+<p>So when writing your first test where a user is needed, stop for a moment and imagine a world which you like and which is amusing in the context of your application&#8217;s domain (like <a href="http://www.youtube.com/watch?v=F2kAnTZBnTg">philosophers playing soccer</a>, Luddites attending a technology conference, etc.). Pick some names and let the feeling that you have created something instead of just using old, boring names fill you with contentment. Whenever you need an other name, take one from your world. If you need further data (e.g date of birth) about your test users you can even do a little bit of research.</p>
+
+<p>Though investing energy in this may reduce the time you spend writing code, compared to all the hours you put into a project, it is negligible. Nurturing this &#8220;subculture&#8221; in your tests can be very entertaining so you have a good time developing and are less prone to boredom. I think it pays off. We, Ruby programmers all know how important it is to be happy while programming and the effect it has on our productivity.</p>
+
+<p>And besides, do you know of anyone who is called John Doe?</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/07/10/the-hashtag-hrt-retweet-bot-gemified.html">The Hashtag (HRT) Retweet Bot Gemified</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-07-10T00:00:00+02:00" pubdate data-updated="true">Jul 10<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A very simple twitter bot that retweeted everything that was tagged by a certain tag was put together for Scotland on Rails &#8216;09. Then, <a href="http://www.jaimeiniesta.com/">Jaime Iniesta</a> adapted it for Euruko &#8216;09. I then forked from his repository, made a few simplifications and minor improvements and DRY-d its configuration.</p>
+
+<p>Maybe most importantly I then turned it into [a gem][hashtag_retweet_home] so that configuration files (including the bot&#8217;s which has the credentials for the twitter account) do not have to be included in the repository.</p>
+
+<p>I also set up <a href="http://twitter.com/budapestrb">a twitter account for the budapest.rb</a> group where an instance of the HRT bot will post any tweets that have been tagged with #budapestrb. So, my fellow budapest.rb programmers, if you have anything to say about the budapest.rb, just make sure you include the #budapestrb tag in your tweet and watch the HRT bot repeat it.</p>
+
+<p>To launch your own hashtag retweet bot, just follow the instructions in <a href="http://github.com/balinterdi/hashtag_retweet_bot">the README</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/07/03/pragmatic-thinking-and-learning-on-twitter.html">Pragmatic Thinking and Learning on Twitter</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-07-03T00:00:00+02:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Some of you may be aware of my grandiose plans with my twitter mini-framework named <a href="http://bucionrails.com/2009/06/22/twuckoo/">twuckoo</a>. For my part I am constantly thinking about -hopefully reasonable- ways that it could be used for the better of mankind :)</p>
+
+<p>The other part of the story is my enthusiasm with Pragmatic Programmers books. I have recently started <a href="http://pragprog.com/titles/ahptl/pragmatic-thinking-and-learning">Pragmatic Thinking and Learning</a> by Andy Hunt which is also a very good one and found the familiar &#8220;resuming card&#8221; at the end. This card sums up the wisdom of the book in short phrases just so that you can recall what you read quickly. It is a great idea and can be found in other PP books, too.</p>
+
+<p>So I asked at a PP email address which seemed to be closest to copyright questions whether I have the right to do this. To my surprise, it was the author himself, <a href="http://blog.toolshed.com/">Andy Hunt</a>, who answered me and kindly gave me permission for the book in question. (Once again, thank you, Andy!)</p>
+
+<p>So there you have it, <a href="https://twitter.com/pragthinklearn">a twitter account that will serve you an advice each day</a> just so that you can &#8220;refactor your wetware&#8221; (the subtitle of the book) and hopefully help you be a better craftsman.</p>
+
+<p>And now, my little twuckoo, on to world domination!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/07/02/installing-ruby-on-a-linode-slice.html">Installing Ruby on a Linode Slice</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-07-02T00:00:00+02:00" pubdate data-updated="true">Jul 2<span>nd</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>To be able to experiment freely and find a store for my <a href="http://bucionrails.com/2009/06/22/twuckoo/">twuckoos</a> and other goodies I have recently purchased a Linode 360 slice and had Ubuntu 9.04 installed on it. Next thing was setting up ruby (ruby 1.8.6, to be precise).</p>
+
+<p>When deciding about how to install ruby, in part I wanted to have flexibility but mostly I wanted to feel like I am a professional sysadmin for some hours so I balked at pre-built ruby packages and went with the roll-your-own approach. I&#8217;ll summarize below the process and some pitfalls I encountered so it might help someone.</p>
+
+<h2>Some basic tools</h2>
+
+
+<p>First, you will need wget (or curl) to download the sources you will need along the way, so:</p>
+
+<pre lang="bash">$ sudo apt-get install wget</pre>
+
+
+<p>Also, before you stare dumbly at the screen (like I did) wondering why can&#8217;t the stupid machine run make when the Makefile is clearly there in the directory , don&#8217;t forget to install make:</p>
+
+<pre lang="bash">$ sudo apt-get install make</pre>
+
+
+<h2>Updating the package repos</h2>
+
+
+<p>Plus, since we&#8217;ll be installing packages that are found in the &#8220;universe&#8221; namespace (or whatever it is called) you should uncomment the below two lines in /etc/apt/sources.list :</p>
+
+<pre lang="bash">deb http://us.archive.ubuntu.com/ubuntu/ jaunty universe
+deb-src http://us.archive.ubuntu.com/ubuntu/ jaunty universe</pre>
+
+
+<p>&#8230; and then update your package index:</p>
+
+<pre lang="bash">$ sudo apt-get update</pre>
+
+
+<h2>Installing some packages ruby needs</h2>
+
+
+<p>Before we download and build ruby, however, it is recommendable to have the zlib and openssl libraries so ruby can already bind to them. This is one of the things that is a lot easier to see with hindsight, but here I am, blogging this to you:</p>
+
+<pre lang="bash">$ sudo apt-get install zlib1g zlib1g-dev zlibc
+$ sudo apt-get install openssl</pre>
+
+
+<p>It turns out from <a href="http://www.ruby-forum.com/topic/71774">this thread</a>, that the zlib bindings are part of ruby since 1.8.6 so you will not need the libzlib-ruby package.</p>
+
+<p>Now, on to ruby itself.</p>
+
+<h2>Ruby &amp; Rubygems</h2>
+
+
+<pre lang="bash">$ wget ftp://ftp.ruby-lang.org/pub/ruby/ruby-1.8.6-p369.tar.bz2
+(untar and cd to new directory)
+$ ./configure
+configure: error: no acceptable C compiler found in $PATH</pre>
+
+
+<p>Piece of cake:</p>
+
+<pre lang="bash">$ sudo apt-get install gcc
+$ ./configure
+configure: error: in `/home/balint/ruby-1.8.6-p369':
+configure: error: C compiler cannot create executables
+See `config.log' for more details.</pre>
+
+
+<p>A bit harder, but I have quickly found the answer <a href="http://ubuntuforums.org/showthread.php?t=17033">here</a>, and then did:</p>
+
+<pre lang="bash">$ sudo apt-get install libc6-dev g++
+$ ./configure
+$ make
+$ sudo make install
+$ ruby -e "p 'hello from linode slice'"
+"hello from linode slice"</pre>
+
+
+<p>Rolling!</p>
+
+<p>However, we all know that a ruby installation without gems is a toothless tiger (lion?) so we&#8217;ll install rubygems last, first downloading the source, and then installing it:</p>
+
+<pre lang="bash">$ wget http://rubyforge.org/frs/download.php/57643/rubygems-1.3.4.tgz
+(untar and cd to new directory)
+$ sudo ruby setup.rb</pre>
+
+
+<p>If you want to use gems stored on github (and you probably do) it is convenient to add the gem github repository to your gem sources:</p>
+
+<pre lang="bash">$ gem source -a http://gems.github.com
+$ sudo gem install balinterdi-twuckoo</pre>
+
+
+<p>Ok, that&#8217;s all. I hope you have found this useful.</p>
+
+<hr /><em>Note:</em>
+
+
+<p>If you receive an error message similar to the following when trying to install a gem:</p>
+
+<pre lang="bash">/usr/local/lib/ruby/site_ruby/1.8/rubygems/custom_require.rb:31:in `gem_original_require': no such file to load -- zlib (LoadError)</pre>
+
+
+<p>Then you need to install the appropriate lib package and recompile ruby. Go to the directory where you unpacked the ruby source to and do:</p>
+
+<pre lang="bash">$ make clean
+$ make
+$ sudo make install</pre>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/06/22/twuckoo-my-twitter-mini-framework.html">Twuckoo - My Twitter Mini Framework</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-06-22T00:00:00+02:00" pubdate data-updated="true">Jun 22<span>nd</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I am reading Andy Hunt&#8217;s excellent Pragmatic Thinking and Learning book. There is a section about so called &#8220;oblique strategies&#8221;, short, mysterious phrases that exercise your mind and make you look at problems from another perspective (e.g &#8220;repetition is a form of change&#8221;).</p>
+
+<p>The suggested intake was once a day and there was a free application that did just this for Apple computers. However, the application was so outdated that I could no longer run it on my laptop. So, I set out to write that application and after a bit of thinking decided to make a twitter account where I (&#8220;I&#8221; meaning a script that I wrote :) ) would post an oblique strategy each day and then just follow that account. This way, I can also spread the knowledge around.</p>
+
+<p>Thus <a title="Twuckoo" href="http://github.com/balinterdi/twuckoo/tree/master">Twuckoo</a> was born. Twuckoo is a simple program (relying on <a href="http://github.com/cjohansen/twibot/tree/master">twibot</a> for communication with twitter) that lets you periodically post a message on a twitter account. It can fetch the messages from a file, from a database, from the web or whereever you want it to retrieve them from. Its very modular in nature so it delegates the task of getting the next message to twitter and storing the posts to the module. here is currently one generic module, the one that fetches them from a file, and one that fetches them from wikipedia&#8217;s main page. I strongly hope that it is very easy for you to write your own module for your own purpose. Twuckoo aims to follow the &#8220;provide-what&#8217;s-needed-and-then-just-get-out-of-the-way&#8221; principle. Go check out <a href="http://github.com/balinterdi/twuckoo/tree/master">the README</a> for further details.</p>
+
+<p>It&#8217;s quite easy to install and run. You can find an example for the file-fetcher module at <a href="http://twitter.com/daily_oblique">http://twitter.com/daily_oblique</a> and <a href="http://twitter.com/wikipedia_tfa">http://twitter.com/wikipedia_tfa</a> grabs &#8220;Today&#8217;s Featured Article&#8221; from wikipedia and posts the title and the link so you can grow a little wiser each day :)</p>
+
+<p>Since it is modular it&#8217;s very extensible. I kept the API very simple so writing modules should be a piece of cake. Each module has to define the following methods:</p>
+
+<ol>
+<li><strong>load_tweets</strong> Loads the messages that can be twittered.</li>
+<li><strong>next</strong> Gets the next message that will be posted.</li>
+<li><strong>store</strong> Store the tweet after it had been posted.</li>
+</ol>
+
+
+<p>Once more, I encourage you to scan through <a href="http://github.com/balinterdi/twuckoo/">the README</a>, devise your own module and let me know about it. Any feedback is very welcome.</p>
+
+<p><em>Note:</em> For my Hungarian-speaking readers, I gave a <a href="http://docs.google.com/Presentation?id=dccxt9fm_3g8nf5fm5">lightning talk about twuckoo</a> at the latest budapest.rb meetup.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/04/27/upstream-or-downstream.html">Upstream or Downstream?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-04-27T00:00:00+02:00" pubdate data-updated="true">Apr 27<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>With the proliferation of <a href="http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html">middleware applications</a> the mentions of upstream and downstream servers has intensified so I decided to get to the end of this and find out what exactly an upstream server is. I first looked up <a href="http://en.wikipedia.org/wiki/Upstream_server">wikipedia</a>:</p>
+
+<blockquote>
+In <a title="Computer networking" href="http://en.wikipedia.org/wiki/Computer_networking">computer networking</a>, <strong>upstream server</strong> refers to a <a title="Server (computing)" href="http://en.wikipedia.org/wiki/Server_(computing)">server</a> that provides service to another server. In other words, upstream server is a server that is located higher in the <a title="Hierarchy" href="http://en.wikipedia.org/wiki/Hierarchy">hierarchy</a> of servers.
+</blockquote>
+
+
+<p>Ok, so based on this simplistic definition, a sketch of a request&#8217;s route to the application server and the response back can be illustrated like this:</p>
+
+<p><img src="http://bucionrails.com/wp-content/uploads/2009/04/request-stack.jpg" border="0" /></p>
+
+<p>In this drawing, the middleware is an upstream server to the underlying application since it provides a service to it (be it caching, url mapping, exception handling and <a href="http://github.com/rack/rack-contrib/tree/master">plenty of others</a>).</p>
+
+<p>So now with my definition established, I was looking for examples in the wild that support it. <a href="http://mwrc2009.confreaks.com/13-mar-2009-11-05-in-a-world-of-middleware-who-needs-monolithic-applications-jon-crosby.html">Jon Crosby&#8217;s excellent presentation</a> at the MountainWest Ruby Conference used upstream in this context as far as I remember. Check one.</p>
+
+<p>Browsing the source code of <a href="http://github.com/rtomayko/rack-cache/tree/master">rack-cache</a> -which, by the way, I strongly encourage you to do if you want to understand caching (better) or just like the look of clean Ruby code- I realized Ryan Tomayko&#8217;s definition of upstream coincides with the above one since he uses downstream in the code to refer to the component/application below the rack-cache component. Check two.</p>
+
+<p>I recently set up an nginx web server as a front end server to a mongrel cluster that runs a Rails application. Ok, so in this case, the nginx server must be the upstream server since requests hit there first and then are passed to the mongrels. One must hear the sound of collapse of cards in my head when I saw the following <a href="http://wiki.nginx.org/NginxHttpUpstreamModule">nginx directive</a>:</p>
+
+<div>
+  <pre><code class='bash'>upstream production_mongrels {
+  server 127.0.0.1:8000;
+  server 127.0.0.1:8001;
+  server 127.0.0.1:8002;
+}</code></pre>
+</div>
+
+
+<p>Hmm, what? Nginx is above the component it provides a load-balancing service to so by any -ok, by my- definition the directive should say &#8220;downstream&#8221; and not &#8220;upstream&#8221;.</p>
+
+<p>I realize that the request arrow on the diagram moving from top to bottom is a matter of convention and that it probably correlates with the fact that most languages write from the top to the bottom. Nevertheless, as far as I know Nginx is made by a Russian guy and Russians write top to bottom, too, so he should still use &#8220;downstream&#8221; for the directive, now shouldn&#8217;t he? Or did he simply start to sketch up boxes and arrows from bottom to top for the sake of it when designing his web server?</p>
+
+<p>Summing up, I think the above described convention is the common one but since it is not standardized there will always be people and software that uses it the other way around. I am not overly confident though, so please tell me about your definition or just point to examples which support or contradict mine.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/03/25/finding-missing-i18n-translations-with-missing_t.html">Finding Missing I18n Translations With Missing_t</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-25T00:00:00+01:00" pubdate data-updated="true">Mar 25<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A recurring problem in an internationalized Rails project is to see which translations are missing. You could go through all the pages looking for &#8220;translation missing: en, user, new&#8221; texts. That, however is very tedious and error prone. There may be some texts you don&#8217;t even see that are missing translation. (like a title of an image).</p>
+
+<p>A better solution is to write a program that finds these. So that&#8217;s what I did. I gave it a very imaginative name: <a href="http://github.com/balinterdi/missing_t/tree/master">missing_t</a>. It&#8217;s darn simple. You first have to install the gem:</p>
+
+<pre lang="bash">
+gem install balinterdi-missing_t  
+</pre>
+
+
+<p>and then from the root of your Rails app you type:</p>
+
+<pre lang="bash">
+missing_t
+</pre>
+
+
+<p>You will see all the I18n strings that do not have translations along with the file they were found in. If you want to restrict your search for a specific language, you provide its language code as the first parameter, like so:</p>
+
+<pre lang="bash">
+missing_t fr
+</pre>
+
+
+<p>For a bit more detailed description, <a href="http://github.com/balinterdi/missing_t/tree/master">see the README</a>.</p>
+
+<p>Go ahead, give it a try, your app has the right to speak all those beautiful languages out there!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/9/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/7/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>My Ember 2 book</h1>
+  <div>
+    <a href="http://rockandrollwithemberjs.com/?utm_source=my-blog&utm_medium=sidebar&utm_campaign=rarwe-book" style="text-decoration:none">
+      <img src="/images/rarwe-book.jpg" alt="Rock and Roll with Ember.js" title="Rock and Roll with Ember.js" />
+    </a>
+  </div>
+</section>
+<section>
+  <h1>Contact</h1>
+  <div style="margin-top:10px">
+    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let&#8217;s start talking.
+  </div>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html">Rock and Roll with Ember.js 2.7 is released</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html">Rock and Roll with Ember.js 2.6 is released</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper.html">Complex Component Design in Ember - Part 4 - Use the hash helper</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2016/05/03/rock-and-roll-with-ember-dot-js-2-dot-5-is-released.html">Rock and Roll with Ember.js 2.5 is released</a>
+      </li>
+    
+  </ul>
+</section>
+<section class="codementor">
+  <script data-codementor="balint" data-style="button" data-theme="dark" src="https://cdn.codementor.io/d/badge.js"></script>
+</section>
+
+
+<section>
+  
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/baaz" class="twitter-follow-button" data-show-count="false">Follow @baaz</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Balint Erdi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'codigoergosum';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+<script src="/javascripts/app.js"></script>
+
+
+
+
+</body>
+</html>
