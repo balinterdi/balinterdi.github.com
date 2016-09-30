@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Reminiscing about EmberFest 2014 - Balint Erdi's blog about Ember.js</title>
+  <title>Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014.html">
+  <link rel="canonical" href="http://balinterdi.com/blog/page/12/index.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -81,12 +81,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </nav>
   <div id="main">
     <div id="content">
-      <div>
-<article class="hentry" role="article">
+      <div class="blog-index">
   
+  
+  
+    <article>
+      
   <header>
     
-      <h1 class="entry-title">Reminiscing About EmberFest 2014</h1>
+      <h1 class="entry-title"><a href="/2008/04/09/quick-adaptor-my-role-model.html">Quick Adaptor - My Role Model</a></h1>
     
     
       <p class="meta">
@@ -102,147 +105,152 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
 
 
-<time datetime="2014-09-05T09:55:00+02:00" pubdate data-updated="true">Sep 5<span>th</span>, 2014</time>
+<time datetime="2008-04-09T00:00:00+02:00" pubdate data-updated="true">Apr 9<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p><a href="https://emberfest.eu">EmberFest 2014</a> ended a week ago and I already feel nostalgic. It
-was a great event with great people and you could feel the excitement about
-Ember in the air and in all conversations. It was almost single-handedly
-organized by <a href="https://haagen-software.no">Joachim Haagen-Skeie</a> for which he deserves huge kudos.</p>
+  <div class="entry-content"><p>I returned two weeks ago from the fantastic <a href="http://www.euruko2008.org/">Euruko 2008 conference</a> in Prague dazzled by the outstanding presentations and the power of Ruby. It is hard to pick a favorite but I especially liked David Black&#8217;s &#8220;Per-Object Behavior in Ruby&#8221; (slides hopefully coming up) mainly because I am a sucker for metaprogramming and the true object-orientedness of Ruby in all its glory.</p>
 
-<p>It was really great to associate real people with twitter avatars and have
-fascinating conversations about various topics that included the Ember
-Inspector, the difficulties in building a build tool and even Firefox OS.</p>
+<p>One fundamental concept was the singleton class which I think I&#8217;ve finally understood from this session. His example was the OpenStruct class whose instances learn to respond to all messages sent to them (this is Smalltalk/Ruby parlance, we could also say they learn to handle method calls) instead of throwing a NoMethodError. So I thought a great way to gain an insight of how this works is to actually code that up myself. Here is what I got:</p>
 
-<h3>The functional paradigm making a headway into Emberland</h3>
+<pre lang="ruby">
+require 'test/unit'
+class QuickAdaptor
+  def method_missing(method_id, *args)
+    method_name = method_id.to_s
+    if method_name =~ /=$/
+      attr = method_name.to_s.chop
+      self.class.class_eval do
+        define_method method_id do |x|
+          instance_variable_set("@#{attr}", x)
+        end
+        method_name.chop!
+        define_method method_name.to_sym do
+          instance_variable_get "@#{attr}"
+        end
+      end
+      instance_variable_set("@#{attr}", args[0])
+    end
+  end
 
-<p>One thing that struck me about Ember initially is that it seems to rely heavily
-on (shared) state. Some (most?) of that is inevitable given Ember being a
-performant framework that runs in the browser and is written in Javascript.
-None of these facilitates ditching (or minimizing) state and go with a
-functional, stateless approach.</p>
+end
 
-<p>On the other hand, I really came to cherish the <a href="http://www.infoq.com/presentations/Simple-Made-Easy">simplicity</a> of the
-functional paradigm and have been gravitating towards languages that allow this
-(Clojure was, and still is, <a href="http://balinterdi.com/2013/06/19/the-appeal-of-one-paradigm-languages.html">my favorite</a>). So I added a mental
-note about my two favorite things being at such a great distance from each other
-and moved on.</p>
+class QuickSingletonAdaptor
+  # does the same as QuickAdaptor
+  # but only defines methods for singleton
+  # class of object, so it is not the class
+  # that "learns", but the singleton class
+  def method_missing(method_id, *args)
+    method_name = method_id.to_s
+    if method_name =~ /=$/
+      attr = method_name.to_s.chop
+      singleton_class = class << self ; self; end
+      singleton_class.instance_eval do
+        define_method method_id do |x|
+          instance_variable_set("@#{attr}", x)
+        end
+        method_name.chop!
+        define_method method_name.to_sym do
+          instance_variable_get "@#{attr}"
+        end
+      end
+      instance_variable_set("@#{attr}", args[0])
+    end
+  end
 
-<p>One theme of the conference and the hallway talks, however, is how Ember
-embraces the functional, immutable approach where it makes sense to. It might
-have something to do with my confirmation bias, but let me cite the examples
-nevertheless. <a href="https://twitter.com/tchak13">Paul Chavard</a> had a talk on his using immutable data
-structures in Ember. <a href="http://www.solitr.com/blog/">Jo Liss</a> revealed how Broccoli uses a
-&#8220;rebuild-from-scratch&#8221; approach instead of trying to find out which assets to
-rebuild at each modification. Finally, Alex Matchneer, aka. machty, prolific
-Ember and router.js contributor had <a href="https://docs.google.com/presentation/d/1afMLTCpRxhJpurQ97VBHCZkLbR1TEsRnd3yyxuSQ5YY/edit#slide=id.p">a presentation on React vs.  Ember</a>
-at EmberNYC which you should go read. His <a href="https://docs.google.com/presentation/d/1afMLTCpRxhJpurQ97VBHCZkLbR1TEsRnd3yyxuSQ5YY/edit#slide=id.g380053cce_1786">last slide</a> has a bullet-point
-that states: &#8220;Don&#8217;t be surprised if Ember adopts DOM-diffing&#8221;.</p>
+end
 
-<p>It would be an understatement if I said I&#8217;m happy to see the functional world
-coming to Ember.</p>
+if __FILE__ == $0
+  class ModuleTester < Test::Unit::TestCase
 
-<h3>Promises</h3>
+    def test_quick_adaptor_creates_methods
+      qa = QuickAdaptor.new
+      qa.age = 18
+      assert_equal(18, qa.age)
+      qa.age = 24
+      assert_equal(24, qa.age)
+      assert_equal(nil, qa.name)
+      qa.name = 'joe'
+      assert_equal('joe', qa.name)
+      assert(!qa.respond_to(:nam))
+    end
 
-<p>I had a talk at the conference called &#8220;Don&#8217;t call me back - How Ember uses
-promises and how you can, too&#8221;. As it usually happens, in doing research for the
-talk, I learned a lot not just about promises but about other topics, too. This
-time, it was the (in)famous run loop I stumbled across on several
-occasions so I am really happy I know a lot more about that beast now. You can
-find the slides of my presentation below.</p>
+    def test_quick_adaptor_creates_instance_methods
+      qa1 = QuickAdaptor.new
+      qa1.age = 18
+      qa2 = QuickAdaptor.new
+      assert(qa2.respond_to?(:age=))
+      assert(qa2.respond_to?(:age))
+      assert_equal(nil, qa2.age)
+    end
 
-<script async class="speakerdeck-embed" data-slide="10"
-data-id="47ee01e011b60132c86e02e2e0c65448" data-ratio="1.33333333333333"
-src="//speakerdeck.com/assets/embed.js"></script>
+    def test_quick_singleton_adaptor_creates_singleton_methods
+      qa1 = QuickSingletonAdaptor.new
+      qa1.age = 18
+      qa2 = QuickSingletonAdaptor.new
+      # qa2 at this point should not know anything!
+      assert(!qa2.respond_to?(:age=))
+      assert(!qa2.respond_to?(:age))
+    end
+
+  end
+end
+
+</pre>
 
 
-<p>I might even do another talk &#8220;How Ember uses the run loop and how you should
-probably not&#8221;, or something to this effect.</p>
+<p>As a test enthusiastic I embedded the tests in the same file which also has the advantage of giving a documentation of what the code achieves.</p>
 
-<h3>EmberFest 2015</h3>
+<p>You can see that the real difference between the QuickAdaptor and QuickSingletonAdaptor classes lies in the following lines:</p>
 
-<p>The greatest thing about EmberFest was its vibe. I saw the tweets coming
-in from EmberConf this March and <a href="http://reefpoints.dockyard.com/2014/03/17/emberconf-picks-ups-where-the-rails-community-left-off.html">the post-conf blog posts</a>
-about the awesome community and how one could feel the excitement that we are
-building apps with a tool that is new and hot now but is probably going to be
-the framework of choice for many in a few years. It is definitely a fascinating
-world to live in.</p>
+<pre lang="ruby">
+class QuickAdaptor
+  ...
+  self.class.class_eval do
+    define_method method_id do |x|
+      ...
+    end
+  end
+end
+</pre>
 
-<p>I&#8217;ll certainly be there at EmberFest 2015, so hopefully see you there!</p>
+
+<pre lang="ruby">
+class QuickSingletonAdaptor
+  ...
+  singleton_class = class << self ; self; end
+  singleton_class.instance_eval do
+    define_method method_id do |x|
+      ...
+    end
+  end
+end
+</pre>
+
+
+<p>You can see from the tests that the QuickAdaptor shares the knowledge it gained with its peers (other QuickAdaptor instances), whereas QuickSingletonAdaptor is an egoist, it keeps it to itself! That&#8217;s why I agree with David Black that the best way to call the class that only one instance can access is singleton class because this has more expressive power than other terms (e.g metaclass, eigenclass, etc.)</p>
+
+<p>My goal is to act like the QuickAdaptor, to suck in all ruby knowledge and learn as fast as QuickAdaptor does while having fun at the same time!</p>
+
+<p>ps. I have also taken a look at how Matz&#8217;s <a href="http://www.ruby-doc.org/stdlib/libdoc/ostruct/rdoc/index.html">OpenStruct class</a> accomplishes the same (well, much more :) ). It uses a table of fields where each new &#8220;member method&#8221; is defined. Nice.</p>
 </div>
-
-
-  <footer>
-    <!--
-    <p class="meta">
-      
   
-
-<span class="byline author vcard">Posted by <span class="fn">I'm all about Ember.js recently</span></span>
-
-      
-
-
-
-
-
-
-
-
   
 
 
-<time datetime="2014-09-05T09:55:00+02:00" pubdate data-updated="true">Sep 5<span>th</span>, 2014</time>
-      
-
-<span class="categories">
+    </article>
   
-    <a class='category' href='/blog/categories/ember-js/'>ember.js</a>
-  
-</span>
-
-
-    </p>
-    -->
+  <div class="pagination">
     
-      <!--
-<p class="email-optin-box">
-  Liked this post? <a id="post-email-optin" href="https://my.leadpages.net/leadbox/147fb3573f72a2%3A12ccd2806b46dc/5733935958982656/" target="_blank">Sign up here</a>
-  <script type="text/javascript" src="//my.leadpages.net/leadbox-699.js"></script>
-  to receive articles, screencasts and other Ember goodies regularly to your inbox.
-</p>
--->
-
-
-
-
-
-
+    <a href="/blog/archives">Blog Archives</a>
     
+    <a class="next" href="/blog/page/11/">Newer &rarr;</a>
     
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2014/06/26/ember-gotcha-controllers-are-singletons.html" title="Previous Post: Ember gotcha: Controllers are singletons">&laquo; Ember gotcha: Controllers are singletons</a>
-      
-      
-        <a class="basic-alignment right" href="/2015/02/18/rock-and-roll-with-ember-js-is-live.html" title="Next Post: My book, Rock and Roll with Ember.js, is now live!">My book, Rock and Roll with Ember.js, is now live! &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-  <section>
-    <h1>Comments</h1>
-    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
 </div>
-  </section>
-
-</div>
-
 <aside class="sidebar">
   
     <section>
@@ -256,7 +264,7 @@ world to live in.</p>
 <section>
   <h1>Contact</h1>
   <div style="margin-top:10px">
-    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let's start talking.
+    I do Ember.js consulting. If you have a project that needs help, <a href="mailto:balint@balinterdi.com">contact me</a> and let&#8217;s start talking.
   </div>
 </section>
 
@@ -306,7 +314,6 @@ world to live in.</p>
   
 </aside>
 
-
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -321,10 +328,7 @@ world to live in.</p>
       var disqus_shortname = 'codigoergosum';
       
         
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014.html';
-        var disqus_url = 'http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014.html';
-        var disqus_script = 'embed.js';
+        var disqus_script = 'count.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-09-14T20:52:23+02:00</updated>
+  <updated>2016-09-30T21:56:58+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,40 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rock and Roll with Ember.js 2.8 is released]]></title>
+    <link href="http://balinterdi.com/2016/09/30/rock-and-roll-with-ember-dot-js-2-dot-8-is-released.html"/>
+    <updated>2016-09-30T21:22:00+02:00</updated>
+    <id>http://balinterdi.com/2016/09/30/rock-and-roll-with-ember-dot-js-2-dot-8-is-released</id>
+    <content type="html"><![CDATA[<p>Yesterday I published an updated version of the <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js book</a>.
+The app now runs on 2.8 (Ember CLI, Ember and Ember Data) and, as usual, there are a few other changes.</p>
+
+<p>The biggest of these was updating the Deployment chapter.
+<a href="https://www.pagefronthq.com/">PageFront</a> seems defunct so I replaced it with
+<a href="https://surge.sh">Surge</a>. Above that I also updated the section on deploying
+(to S3) with ember-cli-deploy as things have changed quite a bit.</p>
+
+<p>You can check out the full list of changes <a href="https://github.com/balinterdi/rarwe-issues/milestone/16?closed=1">here</a>
+or the book itself <a href="http://rockandrollwithemberjs.com">here.</a></p>
+
+<hr />
+
+<p><strong>PSA</strong>: Ember 2.9 will bring the long-awaited new rendering engine, <a href="http://emberjs.com/blog/2016/09/08/ember-2-8-and-2-9-beta-released.html">Glimmer 2</a>!</p>
+
+<p>I already went ahead and updated the app to 2.9.beta to give it a whirl.</p>
+
+<p>The results were pretty jaw-dropping:</p>
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">My app.js size after upgrading the Rock and Roll <a href="https://twitter.com/hashtag/Ember?src=hash">#Ember</a> app to use Glimmer 2 (so from 2.8.1 to 2.9.0-beta.2) went from 233K to 79K 😮</p>&mdash; Balint Erdi (@baaz) <a href="https://twitter.com/baaz/status/776872893577822208">September 16, 2016</a></blockquote>
+
+
+<script async src="http://balinterdi.com//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>I encourage you to <a href="http://emberjs.com/builds/#/beta">try switching your app to Glimmer 2</a> and see if you encounter any problems.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js 2.7 is released]]></title>
@@ -3261,80 +3295,6 @@ of the error reporting for this update. Thank you, Andrew!</p>
 
 <p>Stay tuned for more goodies early next week, or sign up below so that you don&#8217;t
 miss any in the future.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Complex Component Design in Ember.js - Intro]]></title>
-    <link href="http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html"/>
-    <updated>2015-09-10T11:07:00+02:00</updated>
-    <id>http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro</id>
-    <content type="html"><![CDATA[<p><em>This is the intro of the Complex Component Design series. Here are the posts in the series:</em></p>
-
-<ul>
-<li><strong>Intro</strong></li>
-<li><a href="http://balinterdi.com/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html"><strong>Part 1 - Analyzing User Flows</strong></a></li>
-<li><a href="2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html"><strong>Part 2 - Towards a more reactive component</strong></a></li>
-<li><a href="http://balinterdi.com/2016/04/08/complex-component-design-in-ember-replace-the-observer.html"><strong>Part 3 - Remove the observer</strong></a></li>
-<li><a href="http://balinterdi.com/2016-05-26-complex-component-design-in-ember-part-4-use-the-hash-helper.html"><strong>Part 4 - Use the hash helper</strong></a></li>
-</ul>
-
-
-<hr />
-
-<p>The title would probably better be &#8220;Somewhat Complex Component Design in Ember.js&#8221;
-but any title including &#8216;Somewhat&#8217; rules out pompousness. I therefore don&#8217;t
-claim that the series of blog posts I intend to start here will represent the
-pinnacle of component design in Ember. There definitely are and definitely will
-be more complex component structures and scenarios.</p>
-
-<p>The component developed in the series is one that autocompletes as the user
-starts to write the input and allows selecting from a fixed set of options.
-Nothing extraordinary but complex enough so that the design/interaction
-principles can be applied and explained while developing the component.</p>
-
-<p>Important disclaimer: I am not an expert on component design (which, it seems
-to me, is quite a complex topic). I got intrigued by it thanks to <a href="https://twitter.com/ryanflorence">Ryan Florence</a>
-and his talks and learned most of the basics from him. My choice of component
-probably also has to do something with Ryan. He developed the ic-autocomplete
-component from which I took several ideas, sometimes simply copying the
-implementation.</p>
-
-<h3>Rationale</h3>
-
-<p>So you probably ask: why reinvent the wheel? Why develop something that is
-already done and not something new?</p>
-
-<p>First of all, I (and science says most of us) learn best by doing. I wanted to
-use an example where I already have a sample implementation but also understand
-why the original implementation did things as it did and see whether I can make
-the component simpler or more robust. I wanted to face the problems, to feel
-the pain of doing things a certain way, and find solutions for typical,
-recurring problems.</p>
-
-<p>It&#8217;s also important to remember that when Ryan developed their autocomplete
-component, there were no block parameters, no closure actions and no direct
-attribute bindings. One still had to resort to observers in several cases.
-Two-way bindings were still in, and the de-facto way of communication between
-pieces of a component structure.</p>
-
-<p>Ember has come a long way since then and its components converged toward those
-of React in its reactive, &#8220;rerender everything&#8221; approach. Potentially some of
-the ideas explained in the series can be applied to React and other libraries,
-too, and thus might prove useful to more people.</p>
-
-<h3>So many words, so little code</h3>
-
-<p>To have something (almost) tangible in this first intro post, too, let me show
-you how one would interact with the finished(?) component. If you have read my
-<a href="http://balinterdi.com/2014/06/26/ember-gotcha-controllers-are-singletons.html">earlier</a> <a href="http://balinterdi.com/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria.html">posts</a> or <a href="http://rockandrollwithemberjs.com">my book</a>, it will come as no surprise that I use it here to
-select a great musician from a defined set of them:</p>
-
-<p><img src="http://balinterdi.com/images/posts/complex-component-design-ember/ember-autocomplete-demo.gif" alt="Selecting an
-artist" /></p>
-
-<p>This short intro and the demo have hopefully whetted your appetite and you&#8217;ll
-join me for the next part of the series:</p>
 ]]></content>
   </entry>
   

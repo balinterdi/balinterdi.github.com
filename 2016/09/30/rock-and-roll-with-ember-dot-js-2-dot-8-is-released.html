@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Reminiscing about EmberFest 2014 - Balint Erdi's blog about Ember.js</title>
+  <title>Rock and Roll with Ember.js 2.8 is released - Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014.html">
+  <link rel="canonical" href="http://balinterdi.com/2016/09/30/rock-and-roll-with-ember-dot-js-2-dot-8-is-released.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -86,7 +86,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
   <header>
     
-      <h1 class="entry-title">Reminiscing About EmberFest 2014</h1>
+      <h1 class="entry-title">Rock and Roll With Ember.js 2.8 Is Released</h1>
     
     
       <p class="meta">
@@ -102,77 +102,39 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
 
 
-<time datetime="2014-09-05T09:55:00+02:00" pubdate data-updated="true">Sep 5<span>th</span>, 2014</time>
+<time datetime="2016-09-30T21:22:00+02:00" pubdate data-updated="true">Sep 30<span>th</span>, 2016</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p><a href="https://emberfest.eu">EmberFest 2014</a> ended a week ago and I already feel nostalgic. It
-was a great event with great people and you could feel the excitement about
-Ember in the air and in all conversations. It was almost single-handedly
-organized by <a href="https://haagen-software.no">Joachim Haagen-Skeie</a> for which he deserves huge kudos.</p>
+<div class="entry-content"><p>Yesterday I published an updated version of the <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js book</a>.
+The app now runs on 2.8 (Ember CLI, Ember and Ember Data) and, as usual, there are a few other changes.</p>
 
-<p>It was really great to associate real people with twitter avatars and have
-fascinating conversations about various topics that included the Ember
-Inspector, the difficulties in building a build tool and even Firefox OS.</p>
+<p>The biggest of these was updating the Deployment chapter.
+<a href="https://www.pagefronthq.com/">PageFront</a> seems defunct so I replaced it with
+<a href="https://surge.sh">Surge</a>. Above that I also updated the section on deploying
+(to S3) with ember-cli-deploy as things have changed quite a bit.</p>
 
-<h3>The functional paradigm making a headway into Emberland</h3>
+<p>You can check out the full list of changes <a href="https://github.com/balinterdi/rarwe-issues/milestone/16?closed=1">here</a>
+or the book itself <a href="http://rockandrollwithemberjs.com">here.</a></p>
 
-<p>One thing that struck me about Ember initially is that it seems to rely heavily
-on (shared) state. Some (most?) of that is inevitable given Ember being a
-performant framework that runs in the browser and is written in Javascript.
-None of these facilitates ditching (or minimizing) state and go with a
-functional, stateless approach.</p>
+<hr />
 
-<p>On the other hand, I really came to cherish the <a href="http://www.infoq.com/presentations/Simple-Made-Easy">simplicity</a> of the
-functional paradigm and have been gravitating towards languages that allow this
-(Clojure was, and still is, <a href="http://balinterdi.com/2013/06/19/the-appeal-of-one-paradigm-languages.html">my favorite</a>). So I added a mental
-note about my two favorite things being at such a great distance from each other
-and moved on.</p>
+<p><strong>PSA</strong>: Ember 2.9 will bring the long-awaited new rendering engine, <a href="http://emberjs.com/blog/2016/09/08/ember-2-8-and-2-9-beta-released.html">Glimmer 2</a>!</p>
 
-<p>One theme of the conference and the hallway talks, however, is how Ember
-embraces the functional, immutable approach where it makes sense to. It might
-have something to do with my confirmation bias, but let me cite the examples
-nevertheless. <a href="https://twitter.com/tchak13">Paul Chavard</a> had a talk on his using immutable data
-structures in Ember. <a href="http://www.solitr.com/blog/">Jo Liss</a> revealed how Broccoli uses a
-&#8220;rebuild-from-scratch&#8221; approach instead of trying to find out which assets to
-rebuild at each modification. Finally, Alex Matchneer, aka. machty, prolific
-Ember and router.js contributor had <a href="https://docs.google.com/presentation/d/1afMLTCpRxhJpurQ97VBHCZkLbR1TEsRnd3yyxuSQ5YY/edit#slide=id.p">a presentation on React vs.  Ember</a>
-at EmberNYC which you should go read. His <a href="https://docs.google.com/presentation/d/1afMLTCpRxhJpurQ97VBHCZkLbR1TEsRnd3yyxuSQ5YY/edit#slide=id.g380053cce_1786">last slide</a> has a bullet-point
-that states: &#8220;Don&#8217;t be surprised if Ember adopts DOM-diffing&#8221;.</p>
+<p>I already went ahead and updated the app to 2.9.beta to give it a whirl.</p>
 
-<p>It would be an understatement if I said I&#8217;m happy to see the functional world
-coming to Ember.</p>
+<p>The results were pretty jaw-dropping:</p>
 
-<h3>Promises</h3>
-
-<p>I had a talk at the conference called &#8220;Don&#8217;t call me back - How Ember uses
-promises and how you can, too&#8221;. As it usually happens, in doing research for the
-talk, I learned a lot not just about promises but about other topics, too. This
-time, it was the (in)famous run loop I stumbled across on several
-occasions so I am really happy I know a lot more about that beast now. You can
-find the slides of my presentation below.</p>
-
-<script async class="speakerdeck-embed" data-slide="10"
-data-id="47ee01e011b60132c86e02e2e0c65448" data-ratio="1.33333333333333"
-src="//speakerdeck.com/assets/embed.js"></script>
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">My app.js size after upgrading the Rock and Roll <a href="https://twitter.com/hashtag/Ember?src=hash">#Ember</a> app to use Glimmer 2 (so from 2.8.1 to 2.9.0-beta.2) went from 233K to 79K 😮</p>&mdash; Balint Erdi (@baaz) <a href="https://twitter.com/baaz/status/776872893577822208">September 16, 2016</a></blockquote>
 
 
-<p>I might even do another talk &#8220;How Ember uses the run loop and how you should
-probably not&#8221;, or something to this effect.</p>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-<h3>EmberFest 2015</h3>
 
-<p>The greatest thing about EmberFest was its vibe. I saw the tweets coming
-in from EmberConf this March and <a href="http://reefpoints.dockyard.com/2014/03/17/emberconf-picks-ups-where-the-rails-community-left-off.html">the post-conf blog posts</a>
-about the awesome community and how one could feel the excitement that we are
-building apps with a tool that is new and hot now but is probably going to be
-the framework of choice for many in a few years. It is definitely a fascinating
-world to live in.</p>
-
-<p>I&#8217;ll certainly be there at EmberFest 2015, so hopefully see you there!</p>
+<p>I encourage you to <a href="http://emberjs.com/builds/#/beta">try switching your app to Glimmer 2</a> and see if you encounter any problems.</p>
 </div>
 
 
@@ -196,7 +158,7 @@ world to live in.</p>
   
 
 
-<time datetime="2014-09-05T09:55:00+02:00" pubdate data-updated="true">Sep 5<span>th</span>, 2014</time>
+<time datetime="2016-09-30T21:22:00+02:00" pubdate data-updated="true">Sep 30<span>th</span>, 2016</time>
       
 
 <span class="categories">
@@ -218,6 +180,8 @@ world to live in.</p>
 -->
 
 
+  <script src="https://app.convertkit.com/landing_pages/2664.js"></script>
+
 
 
 
@@ -226,10 +190,8 @@ world to live in.</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2014/06/26/ember-gotcha-controllers-are-singletons.html" title="Previous Post: Ember gotcha: Controllers are singletons">&laquo; Ember gotcha: Controllers are singletons</a>
+        <a class="basic-alignment left" href="/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html" title="Previous Post: Rock and Roll with Ember.js 2.7 is released">&laquo; Rock and Roll with Ember.js 2.7 is released</a>
       
-      
-        <a class="basic-alignment right" href="/2015/02/18/rock-and-roll-with-ember-js-is-live.html" title="Next Post: My book, Rock and Roll with Ember.js, is now live!">My book, Rock and Roll with Ember.js, is now live! &raquo;</a>
       
     </p>
   </footer>
@@ -322,8 +284,8 @@ world to live in.</p>
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014.html';
-        var disqus_url = 'http://balinterdi.com/2014/09/05/reminiscing-about-emberfest-2014.html';
+        var disqus_identifier = 'http://balinterdi.com/2016/09/30/rock-and-roll-with-ember-dot-js-2-dot-8-is-released.html';
+        var disqus_url = 'http://balinterdi.com/2016/09/30/rock-and-roll-with-ember-dot-js-2-dot-8-is-released.html';
         var disqus_script = 'embed.js';
       
     (function () {
