@@ -4,7 +4,7 @@
   <title><![CDATA[Category: javascript | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-10-05T09:58:10+02:00</updated>
+  <updated>2016-10-05T15:20:03+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -66,7 +66,7 @@ we could define a function that adds the boilerplatey parts:</p>
 <p>```
 // app/controllers/band.js</p>
 
-<p>function doWithLoadingFlag(operation, loadingProperty) {
+<p>function saveWithLoadingFlag(operation, loadingProperty) {
   this.set(loadingProperty, true);
   return operation.finally(() => {</p>
 
@@ -98,7 +98,7 @@ return saveWithLoadingFlag.call(this, band.save(), 'isLoading')
 <p>```js
 // app/controllers/band.js</p>
 
-<p>function doWithLoadingFlag(operation, loadingProperty='isLoading') {
+<p>function saveWithLoadingFlag(operation, loadingProperty='isLoading') {
   this.set(loadingProperty, true);
   return operation.finally(() => {</p>
 
@@ -125,7 +125,7 @@ return saveWithLoadingFlag.call(this, band.save())
 }
 ```</p>
 
-<p>Since <code>doWithLoadingFlag</code> returns a promise, we can add our own handlers to it,
+<p>Since <code>saveWithLoadingFlag</code> returns a promise, we can add our own handlers to it,
 including other <code>finally</code> handlers.</p>
 
 <p>You can find a working example <a href="https://ember-twiddle.com/54db7a0a708afe3cf59bfa634f1c3a06?numColumns=2&amp;openFiles=controllers.application.js%2Ctemplates.application.hbs">here</a>,

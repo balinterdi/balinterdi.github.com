@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-10-05T09:58:10+02:00</updated>
+  <updated>2016-10-05T15:20:03+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -100,7 +100,7 @@ we could define a function that adds the boilerplatey parts:</p>
 <span class='line-number'>21</span>
 </pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// app/controllers/band.js</span>
 </span><span class='line'>
-</span><span class='line'><span class="kd">function</span> <span class="nx">doWithLoadingFlag</span><span class="p">(</span><span class="nx">operation</span><span class="p">,</span> <span class="nx">loadingProperty</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">saveWithLoadingFlag</span><span class="p">(</span><span class="nx">operation</span><span class="p">,</span> <span class="nx">loadingProperty</span><span class="p">)</span> <span class="p">{</span>
 </span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">loadingProperty</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 </span><span class='line'>  <span class="k">return</span> <span class="nx">operation</span><span class="p">.</span><span class="k">finally</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
 </span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">loadingProperty</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
@@ -147,7 +147,7 @@ we could define a function that adds the boilerplatey parts:</p>
 <span class='line-number'>21</span>
 </pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// app/controllers/band.js</span>
 </span><span class='line'>
-</span><span class='line'><span class="kd">function</span> <span class="nx">doWithLoadingFlag</span><span class="p">(</span><span class="nx">operation</span><span class="p">,</span> <span class="nx">loadingProperty</span><span class="o">=</span><span class="s1">&#39;isLoading&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">saveWithLoadingFlag</span><span class="p">(</span><span class="nx">operation</span><span class="p">,</span> <span class="nx">loadingProperty</span><span class="o">=</span><span class="s1">&#39;isLoading&#39;</span><span class="p">)</span> <span class="p">{</span>
 </span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">loadingProperty</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 </span><span class='line'>  <span class="k">return</span> <span class="nx">operation</span><span class="p">.</span><span class="k">finally</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
 </span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">loadingProperty</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
@@ -169,7 +169,7 @@ we could define a function that adds the boilerplatey parts:</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Since <code>doWithLoadingFlag</code> returns a promise, we can add our own handlers to it,
+<p>Since <code>saveWithLoadingFlag</code> returns a promise, we can add our own handlers to it,
 including other <code>finally</code> handlers.</p>
 
 <p>You can find a working example <a href="https://ember-twiddle.com/54db7a0a708afe3cf59bfa634f1c3a06?numColumns=2&amp;openFiles=controllers.application.js%2Ctemplates.application.hbs">here</a>,
