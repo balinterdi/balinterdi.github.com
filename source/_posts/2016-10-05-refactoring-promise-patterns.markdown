@@ -53,7 +53,7 @@ we could define a function that adds the boilerplatey parts:
 ```
 // app/controllers/band.js
 
-function doWithLoadingFlag(operation, loadingProperty) {
+function saveWithLoadingFlag(operation, loadingProperty) {
   this.set(loadingProperty, true);
   return operation.finally(() => {
     this.set(loadingProperty, false);
@@ -79,7 +79,7 @@ You might go a tiny step further and use a default value for the loading flag:
 ```js
 // app/controllers/band.js
 
-function doWithLoadingFlag(operation, loadingProperty='isLoading') {
+function saveWithLoadingFlag(operation, loadingProperty='isLoading') {
   this.set(loadingProperty, true);
   return operation.finally(() => {
     this.set(loadingProperty, false);
@@ -100,7 +100,7 @@ actions: {
 }
 ```
 
-Since `doWithLoadingFlag` returns a promise, we can add our own handlers to it,
+Since `saveWithLoadingFlag` returns a promise, we can add our own handlers to it,
 including other `finally` handlers.
 
 You can find a working example [here](https://ember-twiddle.com/54db7a0a708afe3cf59bfa634f1c3a06?numColumns=2&openFiles=controllers.application.js%2Ctemplates.application.hbs),
