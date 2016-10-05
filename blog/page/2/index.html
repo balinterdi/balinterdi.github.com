@@ -89,6 +89,103 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2016/02/12/how-to-make-an-ember-module-resolve-as-another-one.html">How to Make an Ember Module Resolve as Another One</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-02-12T11:12:00+01:00" pubdate data-updated="true">Feb 12<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I wanted to write another short, and hopefully useful, post just as I did
+recently for <a href="/2016/02/03/binding-style-attributes-warning-in-ember.html">binding the style attribute</a>.</p>
+
+<h2>No configuration is simpler than no configuration</h2>
+
+<p>About a month ago I was working to add authorization to the <a href="http://rockandrollwithemberjs.com">Rock and Roll with
+Ember</a> application. I used my favorite addon, <a href="https://github.com/Vestorly/torii">Torii</a>, to help with that
+and opted to do the authorization via the <code>google-oauth2-bearer</code> provider.  To
+restore the session, Torii looks up the application (Torii) adapter, but the
+session initialization and closing code used the <code>google-oauth2-bearer</code>
+adapter. So I had two separate files, which I was not happy about and I did not
+want to merge everything into the <code>application</code> adapter, as it does not give a
+hint about its contents then.</p>
+
+<p>My idea was to make it possible to use another adapter <a href="https://github.com/Vestorly/torii/issues/268">to restore the session
+from, via a configuration option</a>. Matthew Beale hinted at a solution that
+removes the need for a configuration option and since I haven&#8217;t seen this
+before, I want to share it with you.</p>
+
+<h2>Import from target module, then reexport</h2>
+
+<p>The Ember resolver is the piece that maps qualified full names (like
+<code>route:blog</code> or <code>controller:bands</code>) to module names.</p>
+
+<p>In my case, Torii makes the resolver look up <code>torii-adapter:application</code> to
+fetch the session from and I wanted this to be resolved to
+<code>torii-adapter:google-oauth2-bearer</code>. In the Ember CLI project, that is
+equivalent of having the <code>app/torii-adapters/application.js</code> file export
+what is exported by <code>app/torii-adapters/google-oauth2-bearer.js</code>.</p>
+
+<p>When phrased like this, the solution is near and I am somewhat embarrassed it
+took me a few attempts to arrive at this.</p>
+
+<p>So the solution is to import in <code>app/torii-adapters/application.js</code> what
+<code>app/torii-adapters/google-oauth2-bearer.js</code> exports and then reexport it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// app/torii-adapters/application.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">GoogleOAuth2BearerAdapter</span> <span class="nx">from</span> <span class="s1">&#39;./google-oauth2-bearer&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">GoogleOAuth2BearerAdapter</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// app/torii-adapters/google-oauth2-bearer.js</span>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Voila, we have &#8220;tricked&#8221; the resolver without adding any configuration
+(and thus complexity) to the addon.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html">Complex Components in Ember.js - Part 2 - Towards a More Reactive Component</a></h1>
     
     
@@ -2601,72 +2698,6 @@ you!</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out.html">Rock and Roll With Ember.js v1.13.9 Is Out</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-09-11T11:42:00+02:00" pubdate data-updated="true">Sep 11<span>th</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I have just released another update to the Rock and Roll with Ember.js book,
-keeping it in sync with Ember 1.13.9. On top of that (mostly on top of that,
-since there weren&#8217;t as many things to do for the Ember upgrade), I added some
-content, removed some other ones, fixed a few wrong paths in code comments,
-clarified a few code lines to help people build the app along, and the like. The
-usual stuff, quoi.</p>
-
-<p>Here are the bigger chunks:</p>
-
-<ul>
-<li>Extended the Testing chapter with a (controller) unit test. I removed the
-component&#8217;s unit test in an earlier update (integration tests are vastly
-superior for components) but now realized unit testing was missing.</li>
-<li>Switched to a dashless helper, <code>capitalize</code> instead of <code>capitalize-words</code>.
-Ember 1.13.0 and up auto-register helpers with and without dashes, so there is
-no need for the more verbose form.</li>
-<li>Fixed a few places where the <code>updateRating</code> action was still in the route.
-When I switched to a closure action, I had to move the action handler to the
-controller but missed a couple of places in the subsequent chapters.</li>
-<li>The epub version had two missing code snippets due to bad formatting (thanks
-to <a href="https://github.com/morganick">@morganick</a>)</li>
-</ul>
-
-
-<p>There are a few other minor fixes, the whole list can be found in the <a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A1.13.9+is%3Aclosed">Github issues repo</a></p>
-
-<p>I want to thank <a href="http://andrew.davison-family.com">Andrew Davison</a> who did most
-of the error reporting for this update. Thank you, Andrew!</p>
-
-<p>Stay tuned for more goodies early next week, or sign up below so that you don&#8217;t
-miss any in the future.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -2699,6 +2730,10 @@ miss any in the future.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/10/05/refactoring-promise-patterns.html">Refactoring Promise Patterns</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/09/30/rock-and-roll-with-ember-dot-js-2-dot-8-is-released.html">Rock and Roll with Ember.js 2.8 is released</a>
       </li>
     
@@ -2712,10 +2747,6 @@ miss any in the future.</p>
     
       <li class="post">
         <a href="/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html">Rock and Roll with Ember.js 2.6 is released</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper.html">Complex Component Design in Ember - Part 4 - Use the hash helper</a>
       </li>
     
   </ul>

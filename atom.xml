@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-09-30T21:56:58+02:00</updated>
+  <updated>2016-10-05T09:56:52+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,170 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Refactoring Promise Patterns]]></title>
+    <link href="http://balinterdi.com/2016/10/05/refactoring-promise-patterns.html"/>
+    <updated>2016-10-05T09:22:00+02:00</updated>
+    <id>http://balinterdi.com/2016/10/05/refactoring-promise-patterns</id>
+    <content type="html"><![CDATA[<p>I&#8217;m sure you have written a lot of code that looks something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// app/controllers/band.js</span>
+</span><span class='line'><span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">save</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">let</span> <span class="nx">band</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;isLoading&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">band</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
+</span><span class='line'>      <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">result</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;successMessage&#39;</span><span class="p">,</span> <span class="s1">&#39;Band has been saved.&#39;</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">})</span>
+</span><span class='line'>      <span class="p">.</span><span class="k">catch</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;Band is too unruly to be saved.&#39;</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">})</span>
+</span><span class='line'>      <span class="p">.</span><span class="k">finally</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;isLoading&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Setting back <code>isLoading</code> to false is conveniently placed in a <code>finally</code> handler
+so that it happens both if the promise resolves successfully (the band is
+saved) and if it is rejected (there is an error during the save).</p>
+
+<p>The <code>isLoading</code> is then used in the corresponding template to show a spinner
+and/or disable the save button while the save is in flight:</p>
+
+<div>
+  <pre><code class='html'>// app/templates/band.hbs
+&lt;button type=&quot;button&quot; onclick=(action &quot;save&quot;) disabled={{isLoading}}&gt;Save band&lt;/button&gt;</code></pre>
+</div>
+
+
+<p>I know I have written this hundreds of times by now and it has increasingly
+disturbed me that setting and unsetting the loading flag is boilerplate code,
+something that could be refactored.</p>
+
+<p>One nice thing about promises is that they are easy to compose. Here is how
+we could define a function that adds the boilerplatey parts:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// app/controllers/band.js</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">doWithLoadingFlag</span><span class="p">(</span><span class="nx">operation</span><span class="p">,</span> <span class="nx">loadingProperty</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">loadingProperty</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">operation</span><span class="p">.</span><span class="k">finally</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">loadingProperty</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">save</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">let</span> <span class="nx">band</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">saveWithLoadingFlag</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">band</span><span class="p">.</span><span class="nx">save</span><span class="p">(),</span> <span class="s1">&#39;isLoading&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">result</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;successMessage&#39;</span><span class="p">,</span> <span class="s1">&#39;Band has been saved.&#39;</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">})</span>
+</span><span class='line'>      <span class="p">.</span><span class="k">catch</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;Band is too unruly to be saved.&#39;</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You might go a tiny step further and use a default value for the loading flag:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// app/controllers/band.js</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">doWithLoadingFlag</span><span class="p">(</span><span class="nx">operation</span><span class="p">,</span> <span class="nx">loadingProperty</span><span class="o">=</span><span class="s1">&#39;isLoading&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">loadingProperty</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">operation</span><span class="p">.</span><span class="k">finally</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">loadingProperty</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">save</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">let</span> <span class="nx">band</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">saveWithLoadingFlag</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">band</span><span class="p">.</span><span class="nx">save</span><span class="p">())</span>
+</span><span class='line'>      <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">result</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;successMessage&#39;</span><span class="p">,</span> <span class="s1">&#39;Band has been saved.&#39;</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">})</span>
+</span><span class='line'>      <span class="p">.</span><span class="k">catch</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;Band is too unruly to be saved.&#39;</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Since <code>doWithLoadingFlag</code> returns a promise, we can add our own handlers to it,
+including other <code>finally</code> handlers.</p>
+
+<p>You can find a working example <a href="https://ember-twiddle.com/54db7a0a708afe3cf59bfa634f1c3a06?numColumns=2&amp;openFiles=controllers.application.js%2Ctemplates.application.hbs">here</a>,
+where you can play around with it.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js 2.8 is released]]></title>
@@ -3256,45 +3420,6 @@ September 30, 2015.</p>
 
 <p>Stand ready, Rock and Roll with Ember 2 is coming to a virtual bookstore near
 you!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rock and Roll With Ember.js v1.13.9 Is Out]]></title>
-    <link href="http://balinterdi.com/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out.html"/>
-    <updated>2015-09-11T11:42:00+02:00</updated>
-    <id>http://balinterdi.com/2015/09/11/rock-and-roll-with-ember-dot-js-v1-dot-13-dot-9-is-out</id>
-    <content type="html"><![CDATA[<p>I have just released another update to the Rock and Roll with Ember.js book,
-keeping it in sync with Ember 1.13.9. On top of that (mostly on top of that,
-since there weren&#8217;t as many things to do for the Ember upgrade), I added some
-content, removed some other ones, fixed a few wrong paths in code comments,
-clarified a few code lines to help people build the app along, and the like. The
-usual stuff, quoi.</p>
-
-<p>Here are the bigger chunks:</p>
-
-<ul>
-<li>Extended the Testing chapter with a (controller) unit test. I removed the
-component&#8217;s unit test in an earlier update (integration tests are vastly
-superior for components) but now realized unit testing was missing.</li>
-<li>Switched to a dashless helper, <code>capitalize</code> instead of <code>capitalize-words</code>.
-Ember 1.13.0 and up auto-register helpers with and without dashes, so there is
-no need for the more verbose form.</li>
-<li>Fixed a few places where the <code>updateRating</code> action was still in the route.
-When I switched to a closure action, I had to move the action handler to the
-controller but missed a couple of places in the subsequent chapters.</li>
-<li>The epub version had two missing code snippets due to bad formatting (thanks
-to <a href="https://github.com/morganick">@morganick</a>)</li>
-</ul>
-
-
-<p>There are a few other minor fixes, the whole list can be found in the <a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A1.13.9+is%3Aclosed">Github issues repo</a></p>
-
-<p>I want to thank <a href="http://andrew.davison-family.com">Andrew Davison</a> who did most
-of the error reporting for this update. Thank you, Andrew!</p>
-
-<p>Stay tuned for more goodies early next week, or sign up below so that you don&#8217;t
-miss any in the future.</p>
 ]]></content>
   </entry>
   

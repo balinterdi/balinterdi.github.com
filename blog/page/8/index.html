@@ -89,6 +89,44 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2009/12/14/i15r-031-is-out-now-with-haml-matchers.html">I15r 0.3.1 Is Out - Now With Haml Matchers!</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-12-14T00:00:00+01:00" pubdate data-updated="true">Dec 14<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&#8217;ve just released a new version of the <a href="http://github.com/balinterdi/i15r">i15r gem</a> which alleviates the tedious task of internationalizing a Rails site by finding the &#8220;static&#8221; texts and replacing them with I18n message strings.</p>
+
+<p>The good news -and probably the reason I am writing a blog post about it- is that it can now process <a href="http://haml-lang.com/">haml</a> files, too. This must cheer up those who -like me- have come to like haml so much they now use it for their projects. So <a href="http://gemcutter.org/gems/i15r">go get it</a> and let me know how it works for you.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2009/10/28/rubygems-under-the-hood-hooking-into-require.html">Rubygems Under the Hood: Hooking Into Require</a></h1>
     
     
@@ -688,74 +726,6 @@ $ sudo make install</pre>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/04/27/upstream-or-downstream.html">Upstream or Downstream?</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-04-27T00:00:00+02:00" pubdate data-updated="true">Apr 27<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>With the proliferation of <a href="http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html">middleware applications</a> the mentions of upstream and downstream servers has intensified so I decided to get to the end of this and find out what exactly an upstream server is. I first looked up <a href="http://en.wikipedia.org/wiki/Upstream_server">wikipedia</a>:</p>
-
-<blockquote>
-In <a title="Computer networking" href="http://en.wikipedia.org/wiki/Computer_networking">computer networking</a>, <strong>upstream server</strong> refers to a <a title="Server (computing)" href="http://en.wikipedia.org/wiki/Server_(computing)">server</a> that provides service to another server. In other words, upstream server is a server that is located higher in the <a title="Hierarchy" href="http://en.wikipedia.org/wiki/Hierarchy">hierarchy</a> of servers.
-</blockquote>
-
-
-<p>Ok, so based on this simplistic definition, a sketch of a request&#8217;s route to the application server and the response back can be illustrated like this:</p>
-
-<p><img src="http://bucionrails.com/wp-content/uploads/2009/04/request-stack.jpg" border="0" /></p>
-
-<p>In this drawing, the middleware is an upstream server to the underlying application since it provides a service to it (be it caching, url mapping, exception handling and <a href="http://github.com/rack/rack-contrib/tree/master">plenty of others</a>).</p>
-
-<p>So now with my definition established, I was looking for examples in the wild that support it. <a href="http://mwrc2009.confreaks.com/13-mar-2009-11-05-in-a-world-of-middleware-who-needs-monolithic-applications-jon-crosby.html">Jon Crosby&#8217;s excellent presentation</a> at the MountainWest Ruby Conference used upstream in this context as far as I remember. Check one.</p>
-
-<p>Browsing the source code of <a href="http://github.com/rtomayko/rack-cache/tree/master">rack-cache</a> -which, by the way, I strongly encourage you to do if you want to understand caching (better) or just like the look of clean Ruby code- I realized Ryan Tomayko&#8217;s definition of upstream coincides with the above one since he uses downstream in the code to refer to the component/application below the rack-cache component. Check two.</p>
-
-<p>I recently set up an nginx web server as a front end server to a mongrel cluster that runs a Rails application. Ok, so in this case, the nginx server must be the upstream server since requests hit there first and then are passed to the mongrels. One must hear the sound of collapse of cards in my head when I saw the following <a href="http://wiki.nginx.org/NginxHttpUpstreamModule">nginx directive</a>:</p>
-
-<div>
-  <pre><code class='bash'>upstream production_mongrels {
-  server 127.0.0.1:8000;
-  server 127.0.0.1:8001;
-  server 127.0.0.1:8002;
-}</code></pre>
-</div>
-
-
-<p>Hmm, what? Nginx is above the component it provides a load-balancing service to so by any -ok, by my- definition the directive should say &#8220;downstream&#8221; and not &#8220;upstream&#8221;.</p>
-
-<p>I realize that the request arrow on the diagram moving from top to bottom is a matter of convention and that it probably correlates with the fact that most languages write from the top to the bottom. Nevertheless, as far as I know Nginx is made by a Russian guy and Russians write top to bottom, too, so he should still use &#8220;downstream&#8221; for the directive, now shouldn&#8217;t he? Or did he simply start to sketch up boxes and arrows from bottom to top for the sake of it when designing his web server?</p>
-
-<p>Summing up, I think the above described convention is the common one but since it is not standardized there will always be people and software that uses it the other way around. I am not overly confident though, so please tell me about your definition or just point to examples which support or contradict mine.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/9/">&larr; Older</a>
@@ -788,6 +758,10 @@ In <a title="Computer networking" href="http://en.wikipedia.org/wiki/Computer_ne
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/10/05/refactoring-promise-patterns.html">Refactoring Promise Patterns</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/09/30/rock-and-roll-with-ember-dot-js-2-dot-8-is-released.html">Rock and Roll with Ember.js 2.8 is released</a>
       </li>
     
@@ -801,10 +775,6 @@ In <a title="Computer networking" href="http://en.wikipedia.org/wiki/Computer_ne
     
       <li class="post">
         <a href="/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html">Rock and Roll with Ember.js 2.6 is released</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper.html">Complex Component Design in Ember - Part 4 - Use the hash helper</a>
       </li>
     
   </ul>
