@@ -89,6 +89,119 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2009/01/28/shoulda-blocks-active-record-macros-and-their-order.html">Shoulda: Setup and Should Blocks and Don&#8217;t Wander Off the Map</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-28T00:00:00+01:00" pubdate data-updated="true">Jan 28<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&#8217;m using <a href="http://www.thoughtbot.com/projects/shoulda/">shoulda</a> for testing in a rails project and I wrote this simple test to see if my update action really updated the object and redirected to the appropriate place:</p>
+
+<pre lang="ruby">
+context "the update" do
+  setup do     # 1
+    @project = Factory(:project, :director => @user)
+    put :update, :id => @project, :project => { :name => "updated name" }
+  end
+  # 2    
+  updated_project = Project.first(:order => "created_at DESC")
+  # 3
+  should_redirect_to "project_url(updated_project)" # 4
+  should "update the attributes" do
+    assert_equal("updated name", updated_project.name) # 5
+  end  
+end
+</pre>
+
+
+<p>To my surprise, I received an &#8220;undefined local variable or method &#8216;updated_project&#8217; on both tests (#4 and #5). I figured out why and I want to share it with you. In case you are a shoulda expert, you must know the answer already and sorry for wasting your time. On the other hand, if you are new to shoulda like I am, you may find this useful.</p>
+
+<p>What shoulda does when running a &#8216;should&#8217; block is that it runs all the &#8216;setup&#8217; blocks of the contexts in which it is nested, from the outside to the inside, so this:</p>
+
+<pre lang="ruby">
+context "alpha" do
+  setup do
+    puts "A"
+  end
+  context "beta" do
+    setup do
+      puts "B"
+    end
+    context "gamma" do
+      setup do
+        puts "C"
+      end
+      should "work" do
+         puts "the only test"
+      end
+    end
+  end
+end
+</pre>
+
+
+<p>Will print</p>
+
+<pre lang="bash">
+A
+B
+C
+the only test
+</pre>
+
+
+<p>Also the area between #2 and #3 in the above test is sort of a no man&#8217;s land, since it is not in a setup block, so assignments that are executed here are completely useless. You can not use it either for side-effects since it will run before the setup block (#1 above). My advice is to simply put everything in a block, be it a &#8216;setup&#8217; or a &#8216;should&#8217; one. (the &#8216;should_redirect_to&#8217; is a macro that&#8217;s part of shoulda, it gets expanded into a block, too).</p>
+
+<p>So here is the same test correctly:</p>
+
+<pre lang="ruby">
+context "the update" do
+  setup do
+    @project = Factory(:project, :director => @user)
+    put :update, :id => @project, :project => { :name => "updated name" }
+  end
+  
+  should_redirect_to "project_url(@project)" 
+  should "update the attributes" do
+    # reload is needed to see the new state
+    @project.reload
+    assert_equal("updated name", @project.name)
+  end
+  
+end
+</pre>
+
+
+<p>Shoulda is a nice tool. There is only one I know and I like a tad better which is quite similar in structure, <a href="http://rspec.info/documentation/">rspec</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2009/01/25/mysql-table-types-and-foreign-key-constraints.html">MySQL Table Types and Foreign Key Constraints</a></h1>
     
     
@@ -843,42 +956,6 @@ Successfully installed rmagick-2.7.2
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2008/11/17/conferenciarails-2008-enhorabuena.html">ConferenciaRails 2008: Enhorabuena!</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-11-17T00:00:00+01:00" pubdate data-updated="true">Nov 17<span>th</span>, 2008</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I have just returned from Madrid where the Spanish Rails Conference, <a href="http://www.conferenciarails.org/">Conferencia Rails</a> was held. I liked it quite a lot, there were several interesting talks most of which made me want to learn all of that and very fast (one thing conferences do to me is to boost that healthy feeling of wanting to always learn and discover new things). So I would like to add my e-voice to the web noise: congratulations and thank you to the organizers and presenters!</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/11/">&larr; Older</a>
@@ -911,6 +988,10 @@ Successfully installed rmagick-2.7.2
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/10/17/continuous-visual-integration-for-ember-apps.html">Continuous Visual Integration for Ember apps</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/10/05/refactoring-promise-patterns.html">Refactoring Promise Patterns</a>
       </li>
     
@@ -924,10 +1005,6 @@ Successfully installed rmagick-2.7.2
     
       <li class="post">
         <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html">Rock and Roll with Ember.js 2.6 is released</a>
       </li>
     
   </ul>

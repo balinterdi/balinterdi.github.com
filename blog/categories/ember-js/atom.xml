@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-10-05T15:20:03+02:00</updated>
+  <updated>2016-10-18T10:43:01+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,148 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Continuous Visual Integration for Ember apps]]></title>
+    <link href="http://balinterdi.com/2016/10/17/continuous-visual-integration-for-ember-apps.html"/>
+    <updated>2016-10-17T19:15:00+02:00</updated>
+    <id>http://balinterdi.com/2016/10/17/continuous-visual-integration-for-ember-apps</id>
+    <content type="html"><![CDATA[<p>I recently watched Mike Fotinakis's presentation at the San Francisco Ember
+meetup, <a href="https://youtu.be/iECnXK9EqA4">Continuous Visual Integration with Ember</a>,
+and I've become really enthusiastic about visual diffs, and Percy.</p>
+
+<p>It's really worth the time and I highly recommend to watch it. I could say
+"watch it now and then come back" but it's a 50-minute long video while this
+post takes 5 minutes to read, so I recommend to do it the other way around: read
+this post first and then go and watch the presentation where he goes into more
+details on what visual diffs and CI are, how Percy works and answers to
+questions from the audience.</p>
+
+<p>Ready? Cool. Start the timer and let's go.</p>
+
+<h3>So what is continuous visual integration?</h3>
+
+<p>I will give you the high-level definition and rationale of visual diffs
+and continuous visual integration as the post otherwise wouldn't make sense.</p>
+
+<p>When we change code, the intangible stuff apps are made of, we risk breaking it.
+To prevent this, we write tests that guard against regression (a nice way of
+saying breaking stuff) and do code reviews where someone goes over the code
+diffs, and potentially after a series of edits, confirms it.</p>
+
+<p>However, that's just the code part. There are other ways to break a web
+application, a major one among them is for the app to look differently than
+before, in an unintended way. The background color of a button might change, a
+link could have become hidden, or a css file could no longer be downloaded
+which all lead to a degraded visual experience for visitors of the app.</p>
+
+<p>Our (textual) tests could pass with flying colors and yet the users of the app
+could be running away screaming from our site. Visual diffs guard against that
+scenario by showing a visual diff, what certain scenarios looked before and
+after the code changes under test.</p>
+
+<h3>Visual diffs as part of the review process</h3>
+
+<p>The idea is to have screenshots made at certain points in our user flows and
+have a review process that approves the changes, just as we do for code.</p>
+
+<p>To automate the process, we integrate the generation of visual diffing in the
+automated testing process. This will produce the "before" and "after"
+screenshots that will be used to generate the diffs. Let's see how this is done
+in practice.</p>
+
+<h3>Making all this a breeze with Percy</h3>
+
+<p>Percy is a visual diffing tool that automates all of this and integrates
+smoothly into the Github pull request process. To get started with Percy,
+install the Ember addon:</p>
+
+<pre><code>$ ember install ember-percy
+</code></pre>
+
+<p>If you use Mirage for your tests, like I do, make sure to define a passthrough
+rule for Percy on top of your Mirage config, before any other rules (see
+<a href="https://percy.io/docs/clients/javascript/ember">the docs</a>):</p>
+
+<p><code>js
+// mirage/config.js
+export default function() {
+  this.passthrough('/_percy/**');
+  (...)
+})
+</code></p>
+
+<p>To demo how the development flow changes to accommodate visual diffing, I prepared <a href="https://github.com/balinterdi/rarwe-demo/pull/10">a PR to make a dropdown</a>
+in the <a href="https://github.com/balinterdi/rarwe-demo">Rock and Roll with Ember demo</a> nicer.</p>
+
+<p>Before implementing the change, I wrote a test that verifies if the songs for a
+particular band are listed correctly:</p>
+
+<p>```js
+// tests/acceptance/songs-test.js
+import Ember from 'ember';
+import { test } from 'qunit';</p>
+
+<p>(...)</p>
+
+<p>test('List songs for a band', function(assert) {
+  visit('/bands');
+  click('a:contains("Tool")');</p>
+
+<p>  andThen(function() {</p>
+
+<pre><code>percySnapshot('list-songs-for-band');
+assert.equal(Ember.$('.song').length, 3, "All songs for the selected band are displayed");
+assert.equal(Ember.$('.song:contains("46 &amp; 2")').length, 1, "The first song is displayed");
+</code></pre>
+
+<p>  });
+});
+```</p>
+
+<p>The thing to note here is <code>percySnapshot</code>. If Percy is set up in the environment
+where the test runs, it generates a screenshot identified by the name we pass it
+(or auto-generates one). To set up Percy, the <code>PERCY_TOKEN</code> and <code>PERCY_PROJECT</code>
+env vars need to be set in the CI tool of your choice. <a href="https://percy.io/docs">The Percy
+docs</a> explain how.</p>
+
+<p>Once we have a percySnapshot, the next time we push and our CI builds the
+project, Percy will have a new snapshot for us:</p>
+
+<p><img src="/images/posts/visual-ci-with-percy/percy-first-screenshot.png" alt="First screenshot - No diff yet" /></p>
+
+<p>We can now implement our feature on a branch and create a pull request for it on
+Github. As you can see on the following screenshot, approving the visual diffs
+is now part of the flow:</p>
+
+<p><img src="/images/posts/visual-ci-with-percy/github-pr-before-percy-approval.png" alt="Github before Percy approval" /></p>
+
+<p>Clicking "Details" takes us to the visual diffs where we must explicilty approve
+the changes:</p>
+
+<p><img src="/images/posts/visual-ci-with-percy/percy-visual-diff.png" alt="Percy visual diffs" /></p>
+
+<p>Once the visual diffs are approved, the PR is all green and we can lean back in
+our chairs and merge it, safe in the knowledge we did not visually break the
+app.</p>
+
+<p><img src="/images/posts/visual-ci-with-percy/github-pr-after-percy-approval.png" alt="Github after Percy approval" /></p>
+
+<p>Just as with "normal" tests, the more snapshots we have, the higher the chance
+we did not introduce any regressions with our latest changes. Mike recommends a
+"breadth first" approach, making screenshots from tests that verify different
+scenarios instead of a "depth first" approach, creating several screenshots for
+the same scenario.</p>
+
+<h3>Closing words</h3>
+
+<p>I'm all sold on visual diffing and I think there is tremendous value in securing
+our apps this way.</p>
+
+<p>I encourage you to <a href="(https://youtu.be/iECnXK9EqA4">watch Mike's presentation</a>
+and <a href="https://percy.io/">sign up for Percy</a> to become a better steward of your applications.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js 2.8 is released]]></title>
@@ -214,221 +356,6 @@ reader knows whether they are reading the latest version: <a href="https://githu
 
 
 <p>The list of all accomplished things can be seen <a href="https://github.com/balinterdi/rarwe-issues/milestone/14?closed=1">here</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Complex Component Design in Ember - Part 4 - Use the hash helper]]></title>
-    <link href="http://balinterdi.com/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper.html"/>
-    <updated>2016-05-26T09:21:00+02:00</updated>
-    <id>http://balinterdi.com/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper</id>
-    <content type="html"><![CDATA[<p><em>This is the fourth and final part of my Complex Component Design series. Here are the preceding posts:</em></p>
-
-<ul>
-<li><a href="/2015/09/10/complex-component-design-in-ember-intro.html"><strong>Intro</strong></a></li>
-<li><a href="/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html"><strong>Part 1 - Analyzing User Flows</strong></a></li>
-<li><a href="/2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html"><strong>Part 2 - Towards a more reactive component</strong></a></li>
-<li><a href="/2016/04/08/complex-component-design-in-ember-replace-the-observer.html"><strong>Part 3 - Remove the observer</strong></a></li>
-<li><strong>Part 4 - Use the hash helper</strong></li>
-</ul>
-
-
-<p>You can find the code for this post <a href="https://github.com/balinterdi/ember-cli-autocomplete/releases/tag/ccd-part-four">on Github.</a></p>
-
-<hr />
-
-<p>After our last refactoring, the <code>ember-cli-autocomplete</code> component no longer
-uses observers. However, the list of parameters the outermost, container
-component, <code>auto-complete</code> returns is now unwieldily long:</p>
-
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
-
-&lt;!-- tests/dummy/templates/index.hbs --&gt;
-
-
-&lt;p&gt;{{#auto-complete&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;      on-select=(action &quot;selectArtist&quot;)
-      on-input=(action &quot;filterArtists&quot;)
-      options=matchingArtists
-      displayProperty=&quot;name&quot;
-      class=&quot;autocomplete-container&quot; as |isDropdownOpen inputValue options
-                                         focusedIndex selectedIndex
-                                         toggleDropdown onSelect onInput|}}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;  (...)
-{{/auto-complete}}</code></pre>
-</div>
-</p>
-
-<p>Not only does that look clumsy, it also makes refactoring more difficult and one
-always constantly have to flip between the component's template (where params
-are yielded from) and the template where the component is used to see if the
-position of values match. So how can improve this?</p>
-
-<h2>Components as functions</h2>
-
-<p>To understand several concepts about components, consider them functions.
-Putting aside the fact that they can also emit DOM elements, you call them with
-a list of arguments, usually, though not exclusively, a collection of key-value
-pairs.  The component then does some internal stuff and returns a value from its
-template via the <code>yield</code> keyword.</p>
-
-<p>Our current case is another instance when treating them as functions can help us
-find the solution. Ask yourself: what would you do if the return value of a
-function you wrote grew to a long list of arguments? You would convert the
-return value to a key-value collection, such as a hash, wouldn't you?</p>
-
-<p>Well, in Ember's component land, we can do this by using the <code>hash</code> helper,
-<a href="http://emberjs.com/blog/2016/01/15/ember-2-3-released.html">introduced in Ember 2.3</a>. It takes a list of key-value pairs at invocation
-time and outputs an object (a hash) with them:</p>
-
-<p><div>
-  <pre><code class='html'>{{#with (hash firstName=&#39;Mike&#39; lastName=&#39;McCready&#39; instrument=&#39;guitar&#39;) as |musician|}}
-  Hello, I&#39;m {{musician.firstName}} {{musician.lastName}} and I play the {{musician.instrument}}.
-{{/with}}</code></pre>
-</div>
-</p>
-
-<p>We can use the <code>hash</code> helper to bring some sanity to the return value of <code>auto-complete</code>
-parameters. It currently looks like this:</p>
-
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
-
-&lt;!-- addon/templates/components/auto-complete.hbs --&gt;
-
-
-&lt;p&gt;{{yield isDropdownOpen&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;    inputValue
-    options
-    focusedIndex
-    selectedIndex
-    (action &quot;toggleDropdown&quot;)
-    (action &quot;selectOption&quot;)
-    (action &quot;inputDidChange&quot;)}}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;</code></pre>
-</div>
-</p>
-
-<p>So we introduce the <code>hash</code> helper to get the following:</p>
-
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
-
-&lt;!-- addon/templates/components/auto-complete.hbs --&gt;
-
-
-&lt;p&gt;{{yield (hash&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;isOpen=isDropdownOpen
-inputValue=inputValue
-options=options
-focusedIndex=focusedIndex
-selectedIndex=selectedIndex
-toggleDropdown=(action &quot;toggleDropdown&quot;)
-onSelect=(action &quot;selectItem&quot;)
-onInput=(action &quot;inputDidChange&quot;))}}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;</code></pre>
-</div>
-</p>
-
-<h2>Modifying call sites</h2>
-
-<p>Now that the component's return value has changed, we should not forget to
-modify the callers, the downstream components that use that value:</p>
-
-<p><div>
-  <pre><code class='html'>&lt;/p&gt;
-
-&lt;!-- tests/dummy/app/templates/index.hbs --&gt;
-
-
-&lt;p&gt;{{#auto-complete&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;  on-select=(action &quot;selectArtist&quot;)
-  on-input=(action &quot;filterArtists&quot;)
-  items=matchingArtists
-  displayProperty=&quot;name&quot;
-  class=&quot;autocomplete-container&quot; as |params|}}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;  &lt;div class=&quot;input-group&quot;&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;{{auto-complete-input
-    value=params.inputValue
-    on-change=params.onInput
-    type=&quot;text&quot;
-    class=&quot;combobox input-large form-control&quot;
-    placeholder=&quot;Select an artist&quot;}}
-{{#auto-complete-list
-    isVisible=params.isOpen
-    class=&quot;typeahead typeahead-long dropdown-menu&quot;}}
-  {{#each params.options as |option|}}
-    {{#auto-complete-option
-        index=option.index
-        on-click=params.onSelect
-        isFocused=(eq params.focusedIndex option.index)
-        isSelected=(eq params.selectedIndex option.index)}}
-      &amp;lt;a href=&quot;#&quot;&amp;gt;{{option.value}}&amp;lt;/a&amp;gt;
-    {{/auto-complete-option}}
-  {{else}}
-    &amp;lt;li&amp;gt;&amp;lt;a href=&quot;#&quot;&amp;gt;No results.&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;
-  {{/each}}
-{{/auto-complete-list}}
-{{#auto-complete-dropdown-toggle on-click=params.toggleDropdown class=&quot;input-group-addon dropdown-toggle&quot;}}
-  &amp;lt;span class=&quot;caret&quot;&amp;gt;&amp;lt;/span&amp;gt;
-{{/auto-complete-dropdown-toggle}}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;  &lt;/div&gt;
-{{/auto-complete}}</code></pre>
-</div>
-</p>
-
-<p>Instead of the long list of parameters, <code>auto-complete</code> now yields a single hash
-parameter (called <code>params</code> above), whose keys are used in the child components
-(<code>params.isOpen</code>, <code>params.options</code>, etc.)</p>
-
-<h2>Polyfill it</h2>
-
-<p>Since we want our component to be usable not only in Ember >=2.3 applications,
-where the <code>hash</code> helper is built in, we should add the
-<code>ember-hash-helper-polyfill</code>, which makes the <code>hash</code> helper available in earlier
-Ember versions, as a dependency of the addon:</p>
-
-<p>```js
-// package.json
-{
-  "name": "ember-cli-autocomplete",
-  "version": "0.0.0",
-  "dependencies": {</p>
-
-<pre><code>(...)
-"ember-hash-helper-polyfill": "0.1.0"
-</code></pre>
-
-<p>  },
-}
-```</p>
-
-<h2>Wrapping up</h2>
-
-<p>That wraps up my Complex Component Design in Ember.js series. Our component
-improved by each post and I think we now have a pretty flexible and thus
-reusable component. The main purpose of the series, however, is education, so I
-hope that I was able to transfer some of the knowledge I've acquired by building
-components.</p>
-
-<p>If you would like to read the whole series as a pdf, just give my your email
-address below and I'm sending it to you.</p>
 ]]></content>
   </entry>
   

@@ -89,6 +89,83 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2016/02/26/rock-and-roll-with-ember-dot-js-demo-a-public-ember-dot-js-example-project.html">Rock and Roll With Ember.js Demo - a Public Ember.js Example Project</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-02-26T11:04:00+01:00" pubdate data-updated="true">Feb 26<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I have a book called Rock and Roll with Ember.js that has an accompanying
+application we develop throughout the book. I also maintain a demo version of
+the same app which has been open-source since its inception. However, that demo app
+has not received updates for a while now so I decided to do something about
+this and spent some time this week on making it a state-of-the-art Ember 2 application.</p>
+
+<p>Here are the main developments I have made:</p>
+
+<ul>
+<li><strong>Upgraded it to use the latest Ember, Ember Data and Ember CLI versions, 2.3.0.</strong></li>
+<li><strong>Used <a href="http://www.ember-cli-mirage.com/">ember-cli-mirage</a> to seed the app with data and handle &#8220;backend&#8221; requests.</strong>
+(Look, ma&#8217;, no backend!)
+<a href="http://www.ember-cli-mirage.com/">ember-cli-mirage</a> is fantastic addon that lets you set up route handlers,
+fixtures, factories and many more to manage your seed data and mock your server
+responses, both in development and tests. This was the first time I seriously
+used it and I have grown to like it a ton! The author, <a href="https://twitter.com/samselikoff">Sam Selikoff</a>, helped
+out tremendously and had an amazing turnaround on a few questions/issues.
+I used the latest beta version, 0.2.0-beta.7, which you should definitely
+check out and give feedback to Sam.</li>
+<li><strong>Made it a modern, idiomatic Ember app.</strong>
+It&#8217;s not just Ember, but also Javascript that evolves at a neck-breaking space
+(although to a lesser extent). I used the not-at-all elementary
+<a href="https://github.com/abuiles/ember-watson">ember-watson</a> to modernize the Ember app and applied a few manual tweaks
+for some of the Javascript parts, like using destructuring and <code>let</code> and <code>const</code>
+instead of <code>var</code>.</li>
+<li><strong>Deployed it to be publicly accessible.</strong>
+Leveraging the most excellent <a href="https://www.pagefronthq.com/">PageFront</a>, the app is now deployed to their
+platform. You can see it in action at <a href="https://rarwe-demo.pagefrontapp.com/">https://rarwe-demo.pagefrontapp.com</a>.
+This was not even a task, I only needed to issue two commands, one to install
+the add-on and one to deploy it.</li>
+</ul>
+
+
+<p>The source lives on Github, at <a href="https://github.com/balinterdi/rarwe-demo">balinterdi/rarwe-demo</a>.</p>
+
+<p>As Mirage can also be used in production (although it&#8217;s probably not common to
+do that), you can check out <a href="https://rarwe-demo.pagefrontapp.com/">the &#8220;production&#8221; app</a>, with the same seed data I
+used in development, and play around with it.</p>
+
+<p>As I mentioned in the introduction, the full version of the app is developed
+chapter by chapter in <a href="http://rockandrollwithemberjs.com">the Rock and Roll with Ember book</a>. You can download a
+sample chapter below:</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2016/02/12/how-to-make-an-ember-module-resolve-as-another-one.html">How to Make an Ember Module Resolve as Another One</a></h1>
     
     
@@ -2590,114 +2667,6 @@ only other difference from before is that we set <code>selectedBandIds</code> in
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2015/09/16/rock-and-roll-with-ember-2-is-coming-soon.html">Rock and Roll With Ember 2 Is Coming Soon!</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-09-16T15:54:00+02:00" pubdate data-updated="true">Sep 16<span>th</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3>tl;dr</h3>
-
-<p>I will publish a second, extended edition of my book, Rock and Roll with Ember
-in about two weeks, at the end of September. Here is what you need to know:</p>
-
-<ul>
-<li>I make the same promise as with the current edition: you buy it once, you get
-all updates for free until 3.0 comes out</li>
-<li>4 extra chapters are added about advanced Ember topics, bringing the number
-of chapters to 18</li>
-<li>There will be a short launch period where the book packages are offered at a
-discount.</li>
-</ul>
-
-
-<p>To be in-the-loop about the launch and know about the launch discount, <a href="http://balinterdi.com/2015/09/16/rock-and-roll-with-ember-2-is-coming-soon.html#launch-date">sign up
-below</a>,
-at the end of the post. Read on for more details.</p>
-
-<h3>The short past, present and future of Rock and Roll with Ember</h3>
-
-<p>Almost exactly 7 months ago, I published my book, Rock and Roll with Ember.js,
-that helps people learn the glorious framework. Ember has since went through
-quite some changes and I kept the book up-to-date with roughly an update each
-month.</p>
-
-<p>Ember 2 was released about a month ago, on the 13rd of August. True to the
-&#8220;stability without stagnation&#8221; philosophy, the 2.0 release did not contain any
-new features but dropped a lot of deadweight, API methods and syntaxes that had
-been deprecated somewhere along the 1.x process.</p>
-
-<p>Thanks to the transparency of the road ahead through RFCs and discussions on
-other forums, it can already be clearly seen that the 2.x series will bring a
-great deal of new and fascinating features. Routable components, angle-bracket
-components and contextual lookup in components are some of the bigger things
-that we can expect on the road to 3.0. The expected simplifications (for
-example, routable components replacing controllers) will come with major changes
-in how one writes an idiomatic app in Ember 2.</p>
-
-<p>I&#8217;ve been following along the 1.x series with fascination and a keen eye to
-apply the changes to my book and the included application. I want to do the same
-along the Ember 2.x line and thus I hereby announce the second edition of the
-book, Rock and Roll with Ember 2!</p>
-
-<h3>Free updates policy</h3>
-
-<p>To clarify, with Rock and Roll with Ember 2,  I intend to follow the &#8220;book
-development and release&#8221; process of the first edition of the book that I&#8217;ve now
-named &#8220;Buy once, get all updates for free (until the next major version)&#8221;. I
-assert that if you buy any of my book packages, you get all subsequent updates
-for free, until 3.0 lands (which is probably 12-18 months away. Geez, do I
-really want to do that? :) ).</p>
-
-<h3>New content</h3>
-
-<p>Keeping the book&#8217;s current content up-to-date is not all. The second edition
-will contain 4 extra chapters on some advanced topics (Animations, Making an
-Ember CLI addon, Deployment and ES2015 &amp; computed macros) bringing the total
-chapter count to 18 (the Getting ready for Ember 2.0 is retired).</p>
-
-<p>Further content changes are expected as Ember 2 evolves (see above for what can
-already be known about these changes), so the content on launch day will by no
-means be the final content of the book. It will constantly improve and be kept
-in-sync with the latest stable 2.x version of Ember.</p>
-
-<h3 id="launch-date">When does it launch?</h3>
-
-
-<p>Very soon, probably in two weeks, mark the date (with a pencil, for the moment):
-September 30, 2015.</p>
-
-<p>Stand ready, Rock and Roll with Ember 2 is coming to a virtual bookstore near
-you!</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -2730,6 +2699,10 @@ you!</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/10/17/continuous-visual-integration-for-ember-apps.html">Continuous Visual Integration for Ember apps</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/10/05/refactoring-promise-patterns.html">Refactoring Promise Patterns</a>
       </li>
     
@@ -2743,10 +2716,6 @@ you!</p>
     
       <li class="post">
         <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html">Rock and Roll with Ember.js 2.6 is released</a>
       </li>
     
   </ul>

@@ -89,6 +89,193 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2016/10/17/continuous-visual-integration-for-ember-apps.html">Continuous Visual Integration for Ember Apps</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-10-17T19:15:00+02:00" pubdate data-updated="true">Oct 17<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I recently watched Mike Fotinakis&#8217;s presentation at the San Francisco Ember
+meetup, <a href="https://youtu.be/iECnXK9EqA4">Continuous Visual Integration with Ember</a>,
+and I&#8217;ve become really enthusiastic about visual diffs, and Percy.</p>
+
+<p>It&#8217;s really worth the time and I highly recommend to watch it. I could say
+&#8220;watch it now and then come back&#8221; but it&#8217;s a 50-minute long video while this
+post takes 5 minutes to read, so I recommend to do it the other way around: read
+this post first and then go and watch the presentation where he goes into more
+details on what visual diffs and CI are, how Percy works and answers to
+questions from the audience.</p>
+
+<p>Ready? Cool. Start the timer and let&#8217;s go.</p>
+
+<h3>So what is continuous visual integration?</h3>
+
+<p>I will give you the high-level definition and rationale of visual diffs
+and continuous visual integration as the post otherwise wouldn&#8217;t make sense.</p>
+
+<p>When we change code, the intangible stuff apps are made of, we risk breaking it.
+To prevent this, we write tests that guard against regression (a nice way of
+saying breaking stuff) and do code reviews where someone goes over the code
+diffs, and potentially after a series of edits, confirms it.</p>
+
+<p>However, that&#8217;s just the code part. There are other ways to break a web
+application, a major one among them is for the app to look differently than
+before, in an unintended way. The background color of a button might change, a
+link could have become hidden, or a css file could no longer be downloaded
+which all lead to a degraded visual experience for visitors of the app.</p>
+
+<p>Our (textual) tests could pass with flying colors and yet the users of the app
+could be running away screaming from our site. Visual diffs guard against that
+scenario by showing a visual diff, what certain scenarios looked before and
+after the code changes under test.</p>
+
+<h3>Visual diffs as part of the review process</h3>
+
+<p>The idea is to have screenshots made at certain points in our user flows and
+have a review process that approves the changes, just as we do for code.</p>
+
+<p>To automate the process, we integrate the generation of visual diffing in the
+automated testing process. This will produce the &#8220;before&#8221; and &#8220;after&#8221;
+screenshots that will be used to generate the diffs. Let&#8217;s see how this is done
+in practice.</p>
+
+<h3>Making all this a breeze with Percy</h3>
+
+<p>Percy is a visual diffing tool that automates all of this and integrates
+smoothly into the Github pull request process. To get started with Percy,
+install the Ember addon:</p>
+
+<pre><code>$ ember install ember-percy
+</code></pre>
+
+<p>If you use Mirage for your tests, like I do, make sure to define a passthrough
+rule for Percy on top of your Mirage config, before any other rules (see
+<a href="https://percy.io/docs/clients/javascript/ember">the docs</a>):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// mirage/config.js</span>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">passthrough</span><span class="p">(</span><span class="s1">&#39;/_percy/**&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To demo how the development flow changes to accommodate visual diffing, I prepared <a href="https://github.com/balinterdi/rarwe-demo/pull/10">a PR to make a dropdown</a>
+in the <a href="https://github.com/balinterdi/rarwe-demo">Rock and Roll with Ember demo</a> nicer.</p>
+
+<p>Before implementing the change, I wrote a test that verifies if the songs for a
+particular band are listed correctly:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// tests/acceptance/songs-test.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="kr">import</span> <span class="p">{</span> <span class="nx">test</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;qunit&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">(...)</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;List songs for a band&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">assert</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">visit</span><span class="p">(</span><span class="s1">&#39;/bands&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">click</span><span class="p">(</span><span class="s1">&#39;a:contains(&quot;Tool&quot;)&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">andThen</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">percySnapshot</span><span class="p">(</span><span class="s1">&#39;list-songs-for-band&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">assert</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.song&#39;</span><span class="p">).</span><span class="nx">length</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;All songs for the selected band are displayed&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">assert</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.song:contains(&quot;46 &amp; 2&quot;)&#39;</span><span class="p">).</span><span class="nx">length</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;The first song is displayed&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The thing to note here is <code>percySnapshot</code>. If Percy is set up in the environment
+where the test runs, it generates a screenshot identified by the name we pass it
+(or auto-generates one). To set up Percy, the <code>PERCY_TOKEN</code> and <code>PERCY_PROJECT</code>
+env vars need to be set in the CI tool of your choice. <a href="https://percy.io/docs">The Percy
+docs</a> explain how.</p>
+
+<p>Once we have a percySnapshot, the next time we push and our CI builds the
+project, Percy will have a new snapshot for us:</p>
+
+<p><img src="/images/posts/visual-ci-with-percy/percy-first-screenshot.png" alt="First screenshot - No diff yet" /></p>
+
+<p>We can now implement our feature on a branch and create a pull request for it on
+Github. As you can see on the following screenshot, approving the visual diffs
+is now part of the flow:</p>
+
+<p><img src="/images/posts/visual-ci-with-percy/github-pr-before-percy-approval.png" alt="Github before Percy approval" /></p>
+
+<p>Clicking &#8220;Details&#8221; takes us to the visual diffs where we must explicilty approve
+the changes:</p>
+
+<p><img src="/images/posts/visual-ci-with-percy/percy-visual-diff.png" alt="Percy visual diffs" /></p>
+
+<p>Once the visual diffs are approved, the PR is all green and we can lean back in
+our chairs and merge it, safe in the knowledge we did not visually break the
+app.</p>
+
+<p><img src="/images/posts/visual-ci-with-percy/github-pr-after-percy-approval.png" alt="Github after Percy approval" /></p>
+
+<p>Just as with &#8220;normal&#8221; tests, the more snapshots we have, the higher the chance
+we did not introduce any regressions with our latest changes. Mike recommends a
+&#8220;breadth first&#8221; approach, making screenshots from tests that verify different
+scenarios instead of a &#8220;depth first&#8221; approach, creating several screenshots for
+the same scenario.</p>
+
+<h3>Closing words</h3>
+
+<p>I&#8217;m all sold on visual diffing and I think there is tremendous value in securing
+our apps this way.</p>
+
+<p>I encourage you to <a href="(https://youtu.be/iECnXK9EqA4">watch Mike&#8217;s presentation</a>
+and <a href="https://percy.io/">sign up for Percy</a> to become a better steward of your applications.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2016/10/05/refactoring-promise-patterns.html">Refactoring Promise Patterns</a></h1>
     
     
@@ -1343,83 +1530,6 @@ guide book, sign up below to get a sample chapter:</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2016/02/26/rock-and-roll-with-ember-dot-js-demo-a-public-ember-dot-js-example-project.html">Rock and Roll With Ember.js Demo - a Public Ember.js Example Project</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2016-02-26T11:04:00+01:00" pubdate data-updated="true">Feb 26<span>th</span>, 2016</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I have a book called Rock and Roll with Ember.js that has an accompanying
-application we develop throughout the book. I also maintain a demo version of
-the same app which has been open-source since its inception. However, that demo app
-has not received updates for a while now so I decided to do something about
-this and spent some time this week on making it a state-of-the-art Ember 2 application.</p>
-
-<p>Here are the main developments I have made:</p>
-
-<ul>
-<li><strong>Upgraded it to use the latest Ember, Ember Data and Ember CLI versions, 2.3.0.</strong></li>
-<li><strong>Used <a href="http://www.ember-cli-mirage.com/">ember-cli-mirage</a> to seed the app with data and handle &#8220;backend&#8221; requests.</strong>
-(Look, ma&#8217;, no backend!)
-<a href="http://www.ember-cli-mirage.com/">ember-cli-mirage</a> is fantastic addon that lets you set up route handlers,
-fixtures, factories and many more to manage your seed data and mock your server
-responses, both in development and tests. This was the first time I seriously
-used it and I have grown to like it a ton! The author, <a href="https://twitter.com/samselikoff">Sam Selikoff</a>, helped
-out tremendously and had an amazing turnaround on a few questions/issues.
-I used the latest beta version, 0.2.0-beta.7, which you should definitely
-check out and give feedback to Sam.</li>
-<li><strong>Made it a modern, idiomatic Ember app.</strong>
-It&#8217;s not just Ember, but also Javascript that evolves at a neck-breaking space
-(although to a lesser extent). I used the not-at-all elementary
-<a href="https://github.com/abuiles/ember-watson">ember-watson</a> to modernize the Ember app and applied a few manual tweaks
-for some of the Javascript parts, like using destructuring and <code>let</code> and <code>const</code>
-instead of <code>var</code>.</li>
-<li><strong>Deployed it to be publicly accessible.</strong>
-Leveraging the most excellent <a href="https://www.pagefronthq.com/">PageFront</a>, the app is now deployed to their
-platform. You can see it in action at <a href="https://rarwe-demo.pagefrontapp.com/">https://rarwe-demo.pagefrontapp.com</a>.
-This was not even a task, I only needed to issue two commands, one to install
-the add-on and one to deploy it.</li>
-</ul>
-
-
-<p>The source lives on Github, at <a href="https://github.com/balinterdi/rarwe-demo">balinterdi/rarwe-demo</a>.</p>
-
-<p>As Mirage can also be used in production (although it&#8217;s probably not common to
-do that), you can check out <a href="https://rarwe-demo.pagefrontapp.com/">the &#8220;production&#8221; app</a>, with the same seed data I
-used in development, and play around with it.</p>
-
-<p>As I mentioned in the introduction, the full version of the app is developed
-chapter by chapter in <a href="http://rockandrollwithemberjs.com">the Rock and Roll with Ember book</a>. You can download a
-sample chapter below:</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1450,6 +1560,10 @@ sample chapter below:</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/10/17/continuous-visual-integration-for-ember-apps.html">Continuous Visual Integration for Ember apps</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/10/05/refactoring-promise-patterns.html">Refactoring Promise Patterns</a>
       </li>
     
@@ -1463,10 +1577,6 @@ sample chapter below:</p>
     
       <li class="post">
         <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html">Rock and Roll with Ember.js 2.6 is released</a>
       </li>
     
   </ul>

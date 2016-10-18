@@ -89,6 +89,78 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2010/01/04/new-year-new-blog.html">New Year, New Blog</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-01-04T00:00:00+01:00" pubdate data-updated="true">Jan 4<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I guess it all began with <a href="http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html">this blog post</a>. I saw that there is another way for composing a blog post than typing it into a textarea with a WYSIWYG interface (which is, by the way, never really WYSIWYG). It also seemed a lot cooler, something a &#8220;real hacker&#8221; would prefer hands down. The decision to switch my blog over to a textarea-free motor has been subconsciously made the time I read that post but the implementation needed a year to be realized. I reckon the final push was to see how easy <a href="http://lackac.hu/2009/11/19/blog-migralas.html">the migration of the blog&#8217;s content</a> is.</p>
+
+<h2>The tools</h2>
+
+<p>I decided to use <a href="http://github.com/mojombo/jekyll">Jekyll</a>, a static-site generator since it integrates nicely with Github and has all the features I need. Being a static-site generator I needed a client-side solution to handle comments. I chose <a href="http://disqus.com/">Disqus</a> because that&#8217;s the one I knew and liked but there are <a href="http://intensedebate.com/">alternatives</a>.</p>
+
+<h2>The process</h2>
+
+<h3>Content migration</h3>
+
+<p>I needed continuity and thus migrating the old posts and comments. Fortunately Jekyll includes <a href="http://wiki.github.com/mojombo/jekyll/blog-migrations">migration scripts for several blog motors</a>, among them Wordpress, so that was a piece of cake, everything worked out of the box.</p>
+
+<p>For the comments, I used <a href="http://gist.github.com/261852">a modified version of Lackac&#8217;s script</a>, that he so kindly directed my attention to (thank you, Lackac). Clearly it was more work than migrating the posts but nothing to shy away from. (If you plan to switch from Wordpress to Disqus I believe you&#8217;ll be able to use <a href="http://gist.github.com/261852">the script</a> with a few minor modifications.)</p>
+
+<h3>New design</h3>
+
+<p>For my Wordpress blog, I used a design template that looked ok but was in PHP and was a PITA to modify or to add some styling to. Since I am looking to improve my capabilities as a designer I thought designing my own blog would be a suitable task to get my hands dirty with. I am not concealing the fact that I borrowed ideas from <a href="http://www.briancasel.com/">several</a> <a href="http://tom.preston-werner.com/">blogs</a> I liked but hey, they say it&#8217;s not a shame to copy good ideas so what&#8217;s wrong with that?</p>
+
+<h3>Layout, site feed, etc. with Jekyll</h3>
+
+<p>Have I said I love open source? There is a Jekyll wiki that lists <a href="http://wiki.github.com/mojombo/jekyll/sites">Jekyll sites</a> along with a link to their sources so seeing how to set up my blog with Jekyll was quite straightforward. I guess this was still the most time-consuming part of all but I did not really have to think of anything, the steps are well-defined. (Here is the <a href="http://github.com/balinterdi/balinterdi.github.com">source of my blog</a> if you&#8217;d like to take a glimpse.)</p>
+
+<h3>Buying a Github plan to be able to use a non-github domain</h3>
+
+<p>If you&#8217;d like to host your blog under a custom domain (<a href="http://codigoergosum.com">http://codigoergosum.com</a> instead of <a href="http://balinterdi.github.com">http://balinterdi.github.com</a>) you&#8217;ll need to buy a Github plan. Starting at 7$/month for the Micro plan it&#8217;s not an insurmountable obstacle, in fact it costs less than the Wordpress hosting I am moving away from.</p>
+
+<h2>Changing the name</h2>
+
+<p>Back in the spring of 2008, returning from the <a href="http://www.euruko2008.org/">European Ruby conference</a> (and having finished <a href="http://pragprog.com/titles/tpp/the-pragmatic-programmer">The Pragmatic Programmer</a> on the train) my mind was buzzing with new ideas and I could not wait to set myself on a craftsman&#8217;s journey.</p>
+
+<p>I felt I needed a blog immediately. The hard part of course was coming up with a name. Since I felt it was more important to get something going than to idle on finding the perfect one (I guess we can call this agile, can&#8217;t we? :)), I launched <a href="http://bucionrails.com">http://bucionrails.com</a>. During the almost two years that have passed since that day I have grown somewhat uncomfortable with that name so I decided to change it. I hope you like <a href="http://en.wikipedia.org/wiki/Descartes">the new one</a> :). (I set up a feed redirection with Feedburner to notify you of the feed URL change after 15 days but you could directly subscribe to the <a href="http://feeds.feedburner.com/codigoergosum">new feed now</a>)</p>
+
+<h2>The end result</h2>
+
+<p>It felt appropriate to start the new year with a new blog and -to my surprise- the switch was a lot easier than I had thought. I hope you, the faithful readers of my blog, welcome the change and ameliorate it with your precious comments.</p>
+
+<p>Now I am blogging like a hacker, too!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2009/12/14/i15r-031-is-out-now-with-haml-matchers.html">I15r 0.3.1 Is Out - Now With Haml Matchers!</a></h1>
     
     
@@ -671,61 +743,6 @@ $ sudo make install</pre>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/06/22/twuckoo-my-twitter-mini-framework.html">Twuckoo - My Twitter Mini Framework</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-06-22T00:00:00+02:00" pubdate data-updated="true">Jun 22<span>nd</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I am reading Andy Hunt&#8217;s excellent Pragmatic Thinking and Learning book. There is a section about so called &#8220;oblique strategies&#8221;, short, mysterious phrases that exercise your mind and make you look at problems from another perspective (e.g &#8220;repetition is a form of change&#8221;).</p>
-
-<p>The suggested intake was once a day and there was a free application that did just this for Apple computers. However, the application was so outdated that I could no longer run it on my laptop. So, I set out to write that application and after a bit of thinking decided to make a twitter account where I (&#8220;I&#8221; meaning a script that I wrote :) ) would post an oblique strategy each day and then just follow that account. This way, I can also spread the knowledge around.</p>
-
-<p>Thus <a title="Twuckoo" href="http://github.com/balinterdi/twuckoo/tree/master">Twuckoo</a> was born. Twuckoo is a simple program (relying on <a href="http://github.com/cjohansen/twibot/tree/master">twibot</a> for communication with twitter) that lets you periodically post a message on a twitter account. It can fetch the messages from a file, from a database, from the web or whereever you want it to retrieve them from. Its very modular in nature so it delegates the task of getting the next message to twitter and storing the posts to the module. here is currently one generic module, the one that fetches them from a file, and one that fetches them from wikipedia&#8217;s main page. I strongly hope that it is very easy for you to write your own module for your own purpose. Twuckoo aims to follow the &#8220;provide-what&#8217;s-needed-and-then-just-get-out-of-the-way&#8221; principle. Go check out <a href="http://github.com/balinterdi/twuckoo/tree/master">the README</a> for further details.</p>
-
-<p>It&#8217;s quite easy to install and run. You can find an example for the file-fetcher module at <a href="http://twitter.com/daily_oblique">http://twitter.com/daily_oblique</a> and <a href="http://twitter.com/wikipedia_tfa">http://twitter.com/wikipedia_tfa</a> grabs &#8220;Today&#8217;s Featured Article&#8221; from wikipedia and posts the title and the link so you can grow a little wiser each day :)</p>
-
-<p>Since it is modular it&#8217;s very extensible. I kept the API very simple so writing modules should be a piece of cake. Each module has to define the following methods:</p>
-
-<ol>
-<li><strong>load_tweets</strong> Loads the messages that can be twittered.</li>
-<li><strong>next</strong> Gets the next message that will be posted.</li>
-<li><strong>store</strong> Store the tweet after it had been posted.</li>
-</ol>
-
-
-<p>Once more, I encourage you to scan through <a href="http://github.com/balinterdi/twuckoo/">the README</a>, devise your own module and let me know about it. Any feedback is very welcome.</p>
-
-<p><em>Note:</em> For my Hungarian-speaking readers, I gave a <a href="http://docs.google.com/Presentation?id=dccxt9fm_3g8nf5fm5">lightning talk about twuckoo</a> at the latest budapest.rb meetup.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/9/">&larr; Older</a>
@@ -758,6 +775,10 @@ $ sudo make install</pre>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/10/17/continuous-visual-integration-for-ember-apps.html">Continuous Visual Integration for Ember apps</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/10/05/refactoring-promise-patterns.html">Refactoring Promise Patterns</a>
       </li>
     
@@ -771,10 +792,6 @@ $ sudo make install</pre>
     
       <li class="post">
         <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html">Rock and Roll with Ember.js 2.6 is released</a>
       </li>
     
   </ul>
