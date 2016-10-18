@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-10-18T10:46:34+02:00</updated>
+  <updated>2016-10-18T21:08:53+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -98,12 +98,12 @@ import { test } from 'qunit';</p>
 
 <p>test('List songs for a band', function(assert) {
   visit('/bands');
-  click('a:contains("Tool")');</p>
+  click('a:contains("Tool")');
+  percySnapshot('list-songs-for-band');</p>
 
 <p>  andThen(function() {</p>
 
-<pre><code>percySnapshot('list-songs-for-band');
-assert.equal(Ember.$('.song').length, 3, "All songs for the selected band are displayed");
+<pre><code>assert.equal(Ember.$('.song').length, 3, "All songs for the selected band are displayed");
 assert.equal(Ember.$('.song:contains("46 &amp; 2")').length, 1, "The first song is displayed");
 </code></pre>
 

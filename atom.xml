@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-10-18T10:46:34+02:00</updated>
+  <updated>2016-10-18T21:08:53+02:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -119,9 +119,9 @@ particular band are listed correctly:</p>
 </span><span class='line'><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;List songs for a band&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">assert</span><span class="p">)</span> <span class="p">{</span>
 </span><span class='line'>  <span class="nx">visit</span><span class="p">(</span><span class="s1">&#39;/bands&#39;</span><span class="p">);</span>
 </span><span class='line'>  <span class="nx">click</span><span class="p">(</span><span class="s1">&#39;a:contains(&quot;Tool&quot;)&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">percySnapshot</span><span class="p">(</span><span class="s1">&#39;list-songs-for-band&#39;</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>  <span class="nx">andThen</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">percySnapshot</span><span class="p">(</span><span class="s1">&#39;list-songs-for-band&#39;</span><span class="p">);</span>
 </span><span class='line'>    <span class="nx">assert</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.song&#39;</span><span class="p">).</span><span class="nx">length</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;All songs for the selected band are displayed&quot;</span><span class="p">);</span>
 </span><span class='line'>    <span class="nx">assert</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="nx">Ember</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.song:contains(&quot;46 &amp; 2&quot;)&#39;</span><span class="p">).</span><span class="nx">length</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;The first song is displayed&quot;</span><span class="p">);</span>
 </span><span class='line'>  <span class="p">});</span>
