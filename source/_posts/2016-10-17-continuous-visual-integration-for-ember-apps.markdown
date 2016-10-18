@@ -4,6 +4,7 @@ title: "Continuous Visual Integration for Ember apps"
 date: 2016-10-17 19:15
 comments: true
 categories: ember.js
+perk: general-signup
 ---
 
 I recently watched Mike Fotinakis's presentation at the San Francisco Ember
@@ -134,7 +135,7 @@ the same scenario.
 I'm all sold on visual diffing and I think there is tremendous value in securing
 our apps this way.
 
-I encourage you to [watch Mike's presentation]((https://youtu.be/iECnXK9EqA4)
+I encourage you to [watch Mike's presentation](https://youtu.be/iECnXK9EqA4)
 and [sign up for Percy](https://percy.io/) to become a better steward of your applications.
 
 
