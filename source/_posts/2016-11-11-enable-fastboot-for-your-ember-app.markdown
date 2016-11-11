@@ -10,14 +10,14 @@ perk: general-signup
 ## What is FastBoot and why should you use it?
 
 [FastBoot](https://ember-fastboot.com/) is the awesome add-on that adds
-server-side rendering to your Ember app. That will make users of your
+server-side rendering to your Ember app. This will make users of your
 application see the content of your page before any of the javascript is
 downloaded. In other words, the ["time to first tweet"][1]
-of your app is greatly reduced, which is great where and when people have slow
+of your app is greatly reduced, which is a big win where and when people have slow
 or unstable network connections.
 
-Another advantage is that crawlers will have an easier job indexing your site,
-which brings SEO benefits.
+Another advantage is that search engine crawlers will have an easier job
+indexing your site, which brings SEO benefits.
 
 Furthermore, your site will be readable with Javascript disabled which is
 convenient for screen readers.
@@ -25,12 +25,12 @@ convenient for screen readers.
 I recently went through the process of enabling the demo version of the
 [Rock and Roll application](http://rockandrollwithemberjs.com) to run in Fastboot.
 Below, I'm going to tell you about the challenges I encountered and how I
-overcame them in the hope that it will prove valuable when you do the same for
+overcame them in the hope that my journey will prove valuable when you do the same for
 your app.
 
 ## Installing the add-on
 
-As FastBoot is a regular Ember add-on, that one was a piece of cake:
+FastBoot is a regular Ember add-on, so installing it is piece of cake:
 
     $ ember install ember-cli-fastboot
 
@@ -39,11 +39,11 @@ I could then run
     $ ember fastboot
 
 from the project's directory and had the node server serving my application at
-port 3000. It's important to note that you should refresh your browser tab each time you
-make changes as FastBoot doesn't (yet) auto-refresh as `ember server` does.
+port 3000. It's important to note that you should refresh your browser tab each
+time you make changes to your code as FastBoot doesn't (yet) auto-refresh the
+way `ember server` does.
 
-I then disabled JavaScript in my browser and then directed my browser
-to `http://localhost:3000`.
+I then disabled JavaScript in my browser and then directed my browser to `http://localhost:3000`.
 
 Disabling JavaScript in Chrome is most easily done by expanding the context menu
 of Developer Tools and then clicking on Settings:
@@ -82,10 +82,10 @@ module.exports = function(environment) {
 ## Serving assets
 
 When I restarted the `ember fastboot` and looked at the server-rendered version
-of my app, I saw that the data is now correctly rendered on the page but that
-all styles missing from it.
+of my app, I saw that the dynamic data was now correctly rendered on the page.
+However, it did not have any styling.
 
-A quick glance at [the documentation][4] made me realize I need to pass the
+A quick glance at [the documentation][4] made me realize I needed to pass the
 `serve-assets` option to the command so that it serves the css (and other asset)
 files:
 
@@ -100,12 +100,16 @@ one of the bands to have their songs displayed, I got the following error:
 
 Since Fastboot runs your Ember app in a node environment, not in the browser,
 `document` is not present. In my case, I accessed `document` (through jQuery)
-to set the document title, but that will not work in FastBoot mode.
+to set the document title, which does not work in FastBoot mode.
 
-The user guide again pointed me to the right direction, to use
-[ember-cli-document-title][5], a FastBoot compatible way to set document titles.
+The user guide suggested to use [ember-cli-document-title][5], a FastBoot
+compatible way to set document titles. So my next step was to install that
+add-on:
 
-Armed with ember-cli-document-title, it was a piece of cake:
+    $ ember install ember-cli-document-title
+
+Armed with this great add-on, I only had to define a title (method) in the
+corresponding route:
 
 ```js
 // app/routes/bands/band/songs.js
@@ -127,10 +131,10 @@ load in FastBoot mode, the list of songs was empty each time.
 
 Adolfo Builes and Jonathan Jackson helped me out by pointing out that songs are
 loaded asynchronously. The request to fetch the songs was only fired when the
-template rendered the `#each model.songs as |song|` piece. FastBoot does not
+template rendered each song belonging to the band. FastBoot does not
 know when the page is fully rendered and thus relies on the `beforeModel`,
 `model` and `afterModel` route hooks having finished their work. When that
-happened, the songs were not fetched and rendered on the screen yet:
+happened, the songs were not yet fetched and rendered on the screen yet:
 
 ![Songs missing](/images/posts/fastboot/songs-missing.png)
 
@@ -154,11 +158,11 @@ export default Ember.Route.extend({
 });
 ```
 
-As you can see, we only pre-fetch the songs in FastBoot mode. In the browser, we
+As you can see, I only pre-fetch the songs in FastBoot mode. In the browser, I
 let rendering start earlier, with a "pop-in" effect (which can be remedied in
 several ways in the browser, too).
 
-The songs now appear in the FastBoot "view" of the app, too:
+The songs now appeared in the FastBoot "view" of the app, too:
 
 ![Songs present](/images/posts/fastboot/songs-present.png)
 
@@ -168,16 +172,16 @@ of [the guide][4].
 ## Fastboot-enabled hosting
 
 It's fine to have FastBoot working in development but nobody actually needs
-it to work in that environment. It has to work when deployed to a server, where
-people see the app rendered faster (among other benefits, see intro).
+it to work in that environment. It has to work when deployed to a server.
 
-I chose Heroku which seemed like the easiest option. And it really was.
+The guide has [a whole page on deployment][6], listing several deployment
+options, from which I chose Heroku as it seemed the easiest option. And it really was.
 
-All I had to do was to set the buildpack URL:
+All I had to do was to set the buildpack URL from my project:
 
-    $ heroku buildpacks:set https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/emberjs.tgz
+    $ heroku buildpacks:set https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/emberjs.tgz -a rarwe-demo
 
-And then add a `static.json` file to the root of my project, to disable forcing
+I then added a `static.json` file to the root of my project, to disable forcing
 https requests, as the domain is not (yet) SSL-supported:
 
 ```js
@@ -211,12 +215,12 @@ This step is really only needed to change the default `https_only` setting. If
 you have SSL set up for your domain, you don't need the `static.json` file.
 
 The next time I pushed to the remote set up by Heroku, it just worked, and my
-app was now FastBoot enabled.
+app was now FastBoot enabled. Hooray!
 
-## Further resources
+## Acknowledgements and further resources
 
 I would like to thank [Adolfo][7] and [Jonathan][8] for their help in pointing
-me at Ember Weekend, an Ember app that runs in FastBoot and [whose source code is publicly available][9],
+me at [Ember Weekend][13], an Ember app that runs in FastBoot and [whose source code is publicly available][9],
 and also for overcoming the above mentioned "missing dynamic content" problem.
 
 My app does not use many of Fastboot's features. If you're looking to see a more
@@ -241,3 +245,4 @@ Github at [balinterdi/rarwe-demo][11] and deployed to [http://demo.rockandrollwi
 [10]: https://vimeo.com/157688134
 [11]: https://github.com/balinterdi/rarwe-demo
 [12]: http://demo.rockandrollwithemberjs.com
+[13]: https://emberweekend.com/
