@@ -71,6 +71,9 @@ export default function() {
 })
 ```
 
+**NOTE** Starting from ember-percy version 1.2.4, you no longer need to do the
+above as ember-percy doesn't use Mirage anymore.
+
 To demo how the development flow changes to accommodate visual diffing, I prepared [a PR to make a dropdown](https://github.com/balinterdi/rarwe-demo/pull/10)
 in the [Rock and Roll with Ember demo](https://github.com/balinterdi/rarwe-demo) nicer.
 
