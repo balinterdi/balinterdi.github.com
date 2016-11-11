@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-11-11T21:11:21+01:00</updated>
+  <updated>2016-11-11T21:20:15+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -14,10 +14,10 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Enable Fastboot for your Ember app]]></title>
-    <link href="http://balinterdi.com/2016/11/11/enable-fastboot-for-your-ember-app.html"/>
+    <title type="html"><![CDATA[Enable FastBoot in your Ember app]]></title>
+    <link href="http://balinterdi.com/2016/11/11/enable-fastboot-in-your-ember-app.html"/>
     <updated>2016-11-11T11:20:00+01:00</updated>
-    <id>http://balinterdi.com/2016/11/11/enable-fastboot-for-your-ember-app</id>
+    <id>http://balinterdi.com/2016/11/11/enable-fastboot-in-your-ember-app</id>
     <content type="html"><![CDATA[<h2>What is FastBoot and why should you use it?</h2>
 
 <p><a href="https://ember-fastboot.com/">FastBoot</a> is the awesome add-on that adds
