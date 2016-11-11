@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Enable Fastboot for your Ember app"
+title: "Enable FastBoot in your Ember app"
 date: 2016-11-11 11:20
 comments: true
 categories: ember.js
