@@ -89,6 +89,336 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2014/03/19/ember-dot-js-getters-and-setters.html">Ember.js Getters and Setters</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-19T20:53:00+01:00" pubdate data-updated="true">Mar 19<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>To make all the magic fairy-dust sprinkling efficient, like auto-updating
+templates and computed properties, Ember uses getters and setters instead of
+accessing properties directly the javascript (and dare I say, the Angular) way. At
+its most simplest form, it is <code>object.get(property)</code> and <code>object.set(property)</code>.</p>
+
+<p>Howevers, it would not be Ember if we were not provided methods on top of these
+primitives to make our hard lives as web developers simpler. In the following
+post, I am going to show (some of) these methods through an example, so let&#8217;s
+go.</p>
+
+<h2>Badges, badges, I want more badges</h2>
+
+<p>I am certainly in favor of having badges in every application. Discourse is
+actively discoursing <a href="https://meta.discourse.org/t/initial-discourse-badge-design-spec">their badge system</a> so I quickly
+sketched out something to get ahead of them.</p>
+
+<p>Let me just paste the code here and then use it to explain what the getter and
+setter methods are good for.</p>
+
+<p>You can quickly scroll through the below templates. They are mostly there so
+that you get the whole picture. The stuff relevant to this discussion is found
+in the javascript code.</p>
+
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot;&gt;
+  &lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;panel panel-primary&quot;&gt;
+      &lt;div class=&quot;panel-heading&quot;&gt;
+        &lt;h3 class=&quot;panel-title&quot;&gt;Your badges, sir/ma&#39;am.&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;panel-body&quot;&gt;
+        {{outlet}}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/script&gt;</code></pre>
+</div>
+
+
+
+
+<div>
+  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;index&quot;&gt;
+  &lt;ul class=&quot;list-group&quot;&gt;
+    {{#each badge in arrangedContent}}
+      &lt;li {{bind-attr class=&quot;:list-group-item badge.unlocked::locked&quot;}}&gt;
+        {{badge.name}}
+        &lt;span class=&quot;badge&quot;&gt;{{badge.score}}&lt;/span&gt;
+      &lt;/li&gt;
+    {{/each}}
+    &lt;li class=&quot;list-group-item&quot;&gt;
+      &lt;em&gt;Total:&lt;/em&gt;
+      &lt;span class=&quot;pull-right&quot;&gt;{{totalScore}}&lt;/span&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;div id=&quot;new-badge&quot; class=&quot;row&quot;&gt;
+    &lt;span class=&quot;col-xs-6&quot;&gt;
+      {{input class=&quot;input&quot; type=&quot;text&quot; placeholder=&quot;Badge name&quot; value=name}}
+    &lt;/span&gt;
+    &lt;span class=&quot;col-xs-4&quot;&gt;
+      {{input class=&quot;small-input&quot; type=&quot;text&quot; placeholder=&quot;Score&quot; value=score action=&quot;addBadge&quot;}}
+    &lt;/span&gt;
+    &lt;span class=&quot;col-xs-2&quot;&gt;
+      &lt;button class=&quot;btn btn-primary btn-sm pull-right&quot; type=&quot;button&quot;
+          {{action &quot;addBadge&quot;}}&gt;
+          Add
+      &lt;/button&gt;
+    &lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div id=&quot;unlock-all&quot; class=&quot;row&quot;&gt;
+    &lt;div class=&quot;col-xs-12&quot;&gt;
+      &lt;button class=&quot;btn btn-danger btn-md&quot; type=&quot;button&quot;
+        {{action &quot;unlockAll&quot;}}&gt;
+        Unlock all
+      &lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;</code></pre>
+</div>
+
+
+<p>First, the badge class is defined and some badges created so that we have something to work with:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">unlocked</span><span class="o">:</span> <span class="kc">false</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">rook</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;R00k&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">unlocked</span><span class="o">:</span> <span class="kc">true</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">talkative</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Talkative&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">10</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">hemingway</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Hemingway&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">score</span><span class="o">:</span> <span class="mi">1000</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="nx">rook</span><span class="p">,</span> <span class="nx">talkative</span><span class="p">,</span> <span class="nx">hemingway</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>getProperties and setProperties</h3>
+
+<p>The first couple of methods come handy when working with a single object but
+multiple properties.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">],</span>
+</span><span class='line'>  <span class="nx">sortAscending</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">addBadge</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">newBadgeProperties</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getProperties</span><span class="p">([</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">]);</span>
+</span><span class='line'>      <span class="nx">newBadgeProperties</span><span class="p">.</span><span class="nx">score</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">newBadgeProperties</span><span class="p">.</span><span class="nx">score</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">newBadge</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Badge</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">newBadgeProperties</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">).</span><span class="nx">pushObject</span><span class="p">(</span><span class="nx">newBadge</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">setProperties</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">score</span><span class="o">:</span> <span class="s1">&#39;&#39;</span> <span class="p">});</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">(...)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>On line 9, we want to create a new object with the values provided in the input
+boxes (addBadge is the action that gets triggered when the Add button is
+clicked, check the template). <code>getProperties</code> will create a javascript object
+creating key-value pairs for the passed properties. So the above might e.g yield
+<code>{ name: "Silent Bob", score: "2" }</code>. That gets directly passed in to create a
+new badge object.</p>
+
+<p>On line 14, we use the mutating pair of <code>getProperties</code> to reset the input
+fields. Pretty straightforward.</p>
+
+<h3>getEach and setEach</h3>
+
+<p>Ember has us covered when we are working with an array and want to get (or set)
+the same property of each item.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">],</span>
+</span><span class='line'>  <span class="nx">sortAscending</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">totalScore</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">sum</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">s1</span> <span class="o">+</span> <span class="nx">s2</span><span class="p">;</span> <span class="p">};</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">).</span><span class="nx">getEach</span><span class="p">(</span><span class="s1">&#39;score&#39;</span><span class="p">).</span><span class="nx">reduce</span><span class="p">(</span><span class="nx">sum</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;model.@each.score&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">(...)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">unlockAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">).</span><span class="nx">setEach</span><span class="p">(</span><span class="s1">&#39;unlocked&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When the &#8220;Unlock all&#8221; button launches the <code>unlockAll</code> action, it calls <code>setEach</code>
+on the badges (line 14), making all of them unlocked (you can verify this in the
+demo by seeing the color of the badge names turn darker - their css class has
+been updated). Another advange of <code>setEach</code> is that it guards against calling
+<code>set</code> on null or undefined values.</p>
+
+<p>You might know the reader counterpart, <code>getEach</code> as <code>mapBy</code>. It goes through the
+array and makes another array by getting the passed property on each item. So in
+the above example (line 7), we first collect the score for each badge and then
+sum them up by way of reduction. (A shiny example of a non-distributed
+map-reduce :) ).</p>
+
+<h3>A macro can make nice code nicer</h3>
+
+<p>I <a href="http://balinterdi.com/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria.html">have used a reduce computed macro</a> before to set up sorting.
+I have gotten the hang of it and realized I could use another couple of them
+to make the above code simpler (and more performant):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IndexController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ArrayController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">sortProperties</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">],</span>
+</span><span class='line'>  <span class="nx">sortAscending</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">scores</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">mapBy</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">),</span>
+</span><span class='line'>  <span class="nx">totalScore</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">sum</span><span class="p">(</span><span class="s1">&#39;scores&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The problem is that the subject under discussion, <code>getEach</code> is gone now, so
+pretend you did not see this.</p>
+
+<p>Finally, here is the jsbin, should you decide to play around with it:</p>
+
+<p><a class="jsbin-embed" href="http://emberjs.jsbin.com/qivah/4/embed?html,js,output">Getter and Setters</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
+
+<p>I hope some of that sticks and you&#8217;ll write less &#8220;bare&#8221; gets and sets.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2014/03/05/sorting-arrays-in-ember-dot-js-by-various-criteria.html">Sorting Arrays in Ember.js by Various Criteria</a></h1>
     
     
@@ -2182,286 +2512,6 @@ URLs" /></p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2013/12/11/build-an-ember-dot-js-app-with-firebase.html">Build an Ember.js App With Firebase</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-12-11T08:42:46+01:00" pubdate data-updated="true">Dec 11<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Ember.js is an outstanding client-side framework for building single-page
-applications. To make your application truly come to life, Firebase, being a
-real-time backend, is a natural choice as the server-side component.</p>
-
-<p>Sending data between the server and the client is a task all web applications
-have to address. However, if one uses the Firebase-Ember.js stack, this
-problem is largely abstracted away by these wonderful frameworks.</p>
-
-<p>To make them work together, the Firebase team released their official
-Ember.js bindings, <a href="https://github.com/firebase/emberFire">emberFire</a>.</p>
-
-<h3>How does it work?</h3>
-
-<p>Before we look at the making of the actual application it is important to
-understand how the emberFire library works.</p>
-
-<p>It is built on two primitives, <code>EmberFire.Object</code> and <code>EmberFire.Array</code>. These
-extend <code>Ember.ObjectProxy</code> and <code>Ember.ArrayProxy</code>, respectively. These proxy
-objects delegate any <code>get</code> and <code>setProperty</code> calls that are not defined on the
-proxy to an underlying content object.</p>
-
-<p>What this means is that we can work with Firebase references in our
-application as if they were Ember objects. In the case of a single object,
-setting a property will cause a child with that name to be written with the
-passed value. When working with an array, the usual array methods (e.g
-<code>pushObject</code>) can be used and they will do the right thing in the underlying
-Firebase reference (e.g <code>push</code> the new node).</p>
-
-<h3>Setting up the environment</h3>
-
-<p>To set up the necessary dependencies, it is easiest to download the <a href="http://emberjs.com/">latest Ember
-starter kit</a> and add the following script tags to the main
-template:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;https://cdn.firebase.com/v0/firebase.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-</span><span class='line'><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&#39;https://cdn.firebase.com/v0/firebase-simple-login.js&#39;</span><span class="nt">&gt;&lt;/script&gt;</span>
-</span><span class='line'><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;http://firebase.github.io/emberFire/emberfire-latest.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>With that in place, we can start developing. For the sake of focusing on one
-single issue at a time, the code snippets in this post do not always exactly
-match those in the actual application. If you want to see them in their
-entirety, you can always <a href="https://github.com/balinterdi/ideavote-emberfire">check the source code on Github</a>.</p>
-
-<h3>The Idealist</h3>
-
-<p>The application we are going to build is an &#8220;Idealist&#8221;. Users can submit ideas
-and vote on existing ones.</p>
-
-<p>When one loads the application it looks like the following:</p>
-
-<p><img src="https://raw.github.com/balinterdi/ideavote-emberfire/master/public/img/screenshots/ideavote-screenshot-3-640.png" alt="Ideavote screenshot" /></p>
-
-<p>A list of ideas is displayed along with the number of votes for that idea and a
-button to vote that idea up.</p>
-
-<p>To get the existing ideas from Firebase, we use the <code>model</code> hook of the
-appropriate route:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">dbRoot</span> <span class="o">=</span> <span class="s2">&quot;https://emberfire-ideavote.firebaseio.com&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="kd">var</span> <span class="nx">ideasPath</span> <span class="o">=</span> <span class="nx">dbRoot</span> <span class="o">+</span> <span class="s2">&quot;/ideas&quot;</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IdeasRoute</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">EmberFire</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-</span><span class='line'>      <span class="nx">ref</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Firebase</span><span class="p">(</span><span class="nx">ideasPath</span><span class="p">)</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This loads the ideas in an <code>EmberFire.Array</code> and then iterates through them in the <code>ideas</code> template:</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;ideas&quot;&gt;
-  {{ render &quot;ideas/new&quot; }}
-  &lt;div class=&quot;idea-list&quot;&gt;
-    &lt;ul class=&quot;unstyled&quot;&gt;
-      {{#each controller}}
-        {{ render &quot;idea&quot; this }}
-      {{/each}}
-    &lt;/ul&gt;
-  &lt;/div&gt;
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p>So how does adding a new idea happen? If we take a look at the <code>ideas/new</code>
-template, we can see that clicking on the &#8220;Send my idea&#8221; button triggers the
-<code>sendIdea</code> action:</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;ideas/new&quot;&gt;
-  &lt;div class=&quot;idea new-idea&quot;&gt;
-    &lt;div class=&quot;row&quot;&gt;
-      &lt;div class=&quot;span9&quot;&gt;
-        {{input value=title placeholder=&quot;Your idea here&quot; insert-newline=&quot;sendIdea&quot;}}
-      &lt;/div&gt;
-      &lt;div class=&quot;span2&quot;&gt;
-        {{#if isDisabled}}
-          &lt;button disabled=&quot;disabled&quot; {{bindAttr class=&quot;isDisabled:disabled&quot;}}&gt;Send my idea&lt;/button&gt;
-        {{else}}
-          &lt;button {{bindAttr class=&quot;isDisabled:disabled&quot;}} {{action sendIdea}}&gt;Send my idea&lt;/button&gt;
-        {{/if}}
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p>The triggered <code>sendIdea</code> action is then handled on the controller:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">IdeasNewController</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">ObjectController</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">sendIdea</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">newIdeaRef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Firebase</span><span class="p">(</span><span class="nx">ideasPath</span><span class="p">).</span><span class="nx">push</span><span class="p">();</span>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">newIdea</span> <span class="o">=</span> <span class="nx">EmberFire</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span> <span class="nx">ref</span><span class="o">:</span> <span class="nx">newIdeaRef</span> <span class="p">});</span>
-</span><span class='line'>      <span class="nx">newIdea</span><span class="p">.</span><span class="nx">setProperties</span><span class="p">({</span>
-</span><span class='line'>        <span class="nx">id</span><span class="o">:</span> <span class="nx">newIdeaRef</span><span class="p">.</span><span class="nx">name</span><span class="p">(),</span>
-</span><span class='line'>        <span class="nx">title</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">),</span>
-</span><span class='line'>        <span class="nx">submittedBy</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;auth.currentUser.id&#39;</span><span class="p">),</span>
-</span><span class='line'>        <span class="nx">timestamp</span><span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(),</span>
-</span><span class='line'>        <span class="nx">voteCount</span><span class="o">:</span> <span class="mi">0</span>
-</span><span class='line'>      <span class="p">});</span>
-</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We get a reference with a unique id by using Firebase&#8217;s push operation. We
-create an <code>EmberFire.Object</code> with that reference and that enables us to do our
-magic with the help of Firebase. When we then set any property on the object,
-it is going to be persisted on our backend and synchronized to all clients.</p>
-
-<h3>Extending the EmberFire classes</h3>
-
-<p>Up until this point, we did not need to create our own model classes. The basic
-EmberFire classes were sufficient for our needs. However, if we need to define
-additional behavior for our models, we have to extend these primitives.</p>
-
-<p>Suppose, for example, that each user has a certain number of votes and we want
-to prevent further voting when she does not have any votes left, as shown on the
-next mockup:</p>
-
-<p><img src="https://raw.github.com/balinterdi/ideavote-emberfire/master/public/img/screenshots/ideavote-screenshot-2-640.png" alt="Ideavote screenshot" /></p>
-
-<p>We can define a computed property on the user that would tell whether she has
-any votes left. Computed properties in Ember are properties that depend on
-other -computed or &#8220;normal&#8221;- properties and get automatically updated when one of
-the dependent properties change.</p>
-
-<p>To do that, we need to define our User model:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">App</span><span class="p">.</span><span class="nx">User</span> <span class="o">=</span> <span class="nx">EmberFire</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">noVotesLeft</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">computed</span><span class="p">.</span><span class="nx">lte</span><span class="p">(</span><span class="s1">&#39;votesLeft&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The above is a computed macro definition that defines <code>noVotesLeft</code> as true if
-the <code>votesLeft</code> property of the user is less than or equal to zero.</p>
-
-<p>Then, in the template that renders each idea, we disable the button if that
-computed property is true and also give it a grey hue to indicate its disabled
-state:</p>
-
-<div>
-  <pre><code class='html'>&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;idea&quot;&gt;
-  &lt;li&gt;
-    &lt;div class=&quot;idea&quot;&gt;
-      &lt;div class=&quot;row&quot;&gt;
-        &lt;div class=&quot;span8&quot;&gt;
-          &lt;strong&gt;{{title}}&lt;/strong&gt;
-        &lt;/div&gt;
-        &lt;div class=&quot;span1&quot;&gt;
-          {{voteCount}}
-        &lt;/div&gt;
-          &lt;div class=&quot;span2&quot;&gt;
-            &lt;button {{bind-attr class=&quot;:btn auth.currentUser.noVotesLeft:btn-disabled:btn-primary&quot;}}
-                    {{bind-attr disabled=&quot;auth.currentUser.noVotesLeft&quot;}}&gt;Vote&lt;/button&gt;
-          &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/li&gt;
-&lt;/script&gt;</code></pre>
-</div>
-
-
-<p>Keep in mind that the context of the template is an idea and our computed
-property is defined on the user, hence the need for
-<code>auth.currentUser.noVotesLeft</code>.</p>
-
-<h3>Wait, there is more</h3>
-
-<p>Taking things a step further, I have also integrated Firebase&#8217;s SimpleLogin
-authentication service and prevented the same user to vote on the same idea
-multiple times. If you wish to see how these are implemented, I encourage you to
-check out <a href="https://github.com/balinterdi/ideavote-emberfire">the source code of the project</a>.</p>
-
-<p>I hope I got you interested in learning more about how to build real-time web
-applications and gave you a basic example of how to use state-of-the-art tools
-to do so.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/6/">&larr; Older</a>
@@ -2475,7 +2525,7 @@ to do so.</p>
 <aside class="sidebar">
   
     <section>
-  <h1>My Ember 2 book</h1>
+  <h1>Learn Ember from the most up-to-date book</h1>
   <div>
     <a href="http://rockandrollwithemberjs.com/?utm_source=my-blog&utm_medium=sidebar&utm_campaign=rarwe-book" style="text-decoration:none">
       <img src="/images/rarwe-book.jpg" alt="Rock and Roll with Ember.js" title="Rock and Roll with Ember.js" />
@@ -2494,6 +2544,10 @@ to do so.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/11/11/enable-fastboot-for-your-ember-app.html">Enable Fastboot for your Ember app</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/10/17/continuous-visual-integration-for-ember-apps.html">Continuous Visual Integration for Ember apps</a>
       </li>
     
@@ -2507,10 +2561,6 @@ to do so.</p>
     
       <li class="post">
         <a href="/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html">Rock and Roll with Ember.js 2.7 is released</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
       </li>
     
   </ul>

@@ -89,6 +89,55 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2016/03/24/rock-and-roll-with-ember-dot-js-now-on-2-dot-4-and-with-code-diffs.html">Rock and Roll With Ember.js - Now on 2.4 and With Code Diffs</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-03-24T15:12:00+01:00" pubdate data-updated="true">Mar 24<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I have just sent an updated version of Rock and Roll with Ember.js to my
+readers. <a href="http://rockandrollwithemberjs.com">The app</a> now runs on Ember 2.4.3.</p>
+
+<p>The biggest change in this release is that I now leverage code diffs in code
+snippets, where this makes understanding changes easier. It looks like this in
+the pdf version:</p>
+
+<p><img src="/images/posts/rarwe-2-4-released/code-diff-example.png" alt="Colored code diffs" /></p>
+
+<p>Since the last release was more than two months ago and I constantly improve
+things, there is a whole slew of other changes that you can see <a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aissue+milestone%3A2.4+is%3Aclosed">here</a>.</p>
+
+<p>If you are not yet a reader yet and want to have an always up-to-date Ember
+guide book, sign up below to get a sample chapter:</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2016/02/26/rock-and-roll-with-ember-dot-js-demo-a-public-ember-dot-js-example-project.html">Rock and Roll With Ember.js Demo - a Public Ember.js Example Project</a></h1>
     
     
@@ -2445,228 +2494,6 @@ you to <a href="http://rockandrollwithemberjs.com">check out the book now</a> be
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2015/09/25/select-in-ember-with-multiple-selection.html">Select in Ember With Multiple Selection</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-09-25T14:24:00+02:00" pubdate data-updated="true">Sep 25<span>th</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><iframe
-  width="178" height="24" style="border:0px"
-  src="https://mixonic.github.io/ember-community-versions/2015/09/25/select-in-ember-with-multiple-selection.html">
-</iframe>
-
-
-<p>A few weeks ago I wrote a blog post about <a href="http://balinterdi.com/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">how to do a select in Ember 2</a>,
-that seemed to be popular. I also received good comments about advanced versions
-of the same problem, namely how the solution would have to change to deal with
-the case if the items to select from are objects and how to tackle multiple
-selections. I thus decided to do a Part 2, showing a solution for these cases.
-Comment are welcome, as always.</p>
-
-<h3>Multiple selection with simple strings as items</h3>
-
-<p>Let&#8217;s tackle the easier problem first, being able to select more than one items,
-but the items are simple string values. The values will serve both as the value
-and the content of the options.</p>
-
-<p>I added some extra Bootstrap markup and a list to see which items are selected:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class=&quot;container&quot;&gt;
-  &lt;div class=&quot;row&quot;&gt;
-    &lt;div class=&quot;col-sm-8&quot;&gt;
-      &lt;h2&gt;Select some bands&lt;/h2&gt;
-      &lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
-        {{#each bands as |bandChoice|}}
-        &lt;option value={{bandChoice}} selected={{include selectedBands bandChoice}}&gt;{{bandChoice}}&lt;/option&gt;
-        {{/each}}
-      &lt;/select&gt;
-    &lt;/div&gt;
-    &lt;div class=&quot;col-sm-4&quot;&gt;
-      {{#if selectedCount}}
-        &lt;h2&gt;Selected bands ({{selectedCount}})&lt;/h2&gt;
-      {{else}}
-        &lt;h2&gt;Selected bands&lt;/h2&gt;
-      {{/if}}
-      &lt;ul class=&quot;list-group&quot;&gt;
-        {{#each selectedBands as |band|}}
-          &lt;li class=&quot;list-group-item&quot;&gt;{{band}}&lt;/li&gt;
-        {{else}}
-          &lt;li class=&quot;list-group-item&quot;&gt;No band selected.&lt;/li&gt;
-        {{/each}}
-      &lt;/ul&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-</div>
-
-
-<p>I added the <code>multiple</code> attribute to the <code>select</code> tag to allow multiple
-selections. Not much has changed from the earlier example. When the user
-selects an option, whether in a way that clears the earlier selection (simple
-click) or adds to it (ctrl/cmd + click), the <code>onchange</code> event is fired, and our
-<code>selectBand</code> handler will handle it. We expect that handler to set
-<code>selectedBands</code> so that the list of selected bands gets updated correctly. So
-let&#8217;s see the controller:</p>
-
-<div>
-  <pre><code class='html'>export default Ember.Controller.extend({
-  bands: [&#39;Pearl Jam&#39;, &#39;Tool&#39;, &#39;Long Distance Calling&#39;, &#39;Led Zeppelin&#39;],
-
-  selectedBands: [],
-
-  selectedCount: Ember.computed.reads(&#39;selectedBands.length&#39;),
-
-  actions: {
-    selectBand(event) {
-      const selectedBands = Ember.$(event.target).val();
-      this.set(&#39;selectedBands&#39;, selectedBands || []);
-    }
-  }
-});</code></pre>
-</div>
-
-
-<p>For multiple selections, jQuery, aliased as <code>Ember.$</code>, returns an array of the
-selected options values as the select&#8217;s value, so all we have to do is assign
-this to the <code>selectedBands</code> property. In case nothing is selected, <code>val()</code>
-returns <code>null</code>, so we guard against transferring this to <code>selectedBands</code> by
-defaulting to an empty array.</p>
-
-<p>There is one more thing you might have noticed, and that is the <code>include</code> helper
-in the template. We want to mark the option as selected if its value is included
-in the selectedBands:</p>
-
-<div>
-  <pre><code class='html'>&lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
-  {{#each bands as |bandChoice|}}
-  &lt;option value={{bandChoice}} selected={{include selectedBands bandChoice}}&gt;{{bandChoice}}&lt;/option&gt;
-  {{/each}}
-&lt;/select&gt;</code></pre>
-</div>
-
-
-<p>The <code>include</code> helper is not provided by Ember but it is rather easy to write
-ourselves:</p>
-
-<div>
-  <pre><code class='html'>import Ember from &#39;ember&#39;;
-
-export function include(params) {
-  const [items, value] = params;
-  return items.indexOf(value) &gt; -1;
-}
-
-export default Ember.Helper.helper(include);</code></pre>
-</div>
-
-
-<p>That is all there is to it:</p>
-
-<p><img src="/images/posts/select-in-ember-with-multiple-selections/multiple-select-with-ember.gif" alt="Multiple selection" /></p>
-
-<h3>Multiple selection with objects as items</h3>
-
-<p>This is just a tad more difficult, as we cannot directly have objects as options
-values. Let&#8217;s assume that these objects have a property that identifies them
-unambiguously (which is a fair assumption to make), usually referred to as <code>id</code>:</p>
-
-<div>
-  <pre><code class='html'>import Ember from &#39;ember&#39;;
-
-export default Ember.Controller.extend({
-  bands: [
-    Ember.Object.create({ id: &quot;1&quot;, name: &#39;Pearl Jam&#39;, formedIn: 1990 }),
-    Ember.Object.create({ id: &quot;2&quot;, name: &#39;Tool&#39;, formedIn: 1991 }),
-    Ember.Object.create({ id: &quot;3&quot;, name: &#39;Long Distance Calling&#39;, formedIn: 2003 }),
-    Ember.Object.create({ id: &quot;4&quot;, name: &#39;Led Zeppelin&#39;, formedIn: 1970 })
-  ],
-  (...)
-});</code></pre>
-</div>
-
-
-<p>We&#8217;ll use the <code>id</code> as the option value and display the name:</p>
-
-<div>
-  <pre><code class='html'>(...)
-&lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
-  {{#each bands as |bandChoice|}}
-    &lt;option value={{bandChoice.id}} selected={{include selectedBandIds bandChoice.id}}&gt;{{bandChoice.name}}&lt;/option&gt;
-  {{/each}}
-&lt;/select&gt;
-(...)</code></pre>
-</div>
-
-
-<p>On the controller, we collect the id of each selected band, and if we need to
-display their names, we simply make the mapping between these two:</p>
-
-<div>
-  <pre><code class='html'>export default Ember.Controller.extend({
-  (...)
-  selectedBandIds: [],
-
-  selectedBands: Ember.computed(&#39;selectedBandIds.[]&#39;, function() {
-    return this.get(&#39;selectedBandIds&#39;).map((bandId) =&gt; {
-      return this.get(&#39;bands&#39;).findBy(&#39;id&#39;, bandId);
-    });
-  }),
-  (...)
-});</code></pre>
-</div>
-
-
-<p><code>bands.findBy</code> is our makeshift store service, which allows us to find an object
-in a collection by its id. If we used Ember Data, it would become
-<code>store.findRecord('band', bandId)</code> or <code>store.peekRecord('band', bandId)</code>. The
-only other difference from before is that we set <code>selectedBandIds</code> instead of
-<code>selectedBands</code> in the action handler:</p>
-
-<div>
-  <pre><code class='html'>export default Ember.Controller.extend({
-  (...)
-  actions: {
-    selectBand(event) {
-      const selectedBandIds = Ember.$(event.target).val();
-      this.set(&#39;selectedBandIds&#39;, selectedBandIds || []);
-    }
-  }
-});</code></pre>
-</div>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -2680,7 +2507,7 @@ only other difference from before is that we set <code>selectedBandIds</code> in
 <aside class="sidebar">
   
     <section>
-  <h1>My Ember 2 book</h1>
+  <h1>Learn Ember from the most up-to-date book</h1>
   <div>
     <a href="http://rockandrollwithemberjs.com/?utm_source=my-blog&utm_medium=sidebar&utm_campaign=rarwe-book" style="text-decoration:none">
       <img src="/images/rarwe-book.jpg" alt="Rock and Roll with Ember.js" title="Rock and Roll with Ember.js" />
@@ -2699,6 +2526,10 @@ only other difference from before is that we set <code>selectedBandIds</code> in
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/11/11/enable-fastboot-for-your-ember-app.html">Enable Fastboot for your Ember app</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/10/17/continuous-visual-integration-for-ember-apps.html">Continuous Visual Integration for Ember apps</a>
       </li>
     
@@ -2712,10 +2543,6 @@ only other difference from before is that we set <code>selectedBandIds</code> in
     
       <li class="post">
         <a href="/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html">Rock and Roll with Ember.js 2.7 is released</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
       </li>
     
   </ul>

@@ -89,6 +89,54 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2010/01/08/i15r-works-with-non-english-source.html">I15r Handles Non-english Source</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-01-08T00:00:00+01:00" pubdate data-updated="true">Jan 8<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The other day thinking about how <a href="http://github.com/balinterdi/i15r">i15r</a> could be improved I realized that there are times when the language of the non-internationalized site is not English (surprise, surprise). Add to this that lots of languages have &#8220;special&#8221; characters, characters that may not be properly found and replaced by the matchers. So I first learned the basics of <a href="http://blog.grayproductions.net/articles/understanding_m17n">how Ruby handles encodings</a> (from <a href="http://blog.grayproductions.net/">James Edward Gray&#8217;s</a> excellent series) and then adjusted a few matchers to catch those special characters, too. (Note: one can&#8217;t underestimate the utility of a spec suite that covers most of the code)</p>
+
+<p>The specs pass but I am pretty certain there are some cases where the matchers might not be up to the task. If you come through such a case, please <a href="http://github.com/balinterdi/i15r/issues">submit a bug report</a>. Since there has been a huge improvement in <a href="http://blog.grayproductions.net/articles/ruby_19s_string">string encoding in Ruby 1.9</a> (basically, strings now have an encoding as opposed to in <a href="http://blog.grayproductions.net/articles/bytes_and_characters_in_ruby_18">Ruby 1.8</a>), there might be some cases where strings are properly internationalized using Ruby 1.9 but not with 1.8.</p>
+
+<p>So if you think this is a valuable addition or just have not tried i15r yet, go get it:</p>
+
+<figure class='code'><figcaption><span>install.sh </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>gem install i15r --source http://gemcutter.org
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2010/01/04/new-year-new-blog.html">New Year, New Blog</a></h1>
     
     
@@ -605,144 +653,6 @@ apt-get install xvfb</code></pre>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2009/07/02/installing-ruby-on-a-linode-slice.html">Installing Ruby on a Linode Slice</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-07-02T00:00:00+02:00" pubdate data-updated="true">Jul 2<span>nd</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>To be able to experiment freely and find a store for my <a href="http://bucionrails.com/2009/06/22/twuckoo/">twuckoos</a> and other goodies I have recently purchased a Linode 360 slice and had Ubuntu 9.04 installed on it. Next thing was setting up ruby (ruby 1.8.6, to be precise).</p>
-
-<p>When deciding about how to install ruby, in part I wanted to have flexibility but mostly I wanted to feel like I am a professional sysadmin for some hours so I balked at pre-built ruby packages and went with the roll-your-own approach. I&#8217;ll summarize below the process and some pitfalls I encountered so it might help someone.</p>
-
-<h2>Some basic tools</h2>
-
-
-<p>First, you will need wget (or curl) to download the sources you will need along the way, so:</p>
-
-<pre lang="bash">$ sudo apt-get install wget</pre>
-
-
-<p>Also, before you stare dumbly at the screen (like I did) wondering why can&#8217;t the stupid machine run make when the Makefile is clearly there in the directory , don&#8217;t forget to install make:</p>
-
-<pre lang="bash">$ sudo apt-get install make</pre>
-
-
-<h2>Updating the package repos</h2>
-
-
-<p>Plus, since we&#8217;ll be installing packages that are found in the &#8220;universe&#8221; namespace (or whatever it is called) you should uncomment the below two lines in /etc/apt/sources.list :</p>
-
-<pre lang="bash">deb http://us.archive.ubuntu.com/ubuntu/ jaunty universe
-deb-src http://us.archive.ubuntu.com/ubuntu/ jaunty universe</pre>
-
-
-<p>&#8230; and then update your package index:</p>
-
-<pre lang="bash">$ sudo apt-get update</pre>
-
-
-<h2>Installing some packages ruby needs</h2>
-
-
-<p>Before we download and build ruby, however, it is recommendable to have the zlib and openssl libraries so ruby can already bind to them. This is one of the things that is a lot easier to see with hindsight, but here I am, blogging this to you:</p>
-
-<pre lang="bash">$ sudo apt-get install zlib1g zlib1g-dev zlibc
-$ sudo apt-get install openssl</pre>
-
-
-<p>It turns out from <a href="http://www.ruby-forum.com/topic/71774">this thread</a>, that the zlib bindings are part of ruby since 1.8.6 so you will not need the libzlib-ruby package.</p>
-
-<p>Now, on to ruby itself.</p>
-
-<h2>Ruby &amp; Rubygems</h2>
-
-
-<pre lang="bash">$ wget ftp://ftp.ruby-lang.org/pub/ruby/ruby-1.8.6-p369.tar.bz2
-(untar and cd to new directory)
-$ ./configure
-configure: error: no acceptable C compiler found in $PATH</pre>
-
-
-<p>Piece of cake:</p>
-
-<pre lang="bash">$ sudo apt-get install gcc
-$ ./configure
-configure: error: in `/home/balint/ruby-1.8.6-p369':
-configure: error: C compiler cannot create executables
-See `config.log' for more details.</pre>
-
-
-<p>A bit harder, but I have quickly found the answer <a href="http://ubuntuforums.org/showthread.php?t=17033">here</a>, and then did:</p>
-
-<pre lang="bash">$ sudo apt-get install libc6-dev g++
-$ ./configure
-$ make
-$ sudo make install
-$ ruby -e "p 'hello from linode slice'"
-"hello from linode slice"</pre>
-
-
-<p>Rolling!</p>
-
-<p>However, we all know that a ruby installation without gems is a toothless tiger (lion?) so we&#8217;ll install rubygems last, first downloading the source, and then installing it:</p>
-
-<pre lang="bash">$ wget http://rubyforge.org/frs/download.php/57643/rubygems-1.3.4.tgz
-(untar and cd to new directory)
-$ sudo ruby setup.rb</pre>
-
-
-<p>If you want to use gems stored on github (and you probably do) it is convenient to add the gem github repository to your gem sources:</p>
-
-<pre lang="bash">$ gem source -a http://gems.github.com
-$ sudo gem install balinterdi-twuckoo</pre>
-
-
-<p>Ok, that&#8217;s all. I hope you have found this useful.</p>
-
-<hr /><em>Note:</em>
-
-
-<p>If you receive an error message similar to the following when trying to install a gem:</p>
-
-<pre lang="bash">/usr/local/lib/ruby/site_ruby/1.8/rubygems/custom_require.rb:31:in `gem_original_require': no such file to load -- zlib (LoadError)</pre>
-
-
-<p>Then you need to install the appropriate lib package and recompile ruby. Go to the directory where you unpacked the ruby source to and do:</p>
-
-<pre lang="bash">$ make clean
-$ make
-$ sudo make install</pre>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/9/">&larr; Older</a>
@@ -756,7 +666,7 @@ $ sudo make install</pre>
 <aside class="sidebar">
   
     <section>
-  <h1>My Ember 2 book</h1>
+  <h1>Learn Ember from the most up-to-date book</h1>
   <div>
     <a href="http://rockandrollwithemberjs.com/?utm_source=my-blog&utm_medium=sidebar&utm_campaign=rarwe-book" style="text-decoration:none">
       <img src="/images/rarwe-book.jpg" alt="Rock and Roll with Ember.js" title="Rock and Roll with Ember.js" />
@@ -775,6 +685,10 @@ $ sudo make install</pre>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/11/11/enable-fastboot-for-your-ember-app.html">Enable Fastboot for your Ember app</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/10/17/continuous-visual-integration-for-ember-apps.html">Continuous Visual Integration for Ember apps</a>
       </li>
     
@@ -788,10 +702,6 @@ $ sudo make install</pre>
     
       <li class="post">
         <a href="/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html">Rock and Roll with Ember.js 2.7 is released</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
       </li>
     
   </ul>

@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-11-01T14:34:48+01:00</updated>
+  <updated>2016-11-11T21:11:21+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,301 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Enable Fastboot for your Ember app]]></title>
+    <link href="http://balinterdi.com/2016/11/11/enable-fastboot-for-your-ember-app.html"/>
+    <updated>2016-11-11T11:20:00+01:00</updated>
+    <id>http://balinterdi.com/2016/11/11/enable-fastboot-for-your-ember-app</id>
+    <content type="html"><![CDATA[<h2>What is FastBoot and why should you use it?</h2>
+
+<p><a href="https://ember-fastboot.com/">FastBoot</a> is the awesome add-on that adds
+server-side rendering to your Ember app. This will make users of your
+application see the content of your page before any of the javascript is
+downloaded. In other words, the <a href="https://blog.alexmaccaw.com/time-to-first-tweet">&#8220;time to first tweet&#8221;</a>
+of your app is greatly reduced, which is a big win where and when people have slow
+or unstable network connections.</p>
+
+<p>Another advantage is that search engine crawlers will have an easier job
+indexing your site, which brings SEO benefits.</p>
+
+<p>Furthermore, your site will be readable with Javascript disabled which is
+convenient for screen readers.</p>
+
+<p>I recently went through the process of enabling the demo version of the
+<a href="http://rockandrollwithemberjs.com">Rock and Roll application</a> to run in Fastboot.
+Below, I&#8217;m going to tell you about the challenges I encountered and how I
+overcame them in the hope that my journey will prove valuable when you do the same for
+your app.</p>
+
+<h2>Installing the add-on</h2>
+
+<p>FastBoot is a regular Ember add-on, so installing it is piece of cake:</p>
+
+<pre><code>$ ember install ember-cli-fastboot
+</code></pre>
+
+<p>I could then run</p>
+
+<pre><code>$ ember fastboot
+</code></pre>
+
+<p>from the project&#8217;s directory and had the node server serving my application at
+port 3000. It&#8217;s important to note that you should refresh your browser tab each
+time you make changes to your code as FastBoot doesn&#8217;t (yet) auto-refresh the
+way <code>ember server</code> does.</p>
+
+<p>I then disabled JavaScript in my browser and then directed my browser to <code>http://localhost:3000</code>.</p>
+
+<p>Disabling JavaScript in Chrome is most easily done by expanding the context menu
+of Developer Tools and then clicking on Settings:</p>
+
+<p><img src="http://balinterdi.com/images/posts/fastboot/disable-javascript-in-chrome.png" alt="Disable JavaScript" /></p>
+
+<h2>Mirage is disabled in FastBoot mode</h2>
+
+<p>My first obstacle turned out to be Mirage.</p>
+
+<p>Mirage is a great tool for mocking server responses and even <a href="https://www.codeschool.com/blog/2016/07/07/building-an-ember-app-without-a-back-end/">prototyping your Ember app</a>.
+I used it in development, too, and it turned out that since <a href="https://github.com/samselikoff/ember-cli-mirage/blob/24f994f4419f1b175c82331b00c3089e3f65c038/index.js#L106">it turns itself off</a>
+when your app is running in FastBoot mode, the requests hitherto handled by
+Mirage now went out and were thus unhandled.</p>
+
+<p>The fix here was to disable Mirage in development (and, in my case, production,
+too) and to make the requests against an actual API.</p>
+
+<p>You also have to add the hosts that will serve your Ember app in FastBoot mode
+to a list called hostWhitelist in your app&#8217;s configuration.</p>
+
+<p>In my case, it contains the host I wanted to deploy it to and any localhost
+port:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// config/environment.js</span>
+</span><span class='line'><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">environment</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">ENV</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">(...)</span>
+</span><span class='line'>    <span class="nx">fastboot</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">hostWhitelist</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;demo.rockandrollwithemberjs.com&#39;</span><span class="p">,</span> <span class="sr">/^localhost:\d+$/</span><span class="p">]</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Serving assets</h2>
+
+<p>When I restarted the <code>ember fastboot</code> and looked at the server-rendered version
+of my app, I saw that the dynamic data was now correctly rendered on the page.
+However, it did not have any styling.</p>
+
+<p>A quick glance at <a href="https://ember-fastboot.com/docs/user-guide">the documentation</a> made me realize I needed to pass the
+<code>serve-assets</code> option to the command so that it serves the css (and other asset)
+files:</p>
+
+<pre><code>$ ember fastboot --serve-assets
+</code></pre>
+
+<h2>document is not defined</h2>
+
+<p>So now the main page, with the list of bands rendered fine but when I selected
+one of the bands to have their songs displayed, I got the following error:</p>
+
+<pre><code>Error while processing route: bands.band.songs document is not defined
+</code></pre>
+
+<p>Since Fastboot runs your Ember app in a node environment, not in the browser,
+<code>document</code> is not present. In my case, I accessed <code>document</code> (through jQuery)
+to set the document title, which does not work in FastBoot mode.</p>
+
+<p>The user guide suggested to use <a href="https://github.com/kimroen/ember-cli-document-title">ember-cli-document-title</a>, a FastBoot
+compatible way to set document titles. So my next step was to install that
+add-on:</p>
+
+<pre><code>$ ember install ember-cli-document-title
+</code></pre>
+
+<p>Armed with this great add-on, I only had to define a title (method) in the
+corresponding route:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// app/routes/bands/band/songs.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'>  <span class="nx">title</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">let</span> <span class="nx">bandName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">modelFor</span><span class="p">(</span><span class="s1">&#39;bands.band&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="err">`</span><span class="nx">$</span><span class="p">{</span><span class="nx">bandName</span><span class="p">}</span> <span class="nx">songs</span> <span class="o">-</span> <span class="nx">Rock</span> <span class="nx">and</span> <span class="nx">Roll</span><span class="err">`</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Missing dynamic content</h2>
+
+<p>The next thing that did not work was that the songs for a specific band did not
+load in FastBoot mode, the list of songs was empty each time.</p>
+
+<p>Adolfo Builes and Jonathan Jackson helped me out by pointing out that songs are
+loaded asynchronously. The request to fetch the songs was only fired when the
+template rendered each song belonging to the band. FastBoot does not
+know when the page is fully rendered and thus relies on the <code>beforeModel</code>,
+<code>model</code> and <code>afterModel</code> route hooks having finished their work. When that
+happened, the songs were not yet fetched and rendered on the screen yet:</p>
+
+<p><img src="http://balinterdi.com/images/posts/fastboot/songs-missing.png" alt="Songs missing" /></p>
+
+<p>The way to fix this was to block rendering in the <code>afterModel</code> hook, by
+returning a promise that fetched the songs:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// app/routes/bands/band/songs.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">fastboot</span><span class="o">:</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">inject</span><span class="p">.</span><span class="nx">service</span><span class="p">(),</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">afterModel</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;fastboot.isFastBoot&#39;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kd">let</span> <span class="nx">band</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">modelFor</span><span class="p">(</span><span class="s1">&#39;bands.band&#39;</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">return</span> <span class="nx">band</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;songs&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="p">(...)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you can see, I only pre-fetch the songs in FastBoot mode. In the browser, I
+let rendering start earlier, with a &#8220;pop-in&#8221; effect (which can be remedied in
+several ways in the browser, too).</p>
+
+<p>The songs now appeared in the FastBoot &#8220;view&#8221; of the app, too:</p>
+
+<p><img src="http://balinterdi.com/images/posts/fastboot/songs-present.png" alt="Songs present" /></p>
+
+<p>You can read more about this in the &#8220;Use Model Hooks to Defer Rendering&#8221; section
+of <a href="https://ember-fastboot.com/docs/user-guide">the guide</a>.</p>
+
+<h2>Fastboot-enabled hosting</h2>
+
+<p>It&#8217;s fine to have FastBoot working in development but nobody actually needs
+it to work in that environment. It has to work when deployed to a server.</p>
+
+<p>The guide has <a href="https://ember-fastboot.com/docs/deploying">a whole page on deployment</a>, listing several deployment
+options, from which I chose Heroku as it seemed the easiest option. And it really was.</p>
+
+<p>All I had to do was to set the buildpack URL from my project:</p>
+
+<pre><code>$ heroku buildpacks:set https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/emberjs.tgz -a rarwe-demo
+</code></pre>
+
+<p>I then added a <code>static.json</code> file to the root of my project, to disable forcing
+https requests, as the domain is not (yet) SSL-supported:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// static.json</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="s2">&quot;root&quot;</span><span class="o">:</span> <span class="s2">&quot;dist/&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;https_only&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;clean_urls&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;routes&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="s2">&quot;/**&quot;</span><span class="o">:</span> <span class="s2">&quot;index.html&quot;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="s2">&quot;headers&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="s2">&quot;/**&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>      <span class="s2">&quot;Cache-Control&quot;</span><span class="o">:</span> <span class="s2">&quot;private, no-store, no-cache, must-revalidate, proxy-revalidate&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="s2">&quot;Pragma&quot;</span><span class="o">:</span> <span class="s2">&quot;no-cache&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="s2">&quot;Expires&quot;</span><span class="o">:</span> <span class="s2">&quot;Sat, 05 Nov 1955 00:00:00 PST&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="s2">&quot;Strict-Transport-Security&quot;</span><span class="o">:</span> <span class="s2">&quot;max-age=31536000; includeSubDomains;&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="s2">&quot;X-Download-Options&quot;</span><span class="o">:</span> <span class="s2">&quot;noopen&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="s2">&quot;X-Content-Type-Options&quot;</span><span class="o">:</span> <span class="s2">&quot;nosniff&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="s2">&quot;X-Frame-Options&quot;</span><span class="o">:</span> <span class="s2">&quot;SAMEORIGIN&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="s2">&quot;X-XSS-Protection&quot;</span><span class="o">:</span> <span class="s2">&quot;1; mode=block&quot;</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="s2">&quot;/assets/**&quot;</span><span class="o">:</span> <span class="p">{</span> <span class="s2">&quot;Cache-Control&quot;</span><span class="o">:</span> <span class="s2">&quot;public, max-age=512000&quot;</span> <span class="p">},</span>
+</span><span class='line'>    <span class="s2">&quot;/robots.txt&quot;</span><span class="o">:</span> <span class="p">{</span> <span class="s2">&quot;Cache-Control&quot;</span><span class="o">:</span> <span class="s2">&quot;public, max-age=512000&quot;</span> <span class="p">},</span>
+</span><span class='line'>    <span class="s2">&quot;/crossdomain.xml&quot;</span><span class="o">:</span> <span class="p">{</span> <span class="s2">&quot;Cache-Control&quot;</span><span class="o">:</span> <span class="s2">&quot;public, max-age=512000&quot;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This step is really only needed to change the default <code>https_only</code> setting. If
+you have SSL set up for your domain, you don&#8217;t need the <code>static.json</code> file.</p>
+
+<p>The next time I pushed to the remote set up by Heroku, it just worked, and my
+app was now FastBoot enabled. Hooray!</p>
+
+<h2>Acknowledgements and further resources</h2>
+
+<p>I would like to thank <a href="https://twitter.com/abuiles">Adolfo</a> and <a href="https://twitter.com/rondale_sc">Jonathan</a> for their help in pointing
+me at <a href="https://emberweekend.com/">Ember Weekend</a>, an Ember app that runs in FastBoot and <a href="https://github.com/ember-weekend/ember-weekend">whose source code is publicly available</a>,
+and also for overcoming the above mentioned &#8220;missing dynamic content&#8221; problem.</p>
+
+<p>My app does not use many of Fastboot&#8217;s features. If you&#8217;re looking to see a more
+complex use case, check out the <a href="https://github.com/ember-weekend/ember-weekend">Ember Weekend source code</a>.</p>
+
+<p>If you want to learn more about FastBoot&#8217;s architecture and rationale, I
+recommend checking out <a href="https://vimeo.com/157688134">Tom Dale&#8217;s great presentation</a> he gave at Global
+Ember Meetup.</p>
+
+<p>Finally, the Rock and Roll demo app that this post describes is available on
+Github at <a href="https://github.com/balinterdi/rarwe-demo">balinterdi/rarwe-demo</a> and deployed to <a href="http://demo.rockandrollwithemberjs.com">http://demo.rockandrollwithemberjs.com</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Continuous Visual Integration for Ember apps]]></title>
@@ -3307,201 +3602,6 @@ features.</p>
 <p>Oh, and did I mention I am running a 20% discount on all packages until Monday,
 10/05, 23:59 PST?  There are also a few other goodies in the bag, so I encourage
 you to <a href="http://rockandrollwithemberjs.com">check out the book now</a> before prices revert to their normal level.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Select in Ember with multiple selection]]></title>
-    <link href="http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selection.html"/>
-    <updated>2015-09-25T14:24:00+02:00</updated>
-    <id>http://balinterdi.com/2015/09/25/select-in-ember-with-multiple-selection</id>
-    <content type="html"><![CDATA[<iframe
-  width="178" height="24" style="border:0px"
-  src="https://mixonic.github.io/ember-community-versions/2015/09/25/select-in-ember-with-multiple-selection.html">
-</iframe>
-
-
-<p>A few weeks ago I wrote a blog post about <a href="http://balinterdi.com/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">how to do a select in Ember 2</a>,
-that seemed to be popular. I also received good comments about advanced versions
-of the same problem, namely how the solution would have to change to deal with
-the case if the items to select from are objects and how to tackle multiple
-selections. I thus decided to do a Part 2, showing a solution for these cases.
-Comment are welcome, as always.</p>
-
-<h3>Multiple selection with simple strings as items</h3>
-
-<p>Let&#8217;s tackle the easier problem first, being able to select more than one items,
-but the items are simple string values. The values will serve both as the value
-and the content of the options.</p>
-
-<p>I added some extra Bootstrap markup and a list to see which items are selected:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class=&quot;container&quot;&gt;
-  &lt;div class=&quot;row&quot;&gt;
-    &lt;div class=&quot;col-sm-8&quot;&gt;
-      &lt;h2&gt;Select some bands&lt;/h2&gt;
-      &lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
-        {{#each bands as |bandChoice|}}
-        &lt;option value={{bandChoice}} selected={{include selectedBands bandChoice}}&gt;{{bandChoice}}&lt;/option&gt;
-        {{/each}}
-      &lt;/select&gt;
-    &lt;/div&gt;
-    &lt;div class=&quot;col-sm-4&quot;&gt;
-      {{#if selectedCount}}
-        &lt;h2&gt;Selected bands ({{selectedCount}})&lt;/h2&gt;
-      {{else}}
-        &lt;h2&gt;Selected bands&lt;/h2&gt;
-      {{/if}}
-      &lt;ul class=&quot;list-group&quot;&gt;
-        {{#each selectedBands as |band|}}
-          &lt;li class=&quot;list-group-item&quot;&gt;{{band}}&lt;/li&gt;
-        {{else}}
-          &lt;li class=&quot;list-group-item&quot;&gt;No band selected.&lt;/li&gt;
-        {{/each}}
-      &lt;/ul&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-</div>
-
-
-<p>I added the <code>multiple</code> attribute to the <code>select</code> tag to allow multiple
-selections. Not much has changed from the earlier example. When the user
-selects an option, whether in a way that clears the earlier selection (simple
-click) or adds to it (ctrl/cmd + click), the <code>onchange</code> event is fired, and our
-<code>selectBand</code> handler will handle it. We expect that handler to set
-<code>selectedBands</code> so that the list of selected bands gets updated correctly. So
-let&#8217;s see the controller:</p>
-
-<div>
-  <pre><code class='html'>export default Ember.Controller.extend({
-  bands: [&#39;Pearl Jam&#39;, &#39;Tool&#39;, &#39;Long Distance Calling&#39;, &#39;Led Zeppelin&#39;],
-
-  selectedBands: [],
-
-  selectedCount: Ember.computed.reads(&#39;selectedBands.length&#39;),
-
-  actions: {
-    selectBand(event) {
-      const selectedBands = Ember.$(event.target).val();
-      this.set(&#39;selectedBands&#39;, selectedBands || []);
-    }
-  }
-});</code></pre>
-</div>
-
-
-<p>For multiple selections, jQuery, aliased as <code>Ember.$</code>, returns an array of the
-selected options values as the select&#8217;s value, so all we have to do is assign
-this to the <code>selectedBands</code> property. In case nothing is selected, <code>val()</code>
-returns <code>null</code>, so we guard against transferring this to <code>selectedBands</code> by
-defaulting to an empty array.</p>
-
-<p>There is one more thing you might have noticed, and that is the <code>include</code> helper
-in the template. We want to mark the option as selected if its value is included
-in the selectedBands:</p>
-
-<div>
-  <pre><code class='html'>&lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
-  {{#each bands as |bandChoice|}}
-  &lt;option value={{bandChoice}} selected={{include selectedBands bandChoice}}&gt;{{bandChoice}}&lt;/option&gt;
-  {{/each}}
-&lt;/select&gt;</code></pre>
-</div>
-
-
-<p>The <code>include</code> helper is not provided by Ember but it is rather easy to write
-ourselves:</p>
-
-<div>
-  <pre><code class='html'>import Ember from &#39;ember&#39;;
-
-export function include(params) {
-  const [items, value] = params;
-  return items.indexOf(value) &gt; -1;
-}
-
-export default Ember.Helper.helper(include);</code></pre>
-</div>
-
-
-<p>That is all there is to it:</p>
-
-<p><img src="http://balinterdi.com/images/posts/select-in-ember-with-multiple-selections/multiple-select-with-ember.gif" alt="Multiple selection" /></p>
-
-<h3>Multiple selection with objects as items</h3>
-
-<p>This is just a tad more difficult, as we cannot directly have objects as options
-values. Let&#8217;s assume that these objects have a property that identifies them
-unambiguously (which is a fair assumption to make), usually referred to as <code>id</code>:</p>
-
-<div>
-  <pre><code class='html'>import Ember from &#39;ember&#39;;
-
-export default Ember.Controller.extend({
-  bands: [
-    Ember.Object.create({ id: &quot;1&quot;, name: &#39;Pearl Jam&#39;, formedIn: 1990 }),
-    Ember.Object.create({ id: &quot;2&quot;, name: &#39;Tool&#39;, formedIn: 1991 }),
-    Ember.Object.create({ id: &quot;3&quot;, name: &#39;Long Distance Calling&#39;, formedIn: 2003 }),
-    Ember.Object.create({ id: &quot;4&quot;, name: &#39;Led Zeppelin&#39;, formedIn: 1970 })
-  ],
-  (...)
-});</code></pre>
-</div>
-
-
-<p>We&#8217;ll use the <code>id</code> as the option value and display the name:</p>
-
-<div>
-  <pre><code class='html'>(...)
-&lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
-  {{#each bands as |bandChoice|}}
-    &lt;option value={{bandChoice.id}} selected={{include selectedBandIds bandChoice.id}}&gt;{{bandChoice.name}}&lt;/option&gt;
-  {{/each}}
-&lt;/select&gt;
-(...)</code></pre>
-</div>
-
-
-<p>On the controller, we collect the id of each selected band, and if we need to
-display their names, we simply make the mapping between these two:</p>
-
-<div>
-  <pre><code class='html'>export default Ember.Controller.extend({
-  (...)
-  selectedBandIds: [],
-
-  selectedBands: Ember.computed(&#39;selectedBandIds.[]&#39;, function() {
-    return this.get(&#39;selectedBandIds&#39;).map((bandId) =&gt; {
-      return this.get(&#39;bands&#39;).findBy(&#39;id&#39;, bandId);
-    });
-  }),
-  (...)
-});</code></pre>
-</div>
-
-
-<p><code>bands.findBy</code> is our makeshift store service, which allows us to find an object
-in a collection by its id. If we used Ember Data, it would become
-<code>store.findRecord('band', bandId)</code> or <code>store.peekRecord('band', bandId)</code>. The
-only other difference from before is that we set <code>selectedBandIds</code> instead of
-<code>selectedBands</code> in the action handler:</p>
-
-<div>
-  <pre><code class='html'>export default Ember.Controller.extend({
-  (...)
-  actions: {
-    selectBand(event) {
-      const selectedBandIds = Ember.$(event.target).val();
-      this.set(&#39;selectedBandIds&#39;, selectedBandIds || []);
-    }
-  }
-});</code></pre>
-</div>
-
-
-
 ]]></content>
   </entry>
   

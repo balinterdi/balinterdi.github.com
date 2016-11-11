@@ -89,6 +89,228 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2015/09/25/select-in-ember-with-multiple-selection.html">Select in Ember With Multiple Selection</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-09-25T14:24:00+02:00" pubdate data-updated="true">Sep 25<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><iframe
+  width="178" height="24" style="border:0px"
+  src="https://mixonic.github.io/ember-community-versions/2015/09/25/select-in-ember-with-multiple-selection.html">
+</iframe>
+
+
+<p>A few weeks ago I wrote a blog post about <a href="http://balinterdi.com/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">how to do a select in Ember 2</a>,
+that seemed to be popular. I also received good comments about advanced versions
+of the same problem, namely how the solution would have to change to deal with
+the case if the items to select from are objects and how to tackle multiple
+selections. I thus decided to do a Part 2, showing a solution for these cases.
+Comment are welcome, as always.</p>
+
+<h3>Multiple selection with simple strings as items</h3>
+
+<p>Let&#8217;s tackle the easier problem first, being able to select more than one items,
+but the items are simple string values. The values will serve both as the value
+and the content of the options.</p>
+
+<p>I added some extra Bootstrap markup and a list to see which items are selected:</p>
+
+<div>
+  <pre><code class='html'>&lt;div class=&quot;container&quot;&gt;
+  &lt;div class=&quot;row&quot;&gt;
+    &lt;div class=&quot;col-sm-8&quot;&gt;
+      &lt;h2&gt;Select some bands&lt;/h2&gt;
+      &lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
+        {{#each bands as |bandChoice|}}
+        &lt;option value={{bandChoice}} selected={{include selectedBands bandChoice}}&gt;{{bandChoice}}&lt;/option&gt;
+        {{/each}}
+      &lt;/select&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;col-sm-4&quot;&gt;
+      {{#if selectedCount}}
+        &lt;h2&gt;Selected bands ({{selectedCount}})&lt;/h2&gt;
+      {{else}}
+        &lt;h2&gt;Selected bands&lt;/h2&gt;
+      {{/if}}
+      &lt;ul class=&quot;list-group&quot;&gt;
+        {{#each selectedBands as |band|}}
+          &lt;li class=&quot;list-group-item&quot;&gt;{{band}}&lt;/li&gt;
+        {{else}}
+          &lt;li class=&quot;list-group-item&quot;&gt;No band selected.&lt;/li&gt;
+        {{/each}}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>I added the <code>multiple</code> attribute to the <code>select</code> tag to allow multiple
+selections. Not much has changed from the earlier example. When the user
+selects an option, whether in a way that clears the earlier selection (simple
+click) or adds to it (ctrl/cmd + click), the <code>onchange</code> event is fired, and our
+<code>selectBand</code> handler will handle it. We expect that handler to set
+<code>selectedBands</code> so that the list of selected bands gets updated correctly. So
+let&#8217;s see the controller:</p>
+
+<div>
+  <pre><code class='html'>export default Ember.Controller.extend({
+  bands: [&#39;Pearl Jam&#39;, &#39;Tool&#39;, &#39;Long Distance Calling&#39;, &#39;Led Zeppelin&#39;],
+
+  selectedBands: [],
+
+  selectedCount: Ember.computed.reads(&#39;selectedBands.length&#39;),
+
+  actions: {
+    selectBand(event) {
+      const selectedBands = Ember.$(event.target).val();
+      this.set(&#39;selectedBands&#39;, selectedBands || []);
+    }
+  }
+});</code></pre>
+</div>
+
+
+<p>For multiple selections, jQuery, aliased as <code>Ember.$</code>, returns an array of the
+selected options values as the select&#8217;s value, so all we have to do is assign
+this to the <code>selectedBands</code> property. In case nothing is selected, <code>val()</code>
+returns <code>null</code>, so we guard against transferring this to <code>selectedBands</code> by
+defaulting to an empty array.</p>
+
+<p>There is one more thing you might have noticed, and that is the <code>include</code> helper
+in the template. We want to mark the option as selected if its value is included
+in the selectedBands:</p>
+
+<div>
+  <pre><code class='html'>&lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
+  {{#each bands as |bandChoice|}}
+  &lt;option value={{bandChoice}} selected={{include selectedBands bandChoice}}&gt;{{bandChoice}}&lt;/option&gt;
+  {{/each}}
+&lt;/select&gt;</code></pre>
+</div>
+
+
+<p>The <code>include</code> helper is not provided by Ember but it is rather easy to write
+ourselves:</p>
+
+<div>
+  <pre><code class='html'>import Ember from &#39;ember&#39;;
+
+export function include(params) {
+  const [items, value] = params;
+  return items.indexOf(value) &gt; -1;
+}
+
+export default Ember.Helper.helper(include);</code></pre>
+</div>
+
+
+<p>That is all there is to it:</p>
+
+<p><img src="/images/posts/select-in-ember-with-multiple-selections/multiple-select-with-ember.gif" alt="Multiple selection" /></p>
+
+<h3>Multiple selection with objects as items</h3>
+
+<p>This is just a tad more difficult, as we cannot directly have objects as options
+values. Let&#8217;s assume that these objects have a property that identifies them
+unambiguously (which is a fair assumption to make), usually referred to as <code>id</code>:</p>
+
+<div>
+  <pre><code class='html'>import Ember from &#39;ember&#39;;
+
+export default Ember.Controller.extend({
+  bands: [
+    Ember.Object.create({ id: &quot;1&quot;, name: &#39;Pearl Jam&#39;, formedIn: 1990 }),
+    Ember.Object.create({ id: &quot;2&quot;, name: &#39;Tool&#39;, formedIn: 1991 }),
+    Ember.Object.create({ id: &quot;3&quot;, name: &#39;Long Distance Calling&#39;, formedIn: 2003 }),
+    Ember.Object.create({ id: &quot;4&quot;, name: &#39;Led Zeppelin&#39;, formedIn: 1970 })
+  ],
+  (...)
+});</code></pre>
+</div>
+
+
+<p>We&#8217;ll use the <code>id</code> as the option value and display the name:</p>
+
+<div>
+  <pre><code class='html'>(...)
+&lt;select style=&quot;height:100px&quot; class=&quot;form-control&quot; multiple onchange={{action &quot;selectBand&quot;}}&gt;
+  {{#each bands as |bandChoice|}}
+    &lt;option value={{bandChoice.id}} selected={{include selectedBandIds bandChoice.id}}&gt;{{bandChoice.name}}&lt;/option&gt;
+  {{/each}}
+&lt;/select&gt;
+(...)</code></pre>
+</div>
+
+
+<p>On the controller, we collect the id of each selected band, and if we need to
+display their names, we simply make the mapping between these two:</p>
+
+<div>
+  <pre><code class='html'>export default Ember.Controller.extend({
+  (...)
+  selectedBandIds: [],
+
+  selectedBands: Ember.computed(&#39;selectedBandIds.[]&#39;, function() {
+    return this.get(&#39;selectedBandIds&#39;).map((bandId) =&gt; {
+      return this.get(&#39;bands&#39;).findBy(&#39;id&#39;, bandId);
+    });
+  }),
+  (...)
+});</code></pre>
+</div>
+
+
+<p><code>bands.findBy</code> is our makeshift store service, which allows us to find an object
+in a collection by its id. If we used Ember Data, it would become
+<code>store.findRecord('band', bandId)</code> or <code>store.peekRecord('band', bandId)</code>. The
+only other difference from before is that we set <code>selectedBandIds</code> instead of
+<code>selectedBands</code> in the action handler:</p>
+
+<div>
+  <pre><code class='html'>export default Ember.Controller.extend({
+  (...)
+  actions: {
+    selectBand(event) {
+      const selectedBandIds = Ember.$(event.target).val();
+      this.set(&#39;selectedBandIds&#39;, selectedBandIds || []);
+    }
+  }
+});</code></pre>
+</div>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2015/09/16/rock-and-roll-with-ember-2-is-coming-soon.html">Rock and Roll With Ember 2 Is Coming Soon!</a></h1>
     
     
@@ -928,105 +1150,6 @@ exist.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/09/05/reminiscing-about-emberfest-2014.html">Reminiscing About EmberFest 2014</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-09-05T09:55:00+02:00" pubdate data-updated="true">Sep 5<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="https://emberfest.eu">EmberFest 2014</a> ended a week ago and I already feel nostalgic. It
-was a great event with great people and you could feel the excitement about
-Ember in the air and in all conversations. It was almost single-handedly
-organized by <a href="https://haagen-software.no">Joachim Haagen-Skeie</a> for which he deserves huge kudos.</p>
-
-<p>It was really great to associate real people with twitter avatars and have
-fascinating conversations about various topics that included the Ember
-Inspector, the difficulties in building a build tool and even Firefox OS.</p>
-
-<h3>The functional paradigm making a headway into Emberland</h3>
-
-<p>One thing that struck me about Ember initially is that it seems to rely heavily
-on (shared) state. Some (most?) of that is inevitable given Ember being a
-performant framework that runs in the browser and is written in Javascript.
-None of these facilitates ditching (or minimizing) state and go with a
-functional, stateless approach.</p>
-
-<p>On the other hand, I really came to cherish the <a href="http://www.infoq.com/presentations/Simple-Made-Easy">simplicity</a> of the
-functional paradigm and have been gravitating towards languages that allow this
-(Clojure was, and still is, <a href="http://balinterdi.com/2013/06/19/the-appeal-of-one-paradigm-languages.html">my favorite</a>). So I added a mental
-note about my two favorite things being at such a great distance from each other
-and moved on.</p>
-
-<p>One theme of the conference and the hallway talks, however, is how Ember
-embraces the functional, immutable approach where it makes sense to. It might
-have something to do with my confirmation bias, but let me cite the examples
-nevertheless. <a href="https://twitter.com/tchak13">Paul Chavard</a> had a talk on his using immutable data
-structures in Ember. <a href="http://www.solitr.com/blog/">Jo Liss</a> revealed how Broccoli uses a
-&#8220;rebuild-from-scratch&#8221; approach instead of trying to find out which assets to
-rebuild at each modification. Finally, Alex Matchneer, aka. machty, prolific
-Ember and router.js contributor had <a href="https://docs.google.com/presentation/d/1afMLTCpRxhJpurQ97VBHCZkLbR1TEsRnd3yyxuSQ5YY/edit#slide=id.p">a presentation on React vs.  Ember</a>
-at EmberNYC which you should go read. His <a href="https://docs.google.com/presentation/d/1afMLTCpRxhJpurQ97VBHCZkLbR1TEsRnd3yyxuSQ5YY/edit#slide=id.g380053cce_1786">last slide</a> has a bullet-point
-that states: &#8220;Don&#8217;t be surprised if Ember adopts DOM-diffing&#8221;.</p>
-
-<p>It would be an understatement if I said I&#8217;m happy to see the functional world
-coming to Ember.</p>
-
-<h3>Promises</h3>
-
-<p>I had a talk at the conference called &#8220;Don&#8217;t call me back - How Ember uses
-promises and how you can, too&#8221;. As it usually happens, in doing research for the
-talk, I learned a lot not just about promises but about other topics, too. This
-time, it was the (in)famous run loop I stumbled across on several
-occasions so I am really happy I know a lot more about that beast now. You can
-find the slides of my presentation below.</p>
-
-<script async class="speakerdeck-embed" data-slide="10"
-data-id="47ee01e011b60132c86e02e2e0c65448" data-ratio="1.33333333333333"
-src="//speakerdeck.com/assets/embed.js"></script>
-
-
-<p>I might even do another talk &#8220;How Ember uses the run loop and how you should
-probably not&#8221;, or something to this effect.</p>
-
-<h3>EmberFest 2015</h3>
-
-<p>The greatest thing about EmberFest was its vibe. I saw the tweets coming
-in from EmberConf this March and <a href="http://reefpoints.dockyard.com/2014/03/17/emberconf-picks-ups-where-the-rails-community-left-off.html">the post-conf blog posts</a>
-about the awesome community and how one could feel the excitement that we are
-building apps with a tool that is new and hot now but is probably going to be
-the framework of choice for many in a few years. It is definitely a fascinating
-world to live in.</p>
-
-<p>I&#8217;ll certainly be there at EmberFest 2015, so hopefully see you there!</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -1040,7 +1163,7 @@ world to live in.</p>
 <aside class="sidebar">
   
     <section>
-  <h1>My Ember 2 book</h1>
+  <h1>Learn Ember from the most up-to-date book</h1>
   <div>
     <a href="http://rockandrollwithemberjs.com/?utm_source=my-blog&utm_medium=sidebar&utm_campaign=rarwe-book" style="text-decoration:none">
       <img src="/images/rarwe-book.jpg" alt="Rock and Roll with Ember.js" title="Rock and Roll with Ember.js" />
@@ -1059,6 +1182,10 @@ world to live in.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/11/11/enable-fastboot-for-your-ember-app.html">Enable Fastboot for your Ember app</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/10/17/continuous-visual-integration-for-ember-apps.html">Continuous Visual Integration for Ember apps</a>
       </li>
     
@@ -1072,10 +1199,6 @@ world to live in.</p>
     
       <li class="post">
         <a href="/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html">Rock and Roll with Ember.js 2.7 is released</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/08/11/using-dependency-injection-to-write-better-tests.html">Using Dependency Injection to Write Better Tests</a>
       </li>
     
   </ul>

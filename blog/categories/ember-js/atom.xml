@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-11-01T14:34:48+01:00</updated>
+  <updated>2016-11-11T21:11:21+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,260 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Enable Fastboot for your Ember app]]></title>
+    <link href="http://balinterdi.com/2016/11/11/enable-fastboot-for-your-ember-app.html"/>
+    <updated>2016-11-11T11:20:00+01:00</updated>
+    <id>http://balinterdi.com/2016/11/11/enable-fastboot-for-your-ember-app</id>
+    <content type="html"><![CDATA[<h2>What is FastBoot and why should you use it?</h2>
+
+<p><a href="https://ember-fastboot.com/">FastBoot</a> is the awesome add-on that adds
+server-side rendering to your Ember app. This will make users of your
+application see the content of your page before any of the javascript is
+downloaded. In other words, the <a href="https://blog.alexmaccaw.com/time-to-first-tweet">"time to first tweet"</a>
+of your app is greatly reduced, which is a big win where and when people have slow
+or unstable network connections.</p>
+
+<p>Another advantage is that search engine crawlers will have an easier job
+indexing your site, which brings SEO benefits.</p>
+
+<p>Furthermore, your site will be readable with Javascript disabled which is
+convenient for screen readers.</p>
+
+<p>I recently went through the process of enabling the demo version of the
+<a href="http://rockandrollwithemberjs.com">Rock and Roll application</a> to run in Fastboot.
+Below, I'm going to tell you about the challenges I encountered and how I
+overcame them in the hope that my journey will prove valuable when you do the same for
+your app.</p>
+
+<h2>Installing the add-on</h2>
+
+<p>FastBoot is a regular Ember add-on, so installing it is piece of cake:</p>
+
+<pre><code>$ ember install ember-cli-fastboot
+</code></pre>
+
+<p>I could then run</p>
+
+<pre><code>$ ember fastboot
+</code></pre>
+
+<p>from the project's directory and had the node server serving my application at
+port 3000. It's important to note that you should refresh your browser tab each
+time you make changes to your code as FastBoot doesn't (yet) auto-refresh the
+way <code>ember server</code> does.</p>
+
+<p>I then disabled JavaScript in my browser and then directed my browser to <code>http://localhost:3000</code>.</p>
+
+<p>Disabling JavaScript in Chrome is most easily done by expanding the context menu
+of Developer Tools and then clicking on Settings:</p>
+
+<p><img src="/images/posts/fastboot/disable-javascript-in-chrome.png" alt="Disable JavaScript" /></p>
+
+<h2>Mirage is disabled in FastBoot mode</h2>
+
+<p>My first obstacle turned out to be Mirage.</p>
+
+<p>Mirage is a great tool for mocking server responses and even <a href="https://www.codeschool.com/blog/2016/07/07/building-an-ember-app-without-a-back-end/">prototyping your Ember app</a>.
+I used it in development, too, and it turned out that since <a href="https://github.com/samselikoff/ember-cli-mirage/blob/24f994f4419f1b175c82331b00c3089e3f65c038/index.js#L106">it turns itself off</a>
+when your app is running in FastBoot mode, the requests hitherto handled by
+Mirage now went out and were thus unhandled.</p>
+
+<p>The fix here was to disable Mirage in development (and, in my case, production,
+too) and to make the requests against an actual API.</p>
+
+<p>You also have to add the hosts that will serve your Ember app in FastBoot mode
+to a list called hostWhitelist in your app's configuration.</p>
+
+<p>In my case, it contains the host I wanted to deploy it to and any localhost
+port:</p>
+
+<p>```js
+// config/environment.js
+module.exports = function(environment) {
+  var ENV = {</p>
+
+<pre><code>(...)
+fastboot: {
+  hostWhitelist: ['demo.rockandrollwithemberjs.com', /^localhost:\d+$/]
+}
+</code></pre>
+
+<p>  };
+```</p>
+
+<h2>Serving assets</h2>
+
+<p>When I restarted the <code>ember fastboot</code> and looked at the server-rendered version
+of my app, I saw that the dynamic data was now correctly rendered on the page.
+However, it did not have any styling.</p>
+
+<p>A quick glance at <a href="https://ember-fastboot.com/docs/user-guide">the documentation</a> made me realize I needed to pass the
+<code>serve-assets</code> option to the command so that it serves the css (and other asset)
+files:</p>
+
+<pre><code>$ ember fastboot --serve-assets
+</code></pre>
+
+<h2>document is not defined</h2>
+
+<p>So now the main page, with the list of bands rendered fine but when I selected
+one of the bands to have their songs displayed, I got the following error:</p>
+
+<pre><code>Error while processing route: bands.band.songs document is not defined
+</code></pre>
+
+<p>Since Fastboot runs your Ember app in a node environment, not in the browser,
+<code>document</code> is not present. In my case, I accessed <code>document</code> (through jQuery)
+to set the document title, which does not work in FastBoot mode.</p>
+
+<p>The user guide suggested to use <a href="https://github.com/kimroen/ember-cli-document-title">ember-cli-document-title</a>, a FastBoot
+compatible way to set document titles. So my next step was to install that
+add-on:</p>
+
+<pre><code>$ ember install ember-cli-document-title
+</code></pre>
+
+<p>Armed with this great add-on, I only had to define a title (method) in the
+corresponding route:</p>
+
+<p>```js
+// app/routes/bands/band/songs.js
+import Ember from 'ember';</p>
+
+<p>export default Ember.Route.extend({
+  (...)
+  title() {</p>
+
+<pre><code>let bandName = this.modelFor('bands.band').get('name');
+return `${bandName} songs - Rock and Roll`;
+</code></pre>
+
+<p>  },
+});
+```</p>
+
+<h2>Missing dynamic content</h2>
+
+<p>The next thing that did not work was that the songs for a specific band did not
+load in FastBoot mode, the list of songs was empty each time.</p>
+
+<p>Adolfo Builes and Jonathan Jackson helped me out by pointing out that songs are
+loaded asynchronously. The request to fetch the songs was only fired when the
+template rendered each song belonging to the band. FastBoot does not
+know when the page is fully rendered and thus relies on the <code>beforeModel</code>,
+<code>model</code> and <code>afterModel</code> route hooks having finished their work. When that
+happened, the songs were not yet fetched and rendered on the screen yet:</p>
+
+<p><img src="/images/posts/fastboot/songs-missing.png" alt="Songs missing" /></p>
+
+<p>The way to fix this was to block rendering in the <code>afterModel</code> hook, by
+returning a promise that fetched the songs:</p>
+
+<p>```js
+// app/routes/bands/band/songs.js
+import Ember from 'ember';</p>
+
+<p>export default Ember.Route.extend({
+  fastboot: Ember.inject.service(),</p>
+
+<p>  afterModel() {</p>
+
+<pre><code>if (this.get('fastboot.isFastBoot')) {
+  let band = this.modelFor('bands.band');
+  return band.get('songs');
+}
+</code></pre>
+
+<p>  },
+  (...)
+});
+```</p>
+
+<p>As you can see, I only pre-fetch the songs in FastBoot mode. In the browser, I
+let rendering start earlier, with a "pop-in" effect (which can be remedied in
+several ways in the browser, too).</p>
+
+<p>The songs now appeared in the FastBoot "view" of the app, too:</p>
+
+<p><img src="/images/posts/fastboot/songs-present.png" alt="Songs present" /></p>
+
+<p>You can read more about this in the "Use Model Hooks to Defer Rendering" section
+of <a href="https://ember-fastboot.com/docs/user-guide">the guide</a>.</p>
+
+<h2>Fastboot-enabled hosting</h2>
+
+<p>It's fine to have FastBoot working in development but nobody actually needs
+it to work in that environment. It has to work when deployed to a server.</p>
+
+<p>The guide has <a href="https://ember-fastboot.com/docs/deploying">a whole page on deployment</a>, listing several deployment
+options, from which I chose Heroku as it seemed the easiest option. And it really was.</p>
+
+<p>All I had to do was to set the buildpack URL from my project:</p>
+
+<pre><code>$ heroku buildpacks:set https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/emberjs.tgz -a rarwe-demo
+</code></pre>
+
+<p>I then added a <code>static.json</code> file to the root of my project, to disable forcing
+https requests, as the domain is not (yet) SSL-supported:</p>
+
+<p>```js
+// static.json
+{
+  "root": "dist/",
+  "https_only": false,
+  "clean_urls": true,
+  "routes": {</p>
+
+<pre><code>"/**": "index.html"
+</code></pre>
+
+<p>  },
+  "headers": {</p>
+
+<pre><code>"/**": {
+  "Cache-Control": "private, no-store, no-cache, must-revalidate, proxy-revalidate",
+  "Pragma": "no-cache",
+  "Expires": "Sat, 05 Nov 1955 00:00:00 PST",
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains;",
+  "X-Download-Options": "noopen",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "SAMEORIGIN",
+  "X-XSS-Protection": "1; mode=block"
+},
+"/assets/**": { "Cache-Control": "public, max-age=512000" },
+"/robots.txt": { "Cache-Control": "public, max-age=512000" },
+"/crossdomain.xml": { "Cache-Control": "public, max-age=512000" }
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>This step is really only needed to change the default <code>https_only</code> setting. If
+you have SSL set up for your domain, you don't need the <code>static.json</code> file.</p>
+
+<p>The next time I pushed to the remote set up by Heroku, it just worked, and my
+app was now FastBoot enabled. Hooray!</p>
+
+<h2>Acknowledgements and further resources</h2>
+
+<p>I would like to thank <a href="https://twitter.com/abuiles">Adolfo</a> and <a href="https://twitter.com/rondale_sc">Jonathan</a> for their help in pointing
+me at <a href="https://emberweekend.com/">Ember Weekend</a>, an Ember app that runs in FastBoot and <a href="https://github.com/ember-weekend/ember-weekend">whose source code is publicly available</a>,
+and also for overcoming the above mentioned "missing dynamic content" problem.</p>
+
+<p>My app does not use many of Fastboot's features. If you're looking to see a more
+complex use case, check out the <a href="https://github.com/ember-weekend/ember-weekend">Ember Weekend source code</a>.</p>
+
+<p>If you want to learn more about FastBoot's architecture and rationale, I
+recommend checking out <a href="https://vimeo.com/157688134">Tom Dale's great presentation</a> he gave at Global
+Ember Meetup.</p>
+
+<p>Finally, the Rock and Roll demo app that this post describes is available on
+Github at <a href="https://github.com/balinterdi/rarwe-demo">balinterdi/rarwe-demo</a> and deployed to <a href="http://demo.rockandrollwithemberjs.com">http://demo.rockandrollwithemberjs.com</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Continuous Visual Integration for Ember apps]]></title>
@@ -338,27 +592,6 @@ import { module, test } from 'qunit';</p>
 non-testing aspect. Here, we made it possible to pass any function before we
 return the normalized text. We could, for example, use this to replace the <code>&lt;p&gt;</code>
 tags with <code>&lt;span&gt;</code>s, if we so wish.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rock and Roll with Ember.js 2.6 is released]]></title>
-    <link href="http://balinterdi.com/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released.html"/>
-    <updated>2016-07-07T22:21:00+02:00</updated>
-    <id>http://balinterdi.com/2016/07/07/rock-and-roll-with-ember-dot-js-2-dot-6-is-released</id>
-    <content type="html"><![CDATA[<p>With some delay, but I just sent an update to all of the Rock and Roll with
-Ember.js customers. The book brings the app in sync with Ember, Ember Data and
-Ember CLI 2.6. Among a few other improvments it:</p>
-
-<ul>
-<li>Makes sure the new Ember welcome page is removed before generating the
-application template: <a href="https://github.com/balinterdi/rarwe-issues/issues/196">#196</a></li>
-<li>Adds a version string to the book's title and also in the Preface so that the
-reader knows whether they are reading the latest version: <a href="https://github.com/balinterdi/rarwe-issues/issues/174">#174</a></li>
-</ul>
-
-
-<p>The list of all accomplished things can be seen <a href="https://github.com/balinterdi/rarwe-issues/milestone/14?closed=1">here</a></p>
 ]]></content>
   </entry>
   
