@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-11-11T21:20:15+01:00</updated>
+  <updated>2016-11-16T14:25:00+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,18 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rock and Roll with Ember.js 2.9 is released]]></title>
+    <link href="http://balinterdi.com/2016/11/16/rock-and-roll-with-ember-dot-js-2-dot-9-is-released.html"/>
+    <updated>2016-11-16T14:17:00+01:00</updated>
+    <id>http://balinterdi.com/2016/11/16/rock-and-roll-with-ember-dot-js-2-dot-9-is-released</id>
+    <content type="html"><![CDATA[<p>I just published an updated version of the <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js book</a>. The app now runs on 2.9.1 and there are only
+<a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aopen+is%3Aissue+milestone%3A2.9">a few really minor changes</a> this time.</p>
+
+<p>If you&#8217;re looking to get started in Ember, I encourage you read a sample chapter below.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Enable FastBoot in your Ember app]]></title>
@@ -3556,52 +3568,6 @@ possibilities &#8220;managed&#8221; one-way bindings open up and the best way to
 them. So if you have thoughts or insights, please do share them in the comments.</p>
 
 <p>NOTE: I published <a href="https://github.com/balinterdi/tale-of-two-bindings">the demo app of this post on Github.</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rock and Roll with Ember 2 just went live]]></title>
-    <link href="http://balinterdi.com/2015/10/01/rock-and-roll-with-ember-2-just-went-live.html"/>
-    <updated>2015-10-01T09:48:00+02:00</updated>
-    <id>http://balinterdi.com/2015/10/01/rock-and-roll-with-ember-2-just-went-live</id>
-    <content type="html"><![CDATA[<p>The 2nd edition of my critically acclaimed book, <a href="http://rockandrollwithemberjs.com">Rock and Roll with
-Ember.js</a>, has just been published. The number 2 does not only denote the 2nd
-edition but also the fact that it runs on Ember (and Ember Data) 2.0 and that it
-will follow the 2.x development path of the framework.</p>
-
-<p>The 2nd edition adds 4 new chapters: Animations, Making an Ember
-addon, Writing modern JavaScript (ES2015) and Deployment. Here is the complete
-set list:</p>
-
-<ol>
-<li>Introduction to Ember.js</li>
-<li>Ember CLI</li>
-<li>Templates and data bindings</li>
-<li>Routing</li>
-<li>Nested routes</li>
-<li>Actions</li>
-<li>Components</li>
-<li>Controllers</li>
-<li>Advanced routing</li>
-<li>Talking to a backend - with Ember Data</li>
-<li>Testing</li>
-<li>Sorting and searching with query params</li>
-<li>Loading and error routes</li>
-<li>Helpers</li>
-<li>Animations</li>
-<li>Making an Ember addon</li>
-<li>ES2015 - Writing modern JavaScript</li>
-<li>Deployment</li>
-</ol>
-
-
-<p>As many readers have said, keeping the book up-to-date with the latest stable
-Ember release also makes it a great reference book on current Ember idioms and
-features.</p>
-
-<p>Oh, and did I mention I am running a 20% discount on all packages until Monday,
-10/05, 23:59 PST?  There are also a few other goodies in the bag, so I encourage
-you to <a href="http://rockandrollwithemberjs.com">check out the book now</a> before prices revert to their normal level.</p>
 ]]></content>
   </entry>
   

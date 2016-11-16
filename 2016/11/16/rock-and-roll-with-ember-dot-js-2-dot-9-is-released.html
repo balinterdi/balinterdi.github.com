@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Exploring Ruby metaprogramming: call counter - Balint Erdi's blog about Ember.js</title>
+  <title>Rock and Roll with Ember.js 2.9 is released - Balint Erdi's blog about Ember.js</title>
   <meta name="author" content="Balint Erdi">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://balinterdi.com/2008/12/06/exploring-ruby-metaprogramming-call-counter.html">
+  <link rel="canonical" href="http://balinterdi.com/2016/11/16/rock-and-roll-with-ember-dot-js-2-dot-9-is-released.html">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -86,7 +86,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
   <header>
     
-      <h1 class="entry-title">Exploring Ruby Metaprogramming: Call Counter</h1>
+      <h1 class="entry-title">Rock and Roll With Ember.js 2.9 Is Released</h1>
     
     
       <p class="meta">
@@ -102,87 +102,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
 
 
-<time datetime="2008-12-06T00:00:00+01:00" pubdate data-updated="true">Dec 6<span>th</span>, 2008</time>
+<time datetime="2016-11-16T14:17:00+01:00" pubdate data-updated="true">Nov 16<span>th</span>, 2016</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>A few days ago I purchased a <a href="http://www.pragprog.com/screencasts/v-dtrubyom/the-ruby-object-model-and-metaprogramming">screencast by Dave Thomas on Ruby metaprogramming</a>. (I do not receive any affiliation fees :)). The part I bought presents a problem and describes nine different ways of solving it in ascending order of beauty and code clarity.</p>
+<div class="entry-content"><p>I just published an updated version of the <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js book</a>. The app now runs on 2.9.1 and there are only
+<a href="https://github.com/balinterdi/rarwe-issues/issues?q=is%3Aopen+is%3Aissue+milestone%3A2.9">a few really minor changes</a> this time.</p>
 
-<p>I was stunned by its beauty so I came up with another -though similar- problem and put together a simple solution for it. I present it for the Rubyists to silently smile in the knowledge of its elegance and power and for non-Ruby programmers to be -hopefully :)- amazed by it.</p>
-
-<p>The task is to count the calls to a certain method of all instances of a class.</p>
-
-<p>call_counter.rb:</p>
-
-<div>
-  <pre><code class='ruby'>module CallCounter
-  def count_calls_to(method_name)
-    original_method = instance_method(method_name)
-    
-    call_counter = 0
-    define_method(method_name) do |*args|
-        call_counter += 1
-        bound_original_method = original_method.bind(self)
-        bound_original_method.call(*args)
-    end
-
-    define_method &quot;calls_to_#{method_name}&quot; do
-        call_counter
-    end     
-  end
-end</code></pre>
-</div>
-
-
-<p>call_foo.rb:</p>
-
-<div>
-  <pre><code class='ruby'>require &quot;call_counter&quot;
-
-class CallFoo
-    
-    extend CallCounter
-
-    def foo; end
-    count_calls_to :foo
-
-end</code></pre>
-</div>
-
-
-<p>After calling &#8220;count_calls_to :foo&#8221; in the CallFoo class definition, calls to the &#8220;foo&#8221; method of CallFoo instances will be counted. A &#8220;calls_to_foo&#8221; method is available to get this count.</p>
-
-<p>I first created an UnboundMethod with &#8220;instance_method&#8221; and then used the bind method to attach it to an instance of ClassFoo. All this is to prevent aliasing method names, not because it is necessarily evil but because I agree with Dave Thomas about &#8220;bind&#8221; being a nicer solution. The define_method acts as a closure and saves its context so there is no need to use an instance variable for call_counter.</p>
-
-<p>You can use the counter like this:</p>
-
-<div>
-  <pre><code class='ruby'>irb(main):003:0&gt; cf = CallFoo.new
-=&gt; #&lt;CallFoo:0x608100&gt;
-irb(main):004:0&gt; cf.calls_to_foo
-=&gt; 0
-irb(main):005:0&gt; 4.times { cf.foo }
-=&gt; 4
-irb(main):006:0&gt; cf.calls_to_foo
-=&gt; 4</code></pre>
-</div>
-
-
-<p>Once again, what I love about Ruby is that in ~ 20 lines we have laid the base of a benchmarking tool (adding the possibility of measuring time spent in the method would not be hard). Also, the original class is not sullied by the call counting code intrinsic details. That functionality is stashed in a module, eager to be reused again.</p>
-
-<p>You may note there is something not quite nice about this. The method calls are counted per class, which makes sense since we usually want to know how many times the method in question was called in all instances, not per instance. However, the calls_to_foo is called on the instance which is confusing. It should be called on the class object, like this:</p>
-
-<div>
-  <pre><code class='ruby'>4.times { cf.foo }
-  CallFoo.calls_to_foo
-  =&gt; 4</code></pre>
-</div>
-
-
-<p>I may get back to this later.</p>
+<p>If you&#8217;re looking to get started in Ember, I encourage you read a sample chapter below.</p>
 </div>
 
 
@@ -206,8 +136,14 @@ irb(main):006:0&gt; cf.calls_to_foo
   
 
 
-<time datetime="2008-12-06T00:00:00+01:00" pubdate data-updated="true">Dec 6<span>th</span>, 2008</time>
+<time datetime="2016-11-16T14:17:00+01:00" pubdate data-updated="true">Nov 16<span>th</span>, 2016</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ember-js/'>ember.js</a>
+  
+</span>
 
 
     </p>
@@ -222,6 +158,8 @@ irb(main):006:0&gt; cf.calls_to_foo
 -->
 
 
+  <script src="https://app.convertkit.com/landing_pages/2664.js"></script>
+
 
 
 
@@ -230,14 +168,18 @@ irb(main):006:0&gt; cf.calls_to_foo
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2008/12/04/a-git-guide-that-emboldens.html" title="Previous Post: A Git guide that emboldens">&laquo; A Git guide that emboldens</a>
+        <a class="basic-alignment left" href="/2016/11/11/enable-fastboot-in-your-ember-app.html" title="Previous Post: Enable FastBoot in your Ember app">&laquo; Enable FastBoot in your Ember app</a>
       
-      
-        <a class="basic-alignment right" href="/2008/12/15/ruby-metaprogramming-call-counter-take-2.html" title="Next Post: Ruby metaprogramming: Call counter - Take 2">Ruby metaprogramming: Call counter - Take 2 &raquo;</a>
       
     </p>
   </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -319,7 +261,10 @@ irb(main):006:0&gt; cf.calls_to_foo
       var disqus_shortname = 'codigoergosum';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://balinterdi.com/2016/11/16/rock-and-roll-with-ember-dot-js-2-dot-9-is-released.html';
+        var disqus_url = 'http://balinterdi.com/2016/11/16/rock-and-roll-with-ember-dot-js-2-dot-9-is-released.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
