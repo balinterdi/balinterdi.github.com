@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Two-way symmetric relationships in Ember with JSON API"
+title: "Two-way symmetric relationships in Ember with JSON API - Part 1"
 date: 2016-11-17 12:52
 comments: true
 categories: ember.js
