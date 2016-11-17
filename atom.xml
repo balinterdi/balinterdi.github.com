@@ -4,7 +4,7 @@
   <title><![CDATA[Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-11-16T14:25:00+01:00</updated>
+  <updated>2016-11-17T21:41:43+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,423 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Two-way symmetric relationships in Ember with JSON API - Part 1]]></title>
+    <link href="http://balinterdi.com/2016/11/17/two-way-symmetric-relationships-in-ember-with-jsonapi-part-1.html"/>
+    <updated>2016-11-17T12:52:00+01:00</updated>
+    <id>http://balinterdi.com/2016/11/17/two-way-symmetric-relationships-in-ember-with-jsonapi-part-1</id>
+    <content type="html"><![CDATA[<h2>Definition</h2>
+
+<p>In data modelling, a symmetric relationship is a special kind of relationship
+where the description of the relationship from the perspective of one end of
+the relationship is identical to looking at it from the perspective of the other
+end.</p>
+
+<p>Friendship between people is a good example. If Megan is Selma&#8217;s friend, it
+follows that Selma is Megan&#8217;s friend, too. On the other hand, the &#8220;knows&#8221;
+relationship between two people is not a symmetric one. I might know Danny
+Carey (the drummer of Tool), but that does not imply he knows me.</p>
+
+<h2>Historical background</h2>
+
+<p>My research into how to model and implement such a relationship in an Ember
+application was sparked by <a href="http://stackoverflow.com/questions/34186435/modelling-two-way-symmetric-relationships-in-ember">this Stack Overflow question</a> that was posed by
+a reader of <a href="http://rockandrollwithemberjs.com">my book</a>. It was more difficult than I thought it would be so I
+was intrigued to find the (an) answer.</p>
+
+<p>My solution turned out to have a fairly large API component, too, so the
+following post will show both the server-side implementation (in Rails) and the
+client-side one (in Ember).</p>
+
+<p>If you don&#8217;t speak Rails, fear not. The code is straightforward and easy to
+understand without any substantial Rails knowledge, thanks in most part to the gem that
+makes it extremely easy to serialize data models and relationships to json:api
+format, <a href="https://github.com/cerebris/jsonapi-resources">jsonapi-resources</a>.</p>
+
+<h2>Data modelling</h2>
+
+<p>We&#8217;ll start with the data modelling part, which is the Rails side.</p>
+
+<p>To be able to model our problem in the data layer, let&#8217;s say that Friendships
+have a <code>friender</code> and a <code>friended</code> end of the relationship and a strength
+attribute that measures how strong their friendship is.</p>
+
+<p>We should create a (data) migration that will create a database table when run:</p>
+
+<pre><code>    $ rails g migration create_friendships
+</code></pre>
+
+<p>Let&#8217;s fill in the generated migration with the above attributes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">CreateFriendships</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Migration</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">change</span>
+</span><span class='line'>    <span class="n">create_table</span> <span class="ss">:friendships</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">integer</span> <span class="ss">:friender_id</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">integer</span> <span class="ss">:friended_id</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">integer</span> <span class="ss">:strength</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">timestamps</span> <span class="ss">null</span><span class="p">:</span> <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>A Friendship, then, is between two people (Persons), so let&#8217;s define that in the
+corresponding model file:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># app/models/friendship.rb</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Friendship</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>  <span class="n">belongs_to</span> <span class="ss">:friender</span><span class="p">,</span> <span class="n">class_name</span><span class="p">:</span> <span class="no">Person</span>
+</span><span class='line'>  <span class="n">belongs_to</span> <span class="ss">:friended</span><span class="p">,</span> <span class="n">class_name</span><span class="p">:</span> <span class="no">Person</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&#8217;ll want to list all the friendships a person has so a <code>friendships</code> method
+needs to be added to the Person class:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># app/models/person.rb</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Person</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">friendships</span>
+</span><span class='line'>    <span class="no">Friendship</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="s2">&quot;friender_id = ? OR friended_id = ?&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="nb">id</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We select the friendships where either the <code>friender</code> or the <code>friended</code> is the
+person we query it for. This is where the symmetric aspect of the relationship
+is implemented. We don&#8217;t care if the person friended somebody or if that
+somebody friended him, they are friends.</p>
+
+<p>Note that modelling it this way, we could split up the symmetric relationship
+into the two constituent parts. We could return only the friendships where the
+person in question &#8220;initiated&#8221; it (was the friender), or &#8220;let himself be
+friended&#8221; (was the friender).</p>
+
+<h2>Server endpoints, resources, serializing relationships</h2>
+
+<p>We could now turn our attention to setting up the endpoints and serializing the
+model, and relationship data for the client application to consume. First, let&#8217;s
+install <a href="https://github.com/cerebris/jsonapi-resources">the jsonapi-resources gem</a>:</p>
+
+<pre><code>    $ gem install jsonapi-resources
+</code></pre>
+
+<p>This gives us a jsonapi:resource generator that we can use to create both the
+endpoints and the serializer for our resources.</p>
+
+<pre><code>    $ rails generate jsonapi:resource person
+    $ rails generate jsonapi:resource friendship
+</code></pre>
+
+<p>The created resources are placed in the <code>app/resources</code> folder. Let&#8217;s add the
+attributes we want to serialize for each one:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># app/resources/person_resource.rb</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">PersonResource</span> <span class="o">&lt;</span> <span class="ss">JSONAPI</span><span class="p">:</span><span class="ss">:Resource</span>
+</span><span class='line'>  <span class="n">attributes</span> <span class="ss">:name</span>
+</span><span class='line'>  <span class="n">has_many</span> <span class="ss">:friendships</span><span class="p">,</span> <span class="n">class_name</span><span class="p">:</span> <span class="s2">&quot;Friendship&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># app/resources/friendship_resource.rb</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">FriendshipResource</span> <span class="o">&lt;</span> <span class="ss">JSONAPI</span><span class="p">:</span><span class="ss">:Resource</span>
+</span><span class='line'>  <span class="n">has_one</span> <span class="ss">:friender</span>
+</span><span class='line'>  <span class="n">has_one</span> <span class="ss">:friended</span>
+</span><span class='line'>  <span class="n">attributes</span> <span class="ss">:strength</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Creating the endpoints is no more work than adding a <code>jsonapi_resources</code> call
+for each resource in the router configuration:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># config/routes.rb</span>
+</span><span class='line'><span class="no">Rails</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class="n">routes</span><span class="o">.</span><span class="n">draw</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">jsonapi_resources</span> <span class="ss">:people</span>
+</span><span class='line'>  <span class="n">jsonapi_resources</span> <span class="ss">:friendships</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The gem also provides a controller generator so let&#8217;s use it to create controllers for our resources:</p>
+
+<pre><code>    $ rails generate jsonapi:controller person
+    $ rails generate jsonapi:controller friendship
+</code></pre>
+
+<p>They can be left empty but they need to be created in a way that they are
+descendants of JSONAPI::ResourceController (the generator takes care of that):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># app/controllers/people_controller.rb</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">PeopleController</span> <span class="o">&lt;</span> <span class="ss">JSONAPI</span><span class="p">:</span><span class="ss">:ResourceController</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># app/controllers/friendships_controller.rb</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">FriendshipsController</span> <span class="o">&lt;</span> <span class="ss">JSONAPI</span><span class="p">:</span><span class="ss">:ResourceController</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The back-end is now done, we can switch our focus to the Ember app.</p>
+
+<h2>The front-end</h2>
+
+<p>We want a list of people (<a href="http://rockandrollwithemberjs.com">rock stars</a>, of course) and then have a list of
+their friendships on the person details page.</p>
+
+<p><img src="http://balinterdi.com/images/posts/symmetric-relationships/friendships-step-1.png" alt="Mike McCready's frienships - Part 1" /></p>
+
+<p>The first step is to set up the routes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">(...)</span>
+</span><span class='line'><span class="nx">Router</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">(</span><span class="s1">&#39;people&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/&#39;</span> <span class="p">},</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">(</span><span class="s1">&#39;show&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/people/:person_id&#39;</span> <span class="p">});</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Router</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The model hooks for these routes are the classic, &#8220;fetch&#8217;em all&#8221; and &#8220;fetch the
+one that matches the id&#8221; methods of Ember Data&#8217;s store:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// app/routes/people.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">findAll</span><span class="p">(</span><span class="s1">&#39;person&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// app/routes/people/show.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">Ember</span> <span class="nx">from</span> <span class="s1">&#39;ember&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Route</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">findRecord</span><span class="p">(</span><span class="s1">&#39;person&#39;</span><span class="p">,</span> <span class="nx">params</span><span class="p">.</span><span class="nx">person_id</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Before we move on to writing the templates, let&#8217;s define the models:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// app/models/person.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">DS</span> <span class="nx">from</span> <span class="s1">&#39;ember-data&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">const</span> <span class="p">{</span> <span class="nx">Model</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">hasMany</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">DS</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span> <span class="nx">attr</span><span class="p">(),</span>
+</span><span class='line'>  <span class="nx">friendships</span><span class="o">:</span> <span class="nx">hasMany</span><span class="p">(),</span>
+</span><span class='line'>  <span class="nx">frienderFriendships</span><span class="o">:</span> <span class="nx">hasMany</span><span class="p">(</span><span class="s1">&#39;friendship&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">inverse</span><span class="o">:</span> <span class="s1">&#39;friender&#39;</span> <span class="p">}),</span>
+</span><span class='line'>  <span class="nx">friendedFriendships</span><span class="o">:</span> <span class="nx">hasMany</span><span class="p">(</span><span class="s1">&#39;friendship&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">inverse</span><span class="o">:</span> <span class="s1">&#39;friended&#39;</span> <span class="p">}),</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// app/models/friendship.js</span>
+</span><span class='line'><span class="kr">import</span> <span class="nx">DS</span> <span class="nx">from</span> <span class="s1">&#39;ember-data&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">const</span> <span class="p">{</span> <span class="nx">Model</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">belongsTo</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">DS</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">strength</span><span class="o">:</span> <span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;number&#39;</span><span class="p">),</span>
+</span><span class='line'>  <span class="nx">friender</span><span class="o">:</span> <span class="nx">belongsTo</span><span class="p">(</span><span class="s1">&#39;person&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">inverse</span><span class="o">:</span> <span class="s1">&#39;frienderFriendships&#39;</span> <span class="p">}),</span>
+</span><span class='line'>  <span class="nx">friended</span><span class="o">:</span> <span class="nx">belongsTo</span><span class="p">(</span><span class="s1">&#39;person&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">inverse</span><span class="o">:</span> <span class="s1">&#39;friendedFriendships&#39;</span> <span class="p">}),</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is rather standard Ember Data stuff, possibly with the exception of the
+<code>inverse</code> definitions. Since we have two relationships between <code>Person</code> and
+<code>Friendship</code> we need to specify the other end of each relationship and that&#8217;s
+what we do with the <code>inverse</code> option.</p>
+
+<p>With the models and routes in place, we can now see what the templates should look like.</p>
+
+<p>The top-level <code>people</code> route is again fairly straightforward:</p>
+
+<div>
+  <pre><code class='html'>// app/templates/people.hbs
+&lt;div class=&quot;col-md-4&quot;&gt;
+  &lt;div class=&quot;list-group&quot;&gt;
+    {{#each model as |person|}}
+      {{link-to person.name &#39;people.show&#39; person.id class=&quot;list-group-item&quot;}}
+    {{/each}}
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;col-md-8&quot;&gt;
+  {{outlet}}
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>The <code>each</code> loop iterates through each person and renders a link for each of
+those that will take us to the person details page, which will display the
+person&#8217;s friendships.</p>
+
+<p><img src="http://balinterdi.com/images/posts/symmetric-relationships/people-list-step-1.png" alt="List of people" /></p>
+
+<h3>Listing a person&#8217;s friendships</h3>
+
+<div>
+  <pre><code class='html'>// app/templates/people/show.hbs
+&lt;div class=&quot;panel panel-default&quot;&gt;
+  &lt;div class=&quot;panel-heading&quot;&gt;
+    &lt;h3 class=&quot;panel-title&quot;&gt;Friends of {{model.name}}&lt;/h3&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;panel-body&quot;&gt;
+    &lt;ul class=&quot;friend-list&quot;&gt;
+      {{#each model.friendships as |friendship|}}
+        &lt;li class=&quot;friend-list-item&quot;&gt;
+          &lt;span class=&quot;name&quot;&gt;{{friendship.friender.name}}&lt;/span&gt;
+          &lt;span class=&quot;name&quot;&gt;{{friendship.friended.name}}&lt;/span&gt;
+          &lt;span class=&quot;badge&quot;&gt;{{friendship.strength}}&lt;/span&gt;
+        &lt;/li&gt;
+      {{/each}}
+    &lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</div>
+
+
+<p>There is nothing fancy going on here, either. The <code>model</code> is the person
+retrieved in the route.  For each friendship that he has, the friender&#8217;s and
+the friended&#8217;s name are rendered along with the strength of the relationship.
+(Either <code>friender</code> or <code>friended</code> will be the person itself, but we can ignore that
+in the first version.)</p>
+
+<p>This naive approach works, the friendships for the selected person are listed correctly:</p>
+
+<p><img src="http://balinterdi.com/images/posts/symmetric-relationships/friendships-step-1.png" alt="Mike McCready's frienships - Part 1" /></p>
+
+<h2>A 2N+1 problem</h2>
+
+<p>However, looking at the requests to the backend for just one page, one gets the
+impression that we&#8217;re not done yet:</p>
+
+<p><img src="http://balinterdi.com/images/posts/symmetric-relationships/too-many-xhrs.png" alt="Too many XHRs" /></p>
+
+<p>For each friendship the person has, two requests are sent to the backend. One to
+fetch the <code>friender</code> and another one to fetch the <code>friended</code> person. This is not
+an <a href="https://www.sitepoint.com/silver-bullet-n1-problem/">N+1 query problem</a>, this is worse, a 2N+1 query problem!</p>
+
+<p>On top of that, those requests are sent for no good reason as we&#8217;d previously
+loaded the people referred by those <code>friended</code> and <code>friended</code> relationships.</p>
+
+<p>In the next part, we&#8217;ll see how these wasteful requests can be eliminated and
+we&#8217;ll also make the person details page less perplexing by not displaying the
+person whose page we&#8217;re looking at in the relationships. Stay tuned!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js 2.9 is released]]></title>
@@ -3083,491 +3500,6 @@ deployment section with another great &amp; simple deployment option,
 this release, the list of which can be viewed on <a href="https://github.com/balinterdi/rarwe-issues/issues?q=milestone%3A2.2.0">Github</a>.</p>
 
 <p>Thank you to everybody who reported issues and helped to improve <a href="http://rockandrollwithemberjs.com">the book</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[The tale of two bindings]]></title>
-    <link href="http://balinterdi.com/2015/10/22/the-tale-of-two-bindings.html"/>
-    <updated>2015-10-22T16:41:00+02:00</updated>
-    <id>http://balinterdi.com/2015/10/22/the-tale-of-two-bindings</id>
-    <content type="html"><![CDATA[<iframe
-  width="178" height="24" style="border:0px"
-  src="https://mixonic.github.io/ember-community-versions/2015/10/22/the-tale-of-two-bindings.html">
-</iframe>
-
-
-<p>Two weeks ago I had a presentation called &#8220;Complex component design&#8221; at the
-Global Ember Meetup.</p>
-
-<p>When I had given the title and abstract of this presentation, I had wanted to
-speak about how to implement more involved, nested components in Ember 2 (but
-actually, more like 1.13+), which is a fascinating and complex (pun intended)
-topic. I had something like a highly reusable autocomplete input component in
-mind something that <a href="http://balinterdi.com/2015/09/10/complex-component-design-in-ember-intro.html">I had decided to explore further</a>.</p>
-
-<p>When I sat down to think about it, I had realized there is a related and equally
-fascinating topic, that of communication between components that live on the
-same page. As everything is <a href="https://github.com/emberjs/rfcs/pull/38">soon becoming a component</a> in Ember, the two are
-very similar. A difference is that communicating components in an app do not
-need such a high degree of flexibility as a reusable component (like an Ember
-addon). In any case, it does not hurt, since making them flexible facilitates
-their reuse.</p>
-
-<p>In this post, I&#8217;ll show an example of simple component communication and focus
-on how moving from two-way bindings to one-way bindings changes that. Spending
-some time on playing around with this, I was very pleasantly surprised in what
-this shift enables.</p>
-
-<h3>The example</h3>
-
-<p>If you know me a bit, you&#8217;d expect the &#8220;app&#8221; to be Rock &amp; Roll themed and
-you&#8217;d be right. I reduced the app <a href="http://rockandrollwithemberjs.com">in the book</a> to a very simple interface
-where you can pick a band and then edit it on a form:</p>
-
-<p><img src="http://balinterdi.com/images/posts/tale-of-two-bindings/sketch.png" alt="Edit band on a form" /></p>
-
-<p>In the remainder of the post, we&#8217;ll see different implementations to achieve the
-validation and saving of the band. There will be 3 scenarios: the traditional
-one, using two-way bindings, the Glimmer version, using one-way bindings, DOM
-events and Data Down, Actions up (DDAU) and finally 1WAY Deluxe&#8482;: adding a few
-features on top of the second scenario that one-way bindings make easy (or
-possible at all).</p>
-
-<h3>Take 1: Traditional, two-way bound</h3>
-
-<p>Ignoring the list of bands on the left, the template belonging to the band
-route, where the band can be edited, contains the band-form (on the right of the
-screenshot), and some minimal markup. We pass in the band object, the <code>on-save</code> and the
-<code>on-star-click</code> closure actions to the band form:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class=&quot;panel panel-default band-panel&quot;&gt;
-  &lt;div class=&quot;panel-body&quot;&gt;
-    {{band-form band=model
-                errors=errors
-                on-save=(action &quot;saveBand&quot;)
-                on-star-click=(action &quot;updateRating&quot;)}}
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-</div>
-
-
-<p>The controller has these actions, sets up the errors object and contains the
-validation logic. The <code>hasErrors</code> property will be true if the band&#8217;s name is
-empty:</p>
-
-<div>
-  <pre><code class='javascript'>import Ember from &#39;ember&#39;;
-
-export default Ember.Controller.extend({
-  hasValidName: Ember.computed.notEmpty(&#39;model.name&#39;),
-  hasErrors: Ember.computed.not(&#39;hasValidName&#39;),
-
-  setupErrors: Ember.on(&#39;init&#39;, function() {
-    this.set(&#39;errors&#39;, Ember.Object.create());
-  }),
-
-  validate() {
-    this.set(&#39;errors.name&#39;, this.get(&#39;hasValidName&#39;) ? null : &quot;Name is required.&quot;);
-  },
-
-  actions: {
-    updateRating(params) {
-      const { item: band, rating } = params;
-      band.set(&#39;rating&#39;, rating);
-    },
-
-    saveBand() {
-      this.validate();
-      if (this.get(&#39;hasErrors&#39;)) {
-        return;
-      }
-
-      const band = this.get(&#39;model&#39;);
-      return band.save().then(() =&gt; {
-        console.log(&quot;Band is saved&quot;);
-      });
-    }
-  }
-});</code></pre>
-</div>
-
-
-<p>Upon validation, the errors are set but this is only needed to be able to
-show the error in the template. <code>this.get('hasErrors')</code> is already true if the
-band&#8217;s name is an empty string.</p>
-
-<p>The missing piece is the <code>band-form</code> template:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class={{if errors.name &quot;form-group has-error&quot; &quot;form-group&quot;}}&gt;
-  &lt;label for=&quot;band-name&quot;&gt;Name&lt;/label&gt;
-  {{input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-name&quot; value=band.name}}
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-year&quot;&gt;Formed in&lt;/label&gt;
-  {{input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-year&quot; value=band.year}}
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-rating&quot;&gt;Rating&lt;/label&gt;
-  {{star-rating id=&quot;band-rating&quot; item=band rating=band.rating on-click=on-star-click}}
-&lt;/div&gt;
-&lt;button type=&quot;submit&quot; class=&quot;btn btn-primary pull-right&quot; {{action &quot;saveBand&quot;}}&gt;Submit&lt;/button&gt;</code></pre>
-</div>
-
-
-<p>It uses the <code>input</code> helper which established two-way bindings between the value
-of the input and the property that was passed to it. When the user modifies the
-input, <code>band.name</code> changes in sync. Since band in the component is the model of
-the controller, the band name in the list changes as the name is edited:</p>
-
-<p><img src="http://balinterdi.com/images/posts/tale-of-two-bindings/two-way-bindings-in-action.gif" alt="Two-way bindings in action" /></p>
-
-<p>In this scenario, communication between the top-level component (controller, if
-you will) and the band form is quite blunt. As data is two-way bound, there is
-no simple, &#8220;in-framework&#8221; way of not changing the name in the list when the name
-on the form is modified. There is shared state and the components do not act via
-messages: they pull two ends of the same string.</p>
-
-<p>(In cases where you had to prevent that in the pre-Glimmer era, you had to resort
-to using a separate property, like <code>band.newName</code>, or using <a href="https://github.com/yapplabs/ember-buffered-proxy">BufferedProxy</a>.)</p>
-
-<p>So let&#8217;s take a step forwards and see how this can be improved.</p>
-
-<h3>Take 2: One-way bound with DDAU</h3>
-
-<p>We&#8217;ll first replace the two-way binding with a one-way one and manually
-synchronize the upstream direction using DDAU. It will not seem like a big gain
-but it will enable us to go further and attain 1WAY Deluxe&#8482;.</p>
-
-<p>The top-level template only needs a slight change. We no longer pass in an
-<code>on-star-click</code> action but instead an <code>on-update</code> one. This will serve for the
-upstream synchronization, setting what changed in the component on the band
-object (the model) of the controller.</p>
-
-<div>
-  <pre><code class='html'>&lt;div class=&quot;panel panel-default band-panel&quot;&gt;
-  &lt;div class=&quot;panel-body&quot;&gt;
-    {{band-form band=model
-                errors=errors
-                on-save=(action &quot;saveBand&quot;)
-                on-update=(action &quot;updateBandProperty&quot;)}}
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-</div>
-
-
-<p>In accordance, the only thing that has changed in the controller is that
-the <code>updateStarRating</code> action has been replaced by <code>updateBandProperty</code>. This is
-the manual syncing:</p>
-
-<div>
-  <pre><code class='javascript'>export default Ember.Controller.extend({
-  (...)
-  actions: {
-    updateBandProperty(property, value) {
-      this.get(&#39;model&#39;).set(property, value);
-    },
-
-    (...)
-  }
-});</code></pre>
-</div>
-
-
-<p>In the template, the two-way bound <code>input</code> helpers are out, substituted by
-regular input tags. We attach event listeners to them which will trigger the
-synchronization proces (I wrote <a href="http://balinterdi.com/2015/08/29/how-to-do-a-select-dropdown-in-ember-20.html">a post</a> about how that works a few months ago):</p>
-
-<div>
-  <pre><code class='html'>&lt;div class={{if errors.name &quot;form-group has-error&quot; &quot;form-group&quot;}}&gt;
-  &lt;label for=&quot;band-name&quot;&gt;Name&lt;/label&gt;
-  &lt;input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-name&quot; value={{band.name}}
-    oninput={{action &quot;nameDidChange&quot; value=&quot;target.value&quot;}} /&gt;
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-year&quot;&gt;Formed in&lt;/label&gt;
-  &lt;input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-year&quot; value={{band.year}}
-    oninput={{action &quot;yearDidChange&quot; value=&quot;target.value&quot;}} /&gt;
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-rating&quot;&gt;Rating&lt;/label&gt;
-  {{star-rating id=&quot;band-rating&quot; item=band rating=band.rating on-click=(action &quot;ratingDidChange&quot;)}}
-&lt;/div&gt;
-&lt;button type=&quot;submit&quot; class=&quot;btn btn-primary pull-right&quot; {{action &quot;saveBand&quot;}}&gt;Submit&lt;/button&gt;</code></pre>
-</div>
-
-
-<p><code>nameDidChange</code>, <code>yearDidChange</code> and <code>ratingDidChange</code> all end up calling the
-passed in closure action, <code>on-update</code>, with the name of the property that has
-changed and its new value. This calls <code>updateBandProperty</code> in the controller we
-already saw:</p>
-
-<div>
-  <pre><code class='html'>import Ember from &#39;ember&#39;;
-
-export default Ember.Component.extend({
-  tagName: &#39;form&#39;,
-  band: null,
-  errors: null,
-  &quot;on-update&quot;: null,
-  &quot;on-save&quot;: null,
-
-  actions: {
-    saveBand() {
-      this.attrs[&#39;on-save&#39;]();
-    },
-
-    nameDidChange(value) {
-      this.attrs[&#39;on-update&#39;](&#39;name&#39;, value);
-    },
-    yearDidChange(value) {
-      this.attrs[&#39;on-update&#39;](&#39;year&#39;, value);
-    },
-    ratingDidChange(params) {
-      const { rating } = params;
-      this.attrs[&#39;on-update&#39;](&#39;rating&#39;, rating);
-    },
-  }
-});</code></pre>
-</div>
-
-
-<p>From the outside, the app works just as before. The band name changes in the
-list as we edit it in the text field:</p>
-
-<p><img src="http://balinterdi.com/images/posts/tale-of-two-bindings/one-way-bindings-in-action.gif" alt="One-way bindings in action" /></p>
-
-<p>However, we know that under the hood our code took control of propagating data
-changes. We have undone the string that kept the two sides (two components)
-tied strongly together. In the third and final iteration, we&#8217;ll leverage that to
-move validation where it belongs and add a micro-feature.</p>
-
-<h3>Take 3: 1WAY Deluxe&#8482;</h3>
-
-<p>Now, for the cool part. Now that we&#8217;re free to change band-related properties on
-the component without affecting the properties of the band object (the model of
-the controller), we no longer have a shared state.</p>
-
-<p>The first thing we&#8217;ll do is to move the validation into the <code>band-form component</code>.
-<code>band-form</code> will be also less chatty. It will only send property updates when
-the form is submitted. That means we don&#8217;t need to pass in the <code>errors</code> object
-or an <code>on-update</code> action:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class=&quot;panel panel-default band-panel&quot;&gt;
-  &lt;div class=&quot;panel-body&quot;&gt;
-    {{band-form band=model on-save=(action &quot;saveBand&quot;)}}
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-</div>
-
-
-<p>That implies that the controller can be really slimmed down to the <code>saveBand</code>
-action:</p>
-
-<div>
-  <pre><code class='html'>import Ember from &#39;ember&#39;;
-
-export default Ember.Controller.extend({
-  actions: {
-    saveBand(properties) {
-      const band = this.get(&#39;model&#39;);
-      band.setProperties(properties);
-
-      return band.save().then(() =&gt; {
-        console.log(&quot;Band is saved&quot;);
-      });
-    }
-  }
-});</code></pre>
-</div>
-
-
-<p>Note how the input field values in the <code>band-form</code> template are now bound to
-properties on the component as opposed to that of the passed in <code>band</code> object:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class={{if errors.name &quot;form-group has-error&quot; &quot;form-group&quot;}}&gt;
-  &lt;label for=&quot;band-name&quot;&gt;Name&lt;/label&gt;
-  &lt;input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-name&quot; value={{name}}
-    oninput={{action &quot;nameDidChange&quot; value=&quot;target.value&quot;}} /&gt;
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-year&quot;&gt;Formed in&lt;/label&gt;
-  &lt;input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-year&quot; value={{year}}
-    oninput={{action &quot;yearDidChange&quot; value=&quot;target.value&quot;}} /&gt;
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-rating&quot;&gt;Rating&lt;/label&gt;
-  {{star-rating id=&quot;band-rating&quot; item=band rating=rating on-click=(action &quot;ratingDidChange&quot;)}}
-&lt;/div&gt;
-&lt;div class=&quot;form-group button-panel&quot;&gt;
-  &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary pull-right&quot; {{action &quot;saveBand&quot;}}&gt;Submit&lt;/button&gt;
-  &lt;button type=&quot;button&quot; class=&quot;btn btn-danger pull-right&quot; {{action &quot;reset&quot;}}&gt;Reset&lt;/button&gt;
-&lt;/div&gt;</code></pre>
-</div>
-
-
-<p>Little else has changed but a second button, Reset, already gives you a taste of
-things to come. Let&#8217;s see the component definition:</p>
-
-<div>
-  <pre><code class='javascript'>import Ember from &#39;ember&#39;;
-
-export default Ember.Component.extend({
-  tagName: &#39;form&#39;,
-  band: null,
-  &quot;on-save&quot;: null,
-
-  name:    null,
-  year:    null,
-  rating:  null,
-  errors:  null,
-
-  // Validation code comes here, copied verbatim from the controller
-
-  resetOnInit: Ember.on(&#39;init&#39;, function() {
-    this.resetFromBand();
-  }),
-
-  resetFromBand() {
-    [&#39;name&#39;, &#39;year&#39;, &#39;rating&#39;].forEach((field) =&gt; {
-      const valueInBand = this.get(&#39;band&#39;).get(field);
-      this.set(field, valueInBand);
-    });
-  },
-
-  actions: {
-    saveBand() {
-      this.validate();
-      if (this.get(&#39;hasErrors&#39;)) {
-        return;
-      }
-
-      return this.attrs[&#39;on-save&#39;](this.getProperties([&#39;name&#39;, &#39;year&#39;, &#39;rating&#39;]));
-    },
-
-    nameDidChange(value) {
-      this.set(&#39;name&#39;, value);
-    },
-    yearDidChange(value) {
-      this.set(&#39;year&#39;, value);
-    },
-    ratingDidChange(params) {
-      const { rating } = params;
-      this.set(&#39;rating&#39;, value);
-    },
-    reset() {
-      this.resetFromBand();
-    }
-  }
-});</code></pre>
-</div>
-
-
-<p>I cut out the code responsible for validation since that has just been brought
-over from the controller.</p>
-
-<p>The interesting stuff happens in <code>resetFromBand</code> which is both called when the
-component comes to life and when the Reset button is clicked. It copies the
-<code>name</code>, <code>year</code> and <code>rating</code> properties of the band onto those of the component,
-effectively resetting them to their original value. That&#8217;s the only reason we
-still need to pass in the band object into the component.</p>
-
-<p>Also notice how the <code>name</code> and the <code>rating</code> are not updated on the band object
-as we interact with the form:</p>
-
-<p><img src="http://balinterdi.com/images/posts/tale-of-two-bindings/one-way-deluxe-in-action.gif" alt="1WAY Deluxe in action" /></p>
-
-<p>Having the data validated by the form acts as a guard. The save action is only
-triggered if the data was found to be valid. It is only then that the form&#8217;s
-data will overwrite that of the band object. Data flows both ways but in a very
-controlled way.</p>
-
-<p>To take this further, thanks to closure actions, we could even display an error in the <code>band-form</code>
-component if the save operation fails on the controller:</p>
-
-<div>
-  <pre><code class='javascript'>export default Ember.Component.extend({
-  (...)
-  actions: {
-    saveBand() {
-      this.validate();
-      if (this.get(&#39;hasErrors&#39;)) {
-        return;
-      }
-      const properties = this.getProperties([&#39;name&#39;, &#39;year&#39;, &#39;rating&#39;]);
-      return this.attrs[&#39;on-save&#39;](properties)
-        .catch((error) =&gt; {
-          this.set(&#39;errors.base&#39;, error.get(&#39;message&#39;));
-        });
-    },
-
-    (...)
-  }
-});</code></pre>
-</div>
-
-
-<p><strong>UPDATE</strong></p>
-
-<h3>Take 4: 1WAY Deluxe&#8482; without input cursor wackiness</h3>
-
-<p>The above 1WAY Deluxe&#8482; has a bug that <a href="https://twitter.com/rwjblue">Robert Jackson</a> pointed out and that
-I did not realize while building the demo app. The cursor in the text field
-always jumps back at the end of the text after each change:</p>
-
-<p><img src="http://balinterdi.com/images/posts/tale-of-two-bindings/1way-deluxe-input-wackiness.gif" alt="1WAY Deluxe input wackiness" /></p>
-
-<p>During the Glimmer rewrite he spend a lot of time tracking down that bug, the
-result of which is the <a href="https://github.com/dockyard/ember-one-way-input"><code>ember-one-way-input</code> Ember addon</a>.</p>
-
-<p>So that&#8217;s what we should use instead of regular input tags. We first install the
-addon with <code>ember install ember-one-way-input</code>. That gives us a <code>one-way-input</code>
-component that takes an <code>update</code> action which will be triggered at each change
-of the input&#8217;s value (more precisely, on both <code>change</code> and <code>input</code> events).</p>
-
-<p>Let&#8217;s replace the input tags in the component&#8217;s template:</p>
-
-<div>
-  <pre><code class='html'>&lt;div class={{if errors.name &quot;form-group has-error&quot; &quot;form-group&quot;}}&gt;
-  &lt;label for=&quot;band-name&quot;&gt;Name&lt;/label&gt;
-  {{one-way-input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-name&quot; value=name
-    update=(action &quot;nameDidChange&quot;)}}
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-year&quot;&gt;Formed in&lt;/label&gt;
-  {{one-way-input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;band-year&quot; value=year
-    update=(action &quot;yearDidChange&quot;)}}
-&lt;/div&gt;
-&lt;div class=&quot;form-group&quot;&gt;
-  &lt;label for=&quot;band-rating&quot;&gt;Rating&lt;/label&gt;
-  {{star-rating id=&quot;band-rating&quot; item=band rating=rating on-click=(action &quot;ratingDidChange&quot;)}}
-&lt;/div&gt;
-&lt;div class=&quot;form-group button-panel&quot;&gt;
-  &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary pull-right&quot; {{action &quot;saveBand&quot;}}&gt;Submit&lt;/button&gt;
-  &lt;button type=&quot;button&quot; class=&quot;btn btn-danger pull-right&quot; {{action &quot;reset&quot;}}&gt;Reset&lt;/button&gt;
-&lt;/div&gt;</code></pre>
-</div>
-
-
-<p>Nothing else needs to change for the cursor position weirdness to go away:</p>
-
-<p><img src="http://balinterdi.com/images/posts/tale-of-two-bindings/1way-deluxe-with-one-way-input.gif" alt="1WAY Deluxe input without cursor wackiness" /></p>
-
-<p>Thank you to <a href="https://twitter.com/rwjblue">Robert Jackson</a> and <a href="https://twitter.com/toranb">Toran Billups</a> for spotting this and pointing me
-to the solution.</p>
-
-<h3>Conclusion</h3>
-
-<p>I&#8217;m really excited and curious about how many things this makes possible. As I
-said in my presentation, we&#8217;re (but surely: I am) only figuring out both the
-possibilities &#8220;managed&#8221; one-way bindings open up and the best way to work with
-them. So if you have thoughts or insights, please do share them in the comments.</p>
-
-<p>NOTE: I published <a href="https://github.com/balinterdi/tale-of-two-bindings">the demo app of this post on Github.</a></p>
 ]]></content>
   </entry>
   

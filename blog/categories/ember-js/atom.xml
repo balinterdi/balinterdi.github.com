@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-11-16T14:25:00+01:00</updated>
+  <updated>2016-11-17T21:41:43+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -12,6 +12,366 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Two-way symmetric relationships in Ember with JSON API - Part 1]]></title>
+    <link href="http://balinterdi.com/2016/11/17/two-way-symmetric-relationships-in-ember-with-jsonapi-part-1.html"/>
+    <updated>2016-11-17T12:52:00+01:00</updated>
+    <id>http://balinterdi.com/2016/11/17/two-way-symmetric-relationships-in-ember-with-jsonapi-part-1</id>
+    <content type="html"><![CDATA[<h2>Definition</h2>
+
+<p>In data modelling, a symmetric relationship is a special kind of relationship
+where the description of the relationship from the perspective of one end of
+the relationship is identical to looking at it from the perspective of the other
+end.</p>
+
+<p>Friendship between people is a good example. If Megan is Selma's friend, it
+follows that Selma is Megan's friend, too. On the other hand, the "knows"
+relationship between two people is not a symmetric one. I might know Danny
+Carey (the drummer of Tool), but that does not imply he knows me.</p>
+
+<h2>Historical background</h2>
+
+<p>My research into how to model and implement such a relationship in an Ember
+application was sparked by <a href="http://stackoverflow.com/questions/34186435/modelling-two-way-symmetric-relationships-in-ember">this Stack Overflow question</a> that was posed by
+a reader of <a href="http://rockandrollwithemberjs.com">my book</a>. It was more difficult than I thought it would be so I
+was intrigued to find the (an) answer.</p>
+
+<p>My solution turned out to have a fairly large API component, too, so the
+following post will show both the server-side implementation (in Rails) and the
+client-side one (in Ember).</p>
+
+<p>If you don't speak Rails, fear not. The code is straightforward and easy to
+understand without any substantial Rails knowledge, thanks in most part to the gem that
+makes it extremely easy to serialize data models and relationships to json:api
+format, <a href="https://github.com/cerebris/jsonapi-resources">jsonapi-resources</a>.</p>
+
+<h2>Data modelling</h2>
+
+<p>We'll start with the data modelling part, which is the Rails side.</p>
+
+<p>To be able to model our problem in the data layer, let's say that Friendships
+have a <code>friender</code> and a <code>friended</code> end of the relationship and a strength
+attribute that measures how strong their friendship is.</p>
+
+<p>We should create a (data) migration that will create a database table when run:</p>
+
+<pre><code>    $ rails g migration create_friendships
+</code></pre>
+
+<p>Let's fill in the generated migration with the above attributes:</p>
+
+<p>```ruby
+class CreateFriendships &lt; ActiveRecord::Migration
+  def change</p>
+
+<pre><code>create_table :friendships do |t|
+  t.integer :friender_id
+  t.integer :friended_id
+  t.integer :strength
+  t.timestamps null: false
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>A Friendship, then, is between two people (Persons), so let's define that in the
+corresponding model file:</p>
+
+<p>```ruby</p>
+
+<h1>app/models/friendship.rb</h1>
+
+<p>class Friendship &lt; ActiveRecord::Base
+  belongs_to :friender, class_name: Person
+  belongs_to :friended, class_name: Person
+end
+```</p>
+
+<p>We'll want to list all the friendships a person has so a <code>friendships</code> method
+needs to be added to the Person class:</p>
+
+<p>```ruby</p>
+
+<h1>app/models/person.rb</h1>
+
+<p>class Person &lt; ActiveRecord::Base
+  def friendships</p>
+
+<pre><code>Friendship.where("friender_id = ? OR friended_id = ?", id, id);
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>We select the friendships where either the <code>friender</code> or the <code>friended</code> is the
+person we query it for. This is where the symmetric aspect of the relationship
+is implemented. We don't care if the person friended somebody or if that
+somebody friended him, they are friends.</p>
+
+<p>Note that modelling it this way, we could split up the symmetric relationship
+into the two constituent parts. We could return only the friendships where the
+person in question "initiated" it (was the friender), or "let himself be
+friended" (was the friender).</p>
+
+<h2>Server endpoints, resources, serializing relationships</h2>
+
+<p>We could now turn our attention to setting up the endpoints and serializing the
+model, and relationship data for the client application to consume. First, let's
+install <a href="https://github.com/cerebris/jsonapi-resources">the jsonapi-resources gem</a>:</p>
+
+<pre><code>    $ gem install jsonapi-resources
+</code></pre>
+
+<p>This gives us a jsonapi:resource generator that we can use to create both the
+endpoints and the serializer for our resources.</p>
+
+<pre><code>    $ rails generate jsonapi:resource person
+    $ rails generate jsonapi:resource friendship
+</code></pre>
+
+<p>The created resources are placed in the <code>app/resources</code> folder. Let's add the
+attributes we want to serialize for each one:</p>
+
+<p>```ruby</p>
+
+<h1>app/resources/person_resource.rb</h1>
+
+<p>class PersonResource &lt; JSONAPI::Resource
+  attributes :name
+  has_many :friendships, class_name: "Friendship"
+end
+```</p>
+
+<p>```ruby</p>
+
+<h1>app/resources/friendship_resource.rb</h1>
+
+<p>class FriendshipResource &lt; JSONAPI::Resource
+  has_one :friender
+  has_one :friended
+  attributes :strength
+end
+```</p>
+
+<p>Creating the endpoints is no more work than adding a <code>jsonapi_resources</code> call
+for each resource in the router configuration:</p>
+
+<p>```ruby</p>
+
+<h1>config/routes.rb</h1>
+
+<p>Rails.application.routes.draw do
+  jsonapi_resources :people
+  jsonapi_resources :friendships
+end
+```</p>
+
+<p>The gem also provides a controller generator so let's use it to create controllers for our resources:</p>
+
+<pre><code>    $ rails generate jsonapi:controller person
+    $ rails generate jsonapi:controller friendship
+</code></pre>
+
+<p>They can be left empty but they need to be created in a way that they are
+descendants of JSONAPI::ResourceController (the generator takes care of that):</p>
+
+<p>```ruby</p>
+
+<h1>app/controllers/people_controller.rb</h1>
+
+<p>class PeopleController &lt; JSONAPI::ResourceController
+end
+```</p>
+
+<p>```ruby</p>
+
+<h1>app/controllers/friendships_controller.rb</h1>
+
+<p>class FriendshipsController &lt; JSONAPI::ResourceController
+end
+```</p>
+
+<p>The back-end is now done, we can switch our focus to the Ember app.</p>
+
+<h2>The front-end</h2>
+
+<p>We want a list of people (<a href="http://rockandrollwithemberjs.com">rock stars</a>, of course) and then have a list of
+their friendships on the person details page.</p>
+
+<p><img src="/images/posts/symmetric-relationships/friendships-step-1.png" alt="Mike McCready's frienships - Part 1" /></p>
+
+<p>The first step is to set up the routes:</p>
+
+<p>```javascript
+(...)
+Router.map(function() {
+  this.route('people', { path: '/' }, function() {</p>
+
+<pre><code>this.route('show', { path: '/people/:person_id' });
+</code></pre>
+
+<p>  });
+});</p>
+
+<p>export default Router;
+```</p>
+
+<p>The model hooks for these routes are the classic, "fetch'em all" and "fetch the
+one that matches the id" methods of Ember Data's store:</p>
+
+<p>```javascript
+// app/routes/people.js
+import Ember from 'ember';</p>
+
+<p>export default Ember.Route.extend({
+  model() {</p>
+
+<pre><code>return this.store.findAll('person');
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>```javascript
+// app/routes/people/show.js
+import Ember from 'ember';</p>
+
+<p>export default Ember.Route.extend({
+  model(params) {</p>
+
+<pre><code>return this.store.findRecord('person', params.person_id);
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Before we move on to writing the templates, let's define the models:</p>
+
+<p>```js
+// app/models/person.js
+import DS from 'ember-data';</p>
+
+<p>const { Model, attr, hasMany } = DS;</p>
+
+<p>export default Model.extend({
+  name: attr(),
+  friendships: hasMany(),
+  frienderFriendships: hasMany('friendship', { inverse: 'friender' }),
+  friendedFriendships: hasMany('friendship', { inverse: 'friended' }),
+});
+```</p>
+
+<p>```js
+// app/models/friendship.js
+import DS from 'ember-data';</p>
+
+<p>const { Model, attr, belongsTo } = DS;</p>
+
+<p>export default Model.extend({
+  strength: attr('number'),
+  friender: belongsTo('person', { inverse: 'frienderFriendships' }),
+  friended: belongsTo('person', { inverse: 'friendedFriendships' }),
+});
+```</p>
+
+<p>This is rather standard Ember Data stuff, possibly with the exception of the
+<code>inverse</code> definitions. Since we have two relationships between <code>Person</code> and
+<code>Friendship</code> we need to specify the other end of each relationship and that's
+what we do with the <code>inverse</code> option.</p>
+
+<p>With the models and routes in place, we can now see what the templates should look like.</p>
+
+<p>The top-level <code>people</code> route is again fairly straightforward:</p>
+
+<p><div>
+  <pre><code class='html'>// app/templates/people.hbs&lt;/p&gt;
+
+&lt;div class=&quot;col-md-4&quot;&gt;
+  &lt;div class=&quot;list-group&quot;&gt;
+    {{#each model as |person|}}
+      {{link-to person.name &#39;people.show&#39; person.id class=&quot;list-group-item&quot;}}
+    {{/each}}
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div class=&quot;col-md-8&quot;&gt;
+  {{outlet}}
+&lt;/div&gt;
+
+
+&lt;p&gt;</code></pre>
+</div>
+</p>
+
+<p>The <code>each</code> loop iterates through each person and renders a link for each of
+those that will take us to the person details page, which will display the
+person's friendships.</p>
+
+<p><img src="/images/posts/symmetric-relationships/people-list-step-1.png" alt="List of people" /></p>
+
+<h3>Listing a person's friendships</h3>
+
+<p><div>
+  <pre><code class='html'>// app/templates/people/show.hbs&lt;/p&gt;
+
+&lt;div class=&quot;panel panel-default&quot;&gt;
+  &lt;div class=&quot;panel-heading&quot;&gt;
+    &lt;h3 class=&quot;panel-title&quot;&gt;Friends of {{model.name}}&lt;/h3&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;panel-body&quot;&gt;
+    &lt;ul class=&quot;friend-list&quot;&gt;
+      {{#each model.friendships as |friendship|}}
+        &lt;li class=&quot;friend-list-item&quot;&gt;
+          &lt;span class=&quot;name&quot;&gt;{{friendship.friender.name}}&lt;/span&gt;
+          &lt;span class=&quot;name&quot;&gt;{{friendship.friended.name}}&lt;/span&gt;
+          &lt;span class=&quot;badge&quot;&gt;{{friendship.strength}}&lt;/span&gt;
+        &lt;/li&gt;
+      {{/each}}
+    &lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;</code></pre>
+</div>
+</p>
+
+<p>There is nothing fancy going on here, either. The <code>model</code> is the person
+retrieved in the route.  For each friendship that he has, the friender's and
+the friended's name are rendered along with the strength of the relationship.
+(Either <code>friender</code> or <code>friended</code> will be the person itself, but we can ignore that
+in the first version.)</p>
+
+<p>This naive approach works, the friendships for the selected person are listed correctly:</p>
+
+<p><img src="/images/posts/symmetric-relationships/friendships-step-1.png" alt="Mike McCready's frienships - Part 1" /></p>
+
+<h2>A 2N+1 problem</h2>
+
+<p>However, looking at the requests to the backend for just one page, one gets the
+impression that we're not done yet:</p>
+
+<p><img src="/images/posts/symmetric-relationships/too-many-xhrs.png" alt="Too many XHRs" /></p>
+
+<p>For each friendship the person has, two requests are sent to the backend. One to
+fetch the <code>friender</code> and another one to fetch the <code>friended</code> person. This is not
+an <a href="https://www.sitepoint.com/silver-bullet-n1-problem/">N+1 query problem</a>, this is worse, a 2N+1 query problem!</p>
+
+<p>On top of that, those requests are sent for no good reason as we'd previously
+loaded the people referred by those <code>friended</code> and <code>friended</code> relationships.</p>
+
+<p>In the next part, we'll see how these wasteful requests can be eliminated and
+we'll also make the person details page less perplexing by not displaying the
+person whose page we're looking at in the relationships. Stay tuned!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rock and Roll with Ember.js 2.9 is released]]></title>
@@ -455,19 +815,6 @@ or the book itself <a href="http://rockandrollwithemberjs.com">here.</a></p>
 
 
 <p>I encourage you to <a href="http://emberjs.com/builds/#/beta">try switching your app to Glimmer 2</a> and see if you encounter any problems.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rock and Roll with Ember.js 2.7 is released]]></title>
-    <link href="http://balinterdi.com/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released.html"/>
-    <updated>2016-08-24T20:50:00+02:00</updated>
-    <id>http://balinterdi.com/2016/08/24/rock-and-roll-with-ember-dot-js-2-dot-7-is-released</id>
-    <content type="html"><![CDATA[<p>Today marks the release of the <a href="http://rockandrollwithemberjs.com">Rock and Roll with Ember.js book</a>,
-version 2.7, which means the app built in the book now runs on Ember 2.7 (and uses Ember CLI 2.7).</p>
-
-<p>There is a number of other small fixes, the full list of which you can see
-<a href="https://github.com/balinterdi/rarwe-issues/milestone/15?closed=1">here</a>.</p>
 ]]></content>
   </entry>
   
