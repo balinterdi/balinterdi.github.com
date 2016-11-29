@@ -89,6 +89,79 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       
   <header>
     
+      <h1 class="entry-title"><a href="/2009/02/12/why-i-love-datamapper.html">Why I Love Datamapper</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-02-12T00:00:00+01:00" pubdate data-updated="true">Feb 12<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I wanted to find the last user in alphabetic order of their names in a Merb project that uses <a href="http://datamapper.org">Datamapper</a> (the default ORM in Merb). So I did [<a href="#love-datamapper-first">*</a>]:</p>
+
+<pre lang="bash">
+irb(main):020:0> User.all(:order => [:name]).first.name
+ ~ (0.032946) SELECT <column_names> FROM `users` ORDER BY `name` LIMIT 1
+=> "Admin User"
+</pre>
+
+
+<p>Ok, so the default sorting order is ascending but I need the last one. There are two ways to do this. Write an SQL snippet and sneak in &#8220;DESC&#8221; somewhere or reverse the collection before taking the first element. Since I was not sure how to sneak in &#8220;DESC&#8221; plus I prefer writing Ruby to writing SQL hands down, I went with the second approach:</p>
+
+<pre lang="bash">
+irb(main):021:0> User.all(:order => [:name]).reverse.first.name
+ ~ (1.033271) SELECT <column_names> FROM `users` ORDER BY `name` DESC LIMIT 1
+=> "XX XX"
+</pre>
+
+
+<p>See what happened? Instead of reverting the collection (which is extra time even if it is done very fast) Datamapper sneaked in that DESC for me! Isn&#8217;t this just brilliant? Datamapper takes the burden to write SQL off of your shoulders. You can keep writing Ruby statements you presumably love and let Datamapper take care of the SQL reaping both the comfort and the performance gain. [<a href="#love-datamapper-second">**</a>]. Also, likewise your app stays database type agnostic. Note how it is not supposed there is a RDBMS under the ORM layer. It could work with CouchDB, for example (I think there is actually work in progress for a CouchDB adapter). This is not the only reason I like Datamapper so much, so if you are still not convinced, go check out <a href="http://datamapper.org/doku.php?id=why_datamapper">some other reasons to use it</a>.</p>
+
+<hr>
+
+
+<h3>Notes</h3>
+
+
+<p id="love-datamapper-first">* I could have written this one in a simpler way:
+<pre lang="bash">
+irb(main):018:0> User.first(:order => [:name]).name
+ ~ (0.032345) SELECT <column_names> FROM `users` ORDER BY `name` LIMIT 1
+=> "Admin User"
+</pre>
+
+But you -or at least I- could not do it for the last element (there is no User.last)
+
+<p id="love-datamapper-second">** I am not suggesting not to learn SQL at all. I am all for a know-thy-tools approach (especially it it means not cluttering your markup with javascript :) ). However, having the ORM do obviously good things for you is worth it most of the time.
+</p>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2009/02/11/deep_test-to-become-tdd-more-easily.html">Deep_test to Become TDD More Easily</a></h1>
     
     
@@ -868,115 +941,6 @@ end</code></pre>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2008/12/06/exploring-ruby-metaprogramming-call-counter.html">Exploring Ruby Metaprogramming: Call Counter</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-12-06T00:00:00+01:00" pubdate data-updated="true">Dec 6<span>th</span>, 2008</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>A few days ago I purchased a <a href="http://www.pragprog.com/screencasts/v-dtrubyom/the-ruby-object-model-and-metaprogramming">screencast by Dave Thomas on Ruby metaprogramming</a>. (I do not receive any affiliation fees :)). The part I bought presents a problem and describes nine different ways of solving it in ascending order of beauty and code clarity.</p>
-
-<p>I was stunned by its beauty so I came up with another -though similar- problem and put together a simple solution for it. I present it for the Rubyists to silently smile in the knowledge of its elegance and power and for non-Ruby programmers to be -hopefully :)- amazed by it.</p>
-
-<p>The task is to count the calls to a certain method of all instances of a class.</p>
-
-<p>call_counter.rb:</p>
-
-<div>
-  <pre><code class='ruby'>module CallCounter
-  def count_calls_to(method_name)
-    original_method = instance_method(method_name)
-    
-    call_counter = 0
-    define_method(method_name) do |*args|
-        call_counter += 1
-        bound_original_method = original_method.bind(self)
-        bound_original_method.call(*args)
-    end
-
-    define_method &quot;calls_to_#{method_name}&quot; do
-        call_counter
-    end     
-  end
-end</code></pre>
-</div>
-
-
-<p>call_foo.rb:</p>
-
-<div>
-  <pre><code class='ruby'>require &quot;call_counter&quot;
-
-class CallFoo
-    
-    extend CallCounter
-
-    def foo; end
-    count_calls_to :foo
-
-end</code></pre>
-</div>
-
-
-<p>After calling &#8220;count_calls_to :foo&#8221; in the CallFoo class definition, calls to the &#8220;foo&#8221; method of CallFoo instances will be counted. A &#8220;calls_to_foo&#8221; method is available to get this count.</p>
-
-<p>I first created an UnboundMethod with &#8220;instance_method&#8221; and then used the bind method to attach it to an instance of ClassFoo. All this is to prevent aliasing method names, not because it is necessarily evil but because I agree with Dave Thomas about &#8220;bind&#8221; being a nicer solution. The define_method acts as a closure and saves its context so there is no need to use an instance variable for call_counter.</p>
-
-<p>You can use the counter like this:</p>
-
-<div>
-  <pre><code class='ruby'>irb(main):003:0&gt; cf = CallFoo.new
-=&gt; #&lt;CallFoo:0x608100&gt;
-irb(main):004:0&gt; cf.calls_to_foo
-=&gt; 0
-irb(main):005:0&gt; 4.times { cf.foo }
-=&gt; 4
-irb(main):006:0&gt; cf.calls_to_foo
-=&gt; 4</code></pre>
-</div>
-
-
-<p>Once again, what I love about Ruby is that in ~ 20 lines we have laid the base of a benchmarking tool (adding the possibility of measuring time spent in the method would not be hard). Also, the original class is not sullied by the call counting code intrinsic details. That functionality is stashed in a module, eager to be reused again.</p>
-
-<p>You may note there is something not quite nice about this. The method calls are counted per class, which makes sense since we usually want to know how many times the method in question was called in all instances, not per instance. However, the calls_to_foo is called on the instance which is confusing. It should be called on the class object, like this:</p>
-
-<div>
-  <pre><code class='ruby'>4.times { cf.foo }
-  CallFoo.calls_to_foo
-  =&gt; 4</code></pre>
-</div>
-
-
-<p>I may get back to this later.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/11/">&larr; Older</a>
@@ -1017,6 +981,10 @@ irb(main):006:0&gt; cf.calls_to_foo
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/11/29/two-way-symmetric-relationships-in-ember-with-jsonapi-part-2.html">Two-way symmetric relationships in Ember with JSON API - Part 2</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/11/17/two-way-symmetric-relationships-in-ember-with-jsonapi-part-1.html">Two-way symmetric relationships in Ember with JSON API - Part 1</a>
       </li>
     
@@ -1030,10 +998,6 @@ irb(main):006:0&gt; cf.calls_to_foo
     
       <li class="post">
         <a href="/2016/10/17/continuous-visual-integration-for-ember-apps.html">Continuous Visual Integration for Ember apps</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/10/05/refactoring-promise-patterns.html">Refactoring Promise Patterns</a>
       </li>
     
   </ul>

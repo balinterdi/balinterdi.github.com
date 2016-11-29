@@ -556,11 +556,17 @@
         <loc>
             http://balinterdi.com/2016/11/17/two-way-symmetric-relationships-in-ember-with-jsonapi-part-1.html
         </loc>
-        <lastmod>2016-11-17T21:41:14+01:00</lastmod>
+        <lastmod>2016-11-29T17:47:39+01:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://balinterdi.com/2016/11/29/two-way-symmetric-relationships-in-ember-with-jsonapi-part-2.html
+        </loc>
+        <lastmod>2016-11-29T17:57:18+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/blog/archives/</loc>
-        <lastmod>2016-11-19T21:55:41+01:00</lastmod>
+        <lastmod>2016-11-29T17:57:18+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/ember-thank-you-fb01/</loc>
@@ -576,7 +582,7 @@
     </url>
     <url>
         <loc>http://balinterdi.com/</loc>
-        <lastmod>2016-11-19T21:55:41+01:00</lastmod>
+        <lastmod>2016-11-29T17:57:18+01:00</lastmod>
     </url>
     <url>
         <loc>http://balinterdi.com/privacy-policy/</loc>
