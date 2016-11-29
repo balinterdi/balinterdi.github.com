@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-11-29T17:57:18+01:00</updated>
+  <updated>2016-11-29T18:03:40+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -543,6 +543,8 @@ loaded the people referred by those <code>friended</code> and <code>friended</co
 <p>In the next part, we'll see how these wasteful requests can be eliminated and
 we'll also make the person details page less perplexing by not displaying the
 person whose page we're looking at in the relationships. Stay tuned!</p>
+
+<p>UPDATE: <a href="/2016/11/29/two-way-symmetric-relationships-in-ember-with-jsonapi-part-2.html">Part 2</a> is now available!</p>
 ]]></content>
   </entry>
   
