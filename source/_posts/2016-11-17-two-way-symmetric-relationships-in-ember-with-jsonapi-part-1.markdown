@@ -4,7 +4,7 @@ title: "Two-way symmetric relationships in Ember with JSON API - Part 1"
 date: 2016-11-17 12:52
 comments: true
 categories: ember.js
-perk: general-signup
+perk: symmetric-relationships
 ---
 
 ## Definition
@@ -299,7 +299,7 @@ in the first version.)
 
 This naive approach works, the friendships for the selected person are listed correctly:
 
-![Mike McCready's frienships - Part 1](/images/posts/symmetric-relationships/friendships-step-1.png)
+![Mike McCready's friendships - Part 1](/images/posts/symmetric-relationships/friendships-step-1.png)
 
 ## A 2N+1 problem
 

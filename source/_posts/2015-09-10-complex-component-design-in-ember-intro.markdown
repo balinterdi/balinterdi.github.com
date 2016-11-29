@@ -13,7 +13,7 @@ perk: complex-component-design
 * [**Part 1 - Analyzing User Flows**](/2015/12/18/complex-components-in-ember-dot-js-part-1-analyzing-user-flows.html)
 * [**Part 2 - Towards a more reactive component**](2016/02/04/complex-components-in-ember-dot-js-part-2-towards-a-more-reactive-component.html)
 * [**Part 3 - Remove the observer**](/2016/04/08/complex-component-design-in-ember-replace-the-observer.html)
-* [**Part 4 - Use the hash helper**](/2016/05/26-complex-component-design-in-ember-part-4-use-the-hash-helper.html)
+* [**Part 4 - Use the hash helper**](/2016/05/26/complex-component-design-in-ember-part-4-use-the-hash-helper.html)
 
 - - - -
 
