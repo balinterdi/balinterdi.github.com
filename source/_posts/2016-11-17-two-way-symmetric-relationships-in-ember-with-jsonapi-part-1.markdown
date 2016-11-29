@@ -319,7 +319,10 @@ In the next part, we'll see how these wasteful requests can be eliminated and
 we'll also make the person details page less perplexing by not displaying the
 person whose page we're looking at in the relationships. Stay tuned!
 
+UPDATE: [Part 2][5] is now available!
+
 [1]: http://stackoverflow.com/questions/34186435/modelling-two-way-symmetric-relationships-in-ember
 [2]: http://rockandrollwithemberjs.com
 [3]: https://github.com/cerebris/jsonapi-resources
 [4]: https://www.sitepoint.com/silver-bullet-n1-problem/
+[5]: /2016/11/29/two-way-symmetric-relationships-in-ember-with-jsonapi-part-2.html
