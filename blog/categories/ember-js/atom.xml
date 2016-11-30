@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ember.js | Balint Erdi's blog about Ember.js]]></title>
   <link href="http://balinterdi.com/blog/categories/ember-js/atom.xml" rel="self"/>
   <link href="http://balinterdi.com/"/>
-  <updated>2016-11-29T18:03:40+01:00</updated>
+  <updated>2016-11-30T09:02:28+01:00</updated>
   <id>http://balinterdi.com/</id>
   <author>
     <name><![CDATA[I'm all about Ember.js recently]]></name>
@@ -178,8 +178,8 @@ question (the <code>model</code>) is, and then only return the other end.</p>
 ease, the next time you encounter it.</p>
 
 <p>I made the source code of both <a href="https://github.com/balinterdi/ember-two-way-symmetric-relationships">the Ember app</a> and the <a href="https://github.com/balinterdi/two-way-symmetric-relationships-api">Rails API</a>
-available on Github. If you want to learn more about the JSON API standard,
-I suggest you visit <a href="http://jsonapi.org/">the official site</a>.</p>
+available on Github. If you want to learn more about the jsonapi-resources gem,
+I suggest you visit <a href="http://jsonapi-resources.com/">the documentation site</a>.</p>
 
 <p>Finally, if you'd like to receive the series as a pdf, fill out the form below
 and I'll send it to you right away!</p>
