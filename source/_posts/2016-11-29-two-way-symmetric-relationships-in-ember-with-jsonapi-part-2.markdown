@@ -157,8 +157,8 @@ Hopefully you can now implement a symmetric relationship with relative
 ease, the next time you encounter it.
 
 I made the source code of both [the Ember app][4] and the [Rails API][5]
-available on Github. If you want to learn more about the JSON API standard,
-I suggest you visit [the official site][6].
+available on Github. If you want to learn more about the jsonapi-resources gem,
+I suggest you visit [the documentation site][7].
 
 Finally, if you'd like to receive the series as a pdf, fill out the form below
 and I'll send it to you right away!
@@ -169,3 +169,4 @@ and I'll send it to you right away!
 [4]: https://github.com/balinterdi/ember-two-way-symmetric-relationships
 [5]: https://github.com/balinterdi/two-way-symmetric-relationships-api
 [6]: http://jsonapi.org/
+[7]: http://jsonapi-resources.com/
